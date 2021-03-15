@@ -1,0 +1,28 @@
+spring:
+  profiles:
+    active: test
+  liquibase:
+    change-log: classpath:/db/changelog.yml
+  application:
+    name: cwa-quick-test-backend
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:log
+    username: sa
+    password: ''
+  cloud:
+    vault:
+      enabled: false
+
+cwa-testresult-server:
+  url: http://localhost:1234
+
+keycloak:
+  auth-server-url: https://example.org
+  realm: c19quicktest
+  resource: quick-test-portal
+  public-client: true
+  bearer-only: true
+
+server:
+  port: 8093

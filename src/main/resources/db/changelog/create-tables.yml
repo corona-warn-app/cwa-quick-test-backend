@@ -1,0 +1,42 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-tables
+      author: f11h
+      changes:
+        - createTable:
+            tableName: quicktest
+            columns:
+              - column:
+                  name: id
+                  type: varchar(32)
+                  constraints:
+                    unique: true
+                    nullable: false
+                    primaryKey: true
+              - column:
+                  name: guid
+                  type: varchar(32)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: personal_data_hash
+                  type: varchar(64)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: version
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false

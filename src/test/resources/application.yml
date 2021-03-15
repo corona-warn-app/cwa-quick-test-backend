@@ -1,0 +1,18 @@
+spring:
+  profiles:
+    active: test
+  liquibase:
+    change-log: classpath:/db/changelog.yml
+  application:
+    name: cwa-quick-test-backend
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:log
+    username: sa
+    password: ''
+
+server:
+  port: 8093
+  error:
+    whitelabel:
+      enabled: false

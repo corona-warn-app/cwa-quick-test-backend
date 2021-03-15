@@ -138,6 +138,32 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-checkstyle-plugin</artifactId>
 				<version>${plugin.checkstyle.version}</version>
+				<dependencies>
+					<dependency>
+						<groupId>com.puppycrawl.tools</groupId>
+						<artifactId>checkstyle</artifactId>
+						<version>8.40</version>
+					</dependency>
+				</dependencies>
+				<configuration>
+					<configLocation>codestyle/checkstyle.xml</configLocation>
+					<excludes>target/**/*</excludes>
+					<encoding>UTF-8</encoding>
+					<consoleOutput>true</consoleOutput>
+					<failsOnError>true</failsOnError>
+					<violationSeverity>warning</violationSeverity>
+					<failOnViolation>true</failOnViolation>
+					<linkXRef>false</linkXRef>
+				</configuration>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

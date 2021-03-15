@@ -12,10 +12,12 @@
 	<artifactId>cwa-quick-test-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>cwa-quick-test-backend</name>
-	<description>Backend for saving and exchanging data for Covid 19 quick tests</description>
+	<description>Backend to save and exchange data for Covid 19 quick tests</description>
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2020.0.1</spring-cloud.version>
+		<!-- plugins -->
+		<plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -131,6 +133,11 @@
 						</exclude>
 					</excludes>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>${plugin.checkstyle.version}</version>
 			</plugin>
 		</plugins>
 	</build>

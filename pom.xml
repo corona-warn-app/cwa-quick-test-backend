@@ -16,7 +16,8 @@
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2020.0.1</spring-cloud.version>
-		<!-- plugins -->
+    <springdoc.version>1.4.2</springdoc.version>
+    <!-- plugins -->
 		<plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
 	</properties>
 	<dependencies>
@@ -40,7 +41,11 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-openfeign</artifactId>
 		</dependency>
-
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>${springdoc.version}</version>
+    </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
@@ -82,7 +87,11 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.springframework.restdocs</groupId>
+            <artifactId>spring-restdocs-core</artifactId>
+        </dependency>
+    </dependencies>
 	<dependencyManagement>
 		<dependencies>
 			<dependency>

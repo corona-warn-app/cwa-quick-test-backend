@@ -33,11 +33,11 @@ import lombok.NoArgsConstructor;
  * @see <a href="https://github.com/corona-warn-app/cwa-testresult-server/blob/master/docs/architecture-overview.md#core-entities">Core Entities</a>
  */
 @Schema(
-  description = "The hashed Guid request model."
+    description = "The hashed Guid request model."
 )
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class HashedGuid {
-  private String guidHash;
+    private String guidHash;
 }

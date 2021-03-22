@@ -7,9 +7,7 @@ spring:
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 server:
-  port: 8093
   ssl:
-    key-store: ${QUICK_TEST_KEYSTORE_PATH}
     key-store-password: ${QUICK_TEST_KEYSTORE_PASSWORD}
     enabled: true
     protocol: TLS

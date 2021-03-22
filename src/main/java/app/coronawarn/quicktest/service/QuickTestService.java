@@ -6,7 +6,6 @@ import app.coronawarn.quicktest.repository.QuickTestRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.weaver.ast.Test;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -14,21 +13,23 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class QuickTestService {
 
-  @NonNull
-  private final QuickTestRepository quickTestRepository;
+    private final QuickTestRepository quickTestRepository;
 
-  @NonNull
-  private final TestResultService testResultService;
+    private final TestResultService testResultService;
 
-  public void saveQuickTest(QuickTest quickTest){}
-  public void updateQuickTest(QuickTest quickTest){}
-  public QuickTest updateQuickTest(String uuid, QuickTest quickTest){
-    return null;
-  }
-  public TestResult getTestResult(String uuid){
-    return null;
-  }
+    public void saveQuickTest(QuickTest quickTest) {
+    }
 
+    public void updateQuickTest(QuickTest quickTest) {
+    }
+
+    public QuickTest updateQuickTest(String uuid, QuickTest quickTest) {
+        return null;
+    }
+
+    public TestResult getTestResult(String uuid) {
+        return null;
+    }
 
 
 }

@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Slf4j
 @Controller
-@RequestMapping(value = "/quicktest/")
+@RequestMapping(value = "/api/quicktest/")
 @RequiredArgsConstructor
 public class QuickTestCreationController {
 

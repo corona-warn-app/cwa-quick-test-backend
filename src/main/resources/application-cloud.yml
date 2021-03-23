@@ -6,6 +6,34 @@ spring:
     password: ${POSTGRESQL_PASSWORD}
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+management:
+  server:
+    port: 8081
+  endpoint:
+    info:
+      enabled: true
+    health:
+      enabled: true
+      probes:
+        enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    enabled-by-default: false
+    web:
+      exposure:
+        include: info,health,metrics,prometheus
+    jmx:
+      exposure:
+        include: info,health,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
 server:
   ssl:
     key-store-password: ${QUICK_TEST_KEYSTORE_PASSWORD}

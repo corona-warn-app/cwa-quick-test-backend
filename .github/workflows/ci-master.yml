@@ -2,7 +2,7 @@ name: ci-master
 on:
   push:
     branches:
-    - master
+      - master
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -10,6 +10,12 @@ spring:
     url: jdbc:h2:mem:log
     username: sa
     password: ''
+  cloud:
+    vault:
+      enabled: false
+
+cwa-testresult-server:
+  url: http://localhost:1234
 
 server:
   port: 8093

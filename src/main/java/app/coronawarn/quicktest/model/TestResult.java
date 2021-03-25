@@ -3,7 +3,6 @@ package app.coronawarn.quicktest.model;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NonNull;
 
 
 /**
@@ -17,9 +16,8 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 public class TestResult {
-    @NonNull
-    private int testResult;
 
-    @NonNull
-    private String personalDataHash;
+    private final int testResult;
+
+    private final String personalDataHash;
 }

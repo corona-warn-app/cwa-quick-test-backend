@@ -12,8 +12,12 @@ spring:
 cwa-testresult-server:
   url: http://localhost:1234
 
+keycloak:
+  auth-server-url:
+  realm: c19quicktest
+  resource: quick-test-portal
+  public-client: true
+  bearer-only: true
+
 server:
   port: 8093
-  error:
-    whitelabel:
-      enabled: false

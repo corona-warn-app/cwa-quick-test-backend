@@ -1,8 +1,10 @@
 package app.coronawarn.quicktest.controller;
 
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.model.QuicktestCreationRequest;
-import app.coronawarn.quicktest.model.TestResult;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -11,16 +13,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
-@Controller
-@RequestMapping(value = "/api/quicktest/")
+@RestController
+@RequestMapping(value = "/api/quicktest")
 @RequiredArgsConstructor
 public class QuickTestCreationController {
 
@@ -37,12 +38,13 @@ public class QuickTestCreationController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Quicktest is created"),
       @ApiResponse(responseCode = "500", description = "Failed to create quicktest")})
-    @PostMapping(value = "/",
+    @PostMapping(value = "",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Secured(ROLE_COUNTER)
     public ResponseEntity<Resource> createQuickTest(QuicktestCreationRequest quicktestCreationRequest) {
-        return null;
+        return ResponseEntity.status(200).build();
     }
 
     /**
@@ -62,25 +64,8 @@ public class QuickTestCreationController {
              consumes = MediaType.APPLICATION_JSON_VALUE,
              produces = MediaType.APPLICATION_JSON_VALUE
     )
+    @Secured(ROLE_LAB)
     public ResponseEntity<Resource> updateQuickTestStatus(QuickTestUpdateRequest quickTestUploadRequest) {
-        return null;
-    }
-
-    /**
-     * Endpoint for downloading a log file.
-     *
-     * @param guid contains the guid to recive the testresult for.
-     * @return ResponseEntity with the test result.
-     */
-    @Operation(
-        summary = "Queries the testresult and personal data hash of an quicktest",
-        description = "Updates the testresult of an quicktest"
-    )
-    @ApiResponses(value = {
-      @ApiResponse(responseCode = "200 ", description = "Returns the Testresult"),
-      @ApiResponse(responseCode = "500", description = "Failed to update testresult")})
-    @GetMapping("/{guid}")
-    public ResponseEntity<TestResult> validate(@PathVariable("guid") String guid) {
         return null;
     }
 }

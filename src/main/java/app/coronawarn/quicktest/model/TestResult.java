@@ -17,9 +17,9 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 public class TestResult {
-    @NonNull
-    private int testResult;
 
-    @NonNull
-    private String personalDataHash;
+
+    private final int testResult;
+
+    private final String personalDataHash;
 }

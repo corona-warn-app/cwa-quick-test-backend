@@ -10,14 +10,11 @@ import lombok.NonNull;
     description = "The quick test update ."
 )
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class QuickTestUpdateRequest {
 
-    @NonNull
-    private String guid;
+    private final String guid;
 
-    @NonNull
-    private TestResult result;
+    private final TestResult result;
 
 }

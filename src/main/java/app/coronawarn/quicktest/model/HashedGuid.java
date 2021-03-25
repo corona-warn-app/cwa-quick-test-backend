@@ -15,8 +15,9 @@ import lombok.NoArgsConstructor;
     description = "The hashed Guid request model."
 )
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class HashedGuid {
+
     private String guidHash;
+
 }

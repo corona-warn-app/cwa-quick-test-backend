@@ -21,8 +21,3 @@ keycloak:
 
 server:
   port: 8093
-
-logging:
-  level:
-    org:
-      keycloak: debug

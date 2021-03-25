@@ -7,7 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 
 /**
- * This class represents the Labor Server service feign client.
+ * This class represents the Testresult Server service feign client.
  */
 @FeignClient(
     name = "testResultServerClient",

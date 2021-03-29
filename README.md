@@ -27,18 +27,7 @@ parties from accessing or controlling the data. This repository contains the **l
 
 ## Status
 
-![ci](https://github.com/corona-warn-app/cwa-quick-test-backend/workflows/ci/badge.svg)
-[![quality gate](https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-quick-test-backend&metric=alert_status)](https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-quick-test-backend)
-[![coverage](https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-quick-test-backend&metric=coverage)](https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-quick-test-backend)
-[![bugs](https://sonarcloud.io/api/project_badges/measure?project=corona-warn-app_cwa-quick-test-backend&metric=bugs)](https://sonarcloud.io/dashboard?id=corona-warn-app_cwa-quick-test-backend)
-
-## About this component
-
-tbd...
-
-## Development
-
-tbd...
+![ci](https://github.com/corona-warn-app/cwa-quick-test-backend/actions/workflows/ci-master.yml/badge.svg)
 
 ### Prerequisites
 
@@ -129,14 +118,10 @@ The following channels are available for discussions, feedback, and support requ
 
 | Type                     | Channel                                                |
 | ------------------------ | ------------------------------------------------------ |
-| **General
-Discussion**   | <a href="https://github.com/corona-warn-app/cwa-documentation/issues/new/choose" title="General Discussion"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-documentation/question.svg?style=flat-square"></a> </a>   |
-| **Concept
-Feedback**    | <a href="https://github.com/corona-warn-app/cwa-documentation/issues/new/choose" title="Open Concept Feedback"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-documentation/architecture.svg?style=flat-square"></a>  |
-| **Quick Test Backend
-Issue**    | <a href="https://github.com/corona-warn-app/cwa-quick-test-backend/issues" title="Open Issues"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-quick-test-backend?style=flat"></a>  |
-| **Other
-Requests**    | <a href="mailto:cwa-opensource@telekom.de" title="Email CWA Team"><img src="https://img.shields.io/badge/email-CWA%20team-green?logo=mail.ru&style=flat-square&logoColor=white"></a>   |
+| **General Discussion**   | <a href="https://github.com/corona-warn-app/cwa-documentation/issues/new/choose" title="General Discussion"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-documentation/question.svg?style=flat-square"></a> </a>   |
+| **Concept Feedback**    | <a href="https://github.com/corona-warn-app/cwa-documentation/issues/new/choose" title="Open Concept Feedback"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-documentation/architecture.svg?style=flat-square"></a>  |
+| **Quick Test Backend Issue**    | <a href="https://github.com/corona-warn-app/cwa-quick-test-backend/issues" title="Open Issues"><img src="https://img.shields.io/github/issues/corona-warn-app/cwa-quick-test-backend?style=flat"></a>  |
+| **Other Requests**    | <a href="mailto:cwa-opensource@telekom.de" title="Email CWA Team"><img src="https://img.shields.io/badge/email-CWA%20team-green?logo=mail.ru&style=flat-square&logoColor=white"></a>   |
 
 ## How to Contribute
 
@@ -155,38 +140,7 @@ become part of its developer community.
 
 ## Repositories
 
-| Repository          | Description                                                           |
-| ------------------- | --------------------------------------------------------------------- |
-| [cwa-documentation] | Project overview, general documentation, and white papers.            |
-| [cwa-app-ios]       | Native iOS app using the Apple/Google exposure notification API.      |
-| [cwa-app-android]   | Native Android app using the Apple/Google exposure notification API.  |
-| [cwa-wishlist]      | Community feature requests.                                           |
-| [cwa-website]       | The official website for the Corona-Warn-App                          |
-| [cwa-server]        | Backend implementation for the Apple/Google exposure notification API.|
-| [cwa-verification-server] | Backend implementation of the verification process.             |
-| [cwa-verification-portal] | The portal to interact with the verification server             |
-| [cwa-verification-iam]    | The identity and access management to interact with the verification server |
-| [cwa-testresult-server]   | Receives the test results from connected laboratories           |
-
-[cwa-documentation]: https://github.com/corona-warn-app/cwa-documentation
-
-[cwa-app-ios]: https://github.com/corona-warn-app/cwa-app-ios
-
-[cwa-app-android]: https://github.com/corona-warn-app/cwa-app-android
-
-[cwa-wishlist]: https://github.com/corona-warn-app/cwa-wishlist
-
-[cwa-website]: https://github.com/corona-warn-app/cwa-website
-
-[cwa-server]: https://github.com/corona-warn-app/cwa-server
-
-[cwa-verification-server]: https://github.com/corona-warn-app/cwa-verification-server
-
-[cwa-verification-portal]: https://github.com/corona-warn-app/cwa-verification-portal
-
-[cwa-verification-iam]: https://github.com/corona-warn-app/cwa-verification-iam
-
-[cwa-testresult-server]: https://github.com/corona-warn-app/cwa-testresult-server
+A list of all public repositories from the Corona-Warn-App can be found [here](https://github.com/corona-warn-app/cwa-documentation/blob/master/README.md#repositories).
 
 ## Licensing
 

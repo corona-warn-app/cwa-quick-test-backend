@@ -21,6 +21,8 @@
 package app.coronawarn.quicktest.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -35,7 +37,11 @@ import org.springframework.beans.factory.annotation.Required;
 @Data
 @RequiredArgsConstructor
 public class QuicktestCreationRequest {
-
+    /**
+     * Hash (SHA256) of test result id (aka QR-Code, GUID) encoded as hex string.
+     */
+    @NotBlank
+    @Pattern(regexp = "^([A-Fa-f0-9]{2}){32}$")
     private final String hashedGuid;
 
 }

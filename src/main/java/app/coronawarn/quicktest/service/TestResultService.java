@@ -23,9 +23,10 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.client.TestResultServerClient;
 import app.coronawarn.quicktest.model.HashedGuid;
 import app.coronawarn.quicktest.model.TestResult;
-import lombok.NonNull;
+import app.coronawarn.quicktest.model.TestResultList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -37,5 +38,8 @@ public class TestResultService {
 
     public TestResult result(HashedGuid guid) {
         return testResultServerClient.result(guid);
+    }
+    public ResponseEntity<?> updateTestResult(TestResultList testResult) {
+        return testResultServerClient.results(testResult);
     }
 }

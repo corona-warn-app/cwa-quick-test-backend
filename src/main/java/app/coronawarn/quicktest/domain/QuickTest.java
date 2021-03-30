@@ -47,7 +47,7 @@ public class QuickTest {
     private Long id;
 
     @Column(name = "hasehdGuid")
-    private String guid;
+    private String hashedGuid;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

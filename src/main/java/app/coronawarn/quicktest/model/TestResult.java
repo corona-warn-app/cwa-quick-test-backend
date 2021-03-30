@@ -21,18 +21,46 @@
 package app.coronawarn.quicktest.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
+import javax.validation.constraints.*;
 
+/**
+ * Model of the test result.
+ */
 @Schema(
-    description = "The test result model."
+        description = "The test result model."
 )
-@Data
-@AllArgsConstructor
+@Getter
+@ToString
+@EqualsAndHashCode
 public class TestResult {
 
-    private final int testResult;
+    /**
+     * Hash (SHA256) of test result id (aka QR-Code, GUID) encoded as hex string.
+     */
+    @NotBlank
+    @Pattern(regexp = "^([A-Fa-f0-9]{2}){32}$")
+    private String id;
 
-    private final String personalDataHash;
+    /**
+     * The test result.
+     * 1: negative
+     * 2: positive
+     * 3: invalid
+     */
+    @Min(1)
+    @Max(3)
+    @NotNull
+    private Integer result;
+
+    public TestResult setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public TestResult setResult(Integer result) {
+        this.result = result;
+        return this;
+    }
 }

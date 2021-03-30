@@ -23,13 +23,16 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
+import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.model.QuicktestCreationRequest;
+import app.coronawarn.quicktest.service.QuickTestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,6 +48,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class QuickTestCreationController {
 
+    @Autowired
+    QuickTestService quickTestService;
+
     @Operation(
         summary = "Creates a quicktest",
         description = "Creates a quicktest and a pending testresult"
@@ -52,19 +58,22 @@ public class QuickTestCreationController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Quicktest is created"),
       @ApiResponse(responseCode = "500", description = "Failed to create quicktest")})
-    @PostMapping(value = "",
+    @PostMapping(value = "/",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Resource> createQuickTest(QuicktestCreationRequest quicktestCreationRequest) {
-        return ResponseEntity.status(200).build();
+        if( quickTestService.saveQuickTest(quicktestCreationRequest) != null) {
+            return ResponseEntity.status(200).build();
+        }
+        return ResponseEntity.status(500).build();
     }
 
     /**
      * Endpoint for updating a Quicktest result.
      *
-     * @param quickTestUploadRequest contains the the new test value for the quicktest.
+     * @param quickTestUpdateRequest contains the the new test value for the quicktest.
      * @return ResponseEntity with binary data.
      */
     @Operation(
@@ -79,7 +88,7 @@ public class QuickTestCreationController {
              produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Secured(ROLE_LAB)
-    public ResponseEntity<Resource> updateQuickTestStatus(QuickTestUpdateRequest quickTestUploadRequest) {
-        return ResponseEntity.status(204).build();
+    public ResponseEntity<?> updateQuickTestStatus(QuickTestUpdateRequest quickTestUpdateRequest) {
+        return quickTestService.updateQuickTest(quickTestUpdateRequest);
     }
 }

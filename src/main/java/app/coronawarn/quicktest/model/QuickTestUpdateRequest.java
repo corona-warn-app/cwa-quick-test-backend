@@ -24,15 +24,28 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 @Schema(
     description = "The quick test update ."
 )
 @Data
 @AllArgsConstructor
 public class QuickTestUpdateRequest {
-
+    /**
+     * First 8 chars of Hash (SHA256) encoded as hex string.
+     */
+    @NotBlank
+    @Pattern(regexp = "^([A-Fa-f0-9]{2}){8}$")
     private final String shortHash;
 
+    /**
+     * The test result.
+     * 1: negative
+     * 2: positive
+     * 3: invalid
+     */
     private final TestResult result;
 
 }

@@ -23,8 +23,6 @@ package app.coronawarn.quicktest.repository;
 import app.coronawarn.quicktest.domain.QuickTest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface QuickTestRepository extends JpaRepository<QuickTest, Long> {
-    public QuickTest findByShortHash(String shortHash);
+    QuickTest findByHashedGuidIsStartingWith(String shortHash);
 }

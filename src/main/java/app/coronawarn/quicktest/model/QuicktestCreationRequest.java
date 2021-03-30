@@ -36,7 +36,6 @@ import org.springframework.beans.factory.annotation.Required;
 @RequiredArgsConstructor
 public class QuicktestCreationRequest {
 
-    private final String guid;
+    private final String hashedGuid;
 
-    private final String personalDataHash;
 }

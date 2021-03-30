@@ -21,3 +21,5 @@ keycloak:
 
 server:
   port: 8093
+quick-test:
+  shortHashLength: 6

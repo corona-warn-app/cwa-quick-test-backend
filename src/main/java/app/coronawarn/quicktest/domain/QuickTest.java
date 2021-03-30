@@ -46,11 +46,8 @@ public class QuickTest {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "guid")
+    @Column(name = "hasehdGuid")
     private String guid;
-
-    @Column(name = "personal_data_hash")
-    private String personalDataHash;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

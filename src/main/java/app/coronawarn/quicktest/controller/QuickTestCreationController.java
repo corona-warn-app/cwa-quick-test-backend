@@ -80,6 +80,6 @@ public class QuickTestCreationController {
     )
     @Secured(ROLE_LAB)
     public ResponseEntity<Resource> updateQuickTestStatus(QuickTestUpdateRequest quickTestUploadRequest) {
-        return null;
+        return ResponseEntity.status(204).build();
     }
 }

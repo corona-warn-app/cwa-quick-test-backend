@@ -31,7 +31,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class QuickTestUpdateRequest {
 
-    private final String guid;
+    private final String shortHash;
 
     private final TestResult result;
 

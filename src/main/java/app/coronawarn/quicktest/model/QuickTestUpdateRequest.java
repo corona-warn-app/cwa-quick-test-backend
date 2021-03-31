@@ -21,11 +21,14 @@
 package app.coronawarn.quicktest.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Value;
 
 @Schema(
     description = "The quick test update ."
@@ -33,19 +36,23 @@ import javax.validation.constraints.Pattern;
 @Data
 @AllArgsConstructor
 public class QuickTestUpdateRequest {
+
     /**
      * First 8 chars of Hash (SHA256) encoded as hex string.
      */
-    @NotBlank
-    @Pattern(regexp = "^([A-Fa-f0-9]{2}){8}$")
+    @Pattern(regexp = "^[A-Fa-f0-9]{8}$")
     private final String shortHash;
 
     /**
      * The test result.
-     * 1: negative
-     * 2: positive
-     * 3: invalid
+     * 5: Pending
+     * 6: Negative
+     * 7: Positive
+     * 8: Invalid
+     * 9: Redeemed
      */
-    private final TestResult result;
+    @Min(6)
+    @Max(8)
+    private final int result;
 
 }

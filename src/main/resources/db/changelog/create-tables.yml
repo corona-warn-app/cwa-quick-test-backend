@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: varchar(8)
+                  type: long
                   autoIncrement: true
                   constraints:
                     unique: true

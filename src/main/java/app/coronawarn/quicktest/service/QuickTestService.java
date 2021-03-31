@@ -21,14 +21,17 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.domain.QuickTest;
-import app.coronawarn.quicktest.model.*;
+import app.coronawarn.quicktest.model.HashedGuid;
+import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
+import app.coronawarn.quicktest.model.QuicktestCreationRequest;
+import app.coronawarn.quicktest.model.TestResult;
+import app.coronawarn.quicktest.model.TestResultList;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import java.util.Collections;
 
 @Slf4j
 @Component
@@ -39,26 +42,46 @@ public class QuickTestService {
 
     private final TestResultService testResultService;
 
+    /**
+     * Persist a new QuickTest.
+     *
+     * @param quicktestCreationRequest The creation request with hashed guid.
+     * @return saved QuickTest
+     */
     public QuickTest saveQuickTest(QuicktestCreationRequest quicktestCreationRequest) {
         QuickTest newQuickTest = new QuickTest();
         newQuickTest.setHashedGuid(quicktestCreationRequest.getHashedGuid());
         return quickTestRepository.save(newQuickTest);
     }
 
+    /**
+     * Queries the TestResult Server by hashed GUID.
+     *
+     * @param hashedGuid the hashedGuid to search for
+     * @return TestResult.
+     */
     public TestResult getTestResult(String hashedGuid) {
         return testResultService.result(new HashedGuid(hashedGuid));
     }
 
 
-    public ResponseEntity<?> updateQuickTest(QuickTestUpdateRequest quickTestUpdateRequest) {
+    /**
+     * Updates a QuickTest entity in persistence.
+     *
+     * @param quickTestUpdateRequest Request to update QuickTest entity
+     * @return Empty Response
+     */
+    public ResponseEntity<Void> updateQuickTest(QuickTestUpdateRequest quickTestUpdateRequest) {
         QuickTest quicktest = quickTestRepository.findByHashedGuidIsStartingWith(quickTestUpdateRequest.getShortHash());
         TestResult testResult = new TestResult();
-        testResult.setResult(quickTestUpdateRequest.getResult().getResult());
+        testResult.setResult(quickTestUpdateRequest.getResult());
         testResult.setId(quicktest.getHashedGuid());
 
         TestResultList testResultList = new TestResultList();
         testResultList.setTestResults(Collections.singletonList(testResult));
 
-        return testResultService.updateTestResult(testResultList);
+        testResultService.updateTestResult(testResultList);
+
+        return ResponseEntity.ok().build();
     }
 }

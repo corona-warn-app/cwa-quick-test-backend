@@ -39,6 +39,7 @@ public class TestResultService {
     public TestResult result(HashedGuid guid) {
         return testResultServerClient.result(guid);
     }
+    
     public ResponseEntity<?> updateTestResult(TestResultList testResult) {
         return testResultServerClient.results(testResult);
     }

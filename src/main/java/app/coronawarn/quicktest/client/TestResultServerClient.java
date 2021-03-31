@@ -23,15 +23,13 @@ package app.coronawarn.quicktest.client;
 import app.coronawarn.quicktest.model.HashedGuid;
 import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.model.TestResultList;
-import io.swagger.v3.oas.annotations.Operation;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 @FeignClient(
     name = "testResultServerClient",
@@ -62,5 +60,5 @@ public interface TestResultServerClient {
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    ResponseEntity<?> results(@RequestBody @NotNull @Valid TestResultList list   ) ;
+    ResponseEntity<?> results(@RequestBody @NotNull @Valid TestResultList list);
 }

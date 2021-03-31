@@ -48,20 +48,26 @@ public class QuickTestCreationController {
 
     private final QuickTestService quickTestService;
 
+    /**
+     * Endpoint for creating new QuickTest entities.
+     *
+     * @param quicktestCreationRequest containing the hashed guid.
+     * @return Empty Response
+     */
     @Operation(
         summary = "Creates a quicktest",
         description = "Creates a quicktest and a pending testresult"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Quicktest is created"),
-        @ApiResponse(responseCode = "409", description = "Quicktest already exists")})
+      @ApiResponse(responseCode = "201", description = "Quicktest is created"),
+      @ApiResponse(responseCode = "409", description = "Quicktest already exists")})
     @PostMapping(value = "",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Resource> createQuickTest(QuicktestCreationRequest quicktestCreationRequest) {
-        if( quickTestService.saveQuickTest(quicktestCreationRequest) != null) {
+        if (quickTestService.saveQuickTest(quicktestCreationRequest) != null) {
             return ResponseEntity.status(200).build();
         }
         return ResponseEntity.status(409).build();
@@ -86,7 +92,7 @@ public class QuickTestCreationController {
     )
     @Secured(ROLE_LAB)
     public ResponseEntity<?> updateQuickTestStatus(QuickTestUpdateRequest quickTestUpdateRequest) {
-//        return quickTestService.updateQuickTest(quickTestUpdateRequest);
+        // return quickTestService.updateQuickTest(quickTestUpdateRequest);
         return ResponseEntity.status(204).build();
     }
 }

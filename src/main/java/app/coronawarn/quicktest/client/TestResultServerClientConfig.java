@@ -43,6 +43,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class TestResultServerClientConfig {
 
     private final TestResultServerValuesConfig config;
+
     /**
      * HttpClient for connection to Test-Result-Server.
      *

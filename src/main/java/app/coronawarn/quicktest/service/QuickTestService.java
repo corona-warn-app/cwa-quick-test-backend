@@ -50,7 +50,7 @@ public class QuickTestService {
     public QuickTest createNewQuickTest(String hashedGuid) throws QuickTestServiceException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
-        QuickTest conflictingQuickTest = quickTestRepository.findByShortHash(shortHash);
+        QuickTest conflictingQuickTest = quickTestRepository.findByHashedGuidStartingWith(shortHash);
 
         if (conflictingQuickTest != null) {
             log.debug("QuickTest with shortHash {} already exists", shortHash);
@@ -92,7 +92,7 @@ public class QuickTestService {
      */
     public void updateQuickTest(String shortHash, int result) throws QuickTestServiceException {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
-        QuickTest quicktest = quickTestRepository.findByShortHash(shortHash);
+        QuickTest quicktest = quickTestRepository.findByHashedGuidStartingWith(shortHash);
 
         if (quicktest == null) {
             log.info("Requested Quick Test with shortHash {} could not be found.", shortHash);

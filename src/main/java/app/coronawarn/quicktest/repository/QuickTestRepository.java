@@ -22,12 +22,9 @@ package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.QuickTest;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface QuickTestRepository extends JpaRepository<QuickTest, Long> {
 
-    @Query("SELECT t FROM QuickTest t WHERE SUBSTRING(t.hashedGuid, 0, 8) = :shortHash")
-    QuickTest findByShortHash(@Param("shortHash") String shortHash);
+    QuickTest findByHashedGuidStartingWith(String shortHash);
 
 }

@@ -42,65 +42,49 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class TestResultServerClientConfig {
 
-//    @Value("${cwa-testresult-server.ssl.enabled}")
-//    private final boolean enabled = false;
-//    @Value("${cwa-testresult-server.ssl.one-way}")
-//    private final boolean oneWay = false;
-//    @Value("${cwa-testresult-server.ssl.two-way}")
-//    private final boolean twoWay = false;
-//    @Value("${cwa-testresult-server.ssl.hostname-verify}")
-//    private final boolean hostnameVerify = false;
-//    @Value("${cwa-testresult-server.ssl.key-store}")
-//    private final String keyStorePath = "";
-//    @Value("${cwa-testresult-server.ssl.key-store-password}")
-//    private final char[] keyStorePassword = new char[0];
-//    @Value("${cwa-testresult-server.ssl.trust-store}")
-//    private final String trustStorePath = "";
-//    @Value("${cwa-testresult-server.ssl.trust-store-password}")
-//    private final char[] trustStorePassword = new char[0];
-//    private TestResultServerValuesConfig testResultServerValuesConfig;
-//    /**
-//     * HttpClient for connection to Test-Result-Server.
-//     *
-//     * @return Instance of HttpClient
-//     */
-//    @Bean
-//    public Client client() {
-//        if (testResultServerValuesConfig.getTestResultServer().isEnabled()) {
-//            return new ApacheHttpClient(
-//                HttpClientBuilder
-//                    .create()
-//                    .setSSLContext(getSslContext())
-//                    .setSSLHostnameVerifier(getSslHostnameVerifier())
-//                    .build()
-//            );
-//        }
-//        return new ApacheHttpClient(HttpClientBuilder.create()
-//            .setSSLHostnameVerifier(getSslHostnameVerifier())
-//            .build());
-//    }
-//
-//    private SSLContext getSslContext() {
-//        try {
-//            SSLContextBuilder builder = SSLContextBuilder
-//                .create();
-//            if (oneWay) {
-//                builder.loadTrustMaterial(ResourceUtils.getFile(trustStorePath),
-//                    trustStorePassword);
-//            }
-//            if (twoWay) {
-//                builder.loadKeyMaterial(ResourceUtils.getFile(keyStorePath),
-//                    keyStorePassword,
-//                    keyStorePassword);
-//            }
-//            return builder.build();
-//        } catch (IOException | GeneralSecurityException e) {
-//            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The SSL context could not be loaded.");
-//        }
-//    }
-//
-//    private HostnameVerifier getSslHostnameVerifier() {
-//        return hostnameVerify ? new DefaultHostnameVerifier() : new NoopHostnameVerifier();
-//    }
-//
+    private final TestResultServerValuesConfig config;
+    /**
+     * HttpClient for connection to Test-Result-Server.
+     *
+     * @return Instance of HttpClient
+     */
+    @Bean
+    public Client client() {
+        if (config.isEnabled()) {
+            return new ApacheHttpClient(
+                HttpClientBuilder
+                    .create()
+                    .setSSLContext(getSslContext())
+                    .setSSLHostnameVerifier(getSslHostnameVerifier())
+                    .build()
+            );
+        }
+        return new ApacheHttpClient(HttpClientBuilder.create()
+            .setSSLHostnameVerifier(getSslHostnameVerifier())
+            .build());
+    }
+
+    private SSLContext getSslContext() {
+        try {
+            SSLContextBuilder builder = SSLContextBuilder
+                .create();
+            if (config.isOneWay()) {
+                builder.loadTrustMaterial(ResourceUtils.getFile(config.getTrustStorePath()),
+                        config.getTrustStorePassword());
+            }
+            if (config.isTwoWay()) {
+                builder.loadKeyMaterial(ResourceUtils.getFile(config.getKeyStorePath()),
+                        config.getKeyStorePassword(),
+                        config.getKeyStorePassword());
+            }
+            return builder.build();
+        } catch (IOException | GeneralSecurityException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The SSL context could not be loaded.");
+        }
+    }
+
+    private HostnameVerifier getSslHostnameVerifier() {
+        return config.isHostnameVerify() ? new DefaultHostnameVerifier() : new NoopHostnameVerifier();
+    }
+
 }

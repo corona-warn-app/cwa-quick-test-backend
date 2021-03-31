@@ -46,7 +46,7 @@ public class QuickTest {
     @Column(name = "id")
     private Long id;
 
-    @Column(name = "hasehdGuid")
+    @Column(name = "hashed_guid")
     private String hashedGuid;
 
     @Column(name = "created_at")

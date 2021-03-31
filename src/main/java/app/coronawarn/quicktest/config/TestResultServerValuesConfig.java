@@ -3,27 +3,19 @@ package app.coronawarn.quicktest.config;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
 @Getter
 @Setter
-@ConfigurationProperties
+@Configuration
+@ConfigurationProperties("testresultserver")
 public class TestResultServerValuesConfig {
-
-    private TestResultServer testResultServer;
-    /**
-     * Configure the TestResultServerValues with build property values and return the configured parameters.
-     */
-    @Getter
-    @Setter
-    public static class TestResultServer {
-        private boolean enabled = false;
-        private boolean oneWay = false;
-        private boolean twoWay = false;
-        private boolean hostnameVerify = false;
-        private String  keyStorePath = "";
-        private char[]  keyStorePassword = new char[0];
-        private String  trustStorePath = "";
-        private char[]  trustStorePassword = new char[0];
-    }
-
+        private boolean enabled;
+        private boolean oneWay;
+        private boolean twoWay;
+        private boolean hostnameVerify;
+        private String  keyStorePath;
+        private char[]  keyStorePassword;
+        private String  trustStorePath;
+        private char[]  trustStorePassword;
 }

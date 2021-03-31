@@ -14,7 +14,7 @@ databaseChangeLog:
                     nullable: false
                     primaryKey: true
               - column:
-                  name: hashedGuid
+                  name: hashed_guid
                   type: varchar(32)
                   constraints:
                     unique: true

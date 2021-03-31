@@ -8,7 +8,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: id
-                  type: long
+                  type: bigint
                   autoIncrement: true
                   constraints:
                     unique: true

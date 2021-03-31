@@ -23,8 +23,8 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
-import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
+import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -62,9 +62,9 @@ public class QuickTestCreationController {
         description = "Creates a quicktest and a pending testresult"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "201", description = "Quicktest is created"),
-        @ApiResponse(responseCode = "409", description = "Quicktest with short hash already exists"),
-        @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
+      @ApiResponse(responseCode = "201", description = "Quicktest is created"),
+      @ApiResponse(responseCode = "409", description = "Quicktest with short hash already exists"),
+      @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> createQuickTest(@Valid @RequestBody QuickTestCreationRequest quicktestCreationRequest) {
@@ -92,8 +92,8 @@ public class QuickTestCreationController {
         description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204 ", description = "Update successful"),
-        @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
+      @ApiResponse(responseCode = "204 ", description = "Update successful"),
+      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
     @PutMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<Void> updateQuickTestStatus(

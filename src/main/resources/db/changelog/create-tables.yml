@@ -9,6 +9,7 @@ databaseChangeLog:
               - column:
                   name: id
                   type: varchar(8)
+                  autoIncrement: true
                   constraints:
                     unique: true
                     nullable: false

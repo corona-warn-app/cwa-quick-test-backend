@@ -26,17 +26,20 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.model.QuicktestCreationRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
+import app.coronawarn.quicktest.service.QuickTestServiceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,18 +62,23 @@ public class QuickTestCreationController {
         description = "Creates a quicktest and a pending testresult"
     )
     @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Quicktest is created"),
-      @ApiResponse(responseCode = "409", description = "Quicktest already exists")})
-    @PostMapping(value = "",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
+        @ApiResponse(responseCode = "201", description = "Quicktest is created"),
+        @ApiResponse(responseCode = "409", description = "Quicktest with short hash already exists"),
+        @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
+    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
-    public ResponseEntity<Resource> createQuickTest(QuicktestCreationRequest quicktestCreationRequest) {
-        if (quickTestService.saveQuickTest(quicktestCreationRequest) != null) {
-            return ResponseEntity.status(200).build();
+    public ResponseEntity<Void> createQuickTest(@RequestBody QuicktestCreationRequest quicktestCreationRequest) {
+        try {
+            quickTestService.createNewQuickTest(quicktestCreationRequest.getHashedGuid());
+        } catch (QuickTestServiceException e) {
+            if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
         }
-        return ResponseEntity.status(409).build();
+
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     /**
@@ -80,19 +88,26 @@ public class QuickTestCreationController {
      * @return ResponseEntity with binary data.
      */
     @Operation(
-        summary = "Updates the testresult of an quicktest",
-        description = "Updates the testresult of an quicktest"
+        summary = "Updates the test result of a quicktest",
+        description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
-      @ApiResponse(responseCode = "204 ", description = "Update successful"),
-      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
-    @PutMapping(value = "",
-             consumes = MediaType.APPLICATION_JSON_VALUE,
-             produces = MediaType.APPLICATION_JSON_VALUE
-    )
+        @ApiResponse(responseCode = "204 ", description = "Update successful"),
+        @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
+    @PutMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
-    public ResponseEntity<?> updateQuickTestStatus(QuickTestUpdateRequest quickTestUpdateRequest) {
-        // return quickTestService.updateQuickTest(quickTestUpdateRequest);
+    public ResponseEntity<Void> updateQuickTestStatus(
+        @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
+        try {
+            quickTestService.updateQuickTest(
+                quickTestUpdateRequest.getShortHash(), quickTestUpdateRequest.getResult());
+        } catch (QuickTestServiceException e) {
+            if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
         return ResponseEntity.status(204).build();
     }
 }

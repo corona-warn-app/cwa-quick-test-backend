@@ -23,7 +23,6 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
-import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.model.QuicktestCreationRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
@@ -32,7 +31,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -48,8 +46,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class QuickTestCreationController {
 
-    @Autowired
-    QuickTestService quickTestService;
+    private final QuickTestService quickTestService;
 
     @Operation(
         summary = "Creates a quicktest",
@@ -58,7 +55,7 @@ public class QuickTestCreationController {
     @ApiResponses(value = {
         @ApiResponse(responseCode = "201", description = "Quicktest is created"),
         @ApiResponse(responseCode = "409", description = "Quicktest already exists")})
-    @PostMapping(value = "/",
+    @PostMapping(value = "",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
     )
@@ -83,7 +80,7 @@ public class QuickTestCreationController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
       @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
-    @PutMapping(value = "/",
+    @PutMapping(value = "",
              consumes = MediaType.APPLICATION_JSON_VALUE,
              produces = MediaType.APPLICATION_JSON_VALUE
     )

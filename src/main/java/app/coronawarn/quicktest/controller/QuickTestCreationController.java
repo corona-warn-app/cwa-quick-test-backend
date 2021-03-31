@@ -56,8 +56,8 @@ public class QuickTestCreationController {
         description = "Creates a quicktest and a pending testresult"
     )
     @ApiResponses(value = {
-      @ApiResponse(responseCode = "201", description = "Quicktest is created"),
-      @ApiResponse(responseCode = "500", description = "Failed to create quicktest")})
+        @ApiResponse(responseCode = "201", description = "Quicktest is created"),
+        @ApiResponse(responseCode = "409", description = "Quicktest already exists")})
     @PostMapping(value = "/",
         consumes = MediaType.APPLICATION_JSON_VALUE,
         produces = MediaType.APPLICATION_JSON_VALUE
@@ -67,7 +67,7 @@ public class QuickTestCreationController {
         if( quickTestService.saveQuickTest(quicktestCreationRequest) != null) {
             return ResponseEntity.status(200).build();
         }
-        return ResponseEntity.status(500).build();
+        return ResponseEntity.status(409).build();
     }
 
     /**
@@ -82,13 +82,14 @@ public class QuickTestCreationController {
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
-      @ApiResponse(responseCode = "500", description = "Failed to update testresult")})
+      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
     @PutMapping(value = "/",
              consumes = MediaType.APPLICATION_JSON_VALUE,
              produces = MediaType.APPLICATION_JSON_VALUE
     )
     @Secured(ROLE_LAB)
     public ResponseEntity<?> updateQuickTestStatus(QuickTestUpdateRequest quickTestUpdateRequest) {
-        return quickTestService.updateQuickTest(quickTestUpdateRequest);
+//        return quickTestService.updateQuickTest(quickTestUpdateRequest);
+        return ResponseEntity.status(204).build();
     }
 }

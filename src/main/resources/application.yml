@@ -23,3 +23,12 @@ server:
   port: 8093
 quick-test:
   shortHashLength: 6
+testresultserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePath: classpath:keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: classpath:truststore.jks
+  trustStorePassword: changeit

@@ -24,7 +24,7 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
-import app.coronawarn.quicktest.model.QuicktestCreationRequest;
+import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import io.swagger.v3.oas.annotations.Operation;
@@ -67,7 +67,7 @@ public class QuickTestCreationController {
         @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
-    public ResponseEntity<Void> createQuickTest(@RequestBody QuicktestCreationRequest quicktestCreationRequest) {
+    public ResponseEntity<Void> createQuickTest(@Valid @RequestBody QuickTestCreationRequest quicktestCreationRequest) {
         try {
             quickTestService.createNewQuickTest(quicktestCreationRequest.getHashedGuid());
         } catch (QuickTestServiceException e) {

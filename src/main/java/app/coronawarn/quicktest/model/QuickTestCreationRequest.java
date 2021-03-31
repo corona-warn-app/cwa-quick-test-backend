@@ -21,22 +21,19 @@
 package app.coronawarn.quicktest.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Schema(
     description = "The quick test creation model."
 )
 @Data
-@RequiredArgsConstructor
-public class QuicktestCreationRequest {
+public class QuickTestCreationRequest {
+
     /**
      * Hash (SHA256) of test result id (aka QR-Code, GUID) encoded as hex string.
      */
-    @NotBlank
-    @Pattern(regexp = "^([A-Fa-f0-9]{2}){32}$")
-    private final String hashedGuid;
+    @Pattern(regexp = "^[A-Fa-f0-9]{64}$")
+    private String hashedGuid;
 
 }

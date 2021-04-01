@@ -26,6 +26,7 @@ import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.model.TestResultList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -55,10 +56,10 @@ public class TestResultService {
      * @return the updated test result
      */
     public TestResult updateTestResult(TestResultList testResultList) {
-        try {
-            testResultServerClient.results(testResultList);
+        if(testResultServerClient.results(testResultList).getStatusCode() == HttpStatus.NO_CONTENT ) {
             return new TestResult().setId(testResultList.getTestResults().get(0).getId());
-        } catch (Exception e) {
+        } else {
+            log.error("Failed to update testresult");
             return null;
         }
     }

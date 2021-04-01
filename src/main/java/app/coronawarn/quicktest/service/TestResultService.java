@@ -20,10 +20,13 @@
 
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.client.TestResultServerClient;
+import app.coronawarn.quicktest.model.HashedGuid;
 import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.model.TestResultList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -31,8 +34,8 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TestResultService {
 
-    // This Service is currently just a mock of the TestResultService.
-    // private final TestResultServerClient testResultServerClient;
+    //This Service is currently just a mock of the TestResultService.
+    private final TestResultServerClient testResultServerClient;
 
     /**
      * Requests the TestResult for given hashed Guid.
@@ -41,8 +44,8 @@ public class TestResultService {
      * @return Corresponding TestResult.
      */
     public TestResult result(String hashedGuid) {
-        // return testResultServerClient.result(guid);
-        return new TestResult().setId(hashedGuid);
+        return testResultServerClient.result(new HashedGuid(hashedGuid));
+        //return new TestResult().setId(hashedGuid);
     }
 
     /**
@@ -52,7 +55,11 @@ public class TestResultService {
      * @return the updated test result
      */
     public TestResult updateTestResult(TestResultList testResultList) {
-        // return testResultServerClient.results(testResult);
-        return new TestResult().setId(testResultList.getTestResults().get(0).getId());
+        try {
+            testResultServerClient.results(testResultList);
+            return new TestResult().setId(testResultList.getTestResults().get(0).getId());
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

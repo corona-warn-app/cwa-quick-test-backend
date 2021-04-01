@@ -47,12 +47,13 @@ public class TestResult {
     @NotBlank
     @Pattern(regexp = "^([A-Fa-f0-9]{2}){32}$")
     private String id;
-
     /**
      * The test result.
-     * 1: negative
-     * 2: positive
-     * 3: invalid
+     * 5: Pending
+     * 6: Negative
+     * 7: Positive
+     * 8: Invalid
+     * 9: Redeemed
      */
     @Min(1)
     @Max(3)

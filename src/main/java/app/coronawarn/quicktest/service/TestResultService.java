@@ -56,7 +56,7 @@ public class TestResultService {
      * @return the updated test result
      */
     public TestResult updateTestResult(TestResultList testResultList) {
-        if(testResultServerClient.results(testResultList).getStatusCode() == HttpStatus.NO_CONTENT ) {
+        if (testResultServerClient.results(testResultList).getStatusCode() == HttpStatus.NO_CONTENT) {
             return new TestResult().setId(testResultList.getTestResults().get(0).getId());
         } else {
             log.error("Failed to update testresult");

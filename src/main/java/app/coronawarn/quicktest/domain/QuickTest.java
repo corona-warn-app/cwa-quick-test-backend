@@ -21,15 +21,12 @@
 package app.coronawarn.quicktest.domain;
 
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
+import app.coronawarn.quicktest.model.Sex;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -44,9 +41,8 @@ public class QuickTest {
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "guid")
+    private String guid;
 
     @Column(name = "hashed_guid")
     private String hashedGuid;
@@ -57,9 +53,59 @@ public class QuickTest {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "confirmation_cwa")
+    private Boolean confirmationCwa;
+
+    @Column(name = "tenant_id")
+    private String tenantId;
+
+    @Column(name = "test_id")
+    private String testId;
+
+    @Column(name = "test_result")
+    @Min(5)
+    @Max(9)
+    private Integer testResult;
+
     @Version
     @Column(name = "version")
     private long version;
+
+    @Column(name = "ins_bill_status")
+    private Boolean insBillStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "brandtype_id")
+    private TestBrand testBrand;
+
+    @Column(name = "name")
+    private String name;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "email")
+    @Email
+    private String email;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "sex")
+    @Enumerated(value = EnumType.STRING)
+    private Sex sex;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "house_number")
+    private String houseNumber;
+
+    @Column(name = "zip_code")
+    private Integer zipCode;
+
+    @Column(name = "city")
+    private String city;
 
     @PrePersist
     private void onCreate() {

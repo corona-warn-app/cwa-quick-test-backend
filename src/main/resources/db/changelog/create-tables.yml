@@ -4,27 +4,40 @@ databaseChangeLog:
       author: f11h
       changes:
         - createTable:
-            tableName: quicktest
+            # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
+            tableName: antigentest
             columns:
               - column:
                   name: id
-                  type: bigint
-                  autoIncrement: true
+                  type: varchar(10)
                   constraints:
-                    unique: true
-                    nullable: false
                     primaryKey: true
+                    nullable: false
+              - column:
+                  name: manufacturer_name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: trade_name
+                  type: varchar(255)
+        - createTable:
+            tableName: quicktest
+            columns:
+              - column:
+                  name: short_hashed_guid
+                  type: varchar(8)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
               - column:
                   name: hashed_guid
                   type: varchar(64)
                   constraints:
-                    unique: true
                     nullable: false
               - column:
-                  name: version
-                  type: bigint
-                  constraints:
-                    nullable: false
+                  name: confirmation_cwa
+                  type: boolean
               - column:
                   name: created_at
                   type: datetime
@@ -35,3 +48,60 @@ databaseChangeLog:
                   type: datetime
                   constraints:
                     nullable: false
+              - column:
+                  # test provider identifier
+                  name: tenant_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  # test spot identifier
+                  name: test_spot_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: test_result
+                  type: tinyint
+              - column:
+                  name: version
+                  type: int
+              - column:
+                  name: insurance_bill_status
+                  type: boolean
+              - column:
+                  name: test_type_id
+                  type: varchar(255)
+                  constraints:
+                    foreignKey:
+                      referencedColumnNames: id
+                      referencedTableName: antigentest
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(255)
+              - column:
+                  name: last_name
+                  type: varchar(255)
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: phone_number
+                  type: varchar(100)
+              - column:
+                  name: sex
+                  type: varchar(100)
+              - column:
+                  name: street
+                  type: varchar(255)
+              - column:
+                  name: house_number
+                  type: varchar(5)
+              - column:
+                  name: zip_code
+                  type: varchar(10)
+              - column:
+                  name: city
+                  type: varchar(255)
+

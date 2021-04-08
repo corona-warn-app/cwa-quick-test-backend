@@ -107,7 +107,6 @@ public class QuickTest {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
         testResult = 5;
-
     }
 
     @PreUpdate

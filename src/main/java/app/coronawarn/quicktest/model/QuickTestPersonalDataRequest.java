@@ -3,10 +3,9 @@ package app.coronawarn.quicktest.model;
 import app.coronawarn.quicktest.validation.ValidName;
 import app.coronawarn.quicktest.validation.ValidPhoneNumber;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
-
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import lombok.Data;
 
 @Schema(
         description = "The quick test personaldata model."
@@ -17,16 +16,16 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     private Boolean confirmationCwa;
 
-    // TODO
-    @NotNull
-    private String testId;
+    //    // TODO nessecary
+    //    @NotNull
+    //    private String testId;
 
     @NotNull
     private Boolean insuranceBillStatus;
 
-//    // TODO
-//    @NotNull
-//    private String antigentest;
+    //    // TODO
+    //    @NotNull
+    //    private String antigentest;
 
     @ValidName
     @NotNull

@@ -22,7 +22,7 @@ databaseChangeLog:
                   name: trade_name
                   type: varchar(255)
         - createTable:
-            tableName: quicktest
+            tableName: quick_test
             columns:
               - column:
                   name: short_hashed_guid
@@ -76,7 +76,6 @@ databaseChangeLog:
                     foreignKey:
                       referencedColumnNames: id
                       referencedTableName: antigentest
-                    nullable: false
               - column:
                   name: first_name
                   type: varchar(255)

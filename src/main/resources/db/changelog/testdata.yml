@@ -16,7 +16,7 @@ databaseChangeLog:
                    name: trade_name
                    value: Panbio™ COVID-19 Ag Rapid Test Device
         - insert:
-            tableName: quicktest
+            tableName: quick_test
             columns:
               - column:
                   name: short_hashed_guid

@@ -1,13 +1,11 @@
 package app.coronawarn.quicktest.validation.validators;
 
-import app.coronawarn.quicktest.validation.ValidGuid;
 import app.coronawarn.quicktest.validation.ValidShortHash;
-import org.apache.commons.lang3.StringUtils;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import org.apache.commons.lang3.StringUtils;
 
 public class ShortHashValidator implements ConstraintValidator<ValidShortHash, String> {
     private static final String SHORTHASH_PATTERN = "^[A-Fa-f0-9]{8}$";

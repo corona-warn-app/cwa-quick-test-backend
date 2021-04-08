@@ -74,7 +74,10 @@ public class QuickTestCreationController {
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> createQuickTest(@Valid @RequestBody QuickTestCreationRequest quicktestCreationRequest) {
         try {
-            quickTestService.createNewQuickTest(quicktestCreationRequest.getHashedGuid());
+            //TODO set tenantId and setTestSpotId from token
+            quickTestService.createNewQuickTest(quicktestCreationRequest.getHashedGuid(),
+                "initTenant",
+                "initTestSport");
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -127,14 +130,13 @@ public class QuickTestCreationController {
             description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "204 ", description = "Update successful"),
-            @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
+      @ApiResponse(responseCode = "204 ", description = "Update successful"),
+      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
     @PutMapping(value = "/{shortHash}/personalData", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> updateQuickTestWithPersonalData(
-            @PathVariable("shortHash") String shortHash,
-            @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest
-    ){
+            @PathVariable String shortHash,
+            @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
         try {
             quickTestService.updateQuickTestWithPersonalData(shortHash,
                     modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));

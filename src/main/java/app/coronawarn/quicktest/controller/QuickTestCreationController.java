@@ -23,7 +23,9 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
+import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
+import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
@@ -33,6 +35,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,11 +48,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/quicktest")
+@RequestMapping(value = "/api_dev/quicktest")
 @RequiredArgsConstructor
 public class QuickTestCreationController {
 
     private final QuickTestService quickTestService;
+
+    private final ModelMapper modelMapper;
 
     /**
      * Endpoint for creating new QuickTest entities.
@@ -100,7 +105,7 @@ public class QuickTestCreationController {
         @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
         try {
             quickTestService.updateQuickTest(
-                quickTestUpdateRequest.getShortHash(), quickTestUpdateRequest.getResult());
+                    shortHash, quickTestUpdateRequest.getResult());
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -110,4 +115,37 @@ public class QuickTestCreationController {
         }
         return ResponseEntity.status(204).build();
     }
+
+    /**
+     * Endpoint for updating a Quicktest result.
+     *
+     * @param quickTestPersonalDataRequest contains the the personaldata for the quicktest.
+     * @return ResponseEntity with binary data.
+     */
+    @Operation(
+            summary = "Updates the test result of a quicktest",
+            description = "Updates the test result of a quicktest"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204 ", description = "Update successful"),
+            @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
+    @PutMapping(value = "/{shortHash}/personalData", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @Secured(ROLE_COUNTER)
+    public ResponseEntity<Void> updateQuickTestWithPersonalData(
+            @PathVariable("shortHash") String shortHash,
+            @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest
+    ){
+        try {
+            quickTestService.updateQuickTestWithPersonalData(shortHash,
+                    modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
+        } catch (QuickTestServiceException e) {
+            if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }
+        }
+        return ResponseEntity.status(204).build();
+    }
+
 }

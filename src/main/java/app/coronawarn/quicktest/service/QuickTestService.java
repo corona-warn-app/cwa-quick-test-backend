@@ -21,22 +21,34 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.model.TestResultList;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+
+import java.lang.reflect.Field;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 
 @Slf4j
 @Component
+@Transactional
 @RequiredArgsConstructor
 public class QuickTestService {
 
     private final QuickTestRepository quickTestRepository;
 
     private final TestResultService testResultService;
+
+    private final ModelMapper modelMapper;
+
+    private final EntityManager entityManager;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -58,29 +70,17 @@ public class QuickTestService {
         }
 
         QuickTest newQuickTest = new QuickTest();
+        newQuickTest.setShortGuid(shortHash);
         newQuickTest.setHashedGuid(hashedGuid);
 
         log.debug("Persisting QuickTest in database");
         try {
             newQuickTest = quickTestRepository.save(newQuickTest);
+            log.info("Created new QuickTest with hashedGUID {}", hashedGuid);
         } catch (Exception e) {
             log.error("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
-
-        log.debug("Sending TestResult to TestResult-Server");
-        try {
-            sendResultToTestResultServer(hashedGuid, 5);
-        } catch (Exception e) {
-            log.error("Failed to send TestResult to TestResult-Server", e);
-            log.debug("Deleting previously created TestResult entity");
-            quickTestRepository.delete(newQuickTest);
-
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
-        }
-
-        log.info("Created new QuickTest with hashedGUID {}", hashedGuid);
-
         return newQuickTest;
     }
 
@@ -91,27 +91,58 @@ public class QuickTestService {
      * @param result the result of the quick test.
      */
     public void updateQuickTest(String shortHash, int result) throws QuickTestServiceException {
-        log.debug("Requesting QuickTest for short Hash {}", shortHash);
-        QuickTest quicktest = quickTestRepository.findByHashedGuidStartingWith(shortHash);
-
-        if (quicktest == null) {
-            log.info("Requested Quick Test with shortHash {} could not be found.", shortHash);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);
-        }
-
+        QuickTest quicktest = getQuickTest(shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
-
         try {
             sendResultToTestResultServer(quicktest.getHashedGuid(), result);
         } catch (Exception e) {
             log.error("Failed to send updated TestResult on TestResult-Server", e);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
         }
-
         log.info("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
     }
 
-    private void sendResultToTestResultServer(String hashedGuid, int result) throws Exception {
+    public void updateQuickTestWithPersonalData(String shortHash, QuickTest quickTestPersonalData) throws QuickTestServiceException {
+        QuickTest quicktest = getQuickTest(shortHash);
+        // TODO
+        quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
+        quicktest.setTestId(quickTestPersonalData.getTestId());
+        quicktest.setInsBillStatus(quickTestPersonalData.getInsBillStatus());
+        quicktest.setName(quickTestPersonalData.getName());
+        quicktest.setFirstName(quickTestPersonalData.getFirstName());
+        quicktest.setEmail(quickTestPersonalData.getEmail());
+        quicktest.setPhoneNumber(quickTestPersonalData.getPhoneNumber());
+        quicktest.setSex(quickTestPersonalData.getSex());
+        quicktest.setStreet(quickTestPersonalData.getStreet());
+        quicktest.setHouseNumber(quickTestPersonalData.getHouseNumber());
+        quicktest.setZipCode(quickTestPersonalData.getZipCode());
+        quicktest.setCity(quickTestPersonalData.getCity());
+        //modelMapper.map(quickTestPersonalData, quicktest);
+        quickTestRepository.saveAndFlush(quicktest);
+
+
+        log.debug("Sending TestResult to TestResult-Server");
+        try {
+            sendResultToTestResultServer(quicktest.getHashedGuid(), quicktest.getTestResult());
+        } catch (Exception e) {
+            // TODO neusenden
+            log.error("Failed to send TestResult to TestResult-Server", e);
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+        }
+
+    }
+
+    private QuickTest getQuickTest(String shortHash) throws QuickTestServiceException {
+        log.debug("Requesting QuickTest for short Hash {}", shortHash);
+        QuickTest quicktest = quickTestRepository.findByHashedGuidStartingWith(shortHash);
+        if (quicktest == null) {
+            log.info("Requested Quick Test with shortHash {} could not be found.", shortHash);
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);
+        }
+        return quicktest;
+    }
+
+    private void sendResultToTestResultServer(String hashedGuid, int result) {
         TestResult testResultObject = new TestResult();
         testResultObject.setResult(result);
         testResultObject.setId(hashedGuid);
@@ -120,5 +151,10 @@ public class QuickTestService {
         testResultList.setTestResults(Collections.singletonList(testResultObject));
 
         testResultService.updateTestResult(testResultList);
+    }
+
+    private QuickTest mapToQuicktest(QuickTest quickTest, QuickTestPersonalDataRequest quickTestPersonalDataRequest){
+        modelMapper.map(quickTestPersonalDataRequest, quickTest);
+        return quickTest;
     }
 }

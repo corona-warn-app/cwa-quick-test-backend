@@ -32,13 +32,12 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
@@ -50,8 +49,11 @@ public class QuickTest {
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
-    @Column(name = "guid")
-    private String guid;
+    @Column(name = "short_guid")
+    private String shortGuid;
+
+    @Column(name = "tenant_id")
+    private String tenantId;
 
     @Column(name = "hashed_guid")
     private String hashedGuid;
@@ -65,8 +67,6 @@ public class QuickTest {
     @Column(name = "confirmation_cwa")
     private Boolean confirmationCwa;
 
-    @Column(name = "tenant_id")
-    private String tenantId;
 
     @Column(name = "test_id")
     private String testId;
@@ -120,6 +120,8 @@ public class QuickTest {
     private void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        testResult = 5;
+
     }
 
     @PreUpdate

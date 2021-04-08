@@ -40,6 +40,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -102,10 +103,11 @@ public class QuickTestCreationController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
       @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
-    @PutMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{shortHash}/testResult", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<Void> updateQuickTestStatus(
-        @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
+            @PathVariable String shortHash,
+            @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
         try {
             quickTestService.updateQuickTest(
                     shortHash, quickTestUpdateRequest.getResult());

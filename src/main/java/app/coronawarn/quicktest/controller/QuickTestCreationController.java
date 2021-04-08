@@ -48,7 +48,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api_dev/quicktest")
+@RequestMapping(value = "/api/quicktest")
 @RequiredArgsConstructor
 public class QuickTestCreationController {
 

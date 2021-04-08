@@ -70,7 +70,7 @@ public class QuickTestService {
         }
 
         QuickTest newQuickTest = new QuickTest();
-        newQuickTest.setShortGuid(shortHash);
+        newQuickTest.setShortHashedGuid(shortHash);
         newQuickTest.setHashedGuid(hashedGuid);
 
         log.debug("Persisting QuickTest in database");
@@ -106,9 +106,8 @@ public class QuickTestService {
         QuickTest quicktest = getQuickTest(shortHash);
         // TODO
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
-        quicktest.setTestId(quickTestPersonalData.getTestId());
-        quicktest.setInsBillStatus(quickTestPersonalData.getInsBillStatus());
-        quicktest.setName(quickTestPersonalData.getName());
+        quicktest.setInsuranceBillStatus(quickTestPersonalData.getInsuranceBillStatus());
+        quicktest.setLastName(quickTestPersonalData.getLastName());
         quicktest.setFirstName(quickTestPersonalData.getFirstName());
         quicktest.setEmail(quickTestPersonalData.getEmail());
         quicktest.setPhoneNumber(quickTestPersonalData.getPhoneNumber());

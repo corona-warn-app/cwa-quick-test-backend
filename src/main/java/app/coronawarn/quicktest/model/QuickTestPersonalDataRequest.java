@@ -22,15 +22,15 @@ public class QuickTestPersonalDataRequest {
     private String testId;
 
     @NotNull
-    private Boolean insBillStatus;
+    private Boolean insuranceBillStatus;
 
 //    // TODO
 //    @NotNull
-//    private TestBrand testBrand;
+//    private String antigentest;
 
     @ValidName
     @NotNull
-    private String name;
+    private String lastName;
     @ValidName
     @NotNull
     private String firstName;
@@ -56,7 +56,7 @@ public class QuickTestPersonalDataRequest {
 
     // TODO
     @NotNull
-    private Integer zipCode;
+    private String zipCode;
 
     // TODO
     @NotNull

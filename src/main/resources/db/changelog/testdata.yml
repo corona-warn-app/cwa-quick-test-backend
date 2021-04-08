@@ -1,0 +1,53 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-testdata
+      author: agaricusbisporus
+      changes:
+        -  insert:
+             tableName: antigentest
+             columns:
+               - column:
+                   name: id
+                   value: AT005/20
+               - column:
+                   name: manufacturer_name
+                   value: Abbott Rapid Diagnostics Jena GmbH
+               - column:
+                   name: trade_name
+                   value: Panbio™ COVID-19 Ag Rapid Test Device
+        - insert:
+            tableName: quicktest
+            columns:
+              - column:
+                  name: short_hashed_guid
+                  value: AljbFHEw
+              - column:
+                  name: hashed_guid
+                  value: AljbFHEw01234567890-123456789-123456789
+              - column:
+                  name: created_at
+                  value: now()
+              - column:
+                  name: updated_at
+                  value: now()
+              - column:
+                  name: tenant_id
+                  value: test provider identifier
+              - column:
+                  name: test_spot_id
+                  value: test spot identifier
+              - column:
+                  name: test_result
+                  value: 5
+              - column:
+                  name: test_type_id
+                  value: AT005/20
+              - column:
+                  name: first_name
+                  value: E
+              - column:
+                  name: last_name
+                  value: G
+              - column:
+                  name: email
+                  value: blub@blub.de

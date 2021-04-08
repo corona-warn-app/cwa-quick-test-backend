@@ -22,98 +22,84 @@ package app.coronawarn.quicktest.domain;
 
 import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.persistence.Version;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "quicktest")
 public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
+    @Size(max = 8)
     @Id
-    @Column(name = "short_guid")
-    private String shortGuid;
+    private String shortHashedGuid;
 
-    @Column(name = "tenant_id")
-    private String tenantId;
-
-    @Column(name = "hashed_guid")
+    @Size(max = 64)
     private String hashedGuid;
 
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "confirmation_cwa")
     private Boolean confirmationCwa;
 
+    @Size(max = 255)
+    private String tenantId;
 
-    @Column(name = "test_id")
-    private String testId;
+    @Size(max = 255)
+    private String testSpotId;
 
-    @Column(name = "test_result")
     @Min(5)
     @Max(9)
-    private Integer testResult;
+    private Short testResult;
 
+    @Setter(AccessLevel.NONE)
     @Version
-    @Column(name = "version")
-    private long version;
+    private Long version;
 
-    @Column(name = "ins_bill_status")
-    private Boolean insBillStatus;
+    private Boolean insuranceBillStatus;
 
     @ManyToOne
-    @JoinColumn(name = "brandtype_id")
-    private TestBrand testBrand;
+    private Antigentest antigentest;
 
-    @Column(name = "name")
-    private String name;
+    private String lastName;
 
-    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "email")
     @Email
     private String email;
 
-    @Column(name = "phone_number")
+    @Size(max = 100)
     private String phoneNumber;
 
-    @Column(name = "sex")
     @Enumerated(value = EnumType.STRING)
     private Sex sex;
 
-    @Column(name = "street")
     private String street;
 
-    @Column(name = "house_number")
     private String houseNumber;
 
-    @Column(name = "zip_code")
-    private Integer zipCode;
+    @Size(max = 10)
+    private String zipCode;
 
-    @Column(name = "city")
     private String city;
 
     @PrePersist

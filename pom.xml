@@ -21,6 +21,7 @@
         <spring-cloud.version>2020.0.1</spring-cloud.version>
         <keycloak.version>10.0.1</keycloak.version>
         <springdoc.version>1.4.2</springdoc.version>
+        <liquibase.version>4.3.2</liquibase.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
         <license.projectName>Corona-Warn-App / cwa-quick-test-backend</license.projectName>
@@ -51,6 +52,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
+            <version>${liquibase.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.cloud</groupId>

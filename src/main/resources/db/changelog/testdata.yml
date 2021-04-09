@@ -3,18 +3,6 @@ databaseChangeLog:
       id: insert-testdata
       author: agaricusbisporus
       changes:
-        -  insert:
-             tableName: antigentest
-             columns:
-               - column:
-                   name: id
-                   value: AT005/20
-               - column:
-                   name: manufacturer_name
-                   value: Abbott Rapid Diagnostics Jena GmbH
-               - column:
-                   name: trade_name
-                   value: Panbio™ COVID-19 Ag Rapid Test Device
         - insert:
             tableName: quick_test
             columns:
@@ -51,3 +39,9 @@ databaseChangeLog:
               - column:
                   name: email
                   value: blub@blub.de
+              - column:
+                  name: test_brand_id
+                  value: agarg
+              - column:
+                  name: test_brand_name
+                  value: cool company

@@ -77,9 +77,6 @@ public class QuickTest {
 
     private Boolean insuranceBillStatus;
 
-    @ManyToOne
-    private Antigentest antigentest;
-
     private String lastName;
 
     private String firstName;
@@ -101,6 +98,12 @@ public class QuickTest {
     private String zipCode;
 
     private String city;
+
+    @Size(max = 10)
+    private String testBrandId;
+
+    @Size(max = 255)
+    private String testBrandName;
 
     @PrePersist
     private void onCreate() {

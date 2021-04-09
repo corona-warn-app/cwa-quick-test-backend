@@ -1,6 +1,5 @@
 package app.coronawarn.quicktest.entity;
 
-import app.coronawarn.quicktest.domain.Antigentest;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.utils.Generators;
@@ -46,7 +45,8 @@ public class QuickTestTest {
         quickTest.setEmail("test@test.test");
         quickTest.setTenantId("4711");
         quickTest.setTestSpotId("4711-A");
-        quickTest.setAntigentest(new Antigentest());
+        quickTest.setTestBrandId("AT116/21");
+        quickTest.setTestBrandName("Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal)");
         quickTest.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 11));
         quickTest.setUpdatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
         quickTest.setFirstName("Joe");
@@ -55,7 +55,7 @@ public class QuickTestTest {
         quickTest.setHouseNumber("11");
         quickTest.setInsuranceBillStatus(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
-        assertEquals("QuickTest(shortHashedGuid=cjfybkfn, hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, createdAt=2021-04-08T08:11:11, updatedAt=2021-04-08T08:11:12, confirmationCwa=true, tenantId=4711, testSpotId=4711-A, testResult=5, version=null, insuranceBillStatus=false, antigentest=Antigentest(id=null, manufacturerName=null, tradeName=null), lastName=Miller, firstName=Joe, email=test@test.test, phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, city=oyvkpigcga)",quickTest.toString());
+        assertEquals("QuickTest(shortHashedGuid=cjfybkfn, hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, createdAt=2021-04-08T08:11:11, updatedAt=2021-04-08T08:11:12, confirmationCwa=true, tenantId=4711, testSpotId=4711-A, testResult=5, version=null, insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal))",quickTest.toString());
     }
     @Test
     void checkShortHashedGuidSize() {
@@ -181,5 +181,24 @@ public class QuickTestTest {
         violations = validator.validate(quickTest);
         assertTrue(violations.isEmpty());
     }
-
+    @Test
+    void checkTestBrandIdSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setTestBrandId(generators.generateString(13));
+        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
+        assertFalse(violations.isEmpty());
+        quickTest.setTestBrandId(generators.generateString(8));
+        violations = validator.validate(quickTest);
+        assertTrue(violations.isEmpty());
+    }
+    @Test
+    void checkTestBrandNameSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setTestBrandName(generators.generateString(270));
+        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
+        assertFalse(violations.isEmpty());
+        quickTest.setTestBrandName(generators.generateString(250));
+        violations = validator.validate(quickTest);
+        assertTrue(violations.isEmpty());
+    }
 }

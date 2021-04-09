@@ -1,26 +1,8 @@
 databaseChangeLog:
   - changeSet:
       id: create-tables
-      author: f11h
+      author: agaricusbisporus
       changes:
-        - createTable:
-            # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
-            tableName: antigentest
-            columns:
-              - column:
-                  name: id
-                  type: varchar(10)
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: manufacturer_name
-                  type: varchar(255)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: trade_name
-                  type: varchar(255)
         - createTable:
             tableName: quick_test
             columns:
@@ -103,4 +85,12 @@ databaseChangeLog:
               - column:
                   name: city
                   type: varchar(255)
-
+              # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
+              - column:
+                  name: test_brand_id
+                  type: varchar(10)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: test_brand_name
+                  type: varchar(255)

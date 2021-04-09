@@ -9,27 +9,18 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * Validation annotation for phonenumber.
+ * Validation annotation for phone number.
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = PhoneNumberValidator.class)
 public @interface ValidPhoneNumber {
-    /**
-     * message.
-     * @return message
-     */
-    String message() default "{Invalid phone number}";
 
     /**
-     * groups.
-     * @return groups
+     * Get the error message for an invalid phone number.
+     *
+     * @return clear text error message
      */
-    Class<?>[] groups() default {};
+    String message() default "Invalid phone number";
 
-    /**
-     * payload.
-     * @return paylaod
-     */
-    Class<? extends Payload>[] payload() default {};
 }

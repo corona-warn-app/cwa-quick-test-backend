@@ -16,21 +16,12 @@ import javax.validation.Payload;
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 @Constraint(validatedBy = NameValidator.class)
 public @interface ValidName {
+
     /**
-     * message.
-     * @return message
+     * Get the error message for an invalid name.
+     *
+     * @return clear text error message
      */
     String message() default "Invalid name";
 
-    /**
-     * groups.
-     * @return groups
-     */
-    Class<?>[] groups() default {};
-
-    /**
-     * payload.
-     * @return paylaod
-     */
-    Class<? extends Payload>[] payload() default {};
 }

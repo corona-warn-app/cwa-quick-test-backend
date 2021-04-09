@@ -15,21 +15,12 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = GuidValidator.class)
 public @interface ValidGuid {
-    /**
-     * message.
-     * @return message
-     */
-    String message() default "{Invalid guid}";
 
     /**
-     * groups.
-     * @return groups
+     * Get the error message for invalid GUID.
+     *
+     * @return clear text error message
      */
-    Class<?>[] groups() default {};
+    String message() default "Invalid guid";
 
-    /**
-     * payload.
-     * @return paylaod
-     */
-    Class<? extends Payload>[] payload() default {};
 }

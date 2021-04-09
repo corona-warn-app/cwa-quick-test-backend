@@ -15,21 +15,12 @@ import javax.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ShortHashValidator.class)
 public @interface ValidShortHash {
-    /**
-    * message.
-    * @return message
-    */
-    String message() default "{Invalid short hash}";
 
     /**
-     * groups.
-     * @return groups
-    */
-    Class<?>[] groups() default {};
-
-    /**
-     * payload.
-     * @return paylaod
+     * Get the error message for an invalid short hash.
+     *
+     * @return clear text error message
      */
-    Class<? extends Payload>[] payload() default {};
+    String message() default "Invalid short hash";
+
 }

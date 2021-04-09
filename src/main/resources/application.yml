@@ -5,12 +5,12 @@ spring:
       path: '/h2-console'
   liquibase:
     change-log: classpath:/db/changelog.yml
+    contexts: prod
   application:
     name: cwa-quick-test-backend
   jpa:
-    generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     show-sql: true
   datasource:
     driver-class-name: org.h2.Driver
@@ -27,12 +27,11 @@ cwa-testresult-server:
   url: http://localhost:1234
 
 keycloak:
-  auth-server-url: https://quicktest-iam-6155b8d7d3c6.coronawarn.app/auth/
+  auth-server-url:
   realm: c19quicktest
   resource: quick-test-portal
   public-client: true
   bearer-only: true
-  proxy-url: http://sia-lb.telekom.de:8080
 
 server:
   port: 8093

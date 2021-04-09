@@ -11,11 +11,6 @@ public class PhoneNumberValidator implements ConstraintValidator<ValidPhoneNumbe
     private static final String PHONENUMBER_PATTERN = "^[0-9]*$";
 
     @Override
-    public void initialize(ValidPhoneNumber constraintAnnotation) {
-        // nothing to initialize
-    }
-
-    @Override
     public boolean isValid(String phone, ConstraintValidatorContext context) {
         if (StringUtils.isBlank(phone)) {
             return false;

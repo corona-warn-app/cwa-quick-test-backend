@@ -11,11 +11,6 @@ public class ShortHashValidator implements ConstraintValidator<ValidShortHash, S
     private static final String SHORTHASH_PATTERN = "^[A-Fa-f0-9]{8}$";
 
     @Override
-    public void initialize(ValidShortHash constraintAnnotation) {
-        // nothing to initialize
-    }
-
-    @Override
     public boolean isValid(String shortHash, ConstraintValidatorContext context) {
         if (StringUtils.isBlank(shortHash)) {
             return false;

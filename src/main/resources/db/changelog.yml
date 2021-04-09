@@ -5,3 +5,4 @@ databaseChangeLog:
   - include:
       file: changelog/testdata.yml
       relativeToChangelogFile: true
+      

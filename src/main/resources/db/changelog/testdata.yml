@@ -1,6 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: insert-testdata
+      context: test
       author: agaricusbisporus
       changes:
         - insert:

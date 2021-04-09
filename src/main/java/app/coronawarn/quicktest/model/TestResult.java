@@ -47,6 +47,7 @@ public class TestResult {
     @NotBlank
     @Pattern(regexp = "^([A-Fa-f0-9]){64}$")
     private String id;
+
     /**
      * The test result.
      * 5: Pending

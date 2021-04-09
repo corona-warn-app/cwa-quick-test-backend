@@ -27,6 +27,7 @@ public class QuickTestPersonalDataRequest {
     @ValidName
     @NotNull
     private String lastName;
+    
     @ValidName
     @NotNull
     private String firstName;

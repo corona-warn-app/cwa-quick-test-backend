@@ -12,11 +12,6 @@ public class NameValidator implements ConstraintValidator<ValidName, String> {
             + "(?=(?!.*[A-Z][A-Z]))(?=(?!.*[- '][- '.]))(?=(?!.*[.][-'.]))[A-Za-z- '.]{2,64}$";
 
     @Override
-    public void initialize(ValidName constraintAnnotation) {
-        // nothing to initialize
-    }
-
-    @Override
     public boolean isValid(String name, ConstraintValidatorContext context) {
         if (StringUtils.isBlank(name)) {
             return false;

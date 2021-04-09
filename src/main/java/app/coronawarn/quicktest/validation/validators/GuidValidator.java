@@ -7,13 +7,8 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
-public class GuidValidator  implements ConstraintValidator<ValidGuid, String> {
+public class GuidValidator implements ConstraintValidator<ValidGuid, String> {
     private static final String GUID_PATTERN = "^([A-Fa-f0-9]{2}){32}$";
-
-    @Override
-    public void initialize(ValidGuid constraintAnnotation) {
-        // nothing to initialize
-    }
 
     @Override
     public boolean isValid(String guid, ConstraintValidatorContext context) {

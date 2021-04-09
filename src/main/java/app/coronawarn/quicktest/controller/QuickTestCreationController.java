@@ -120,7 +120,7 @@ public class QuickTestCreationController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         }
-        return ResponseEntity.status(204).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
@@ -152,7 +152,7 @@ public class QuickTestCreationController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
         }
-        return ResponseEntity.status(204).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

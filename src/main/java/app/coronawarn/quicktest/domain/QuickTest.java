@@ -22,17 +22,15 @@ package app.coronawarn.quicktest.domain;
 
 import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.Table;
 import javax.persistence.Version;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -43,65 +41,76 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "quick_test")
 public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
-    @Size(max = 8)
     @Id
+    @Column(name = "short_hashed_guid")
     private String shortHashedGuid;
 
-    @Size(max = 64)
+    @Column(name = "hashed_guid")
     private String hashedGuid;
 
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "confirmation_cwa")
     private Boolean confirmationCwa;
 
-    @Size(max = 255)
+    @Column(name = "tenant_id")
     private String tenantId;
 
-    @Size(max = 255)
+    @Column(name = "test_spot_id")
     private String testSpotId;
 
-    @Min(5)
-    @Max(9)
+    @Column(name = "test_result")
     private Short testResult;
 
+    @Column(name = "version")
     @Setter(AccessLevel.NONE)
     @Version
     private Long version;
 
+    @Column(name = "insurance_bill_status")
     private Boolean insuranceBillStatus;
 
+    @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "first_name")
     private String firstName;
 
-    @Email
+    @Column(name = "email")
     private String email;
 
-    @Size(max = 100)
+    @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "sex")
     @Enumerated(value = EnumType.STRING)
     private Sex sex;
 
+    @Column(name = "street")
     private String street;
 
+    @Column(name = "house_number")
     private String houseNumber;
 
-    @Size(max = 10)
+    @Column(name = "zip_code")
     private String zipCode;
 
+    @Column(name = "city")
     private String city;
 
-    @Size(max = 10)
+    @Column(name = "test_brand_id")
     private String testBrandId;
 
-    @Size(max = 255)
+    @Column(name = "test_brand_name")
     private String testBrandName;
 
     @PrePersist

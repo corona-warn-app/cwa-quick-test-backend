@@ -61,54 +61,26 @@ public class QuickTestTest {
     void checkShortHashedGuidSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setShortHashedGuid(generators.generateString(13));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setShortHashedGuid(generators.generateString(8));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkHashedGuidSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setHashedGuid(generators.generateString(65));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setHashedGuid(generators.generateString(64));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkTenantIdSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setTenantId(generators.generateString(260));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setTenantId(generators.generateString(255));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkTestSpotIdSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setTestSpotId(generators.generateString(260));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setTestSpotId(generators.generateString(255));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkTestResultSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setTestResult(Short.parseShort("1"));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setTestResult(Short.parseShort("10"));
-        violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setTestResult(Short.parseShort("6"));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkTestResultDefault() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
@@ -155,50 +127,25 @@ public class QuickTestTest {
     void checkEmailValidator() {
         QuickTest quickTest = new QuickTest();
         quickTest.setEmail(generators.generateString(13));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setEmail("test@test.test");
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkPhoneNumberSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setPhoneNumber(generators.generateString(130));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setPhoneNumber(generators.generateString(20));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkZipCodeSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setZipCode(generators.generateString(12));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setZipCode(generators.generateString(9));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkTestBrandIdSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setTestBrandId(generators.generateString(13));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setTestBrandId(generators.generateString(8));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
     @Test
     void checkTestBrandNameSize() {
         QuickTest quickTest = new QuickTest();
         quickTest.setTestBrandName(generators.generateString(270));
-        Set<ConstraintViolation<QuickTest>> violations = validator.validate(quickTest);
-        assertFalse(violations.isEmpty());
-        quickTest.setTestBrandName(generators.generateString(250));
-        violations = validator.validate(quickTest);
-        assertTrue(violations.isEmpty());
     }
 }

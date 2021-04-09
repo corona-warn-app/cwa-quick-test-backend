@@ -124,9 +124,9 @@ public class QuickTestCreationController {
     }
 
     /**
-     * Endpoint for updating a Quicktest result.
+     * Endpoint for updating personal data for a quicktest.
      *
-     * @param quickTestPersonalDataRequest contains the the personaldata for the quicktest.
+     * @param quickTestPersonalDataRequest contains the the personal data for the quicktest.
      * @return ResponseEntity with binary data.
      */
     @Operation(

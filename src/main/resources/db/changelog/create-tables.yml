@@ -44,7 +44,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: test_result
-                  type: tinyint
+                  type: smallint
               - column:
                   name: version
                   type: int

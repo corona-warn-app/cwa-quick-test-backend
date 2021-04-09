@@ -74,7 +74,7 @@ public class QuickTest {
     @Column(name = "version")
     @Setter(AccessLevel.NONE)
     @Version
-    private Long version;
+    private Integer version;
 
     @Column(name = "insurance_bill_status")
     private Boolean insuranceBillStatus;

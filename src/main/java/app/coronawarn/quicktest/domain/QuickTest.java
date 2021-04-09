@@ -20,37 +20,38 @@
 
 package app.coronawarn.quicktest.domain;
 
+import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "quicktest")
+@Table(name = "quick_test")
 public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "short_hashed_guid")
+    private String shortHashedGuid;
 
-    @Column(name = "guid")
-    private String guid;
-
-    @Column(name = "personal_data_hash")
-    private String personalDataHash;
+    @Column(name = "hashed_guid")
+    private String hashedGuid;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -58,9 +59,70 @@ public class QuickTest {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Version
-    @Column(name = "version")
-    private long version;
+    @Column(name = "confirmation_cwa")
+    private Boolean confirmationCwa;
 
+    @Column(name = "tenant_id")
+    private String tenantId;
+
+    @Column(name = "test_spot_id")
+    private String testSpotId;
+
+    @Column(name = "test_result")
+    private Short testResult;
+
+    @Column(name = "version")
+    @Setter(AccessLevel.NONE)
+    @Version
+    private Integer version;
+
+    @Column(name = "insurance_bill_status")
+    private Boolean insuranceBillStatus;
+
+    @Column(name = "last_name")
+    private String lastName;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "sex")
+    @Enumerated(value = EnumType.STRING)
+    private Sex sex;
+
+    @Column(name = "street")
+    private String street;
+
+    @Column(name = "house_number")
+    private String houseNumber;
+
+    @Column(name = "zip_code")
+    private String zipCode;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "test_brand_id")
+    private String testBrandId;
+
+    @Column(name = "test_brand_name")
+    private String testBrandName;
+
+    @PrePersist
+    private void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        testResult = 5;
+    }
+
+    @PreUpdate
+    private void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
 
 }

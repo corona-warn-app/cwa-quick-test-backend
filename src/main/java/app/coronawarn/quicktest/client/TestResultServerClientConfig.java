@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.client;
 
+import app.coronawarn.quicktest.config.TestResultServerValuesConfig;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.IOException;
@@ -41,22 +42,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class TestResultServerClientConfig {
 
-    //@Value("${cwa-testresult-server.ssl.enabled}")
-    private final boolean enabled = false;
-    //@Value("${cwa-testresult-server.ssl.one-way}")
-    private final boolean oneWay = false;
-    //@Value("${cwa-testresult-server.ssl.two-way}")
-    private final boolean twoWay = false;
-    //@Value("${cwa-testresult-server.ssl.hostname-verify}")
-    private final boolean hostnameVerify = false;
-    //@Value("${cwa-testresult-server.ssl.key-store}")
-    private final String keyStorePath = "";
-    //@Value("${cwa-testresult-server.ssl.key-store-password}")
-    private final char[] keyStorePassword = new char[0];
-    //@Value("${cwa-testresult-server.ssl.trust-store}")
-    private final String trustStorePath = "";
-    //@Value("${cwa-testresult-server.ssl.trust-store-password}")
-    private final char[] trustStorePassword = new char[0];
+    private final TestResultServerValuesConfig config;
 
     /**
      * HttpClient for connection to Test-Result-Server.
@@ -65,7 +51,7 @@ public class TestResultServerClientConfig {
      */
     @Bean
     public Client client() {
-        if (enabled) {
+        if (config.isEnabled()) {
             return new ApacheHttpClient(
                 HttpClientBuilder
                     .create()
@@ -83,14 +69,14 @@ public class TestResultServerClientConfig {
         try {
             SSLContextBuilder builder = SSLContextBuilder
                 .create();
-            if (oneWay) {
-                builder.loadTrustMaterial(ResourceUtils.getFile(trustStorePath),
-                    trustStorePassword);
+            if (config.isOneWay()) {
+                builder.loadTrustMaterial(ResourceUtils.getFile(config.getTrustStorePath()),
+                        config.getTrustStorePassword());
             }
-            if (twoWay) {
-                builder.loadKeyMaterial(ResourceUtils.getFile(keyStorePath),
-                    keyStorePassword,
-                    keyStorePassword);
+            if (config.isTwoWay()) {
+                builder.loadKeyMaterial(ResourceUtils.getFile(config.getKeyStorePath()),
+                        config.getKeyStorePassword(),
+                        config.getKeyStorePassword());
             }
             return builder.build();
         } catch (IOException | GeneralSecurityException e) {
@@ -99,7 +85,7 @@ public class TestResultServerClientConfig {
     }
 
     private HostnameVerifier getSslHostnameVerifier() {
-        return hostnameVerify ? new DefaultHostnameVerifier() : new NoopHostnameVerifier();
+        return config.isHostnameVerify() ? new DefaultHostnameVerifier() : new NoopHostnameVerifier();
     }
 
 }

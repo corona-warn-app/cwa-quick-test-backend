@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: insert-testdata
+      context: test
+      author: agaricusbisporus
+      changes:
+        - insert:
+            tableName: quick_test
+            columns:
+              - column:
+                  name: short_hashed_guid
+                  value: AljbFHEw
+              - column:
+                  name: hashed_guid
+                  value: AljbFHEw01234567890-123456789-123456789
+              - column:
+                  name: created_at
+                  value: now()
+              - column:
+                  name: updated_at
+                  value: now()
+              - column:
+                  name: tenant_id
+                  value: test provider identifier
+              - column:
+                  name: test_spot_id
+                  value: test spot identifier
+              - column:
+                  name: test_result
+                  value: 5
+              - column:
+                  name: first_name
+                  value: E
+              - column:
+                  name: last_name
+                  value: G
+              - column:
+                  name: email
+                  value: blub@blub.de
+              - column:
+                  name: test_brand_id
+                  value: AT005/20
+              - column:
+                  name: test_brand_name
+                  value: cool company

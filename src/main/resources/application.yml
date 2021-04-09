@@ -1,8 +1,13 @@
 spring:
   liquibase:
     change-log: classpath:/db/changelog.yml
+    contexts: prod
   application:
     name: cwa-quick-test-backend
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
   datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:quicktest
@@ -26,3 +31,16 @@ keycloak:
 
 server:
   port: 8093
+quick-test:
+  pointOfCareIdName: poc_id
+  tenantIdKey: tenantId
+  tenantPointOfCareIdKey: testSpotId
+testresultserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePath: classpath:keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: classpath:truststore.jks
+  trustStorePassword: changeit

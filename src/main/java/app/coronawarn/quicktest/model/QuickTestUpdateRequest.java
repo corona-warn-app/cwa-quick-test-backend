@@ -20,7 +20,10 @@
 
 package app.coronawarn.quicktest.model;
 
+import app.coronawarn.quicktest.validation.ValidShortHash;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -30,9 +33,16 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class QuickTestUpdateRequest {
-
-    private final String guid;
-
-    private final TestResult result;
+    /**
+     * The test result.
+     * 5: Pending
+     * 6: Negative
+     * 7: Positive
+     * 8: Invalid
+     * 9: Redeemed
+     */
+    @Min(6)
+    @Max(8)
+    private final int result;
 
 }

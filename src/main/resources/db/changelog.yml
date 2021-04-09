@@ -2,3 +2,7 @@ databaseChangeLog:
   - include:
       file: changelog/create-tables.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/testdata.yml
+      relativeToChangelogFile: true
+      

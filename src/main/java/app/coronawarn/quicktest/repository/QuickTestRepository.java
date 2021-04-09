@@ -27,6 +27,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
-    QuickTest findByHashedGuidStartingWith(String shortHash);
+    QuickTest findByTestSpotIdAndHashedGuidStartingWith(String testSpotId, String shortHash);
 
 }

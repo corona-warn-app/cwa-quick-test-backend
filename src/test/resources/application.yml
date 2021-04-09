@@ -26,3 +26,7 @@ keycloak:
 
 server:
   port: 8093
+quick-test:
+  testSpotIdName: poc_id
+  tenantIdKey: tenantId
+  tenantSpotIdKey: testSpotId

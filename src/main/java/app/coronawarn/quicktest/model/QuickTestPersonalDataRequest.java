@@ -16,16 +16,13 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     private Boolean confirmationCwa;
 
-    //    // TODO nessecary
-    //    @NotNull
-    //    private String testId;
-
     @NotNull
     private Boolean insuranceBillStatus;
 
-    //    // TODO
-    //    @NotNull
-    //    private String antigentest;
+    @NotNull
+    private String testBrandId;
+
+    private String testBrandName;
 
     @ValidName
     @NotNull

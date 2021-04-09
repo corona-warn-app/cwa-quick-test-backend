@@ -29,6 +29,7 @@ import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
+import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -57,6 +58,8 @@ public class QuickTestCreationController {
 
     private final ModelMapper modelMapper;
 
+    private final Utilities utilities;
+
     /**
      * Endpoint for creating new QuickTest entities.
      *
@@ -75,10 +78,8 @@ public class QuickTestCreationController {
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> createQuickTest(@Valid @RequestBody QuickTestCreationRequest quicktestCreationRequest) {
         try {
-            //TODO set tenantId and setTestSpotId from token
-            quickTestService.createNewQuickTest(quicktestCreationRequest.getHashedGuid(),
-                "initTenant",
-                "initTestSport");
+            quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
+              quicktestCreationRequest.getHashedGuid());
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -110,6 +111,7 @@ public class QuickTestCreationController {
             @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
         try {
             quickTestService.updateQuickTest(
+              utilities.getIdsFromToken(),
                     shortHash, quickTestUpdateRequest.getResult());
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
@@ -140,7 +142,8 @@ public class QuickTestCreationController {
             @PathVariable String shortHash,
             @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
         try {
-            quickTestService.updateQuickTestWithPersonalData(shortHash,
+            quickTestService.updateQuickTestWithPersonalData(
+              utilities.getIdsFromToken(),shortHash,
                     modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {

@@ -52,13 +52,6 @@ databaseChangeLog:
                   name: insurance_bill_status
                   type: boolean
               - column:
-                  name: test_type_id
-                  type: varchar(255)
-                  constraints:
-                    foreignKey:
-                      referencedColumnNames: id
-                      referencedTableName: antigentest
-              - column:
                   name: first_name
                   type: varchar(255)
               - column:
@@ -89,8 +82,6 @@ databaseChangeLog:
               - column:
                   name: test_brand_id
                   type: varchar(10)
-                  constraints:
-                    nullable: false
               - column:
                   name: test_brand_name
                   type: varchar(255)

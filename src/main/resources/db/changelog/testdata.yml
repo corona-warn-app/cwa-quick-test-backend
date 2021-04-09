@@ -28,9 +28,6 @@ databaseChangeLog:
                   name: test_result
                   value: 5
               - column:
-                  name: test_type_id
-                  value: AT005/20
-              - column:
                   name: first_name
                   value: E
               - column:
@@ -41,7 +38,7 @@ databaseChangeLog:
                   value: blub@blub.de
               - column:
                   name: test_brand_id
-                  value: agarg
+                  value: AT005/20
               - column:
                   name: test_brand_name
                   value: cool company

@@ -1,27 +1,24 @@
 package app.coronawarn.quicktest.utils;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
+@RequiredArgsConstructor
 public class Utilities {
 
-    @Value("${quick-test.tenantIdKey}")
-    String tenantIdKey;
-    @Value("${quick-test.tenantSpotIdKey}")
-    String tenantSpotIdKey;
-    @Value("${quick-test.testSpotIdName}")
-    String testSpotIdName;
+    private final QuickTestConfig quickTestConfig;
 
     /**
      * Get tenantID and testspotID from Token.
@@ -39,16 +36,18 @@ public class Utilities {
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
-            ids.put(tenantIdKey, keycloakPrincipal.getKeycloakSecurityContext().getRealm());
+            ids.put(quickTestConfig.getTenantIdKey(), keycloakPrincipal.getKeycloakSecurityContext().getRealm());
             IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
 
             Map<String, Object> customClaims = token.getOtherClaims();
 
-            if (customClaims.containsKey(testSpotIdName)) {
-                ids.put(tenantSpotIdKey, String.valueOf(customClaims.get(testSpotIdName)));
+            if (customClaims.containsKey(quickTestConfig.getPointOfCareIdName())) {
+                ids.put(quickTestConfig.getTenantPointOfCareIdKey(),
+                        String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
             }
         }
-        if (!ids.containsKey(tenantIdKey) && !ids.containsKey(tenantSpotIdKey)) {
+        if (!ids.containsKey(quickTestConfig.getTenantIdKey())
+                && !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
             log.debug("Ids not found in User-Token");
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }

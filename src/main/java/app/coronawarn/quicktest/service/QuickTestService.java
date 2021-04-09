@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.model.TestResultList;
@@ -29,7 +30,6 @@ import java.util.Map;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -38,13 +38,9 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class QuickTestService {
 
+    private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
-
-    @Value("${quick-test.tenantIdKey}")
-    String tenantIdKey;
-    @Value("${quick-test.tenantSpotIdKey}")
-    String tenantSpotIdKey;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -61,7 +57,7 @@ public class QuickTestService {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
         QuickTest conflictingQuickTest = quickTestRepository.findByTestSpotIdAndHashedGuidStartingWith(
-          ids.get(tenantSpotIdKey), shortHash);
+          ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
 
         if (conflictingQuickTest != null) {
             log.debug("QuickTest with shortHash {} already exists", shortHash);
@@ -70,8 +66,8 @@ public class QuickTestService {
 
         QuickTest newQuickTest = new QuickTest();
         newQuickTest.setShortHashedGuid(shortHash);
-        newQuickTest.setTenantId(ids.get(tenantIdKey));
-        newQuickTest.setTestSpotId(ids.get(tenantSpotIdKey));
+        newQuickTest.setTenantId(ids.get(quickTestConfig.getTenantIdKey()));
+        newQuickTest.setTestSpotId(ids.get(quickTestConfig.getTenantPointOfCareIdKey()));
         newQuickTest.setHashedGuid(hashedGuid);
 
         log.debug("Persisting QuickTest in database");
@@ -92,7 +88,7 @@ public class QuickTestService {
      * @param result the result of the quick test.
      */
     public void updateQuickTest(Map<String,String> ids, String shortHash, int result) throws QuickTestServiceException {
-        QuickTest quicktest = getQuickTest(ids.get(tenantSpotIdKey), shortHash);
+        QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
         try {
             sendResultToTestResultServer(quicktest.getHashedGuid(), result);
@@ -112,7 +108,7 @@ public class QuickTestService {
     public void updateQuickTestWithPersonalData(Map<String,String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
             throws QuickTestServiceException {
-        QuickTest quicktest = getQuickTest(ids.get(tenantSpotIdKey), shortHash);
+        QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
         quicktest.setInsuranceBillStatus(quickTestPersonalData.getInsuranceBillStatus());

@@ -56,6 +56,6 @@ testresultserver:
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
 quick-test:
-  testSpotIdName: poc_id
+  pointOfCareIdName: poc_id
   tenantIdKey: tenantId
-  tenantSpotIdKey: testSpotId
+  tenantPointOfCareIdKey: testSpotId

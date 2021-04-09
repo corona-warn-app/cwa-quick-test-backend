@@ -1,11 +1,12 @@
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://${POSTGRESQL_SERVICE_HOST}:${POSTGRESQL_SERVICE_PORT}/${POSTGRESQL_DATABASE}
-    username: ${POSTGRESQL_USER}
-    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+    url: ${DB_JDBC_URL}
+  archive-datasource:
+    driver-class-name: ${DB_ARCHIVE_DRIVER_CLASS_NAME}
+    url: ${DB_ARCHIVE_JDBC_URL}
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: ${DB_HIBERNATE_DIALECT}
 
 management:
   server:

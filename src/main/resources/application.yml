@@ -14,7 +14,12 @@ spring:
     show-sql: true
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:log
+    url: jdbc:h2:mem:quicktest
+    username: sa
+    password: ''
+  archive-datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:quicktest-archive
     username: sa
     password: ''
 

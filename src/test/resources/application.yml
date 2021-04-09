@@ -3,6 +3,7 @@ spring:
     active: test
   liquibase:
     change-log: classpath:/db/changelog.yml
+    contexts: test
   application:
     name: cwa-quick-test-backend
   datasource:

@@ -56,7 +56,7 @@ public class QuickTestService {
       throws QuickTestServiceException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
-        QuickTest conflictingQuickTest = quickTestRepository.findByTestSpotIdAndHashedGuidStartingWith(
+        QuickTest conflictingQuickTest = quickTestRepository.findByPocIdAndShortHashedGuid(
           ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
 
         if (conflictingQuickTest != null) {
@@ -67,7 +67,7 @@ public class QuickTestService {
         QuickTest newQuickTest = new QuickTest();
         newQuickTest.setShortHashedGuid(shortHash);
         newQuickTest.setTenantId(ids.get(quickTestConfig.getTenantIdKey()));
-        newQuickTest.setTestSpotId(ids.get(quickTestConfig.getTenantPointOfCareIdKey()));
+        newQuickTest.setPocId(ids.get(quickTestConfig.getTenantPointOfCareIdKey()));
         newQuickTest.setHashedGuid(hashedGuid);
 
         log.debug("Persisting QuickTest in database");
@@ -137,9 +137,9 @@ public class QuickTestService {
 
     }
 
-    public QuickTest getQuickTest(String testSpotId, String shortHash) throws QuickTestServiceException {
+    private QuickTest getQuickTest(String pocId, String shortHash) throws QuickTestServiceException {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
-        QuickTest quicktest = quickTestRepository.findByTestSpotIdAndHashedGuidStartingWith(testSpotId,shortHash);
+        QuickTest quicktest = quickTestRepository.findByPocIdAndShortHashedGuid(pocId,shortHash);
         if (quicktest == null) {
             log.info("Requested Quick Test with shortHash {} could not be found.", shortHash);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);

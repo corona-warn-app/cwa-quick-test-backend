@@ -157,15 +157,4 @@ public class QuickTestCreationController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-
-    @GetMapping(value = "/{shortHash}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<QuickTest> getQuickTest(@PathVariable String shortHash) {
-        try {
-            return ResponseEntity.ok(quickTestService.getQuickTest(utilities.getIdsFromToken().get("poc_id"),shortHash));
-        } catch (QuickTestServiceException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
 }

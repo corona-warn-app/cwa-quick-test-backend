@@ -21,13 +21,10 @@
 package app.coronawarn.quicktest.domain;
 
 import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionIntConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionLocalDateTimeConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.Sex;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -50,13 +47,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @Entity
 @Table(name = "quick_test")
-public class QuickTest implements Serializable {
+public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
     @Column(name = "short_hashed_guid")
-    @Convert(converter = DbEncryptionStringConverter.class)
     private String shortHashedGuid;
 
     @Column(name = "hashed_guid")
@@ -64,11 +60,9 @@ public class QuickTest implements Serializable {
     private String hashedGuid;
 
     @Column(name = "created_at")
-    @Convert(converter = DbEncryptionLocalDateTimeConverter.class)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    @Convert(converter = DbEncryptionLocalDateTimeConverter.class)
     private LocalDateTime updatedAt;
 
     @Column(name = "confirmation_cwa")
@@ -79,9 +73,9 @@ public class QuickTest implements Serializable {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String tenantId;
 
-    @Column(name = "test_spot_id")
+    @Column(name = "poc_id")
     @Convert(converter = DbEncryptionStringConverter.class)
-    private String testSpotId;
+    private String pocId;
 
     @Column(name = "test_result")
     @Convert(converter = DbEncryptionShortConverter.class)
@@ -113,7 +107,6 @@ public class QuickTest implements Serializable {
     private String phoneNumber;
 
     @Column(name = "sex")
-    @Enumerated(value = EnumType.STRING)
     @Convert(converter = DbEncryptionSexTypeConverter.class)
     private Sex sex;
 

@@ -22,12 +22,12 @@ databaseChangeLog:
                   type: varchar(400)
               - column:
                   name: created_at
-                  type: varchar(400)
+                  type: datetime
                   constraints:
                     nullable: false
               - column:
                   name: updated_at
-                  type: varchar(400)
+                  type: datetime
                   constraints:
                     nullable: false
               - column:
@@ -38,7 +38,7 @@ databaseChangeLog:
                     nullable: false
               - column:
                   # test spot identifier
-                  name: test_spot_id
+                  name: poc_id
                   type: varchar(400)
                   constraints:
                     nullable: false

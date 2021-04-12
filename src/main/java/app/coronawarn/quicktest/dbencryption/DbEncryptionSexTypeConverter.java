@@ -26,28 +26,30 @@ import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import javax.persistence.PersistenceException;
 
+@Converter
 public class DbEncryptionSexTypeConverter implements AttributeConverter<Sex, String> {
 
-  @Override
-  public String convertToDatabaseColumn(Sex s) {
-    try {
-      return s==null ? null : DbEncryptionService.getInstance().encryptString(s.name());
-    } catch (InvalidAlgorithmParameterException | InvalidKeyException 
-            | BadPaddingException | IllegalBlockSizeException e) {
-      throw new PersistenceException(e);
+    @Override
+    public String convertToDatabaseColumn(Sex s) {
+        try {
+            return s == null ? null : DbEncryptionService.getInstance().encryptString(s.name());
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException e) {
+            throw new PersistenceException(e);
+        }
     }
-  }
 
-  @Override
-  public Sex convertToEntityAttribute(String s) {
-    try {
-      return s==null ? null : Sex.valueOf(DbEncryptionService.getInstance().decryptString(s));
-    } catch (InvalidAlgorithmParameterException | InvalidKeyException 
-            | BadPaddingException | IllegalBlockSizeException e) {
-      throw new PersistenceException(e);
+    @Override
+    public Sex convertToEntityAttribute(String s) {
+        try {
+            return s == null ? null : Sex.valueOf(DbEncryptionService.getInstance().decryptString(s));
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException e) {
+            throw new PersistenceException(e);
+        }
     }
-  }
 
 }

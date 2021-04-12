@@ -25,28 +25,29 @@ import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import javax.persistence.PersistenceException;
 
+@Converter
 public class DbEncryptionBooleanConverter implements AttributeConverter<Boolean, String> {
 
-  @Override
-  public String convertToDatabaseColumn(Boolean s) {
-    try {
-      return s==null ? null : DbEncryptionService.getInstance().encryptBoolean(s);
-    } catch (InvalidAlgorithmParameterException | InvalidKeyException 
-            | BadPaddingException | IllegalBlockSizeException e) {
-      throw new PersistenceException(e);
+    @Override
+    public String convertToDatabaseColumn(Boolean s) {
+        try {
+            return s == null ? null : DbEncryptionService.getInstance().encryptBoolean(s);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException e) {
+            throw new PersistenceException(e);
+        }
     }
-  }
 
-  @Override
-  public Boolean convertToEntityAttribute(String s) {
-    try {
-      return s==null ? null : DbEncryptionService.getInstance().decryptBoolean(s);
-    } catch (InvalidAlgorithmParameterException | InvalidKeyException 
-            | BadPaddingException | IllegalBlockSizeException e) {
-      throw new PersistenceException(e);
+    @Override
+    public Boolean convertToEntityAttribute(String s) {
+        try {
+            return s == null ? null : DbEncryptionService.getInstance().decryptBoolean(s);
+        } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException e) {
+            throw new PersistenceException(e);
+        }
     }
-  }
-
 }

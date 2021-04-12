@@ -21,9 +21,9 @@ public class Utilities {
     private final QuickTestConfig quickTestConfig;
 
     /**
-     * Get tenantID and testspotID from Token.
-     * @return Map with tokens from keycloak (tenantID and testspotID)
-     * @throws QuickTestServiceException TenantID or testSpotId not found
+     * Get tenantID and pocID from Token.
+     * @return Map with tokens from keycloak (tenantID and pocID)
+     * @throws QuickTestServiceException TenantID or pocID not found
      */
     public Map<String, String> getIdsFromToken() throws QuickTestServiceException {
 

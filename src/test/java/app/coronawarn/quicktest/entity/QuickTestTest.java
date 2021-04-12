@@ -7,14 +7,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import java.util.Set;
+
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,7 +44,7 @@ public class QuickTestTest {
         quickTest.setPhoneNumber("00491777777777777");
         quickTest.setEmail("test@test.test");
         quickTest.setTenantId("4711");
-        quickTest.setTestSpotId("4711-A");
+        quickTest.setPocId("4711-A");
         quickTest.setTestBrandId("AT116/21");
         quickTest.setTestBrandName("Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal)");
         quickTest.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 11));
@@ -55,7 +55,7 @@ public class QuickTestTest {
         quickTest.setHouseNumber("11");
         quickTest.setInsuranceBillStatus(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
-        assertEquals("QuickTest(shortHashedGuid=cjfybkfn, hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, createdAt=2021-04-08T08:11:11, updatedAt=2021-04-08T08:11:12, confirmationCwa=true, tenantId=4711, testSpotId=4711-A, testResult=5, version=null, insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal))",quickTest.toString());
+        assertEquals("QuickTest(shortHashedGuid=cjfybkfn, hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, createdAt=2021-04-08T08:11:11, updatedAt=2021-04-08T08:11:12, confirmationCwa=true, tenantId=4711, pocId=4711-A, testResult=5, version=null, insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal))",quickTest.toString());
     }
 
     @Test
@@ -77,9 +77,9 @@ public class QuickTestTest {
     }
 
     @Test
-    void checkTestSpotIdSize() {
+    void checkPocIdSize() {
         QuickTest quickTest = new QuickTest();
-        quickTest.setTestSpotId(generators.generateString(260));
+        quickTest.setPocId(generators.generateString(260));
     }
 
     @Test

@@ -24,6 +24,7 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.model.KeyCloakConfigFile;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
@@ -41,6 +42,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -153,6 +155,17 @@ public class QuickTestCreationController {
             }
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+
+    @GetMapping(value = "/{shortHash}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<QuickTest> getQuickTest(@PathVariable String shortHash) {
+        try {
+            return ResponseEntity.ok(quickTestService.getQuickTest(utilities.getIdsFromToken().get("poc_id"),shortHash));
+        } catch (QuickTestServiceException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
 }

@@ -31,6 +31,9 @@ keycloak:
 
 server:
   port: 8093
+efgs:
+  dbencryption:
+    password: m:zteZXp4QPaD?J@f+|'#y;be1fJRXnY
 quick-test:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId

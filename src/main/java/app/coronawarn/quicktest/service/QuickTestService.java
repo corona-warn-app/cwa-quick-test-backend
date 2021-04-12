@@ -137,7 +137,7 @@ public class QuickTestService {
 
     }
 
-    private QuickTest getQuickTest(String testSpotId, String shortHash) throws QuickTestServiceException {
+    public QuickTest getQuickTest(String testSpotId, String shortHash) throws QuickTestServiceException {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
         QuickTest quicktest = quickTestRepository.findByTestSpotIdAndHashedGuidStartingWith(testSpotId,shortHash);
         if (quicktest == null) {

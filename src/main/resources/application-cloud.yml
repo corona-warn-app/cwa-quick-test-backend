@@ -58,4 +58,4 @@ testresultserver:
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
-  tenantPointOfCareIdKey: testSpotId
+  tenantPointOfCareIdKey: pocId

@@ -56,8 +56,8 @@ public class TestResult {
      * 8: Invalid
      * 9: Redeemed
      */
-    @Min(1)
-    @Max(3)
+    @Min(5)
+    @Max(9)
     @NotNull
     private Integer result;
 

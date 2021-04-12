@@ -2,9 +2,11 @@ package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.validation.ValidName;
 import app.coronawarn.quicktest.validation.ValidPhoneNumber;
+import app.coronawarn.quicktest.validation.ValidZipCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Schema(
@@ -43,19 +45,21 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     private Sex sex;
 
-    // TODO
     @NotNull
+    @Size(max = 200)
     private String street;
 
-    // TODO
     @NotNull
+    @Size(max = 10)
     private String houseNumber;
 
-    // TODO
+    @ValidZipCode
     @NotNull
+    @Size(min = 5)
+    @Size(max = 5)
     private String zipCode;
 
-    // TODO
     @NotNull
+    @Size(max = 255)
     private String city;
 }

@@ -20,7 +20,6 @@
 
 package app.coronawarn.quicktest.model;
 
-import app.coronawarn.quicktest.validation.ValidShortHash;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -28,7 +27,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Schema(
-    description = "The quick test update ."
+    description = "The quick test update."
 )
 @Data
 @AllArgsConstructor

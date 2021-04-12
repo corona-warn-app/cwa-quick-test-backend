@@ -208,7 +208,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <environmentVariables>
-                        <efgs_dbencryption_password>abcdefghjklmnopq</efgs_dbencryption_password>
+                        <quicktest_dbencryption_password>abcdefghjklmnopq</quicktest_dbencryption_password>
                     </environmentVariables>
                 </configuration>
             </plugin>

@@ -23,4 +23,13 @@ public @interface ValidShortHash {
      */
     String message() default "Invalid short hash";
 
+    /**
+     * Default groups() method.
+     */
+    Class<?>[] groups() default {};
+
+    /**
+     * Default payload() method.
+     */
+    Class<? extends Payload>[] payload() default {};
 }

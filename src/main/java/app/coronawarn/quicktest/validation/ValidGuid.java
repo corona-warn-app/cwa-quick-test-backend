@@ -23,4 +23,14 @@ public @interface ValidGuid {
      */
     String message() default "Invalid guid";
 
+    /**
+     * Default groups() method.
+     */
+    Class<?>[] groups() default {};
+
+    /**
+     * Default payload() method.
+     */
+    Class<? extends Payload>[] payload() default {};
+
 }

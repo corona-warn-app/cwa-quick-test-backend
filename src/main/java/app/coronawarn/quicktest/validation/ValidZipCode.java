@@ -6,6 +6,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import javax.validation.Constraint;
+import javax.validation.Payload;
 
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -17,4 +18,14 @@ public @interface ValidZipCode {
      * @return clear text error message
      */
     String message() default "Invalid zip code provided";
+
+    /**
+     * Default groups() method.
+     */
+    Class<?>[] groups() default {};
+
+    /**
+     * Default payload() method.
+     */
+    Class<? extends Payload>[] payload() default {};
 }

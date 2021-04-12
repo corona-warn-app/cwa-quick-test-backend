@@ -23,4 +23,14 @@ public @interface ValidPhoneNumber {
      */
     String message() default "Invalid phone number";
 
+    /**
+     * Default groups() method.
+     */
+    Class<?>[] groups() default {};
+
+    /**
+     * Default payload() method.
+     */
+    Class<? extends Payload>[] payload() default {};
+
 }

@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class ZipCodeValidator implements ConstraintValidator<ValidZipCode, String> {
     private static final Pattern ZIPCODE_PATTERN =
-            Pattern.compile("^([+]{1}[1-9]{1,2}|[0]{1}[1-9]{1})[0-9]{5,}$");
+            Pattern.compile("^([0]{1}[1-9]{1}|[1-9]{1}[0-9]{1})[0-9]{3}$");
 
     @Override
     public boolean isValid(String zipCode, ConstraintValidatorContext constraintValidatorContext) {

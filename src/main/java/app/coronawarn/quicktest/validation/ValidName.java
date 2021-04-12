@@ -24,4 +24,14 @@ public @interface ValidName {
      */
     String message() default "Invalid name";
 
+    /**
+     * Default groups() method.
+     */
+    Class<?>[] groups() default {};
+
+    /**
+     * Default payload() method.
+     */
+    Class<? extends Payload>[] payload() default {};
+
 }

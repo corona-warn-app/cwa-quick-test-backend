@@ -85,3 +85,110 @@ databaseChangeLog:
               - column:
                   name: test_brand_name
                   type: varchar(400)
+        - createTable:
+            tableName: quick_test_archive
+            columns:
+              - column:
+                  name: short_hashed_guid
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hashed_guid
+                  type: varchar(400)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: confirmation_cwa
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  # test provider identifier
+                  name: tenant_id
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  # test spot identifier
+                  name: poc_id
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: test_result
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: insurance_bill_status
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: first_name
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_name
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(400)
+              - column:
+                  name: phone_number
+                  type: varchar(400)
+              - column:
+                  name: sex
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: street
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: house_number
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: zip_code
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: city
+                  type: varchar(400)
+                  constraints:
+                    nullable: false
+              # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
+              - column:
+                  name: test_brand_id
+                  type: varchar(400)
+              - column:
+                  name: test_brand_name
+                  type: varchar(400)
+              - column:
+                  name: pdf
+                  type: blob

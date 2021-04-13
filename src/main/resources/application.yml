@@ -31,6 +31,11 @@ keycloak:
 
 server:
   port: 8093
+  error:
+    include-stacktrace: always
+    include-exception: false
+    include-binding-errors: always
+    include-message: always
 quick-test:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId

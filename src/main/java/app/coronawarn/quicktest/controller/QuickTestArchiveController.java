@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
@@ -49,6 +50,8 @@ public class QuickTestArchiveController {
     private final QuickTestService quickTestService;
     private final QuickTestArchiveService quickTestArchiveService;
 
+    private final QuickTestArchiveRepository quickTestArchiveRepository;
+
     /**
      * Endpoint for storing archive. The record in QuickTest will be moved unchanged to archive.
      *
@@ -65,13 +68,16 @@ public class QuickTestArchiveController {
       @ApiResponse(responseCode = "201", description = "Quicktest archive is created"),
       @ApiResponse(responseCode = "409", description = "Quicktest archive with hash already exists"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
-    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<String> createQuickTestArchive(
             @RequestParam String shortHashedGuid,
             @RequestParam MultipartFile pdf) {
         if (pdf.isEmpty()) {
             return ResponseEntity.badRequest().body("Error Message: PDF is empty");
+        }
+        if (!pdf.getContentType().equals(MediaType.APPLICATION_PDF_VALUE)) {
+            return ResponseEntity.badRequest().body("Error Message: Only PDF content type supported");
         }
         log.debug("Persisting new file: {}", pdf.getOriginalFilename());
         try {
@@ -86,4 +92,15 @@ public class QuickTestArchiveController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    /*
+    @GetMapping
+    @Secured(ROLE_LAB)
+    public byte[] getQuickTestArchivePDF() {
+        Optional<QuickTestArchive> qta = quickTestArchiveRepository.findById(
+            "8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
+        return qta.get().getPdf();
+    }
+
+     */
 }

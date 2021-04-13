@@ -18,7 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class QuickTestArchiveService {
 
-    private QuickTestRepository quickTestRepository;
+    private final QuickTestRepository quickTestRepository;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
 
     /**
@@ -36,7 +36,7 @@ public class QuickTestArchiveService {
         }
         try {
             quickTestArchiveRepository.saveAndFlush(mappingQuickTestToQuickTestAchive(quickTest.get(), pdf));
-
+            // quickTestRepository.deleteById(shortHashedGuid);
         } catch (IOException e) {
             log.error("Could not read pdf. IO Exception = {}", e.getMessage());
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
@@ -44,7 +44,6 @@ public class QuickTestArchiveService {
             log.error("Exception = {}", e.getMessage());
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
-
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestAchive(
@@ -70,7 +69,7 @@ public class QuickTestArchiveService {
         quickTestArchive.setCity(quickTest.getCity());
         quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
-        quickTestArchive.setPdf(pdf.getBytes().toString());
+        quickTestArchive.setPdf(pdf.getBytes());
         return quickTestArchive;
     }
 }

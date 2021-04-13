@@ -1,6 +1,7 @@
 package app.coronawarn.quicktest.domain;
 
 import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
+import app.coronawarn.quicktest.dbencryption.DbEncryptionByteArrayConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
@@ -88,6 +89,6 @@ public class QuickTestArchive {
     private String testBrandName;
 
     @Lob
-    @Convert(converter = DbEncryptionStringConverter.class)
-    private String pdf;
+    @Convert(converter = DbEncryptionByteArrayConverter.class)
+    private byte[] pdf;
 }

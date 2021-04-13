@@ -85,6 +85,10 @@ databaseChangeLog:
               - column:
                   name: test_brand_name
                   type: varchar(108)
+  - changeSet:
+      id: create-archive-table
+      author: agaricusbisporus
+      changes:
         - createTable:
             tableName: quick_test_archive
             columns:

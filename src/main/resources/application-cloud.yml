@@ -7,6 +7,18 @@ spring:
     url: ${DB_ARCHIVE_JDBC_URL}
   jpa:
     database-platform: ${DB_HIBERNATE_DIALECT}
+  mail:
+    host:
+    port:
+    username:
+    password:
+    from:
+    test-connection: true
+    protocol: smtp
+    properties:
+      "[mail.smtp.auth]": true
+      "[mail.smtp.starttls.enable]": true
+      "[mail.smtp.starttls.required]": true
 
 management:
   server:
@@ -51,7 +63,7 @@ server:
     include-stacktrace: never
     include-exception: false
     include-binding-errors: never
-    include-message: always
+    include-message: never
 testresultserver:
   enabled: false
   oneWay: false

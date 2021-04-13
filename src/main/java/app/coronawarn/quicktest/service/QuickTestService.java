@@ -27,6 +27,7 @@ import app.coronawarn.quicktest.model.TestResultList;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -56,11 +57,13 @@ public class QuickTestService {
         throws QuickTestServiceException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
-        QuickTest conflictingQuickTest = quickTestRepository.findByPocIdAndShortHashedGuid(
-            ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
 
-        if (conflictingQuickTest != null) {
-            log.debug("QuickTest with shortHash {} already exists", shortHash);
+        Optional<QuickTest> conflictingQuickTestByHashed =
+            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(hashedGuid,
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
+
+        if (conflictingQuickTestByHashed.isPresent()) {
+            log.debug("QuickTest with Guid {} already exists", shortHash);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }
 

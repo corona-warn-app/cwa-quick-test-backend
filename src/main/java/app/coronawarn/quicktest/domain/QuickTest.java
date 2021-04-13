@@ -50,12 +50,17 @@ public class QuickTest {
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
+    @Column(name = "hashed_guid")
+    private String hashedGuid;
+
     @Column(name = "short_hashed_guid")
     private String shortHashedGuid;
 
-    @Column(name = "hashed_guid")
-    @Convert(converter = DbEncryptionStringConverter.class)
-    private String hashedGuid;
+    @Column(name = "tenant_id")
+    private String tenantId;
+
+    @Column(name = "poc_id")
+    private String pocId;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -63,26 +68,18 @@ public class QuickTest {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "confirmation_cwa")
-    @Convert(converter = DbEncryptionBooleanConverter.class)
-    private Boolean confirmationCwa;
-
-    @Column(name = "tenant_id")
-    @Convert(converter = DbEncryptionStringConverter.class)
-    private String tenantId;
-
-    @Column(name = "poc_id")
-    @Convert(converter = DbEncryptionStringConverter.class)
-    private String pocId;
-
-    @Column(name = "test_result")
-    @Convert(converter = DbEncryptionShortConverter.class)
-    private Short testResult;
-
     @Column(name = "version")
     @Setter(AccessLevel.NONE)
     @Version
     private Integer version;
+
+    @Column(name = "confirmation_cwa")
+    @Convert(converter = DbEncryptionBooleanConverter.class)
+    private Boolean confirmationCwa;
+
+    @Column(name = "test_result")
+    @Convert(converter = DbEncryptionShortConverter.class)
+    private Short testResult;
 
     @Column(name = "insurance_bill_status")
     @Convert(converter = DbEncryptionBooleanConverter.class)

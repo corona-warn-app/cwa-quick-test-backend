@@ -56,9 +56,9 @@ public interface TestResultServerClient {
      * @return the response
      */
     @PostMapping(
-            value = "/api/v1/lab/results",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE
+        value = "/api/v1/lab/results",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
     )
     ResponseEntity<?> results(@RequestBody @NotNull @Valid TestResultList list);
 }

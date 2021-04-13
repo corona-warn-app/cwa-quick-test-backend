@@ -47,17 +47,17 @@ public class QuickTestService {
      * If not a new entity of QuickTest will be created and stored.
      * Also a pending TestResult will be sent to TestResult-Server.
      *
-     * @param ids Map with tenantId and testscopeId
+     * @param ids        Map with tenantId and testscopeId
      * @param hashedGuid SHA256 hash of the test GUID.
      * @return saved QuickTest
      * @throws QuickTestServiceException with reason CONFLICT if a QuickTest with short hash already exists.
      */
-    public QuickTest createNewQuickTest(Map<String,String> ids, String hashedGuid)
-      throws QuickTestServiceException {
+    public QuickTest createNewQuickTest(Map<String, String> ids, String hashedGuid)
+        throws QuickTestServiceException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
         QuickTest conflictingQuickTest = quickTestRepository.findByPocIdAndShortHashedGuid(
-          ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
+            ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
 
         if (conflictingQuickTest != null) {
             log.debug("QuickTest with shortHash {} already exists", shortHash);
@@ -85,9 +85,10 @@ public class QuickTestService {
      * Updates a QuickTest entity in persistence.
      *
      * @param shortHash the short-hash of the testresult to be updated
-     * @param result the result of the quick test.
+     * @param result    the result of the quick test.
      */
-    public void updateQuickTest(Map<String,String> ids, String shortHash, int result) throws QuickTestServiceException {
+    public void updateQuickTest(Map<String, String> ids, String shortHash, int result)
+        throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
         try {
@@ -102,12 +103,12 @@ public class QuickTestService {
     /**
      * Updates a QuickTest entity with personaldata in persistence.
      *
-     * @param shortHash the short-hash of the testresult to be updated
+     * @param shortHash             the short-hash of the testresult to be updated
      * @param quickTestPersonalData the quick test personaldata.
      */
-    public void updateQuickTestWithPersonalData(Map<String,String> ids, String shortHash,
+    public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
-            throws QuickTestServiceException {
+        throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
@@ -139,7 +140,7 @@ public class QuickTestService {
 
     private QuickTest getQuickTest(String pocId, String shortHash) throws QuickTestServiceException {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
-        QuickTest quicktest = quickTestRepository.findByPocIdAndShortHashedGuid(pocId,shortHash);
+        QuickTest quicktest = quickTestRepository.findByPocIdAndShortHashedGuid(pocId, shortHash);
         if (quicktest == null) {
             log.info("Requested Quick Test with shortHash {} could not be found.", shortHash);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);

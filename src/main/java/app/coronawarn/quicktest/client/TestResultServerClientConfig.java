@@ -71,12 +71,12 @@ public class TestResultServerClientConfig {
                 .create();
             if (config.isOneWay()) {
                 builder.loadTrustMaterial(ResourceUtils.getFile(config.getTrustStorePath()),
-                        config.getTrustStorePassword());
+                    config.getTrustStorePassword());
             }
             if (config.isTwoWay()) {
                 builder.loadKeyMaterial(ResourceUtils.getFile(config.getKeyStorePath()),
-                        config.getKeyStorePassword(),
-                        config.getKeyStorePassword());
+                    config.getKeyStorePassword(),
+                    config.getKeyStorePassword());
             }
             return builder.build();
         } catch (IOException | GeneralSecurityException e) {

@@ -25,12 +25,14 @@ public @interface ValidGuid {
 
     /**
      * groups.
+     *
      * @return groups
      */
     Class<?>[] groups() default {};
 
     /**
      * payload.
+     *
      * @return paylaod
      */
     Class<? extends Payload>[] payload() default {};

@@ -37,7 +37,7 @@ public class DbEncryptionSexTypeConverter implements AttributeConverter<Sex, Str
         try {
             return s == null ? null : DbEncryptionService.getInstance().encryptString(s.name());
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException e) {
+            | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }
@@ -47,7 +47,7 @@ public class DbEncryptionSexTypeConverter implements AttributeConverter<Sex, Str
         try {
             return s == null ? null : Sex.valueOf(DbEncryptionService.getInstance().decryptString(s));
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException e) {
+            | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }

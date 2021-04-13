@@ -22,6 +22,7 @@ public class Utilities {
 
     /**
      * Get tenantID and pocID from Token.
+     *
      * @return Map with tokens from keycloak (tenantID and pocID)
      * @throws QuickTestServiceException TenantID or pocID not found
      */
@@ -30,9 +31,9 @@ public class Utilities {
         Map<String, String> ids = new HashMap<>();
 
         KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
-          SecurityContextHolder.getContext().getAuthentication();
+            SecurityContextHolder.getContext().getAuthentication();
 
-        Principal principal =  authentication != null ? (Principal) authentication.getPrincipal() : null;
+        Principal principal = authentication != null ? (Principal) authentication.getPrincipal() : null;
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
@@ -43,11 +44,11 @@ public class Utilities {
 
             if (customClaims.containsKey(quickTestConfig.getPointOfCareIdName())) {
                 ids.put(quickTestConfig.getTenantPointOfCareIdKey(),
-                        String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
+                    String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
             }
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
-                && !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
+            && !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
             log.debug("Ids not found in User-Token");
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }

@@ -24,7 +24,6 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.QuickTest;
-import app.coronawarn.quicktest.model.KeyCloakConfigFile;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
@@ -42,7 +41,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -81,7 +79,7 @@ public class QuickTestCreationController {
     public ResponseEntity<Void> createQuickTest(@Valid @RequestBody QuickTestCreationRequest quicktestCreationRequest) {
         try {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
-              quicktestCreationRequest.getHashedGuid());
+                quicktestCreationRequest.getHashedGuid());
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
@@ -109,12 +107,12 @@ public class QuickTestCreationController {
     @PutMapping(value = "/{shortHash}/testResult", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<Void> updateQuickTestStatus(
-            @PathVariable String shortHash,
-            @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
+        @PathVariable String shortHash,
+        @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
         try {
             quickTestService.updateQuickTest(
-              utilities.getIdsFromToken(),
-                    shortHash, quickTestUpdateRequest.getResult());
+                utilities.getIdsFromToken(),
+                shortHash, quickTestUpdateRequest.getResult());
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -132,8 +130,8 @@ public class QuickTestCreationController {
      * @return ResponseEntity with binary data.
      */
     @Operation(
-            summary = "Updates the test result of a quicktest",
-            description = "Updates the test result of a quicktest"
+        summary = "Updates the test result of a quicktest",
+        description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
@@ -141,12 +139,12 @@ public class QuickTestCreationController {
     @PutMapping(value = "/{shortHash}/personalData", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> updateQuickTestWithPersonalData(
-            @PathVariable String shortHash,
-            @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
+        @PathVariable String shortHash,
+        @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
         try {
             quickTestService.updateQuickTestWithPersonalData(
-              utilities.getIdsFromToken(),shortHash,
-                    modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
+                utilities.getIdsFromToken(), shortHash,
+                modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

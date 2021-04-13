@@ -25,7 +25,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.time.LocalDateTime;
 import java.util.Base64;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -34,7 +33,6 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 
 @Slf4j
@@ -54,14 +52,15 @@ public class DbEncryptionService {
         cipher = AesBytesEncryptor.CipherAlgorithm.CBC.createCipher();
 
         String dbEncryptionPassword = System.getenv().containsKey(PASSWORD_PROPERTY_NAME)
-          ? System.getenv(PASSWORD_PROPERTY_NAME)
-          : System.getProperty(PASSWORD_PROPERTY_NAME);
+            ? System.getenv(PASSWORD_PROPERTY_NAME)
+            : System.getProperty(PASSWORD_PROPERTY_NAME);
 
         if (dbEncryptionPassword != null) {
             int passwordLength = dbEncryptionPassword.length();
             if (passwordLength != 16 && passwordLength != 24 && passwordLength != 32) {
                 throw new ValidationException(
-                "Invalid Application Configuration: Database password must be a string with length of 16, 24 or 32");
+                    "Invalid Application Configuration: Database password must be a string with length of 16, 24 or 32"
+                );
             }
 
             key = new SecretKeySpec(dbEncryptionPassword.getBytes(), "AES");
@@ -72,6 +71,7 @@ public class DbEncryptionService {
 
     /**
      * Returns an instance of Singleton-DbEncryptionService.
+     *
      * @return The DbEncryptionService instance
      */
     public static DbEncryptionService getInstance() {
@@ -87,12 +87,14 @@ public class DbEncryptionService {
      *
      * @param encrypted the encrypted string
      * @return decrypted string
-     * @throws InvalidKeyException if the given key is inappropriate for initializing this cipher
-     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has been requested,
-     *     but the decrypted data is not bounded by the appropriate padding bytes
-     * @throws IllegalBlockSizeException if this cipher is a block cipher,
-     *     no padding has been requested (only in encryption mode), and the total input length
-     *     of the data processed by this cipher is not a multiple of block size;
+     * @throws InvalidKeyException                if the given key is inappropriate for initializing this cipher
+     * @throws BadPaddingException                if this cipher is in decryption mode, and (un)padding has been
+     *                                            requested, but the decrypted data is not bounded by the appropriate
+     *                                            padding bytes
+     * @throws IllegalBlockSizeException          if this cipher is a block cipher,
+     *                                            no padding has been requested (only in encryption mode), and the
+     *                                            total input length of the data processed by this cipher is not a
+     *                                            multiple of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public String decryptString(String encrypted)
@@ -105,12 +107,14 @@ public class DbEncryptionService {
      *
      * @param plain the plain string
      * @return encrypted string
-     * @throws InvalidKeyException if the given key is inappropriate for initializing this cipher
-     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has been requested,
-     *     but the decrypted data is not bounded by the appropriate padding bytes
-     * @throws IllegalBlockSizeException if this cipher is a block cipher,
-     *     no padding has been requested (only in encryption mode), and the total input length
-     *     of the data processed by this cipher is not a multiple of block size;
+     * @throws InvalidKeyException                if the given key is inappropriate for initializing this cipher
+     * @throws BadPaddingException                if this cipher is in decryption mode, and (un)padding has been
+     *                                            requested, but the decrypted data is not bounded by the appropriate
+     *                                            padding bytes
+     * @throws IllegalBlockSizeException          if this cipher is a block cipher,
+     *                                            no padding has been requested (only in encryption mode), and the
+     *                                            total input length of the data processed by this cipher is not a
+     *                                            multiple of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public String encryptString(String plain)
@@ -124,12 +128,14 @@ public class DbEncryptionService {
      *
      * @param encrypted the encrypted string
      * @return decrypted short
-     * @throws InvalidKeyException if the given key is inappropriate for initializing this cipher
-     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has been requested,
-     *     but the decrypted data is not bounded by the appropriate padding bytes
-     * @throws IllegalBlockSizeException if this cipher is a block cipher,
-     *     no padding has been requested (only in encryption mode), and the total input length
-     *     of the data processed by this cipher is not a multiple of block size;
+     * @throws InvalidKeyException                if the given key is inappropriate for initializing this cipher
+     * @throws BadPaddingException                if this cipher is in decryption mode, and (un)padding has been
+     *                                            requested, but the decrypted data is not bounded by the appropriate
+     *                                            padding bytes
+     * @throws IllegalBlockSizeException          if this cipher is a block cipher,
+     *                                            no padding has been requested (only in encryption mode), and the
+     *                                            total input length of the data processed by this cipher is not a
+     *                                            multiple of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public Short decryptShort(String encrypted)
@@ -142,12 +148,14 @@ public class DbEncryptionService {
      *
      * @param plain the plain short.
      * @return encrypted string
-     * @throws InvalidKeyException if the given key is inappropriate for initializing this cipher
-     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has been requested,
-     *     but the decrypted data is not bounded by the appropriate padding bytes
-     * @throws IllegalBlockSizeException if this cipher is a block cipher,
-     *     no padding has been requested (only in encryption mode), and the total input length
-     *     of the data processed by this cipher is not a multiple of block size;
+     * @throws InvalidKeyException                if the given key is inappropriate for initializing this cipher
+     * @throws BadPaddingException                if this cipher is in decryption mode, and (un)padding has been
+     *                                            requested, but the decrypted data is not bounded by the
+     *                                            appropriate padding bytes
+     * @throws IllegalBlockSizeException          if this cipher is a block cipher,
+     *                                            no padding has been requested (only in encryption mode), and the
+     *                                            total input length of the data processed by this cipher is not a
+     *                                            multiple of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public String encryptShort(Short plain)
@@ -161,12 +169,14 @@ public class DbEncryptionService {
      *
      * @param encrypted the encrypted string
      * @return decrypted short
-     * @throws InvalidKeyException if the given key is inappropriate for initializing this cipher
-     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has been requested,
-     *     but the decrypted data is not bounded by the appropriate padding bytes
-     * @throws IllegalBlockSizeException if this cipher is a block cipher,
-     *     no padding has been requested (only in encryption mode), and the total input length
-     *     of the data processed by this cipher is not a multiple of block size;
+     * @throws InvalidKeyException                if the given key is inappropriate for initializing this cipher
+     * @throws BadPaddingException                if this cipher is in decryption mode, and (un)padding has been
+     *                                            requested, but the decrypted data is not bounded by the appropriate
+     *                                            padding bytes
+     * @throws IllegalBlockSizeException          if this cipher is a block cipher,
+     *                                            no padding has been requested (only in encryption mode), and the
+     *                                            total input length of the data processed by this cipher is not a
+     *                                            multiple of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public Boolean decryptBoolean(String encrypted)
@@ -179,12 +189,14 @@ public class DbEncryptionService {
      *
      * @param plain the plain boolean.
      * @return encrypted string
-     * @throws InvalidKeyException if the given key is inappropriate for initializing this cipher
-     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has been requested,
-     *     but the decrypted data is not bounded by the appropriate padding bytes
-     * @throws IllegalBlockSizeException if this cipher is a block cipher,
-     *     no padding has been requested (only in encryption mode), and the total input length
-     *     of the data processed by this cipher is not a multiple of block size;
+     * @throws InvalidKeyException                if the given key is inappropriate for initializing this cipher
+     * @throws BadPaddingException                if this cipher is in decryption mode, and (un)padding has been
+     *                                            requested, but the decrypted data is not bounded by the appropriate
+     *                                            padding bytes
+     * @throws IllegalBlockSizeException          if this cipher is a block cipher,
+     *                                            no padding has been requested (only in encryption mode), and the
+     *                                            total input length of the data processed by this cipher is not a
+     *                                            multiple of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public String encryptBoolean(Boolean plain)

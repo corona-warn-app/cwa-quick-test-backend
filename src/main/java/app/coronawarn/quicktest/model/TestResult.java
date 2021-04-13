@@ -34,7 +34,7 @@ import lombok.ToString;
  * Model of the test result.
  */
 @Schema(
-        description = "The test result model."
+    description = "The test result model."
 )
 @Getter
 @ToString

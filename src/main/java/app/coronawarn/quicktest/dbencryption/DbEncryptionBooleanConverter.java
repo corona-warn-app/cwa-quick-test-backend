@@ -36,7 +36,7 @@ public class DbEncryptionBooleanConverter implements AttributeConverter<Boolean,
         try {
             return s == null ? null : DbEncryptionService.getInstance().encryptBoolean(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException e) {
+            | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }
@@ -46,7 +46,7 @@ public class DbEncryptionBooleanConverter implements AttributeConverter<Boolean,
         try {
             return s == null ? null : DbEncryptionService.getInstance().decryptBoolean(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException e) {
+            | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }

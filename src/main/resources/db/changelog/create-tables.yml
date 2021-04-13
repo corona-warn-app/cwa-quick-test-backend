@@ -8,18 +8,18 @@ databaseChangeLog:
             columns:
               - column:
                   name: short_hashed_guid
-                  type: varchar(400)
+                  type: varchar(8)
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
                   name: hashed_guid
-                  type: varchar(400)
+                  type: varchar(108)
                   constraints:
                     nullable: false
               - column:
                   name: confirmation_cwa
-                  type: varchar(400)
+                  type: varchar(24)
               - column:
                   name: created_at
                   type: datetime
@@ -33,55 +33,55 @@ databaseChangeLog:
               - column:
                   # test provider identifier
                   name: tenant_id
-                  type: varchar(400)
+                  type: varchar(24)
                   constraints:
                     nullable: false
               - column:
                   # test spot identifier
                   name: poc_id
-                  type: varchar(400)
+                  type: varchar(24)
                   constraints:
                     nullable: false
               - column:
                   name: test_result
-                  type: varchar(400)
+                  type: varchar(24)
               - column:
                   name: version
                   type: int
               - column:
                   name: insurance_bill_status
-                  type: varchar(400)
+                  type: varchar(24)
               - column:
                   name: first_name
-                  type: varchar(400)
+                  type: varchar(108)
               - column:
                   name: last_name
-                  type: varchar(400)
+                  type: varchar(108)
               - column:
                   name: email
-                  type: varchar(400)
+                  type: varchar(108)
               - column:
                   name: phone_number
-                  type: varchar(400)
+                  type: varchar(108)
               - column:
                   name: sex
-                  type: varchar(400)
+                  type: varchar(24)
               - column:
                   name: street
-                  type: varchar(400)
+                  type: varchar(108)
               - column:
                   name: house_number
-                  type: varchar(400)
+                  type: varchar(24)
               - column:
                   name: zip_code
-                  type: varchar(400)
+                  type: varchar(24)
               - column:
                   name: city
-                  type: varchar(400)
+                  type: varchar(108)
               # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
               - column:
                   name: test_brand_id
-                  type: varchar(400)
+                  type: varchar(24)
               - column:
                   name: test_brand_name
-                  type: varchar(400)
+                  type: varchar(108)

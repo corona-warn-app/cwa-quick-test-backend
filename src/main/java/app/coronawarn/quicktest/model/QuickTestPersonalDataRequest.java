@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
 import lombok.Data;
 
 @Schema(
-        description = "The quick test personaldata model."
+    description = "The quick test personaldata model."
 )
 @Data
 public class QuickTestPersonalDataRequest {
@@ -47,7 +47,7 @@ public class QuickTestPersonalDataRequest {
     @ValidName
     @NotNull
     private String lastName;
-    
+
     @ValidName
     @NotNull
     private String firstName;

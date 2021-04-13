@@ -20,12 +20,15 @@
 
 package app.coronawarn.quicktest.domain;
 
+import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
+import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
+import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
+import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
+import javax.persistence.Convert;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -51,6 +54,7 @@ public class QuickTest {
     private String shortHashedGuid;
 
     @Column(name = "hashed_guid")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String hashedGuid;
 
     @Column(name = "created_at")
@@ -60,15 +64,19 @@ public class QuickTest {
     private LocalDateTime updatedAt;
 
     @Column(name = "confirmation_cwa")
+    @Convert(converter = DbEncryptionBooleanConverter.class)
     private Boolean confirmationCwa;
 
     @Column(name = "tenant_id")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String tenantId;
 
-    @Column(name = "test_spot_id")
-    private String testSpotId;
+    @Column(name = "poc_id")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String pocId;
 
     @Column(name = "test_result")
+    @Convert(converter = DbEncryptionShortConverter.class)
     private Short testResult;
 
     @Column(name = "version")
@@ -77,40 +85,51 @@ public class QuickTest {
     private Integer version;
 
     @Column(name = "insurance_bill_status")
+    @Convert(converter = DbEncryptionBooleanConverter.class)
     private Boolean insuranceBillStatus;
 
     @Column(name = "last_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String lastName;
 
     @Column(name = "first_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String firstName;
 
     @Column(name = "email")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String email;
 
     @Column(name = "phone_number")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String phoneNumber;
 
     @Column(name = "sex")
-    @Enumerated(value = EnumType.STRING)
+    @Convert(converter = DbEncryptionSexTypeConverter.class)
     private Sex sex;
 
     @Column(name = "street")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String street;
 
     @Column(name = "house_number")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String houseNumber;
 
     @Column(name = "zip_code")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String zipCode;
 
     @Column(name = "city")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String city;
 
     @Column(name = "test_brand_id")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String testBrandId;
 
     @Column(name = "test_brand_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String testBrandName;
 
     @PrePersist

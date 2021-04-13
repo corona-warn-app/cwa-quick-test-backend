@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("quick-test")
+@ConfigurationProperties("quicktest")
 public class QuickTestConfig {
 
     private String pointOfCareIdName;

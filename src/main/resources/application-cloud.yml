@@ -60,3 +60,7 @@ testresultserver:
   keyStorePassword: ${QUICK_TEST_KEYSTORE_PASSWORD}
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
+quicktest:
+  pointOfCareIdName: poc_id
+  tenantIdKey: tenantId
+  tenantPointOfCareIdKey: pocId

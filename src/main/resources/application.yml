@@ -36,10 +36,10 @@ server:
     include-exception: false
     include-binding-errors: always
     include-message: always
-quick-test:
+quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
-  tenantPointOfCareIdKey: testSpotId
+  tenantPointOfCareIdKey: pocId
 testresultserver:
   enabled: false
   oneWay: false

@@ -59,6 +59,36 @@ public class QuickTestTest {
     }
 
     @Test
+    void checkShortHashedGuidSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setShortHashedGuid(generators.generateString(13));
+    }
+
+    @Test
+    void checkHashedGuidSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setHashedGuid(generators.generateString(65));
+    }
+
+    @Test
+    void checkTenantIdSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setTenantId(generators.generateString(260));
+    }
+
+    @Test
+    void checkPocIdSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setPocId(generators.generateString(260));
+    }
+
+    @Test
+    void checkTestResultSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setTestResult(Short.parseShort("1"));
+    }
+
+    @Test
     void checkTestResultDefault() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method method = QuickTest.class.getDeclaredMethod("onCreate");
         method.setAccessible(true);
@@ -101,5 +131,35 @@ public class QuickTestTest {
         } catch (NoSuchMethodException e) {
             assertTrue(true);
         }
+    }
+
+    @Test
+    void checkEmailValidator() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setEmail(generators.generateString(13));
+    }
+
+    @Test
+    void checkPhoneNumberSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setPhoneNumber(generators.generateString(130));
+    }
+
+    @Test
+    void checkZipCodeSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setZipCode(generators.generateString(12));
+    }
+
+    @Test
+    void checkTestBrandIdSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setTestBrandId(generators.generateString(13));
+    }
+
+    @Test
+    void checkTestBrandNameSize() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setTestBrandName(generators.generateString(270));
     }
 }

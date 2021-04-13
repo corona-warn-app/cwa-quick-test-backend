@@ -191,4 +191,4 @@ databaseChangeLog:
                   type: varchar(400)
               - column:
                   name: pdf
-                  type: blob
+                  type: clob

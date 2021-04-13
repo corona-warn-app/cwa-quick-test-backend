@@ -42,7 +42,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/quicktest")
+@RequestMapping(value = "/api/quicktestarchive")
 @RequiredArgsConstructor
 public class QuickTestArchiveController {
 

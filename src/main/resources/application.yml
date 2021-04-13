@@ -31,10 +31,10 @@ keycloak:
 
 server:
   port: 8093
-quick-test:
+quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
-  tenantPointOfCareIdKey: testSpotId
+  tenantPointOfCareIdKey: pocId
 testresultserver:
   enabled: false
   oneWay: false

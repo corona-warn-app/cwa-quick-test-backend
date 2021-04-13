@@ -21,12 +21,15 @@
 package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.QuickTest;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
-    QuickTest findByTestSpotIdAndHashedGuidStartingWith(String testSpotId, String shortHash);
+    QuickTest findByPocIdAndShortHashedGuid(String pocId, String shortHash);
 
+    Optional<QuickTest> findByPocIdAndShortHashedGuidOrHashedGuid(String hashedGuid, String pocId,
+                                                                         String shortHash);
 }

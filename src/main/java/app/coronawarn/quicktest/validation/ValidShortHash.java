@@ -23,4 +23,13 @@ public @interface ValidShortHash {
      */
     String message() default "Invalid short hash";
 
+    /**
+     * Validator does not support validation groups.
+     */
+    Class<?>[] groups() default {};
+
+    /**
+     * Validator does not support any payload.
+     */
+    Class<? extends Payload>[] payload() default {};
 }

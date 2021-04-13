@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-unique-constraint
+      author: mbaude
+      changes:
+        - addUniqueConstraint:
+            columnNames: short_hashed_guid, poc_id
+            tableName: quick_test
+            catalogName: short_hasded_poc

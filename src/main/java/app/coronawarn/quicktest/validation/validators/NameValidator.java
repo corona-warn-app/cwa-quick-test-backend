@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class NameValidator implements ConstraintValidator<ValidName, String> {
     private static final String NAME_PATTERN = "^[^- '](?=(?![A-Z]?[A-Z]))(?=(?![a-z]+[A-Z]))"
-            + "(?=(?!.*[A-Z][A-Z]))(?=(?!.*[- '][- '.]))(?=(?!.*[.][-'.]))[A-Za-z- '.]{2,64}$";
+        + "(?=(?!.*[A-Z][A-Z]))(?=(?!.*[- '][- '.]))(?=(?!.*[.][-'.]))[A-Za-z- '.]{2,64}$";
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext context) {

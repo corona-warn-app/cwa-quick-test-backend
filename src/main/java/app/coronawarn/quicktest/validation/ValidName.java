@@ -24,4 +24,13 @@ public @interface ValidName {
      */
     String message() default "Invalid name";
 
+    /**
+     * Validator does not support validation groups.
+     */
+    Class<?>[] groups() default {};
+
+    /**
+     * Validator does not support any payload.
+     */
+    Class<? extends Payload>[] payload() default {};
 }

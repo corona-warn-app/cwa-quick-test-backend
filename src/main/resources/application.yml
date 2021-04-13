@@ -18,6 +18,19 @@ spring:
     url: jdbc:h2:mem:quicktest-archive
     username: sa
     password: ''
+  mail:
+    host:
+    port:
+    username:
+    password:
+    from:
+    test-connection: true
+    protocol: smtp
+    properties:
+      "[mail.smtp.auth]": true
+      "[mail.smtp.starttls.enable]": true
+      "[mail.smtp.starttls.required]": true
+      "[mail.smtp.ssl.trust]": "*"
 
 cwa-testresult-server:
   url: http://localhost:1234
@@ -33,7 +46,7 @@ server:
   port: 8093
   error:
     include-stacktrace: always
-    include-exception: false
+    include-exception: true
     include-binding-errors: always
     include-message: always
 quicktest:

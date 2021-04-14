@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-archive-table
+      author: mbaude
+      changes:
+        - createTable:
+            tableName: quick_test_statistics
+            columns:
+              - column:
+                  name: uuid
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: tenant_id
+                  type: varchar(24)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: poc_id
+                  type: varchar(24)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: date
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_test_count
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: positive_test_count
+                  type: int
+                  constraints:
+                    nullable: false

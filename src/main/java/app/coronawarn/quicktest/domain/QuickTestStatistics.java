@@ -22,10 +22,10 @@ package app.coronawarn.quicktest.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -44,7 +44,7 @@ public class QuickTestStatistics {
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private String uuid;
 
     @Column(name = "poc_id")
@@ -65,14 +65,12 @@ public class QuickTestStatistics {
     @Column(name = "positive_test_count")
     private Integer positiveTestCount;
 
-    @Column(name = "test_result")
-    private Short testResult;
-
-
     @PrePersist
     private void onCreate() {
         createdAt = LocalDate.now();
         updatedAt = LocalDateTime.now();
+        totalTestCount = 0;
+        positiveTestCount = 0;
     }
 
     @PreUpdate

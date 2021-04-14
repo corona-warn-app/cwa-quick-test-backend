@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.QuickTestStatistics;
 import java.time.LocalDate;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,15 +30,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface QuickTestStatisticRepository extends JpaRepository<QuickTestStatistics, String> {
+public interface QuickTestStatisticsRepository extends JpaRepository<QuickTestStatistics, String> {
 
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE quick_test_statistics qts SET qts.total_test_count = qts.total_test_count + 1 WHERE " +
-        "QuickTestStatistics.pocId =: poc_id AND QuickTestStatistics.createdAt =: date ")
+    Optional<QuickTestStatistics> findByPocIdAndCreatedAt(String pocId, LocalDate localDate);
+
+
+    @Modifying
+    @Query("UPDATE QuickTestStatistics qts SET qts.totalTestCount = qts.totalTestCount + 1 WHERE "
+        + "qts.pocId = :poc_id AND qts.createdAt = :date ")
     void incrementTotalTestCount(@Param("poc_id") String pocId, @Param("date") LocalDate date);
 
-    @Modifying(clearAutomatically = true)
-    @Query("UPDATE quick_test_statistics qts SET qts.positive_test_count = qts.positive_test_count + 1 WHERE " +
-        "QuickTestStatistics.pocId =: poc_id AND QuickTestStatistics.createdAt =: date ")
-    void incrementPositiveTestCount(@Param("poc_id") String pocId, @Param("date") LocalDate date);
+    @Modifying
+    @Query("UPDATE QuickTestStatistics qts SET qts.positiveTestCount = qts.positiveTestCount + 1, "
+        + "qts.totalTestCount = qts.totalTestCount + 1"
+        + " WHERE qts.pocId = :poc_id AND qts.createdAt = :date ")
+    void incrementPositiveAndTotalTestCount(@Param("poc_id") String pocId, @Param("date") LocalDate date);
+
 }

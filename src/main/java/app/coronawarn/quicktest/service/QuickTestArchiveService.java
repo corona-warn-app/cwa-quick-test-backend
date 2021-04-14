@@ -5,9 +5,10 @@ import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,15 +24,17 @@ public class QuickTestArchiveService {
     private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
+    private final QuickTestStatisticsRepository quickTestStatisticsRepository;
 
     /**
      * Stores quicktest with pdf in archive table.
      *
      * @param shortHashedGuid to identify quicktest
-     * @param pdf as MultipartFile to store
+     * @param pdf             as MultipartFile to store
      * @throws QuickTestServiceException if the pdf was no readable or not storable.
      */
-    public void createNewQuickTestArchive(Map<String, String> ids, String shortHashedGuid, MultipartFile pdf) throws QuickTestServiceException {
+    public void createNewQuickTestArchive(Map<String, String> ids, String shortHashedGuid, MultipartFile pdf)
+        throws QuickTestServiceException {
         QuickTest quickTest = quickTestRepository.findByPocIdAndShortHashedGuid(
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHashedGuid);
         if (quickTest == null) {
@@ -39,7 +42,13 @@ public class QuickTestArchiveService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);
         }
         try {
+            if (quickTest.getTestResult() == 7) {
+                quickTestStatisticsRepository.incrementPositiveAndTotalTestCount(quickTest.getPocId(), LocalDate.now());
+            } else {
+                quickTestStatisticsRepository.incrementTotalTestCount(quickTest.getPocId(), LocalDate.now());
+            }
             quickTestArchiveRepository.saveAndFlush(mappingQuickTestToQuickTestAchive(quickTest, pdf));
+            //TODO only for test => will be removed
             shortHashedGuid = "123";
             quickTestRepository.deleteById(shortHashedGuid);
         } catch (IOException e) {
@@ -47,13 +56,12 @@ public class QuickTestArchiveService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         } catch (Exception e) {
             log.error("Exception = {}", e.getMessage());
-            QuickTestServiceException ex = new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
-            throw ex;
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestAchive(
-            QuickTest quickTest, MultipartFile pdf) throws IOException {
+        QuickTest quickTest, MultipartFile pdf) throws IOException {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
         quickTestArchive.setHashedGuid(quickTest.getHashedGuid());

@@ -25,12 +25,12 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
-import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -43,8 +43,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -99,9 +97,15 @@ public class QuickTestArchiveController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    //TODO remove!
+    /**
+     * Only for testing => will be removed.
+     *
+     * @return pdf Response
+     */
     @GetMapping
     @Secured(ROLE_LAB)
-    public byte[] getQuickTestArchivePDF() {
+    public byte[] getQuickTestArchivePdf() {
         Optional<QuickTestArchive> qta = quickTestArchiveRepository.findById(
             "8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         return qta.get().getPdf();

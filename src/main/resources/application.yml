@@ -24,7 +24,7 @@ spring:
     username:
     password:
     from:
-    test-connection: true
+    test-connection: false
     protocol: smtp
     properties:
       "[mail.smtp.auth]": true
@@ -33,7 +33,7 @@ spring:
       "[mail.smtp.ssl.trust]": "*"
 
 cwa-testresult-server:
-  url: http://localhost:1234
+  url: http://localhost:8080
 
 keycloak:
   auth-server-url:
@@ -62,3 +62,8 @@ testresultserver:
   keyStorePassword: changeit
   trustStorePath: classpath:truststore.jks
   trustStorePassword: changeit
+
+management:
+  health:
+    mail:
+      enabled: off

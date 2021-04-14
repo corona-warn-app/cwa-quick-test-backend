@@ -39,7 +39,7 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class TestResult {
+public class QuickTestResult {
 
     /**
      * Hash (SHA256) of test result id (aka QR-Code, GUID) encoded as hex string.
@@ -61,12 +61,12 @@ public class TestResult {
     @NotNull
     private Integer result;
 
-    public TestResult setId(String id) {
+    public QuickTestResult setId(String id) {
         this.id = id;
         return this;
     }
 
-    public TestResult setResult(Integer result) {
+    public QuickTestResult setResult(Integer result) {
         this.result = result;
         return this;
     }

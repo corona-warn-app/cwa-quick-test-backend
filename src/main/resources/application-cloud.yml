@@ -46,6 +46,9 @@ management:
     export:
       prometheus:
         enabled: true
+  health:
+    mail:
+      enabled: off
 
 server:
   ssl:

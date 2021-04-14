@@ -21,9 +21,8 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
-import app.coronawarn.quicktest.model.HashedGuid;
-import app.coronawarn.quicktest.model.TestResult;
-import app.coronawarn.quicktest.model.TestResultList;
+import app.coronawarn.quicktest.model.QuickTestResult;
+import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -34,32 +33,22 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class TestResultService {
 
-    //This Service is currently just a mock of the TestResultService.
     private final TestResultServerClient testResultServerClient;
 
     /**
-     * Requests the TestResult for given hashed Guid.
+     * Creates or updates a QuickTest in TestResult Server.
      *
-     * @param hashedGuid the hashed guid.
-     * @return Corresponding TestResult.
+     * @param quickTestResult comment.
      */
-    public TestResult result(String hashedGuid) {
-        return testResultServerClient.result(new HashedGuid(hashedGuid));
-        //return new TestResult().setId(hashedGuid);
-    }
-
-    /**
-     * Updates a set of TestResults in TestResult Server.
-     *
-     * @param testResultList List of TestResults
-     * @return the updated test result
-     */
-    public TestResult updateTestResult(TestResultList testResultList) {
-        if (testResultServerClient.results(testResultList).getStatusCode() == HttpStatus.NO_CONTENT) {
-            return new TestResult().setId(testResultList.getTestResults().get(0).getId());
-        } else {
+    public void createOrUpdateTestResult(QuickTestResult quickTestResult) throws TestResultServiceException {
+        try {
+            if (testResultServerClient.result(quickTestResult).getStatusCode() != HttpStatus.CREATED) {
+                log.error("Failed to update testresult");
+                throw new TestResultServiceException(TestResultServiceException.Reason.SERVER_ERROR);
+            }
+        } catch (FeignException e) {
             log.error("Failed to update testresult");
-            return null;
+            throw new TestResultServiceException(TestResultServiceException.Reason.SERVER_ERROR);
         }
     }
 }

@@ -2,33 +2,20 @@ package app.coronawarn.quicktest.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.Sex;
-import app.coronawarn.quicktest.utils.Generators;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
 @SpringBootTest
 public class QuickTestTest {
-
-    private static Validator validator;
-    private final Generators generators = new Generators();
-
-    @BeforeAll
-    public static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
 
     @Test
     void constructorTest() {
@@ -103,9 +90,8 @@ public class QuickTestTest {
     void checkVersionNotHasSetter() {
         try {
             Method method = QuickTest.class.getDeclaredMethod("setVersion");
-            assertTrue(false, "setVersion method not allowed");
+           fail("setVersion method not allowed");
         } catch (NoSuchMethodException e) {
-            assertTrue(true);
         }
     }
 }

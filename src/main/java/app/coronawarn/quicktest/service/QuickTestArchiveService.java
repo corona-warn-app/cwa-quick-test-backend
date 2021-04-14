@@ -39,20 +39,24 @@ public class QuickTestArchiveService {
         QuickTest quickTest = quickTestRepository.findByPocIdAndShortHashedGuid(
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHashedGuid);
         if (quickTest == null) {
-            log.info("Requested Quick Test with shortHash {} could not be found. Wrong poc", shortHashedGuid);
+            log.info("Requested Quick Test with shortHash {} could not be found or wrong poc", shortHashedGuid);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);
         }
         addStatistics(quickTest);
         try {
             quickTestArchiveRepository.save(mappingQuickTestToQuickTestAchive(quickTest, pdf));
+            log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
+                    quickTest.getPocId(), shortHashedGuid);
         } catch (IOException e) {
-            log.error("Could not read pdf. IO Exception = {}", e.getMessage());
+            log.error("Could not read pdf. createNewQuickTestArchive failed. IO Exception = {}", e.getMessage());
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
         try {
             quickTestRepository.deleteById(quickTest.getHashedGuid());
+            log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
+                    quickTest.getPocId(), shortHashedGuid);
         } catch (Exception e) {
-            log.error("Exception = {}", e.getMessage());
+            log.error("createNewQuickTestArchive failed. Exception = {}", e.getMessage());
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
     }
@@ -61,6 +65,7 @@ public class QuickTestArchiveService {
     protected void addStatistics(QuickTest quickTest) {
         if (quickTestStatisticsRepository.findByPocIdAndDate(quickTest.getPocId(), LocalDate.now()) == null) {
             quickTestStatisticsRepository.save(new QuickTestStatistics(quickTest.getPocId(), quickTest.getTenantId()));
+            log.debug("New QuickTestStatistics created for poc {}", quickTest.getPocId());
         }
         if (quickTest.getTestResult() == 7) {
             quickTestStatisticsRepository.incrementPositiveAndTotalTestCount(quickTest.getPocId(), LocalDate.now());

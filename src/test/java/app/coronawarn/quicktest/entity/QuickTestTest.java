@@ -54,7 +54,13 @@ public class QuickTestTest {
         quickTest.setInsuranceBillStatus(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         assertEquals(
-            "QuickTest(shortHashedGuid=cjfybkfn, hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, createdAt=2021-04-08T08:11:11, updatedAt=2021-04-08T08:11:12, confirmationCwa=true, tenantId=4711, pocId=4711-A, testResult=5, version=null, insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal))",
+            "QuickTest(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, " +
+                "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, " +
+                "updatedAt=2021-04-08T08:11:12, version=null, confirmationCwa=true, testResult=5, " +
+                "insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, " +
+                "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, " +
+                "city=oyvkpigcga, testBrandId=AT116/21, " +
+                "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal))",
             quickTest.toString());
     }
 

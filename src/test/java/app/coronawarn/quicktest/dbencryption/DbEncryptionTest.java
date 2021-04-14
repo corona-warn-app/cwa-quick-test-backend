@@ -91,20 +91,22 @@ public class DbEncryptionTest {
         quickTest = quickTestRepository.saveAndFlush(quickTest);
 
         Object databaseEntry =
-            entityManager.createNativeQuery("SELECT * FROM quick_test q WHERE SHORT_HASHED_GUID='8fa4dcec'")
+            entityManager.createNativeQuery("SELECT * FROM quick_test q WHERE HASHED_GUID='" +
+                "8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4'")
                 .getSingleResult();
 
-        assertEquals(quickTest.getShortHashedGuid(), ((Object[]) databaseEntry)[0]);
-        assertNotEquals(quickTest.getHashedGuid(), ((Object[]) databaseEntry)[1]);
-        assertNotEquals(quickTest.getConfirmationCwa(), ((Object[]) databaseEntry)[2]);
+        assertEquals(quickTest.getHashedGuid(), ((Object[]) databaseEntry)[0]);
+        assertEquals(quickTest.getShortHashedGuid(), ((Object[]) databaseEntry)[1]);
+        assertEquals(quickTest.getTenantId(), ((Object[]) databaseEntry)[2]);
+        assertEquals(quickTest.getPocId(), ((Object[]) databaseEntry)[3]);
         assertEquals(quickTest.getCreatedAt().withNano(0),
-            ((Timestamp) ((Object[]) databaseEntry)[3]).toLocalDateTime().withNano(0));
-        assertEquals(quickTest.getUpdatedAt().withNano(0),
             ((Timestamp) ((Object[]) databaseEntry)[4]).toLocalDateTime().withNano(0));
-        assertNotEquals(quickTest.getTenantId(), ((Object[]) databaseEntry)[5]);
-        assertNotEquals(quickTest.getPocId(), ((Object[]) databaseEntry)[6]);
-        assertNotEquals(quickTest.getTestResult(), ((Object[]) databaseEntry)[7]);
-        assertEquals(quickTest.getVersion(), ((Object[]) databaseEntry)[8]);
+        assertEquals(quickTest.getUpdatedAt().withNano(0),
+            ((Timestamp) ((Object[]) databaseEntry)[5]).toLocalDateTime().withNano(0));
+        assertEquals(quickTest.getVersion(), ((Object[]) databaseEntry)[6]);
+
+        assertNotEquals(quickTest.getConfirmationCwa(), ((Object[]) databaseEntry)[7]);
+        assertNotEquals(quickTest.getTestResult(), ((Object[]) databaseEntry)[8]);
         assertNotEquals(quickTest.getInsuranceBillStatus(), ((Object[]) databaseEntry)[9]);
         assertNotEquals(quickTest.getFirstName(), ((Object[]) databaseEntry)[10]);
         assertNotEquals(quickTest.getLastName(), ((Object[]) databaseEntry)[11]);
@@ -118,20 +120,11 @@ public class DbEncryptionTest {
         assertNotEquals(quickTest.getTestBrandId(), ((Object[]) databaseEntry)[19]);
         assertNotEquals(quickTest.getTestBrandName(), ((Object[]) databaseEntry)[20]);
         try {
-            assertEquals(quickTest.getHashedGuid(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[1]))), CHARSET));
-
             assertEquals(quickTest.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[2]))), CHARSET)));
-
-            assertEquals(quickTest.getTenantId(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[5]))), CHARSET));
-
-            assertEquals(quickTest.getPocId(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[6]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
 
             assertEquals(quickTest.getTestResult(), Short.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
+                String.valueOf(((Object[]) databaseEntry)[8]))), CHARSET)));
 
             assertEquals(quickTest.getInsuranceBillStatus(),
                 Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(

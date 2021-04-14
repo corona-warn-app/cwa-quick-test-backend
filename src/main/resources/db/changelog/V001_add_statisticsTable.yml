@@ -7,9 +7,11 @@ databaseChangeLog:
             tableName: quick_test_statistics
             columns:
               - column:
-                  name: uuid
-                  type: varchar(255)
+                  name: id
+                  type: bigint
+                  autoIncrement: true
                   constraints:
+                    primaryKey: true
                     nullable: false
               - column:
                   name: tenant_id

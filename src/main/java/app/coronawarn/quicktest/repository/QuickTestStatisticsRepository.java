@@ -34,7 +34,6 @@ public interface QuickTestStatisticsRepository extends JpaRepository<QuickTestSt
 
     Optional<QuickTestStatistics> findByPocIdAndCreatedAt(String pocId, LocalDate localDate);
 
-
     @Modifying
     @Query("UPDATE QuickTestStatistics qts SET qts.totalTestCount = qts.totalTestCount + 1 WHERE "
         + "qts.pocId = :poc_id AND qts.createdAt = :date ")
@@ -46,4 +45,6 @@ public interface QuickTestStatisticsRepository extends JpaRepository<QuickTestSt
         + " WHERE qts.pocId = :poc_id AND qts.createdAt = :date ")
     void incrementPositiveAndTotalTestCount(@Param("poc_id") String pocId, @Param("date") LocalDate date);
 
+    @Query("SELECT qts from QuickTestStatistics qts WHERE qts.pocId = :poc_id AND qts.createdAt = :date")
+    QuickTestStatistics findByPocIdAndDate(@Param("poc_id") String pocId, @Param("date") LocalDate date);
 }

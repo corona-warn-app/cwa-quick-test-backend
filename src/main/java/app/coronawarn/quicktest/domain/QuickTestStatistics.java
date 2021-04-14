@@ -45,7 +45,12 @@ public class QuickTestStatistics {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String uuid;
+    private long id;
+
+    public QuickTestStatistics(String pocId, String tenantId) {
+        this.pocId = pocId;
+        this.tenantId = tenantId;
+    }
 
     @Column(name = "poc_id")
     private String pocId;

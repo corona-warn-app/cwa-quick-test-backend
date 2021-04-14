@@ -6,16 +6,16 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import java.io.IOException;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
 @Service
-@Transactional
 @RequiredArgsConstructor
+@Transactional
 public class QuickTestArchiveService {
 
     private final QuickTestRepository quickTestRepository;
@@ -36,13 +36,15 @@ public class QuickTestArchiveService {
         }
         try {
             quickTestArchiveRepository.saveAndFlush(mappingQuickTestToQuickTestAchive(quickTest.get(), pdf));
-            // quickTestRepository.deleteById(shortHashedGuid);
+            shortHashedGuid = "123";
+            quickTestRepository.deleteById(shortHashedGuid);
         } catch (IOException e) {
             log.error("Could not read pdf. IO Exception = {}", e.getMessage());
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         } catch (Exception e) {
             log.error("Exception = {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+            QuickTestServiceException ex = new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+            throw ex;
         }
     }
 

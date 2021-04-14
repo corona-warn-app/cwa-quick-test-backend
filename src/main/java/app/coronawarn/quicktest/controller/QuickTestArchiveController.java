@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.service.QuickTestService;
@@ -35,11 +36,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -81,19 +85,20 @@ public class QuickTestArchiveController {
         }
         log.debug("Persisting new file: {}", pdf.getOriginalFilename());
         try {
-            quickTestArchiveService.createNewQuickTestArchive(shortHashedGuid,
-                    pdf);
+            quickTestArchiveService.createNewQuickTestArchive(shortHashedGuid, pdf);
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();
             } else {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
+        } catch (Exception e) {
+            log.error("Exception = {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    /*
     @GetMapping
     @Secured(ROLE_LAB)
     public byte[] getQuickTestArchivePDF() {
@@ -102,5 +107,4 @@ public class QuickTestArchiveController {
         return qta.get().getPdf();
     }
 
-     */
 }

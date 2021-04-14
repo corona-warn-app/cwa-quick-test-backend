@@ -8,12 +8,12 @@ spring:
   jpa:
     database-platform: ${DB_HIBERNATE_DIALECT}
   mail:
-    host:
-    port:
-    username:
-    password:
-    from:
-    test-connection: true
+    host: ${SMTP_SERVER_HOST}
+    port: ${SMTP_SERVER_PORT}
+    username: ${SMTP_SERVER_USERNAME}
+    password: ${SMTP_SERVER_PASSWORD}
+    from: ${SMTP_SERVER_FROM}
+    test-connection: false
     protocol: smtp
     properties:
       "[mail.smtp.auth]": true

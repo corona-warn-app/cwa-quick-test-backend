@@ -1,10 +1,12 @@
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional
 public class QuickTestArchiveService {
 
+    private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
 
@@ -28,14 +31,15 @@ public class QuickTestArchiveService {
      * @param pdf as MultipartFile to store
      * @throws QuickTestServiceException if the pdf was no readable or not storable.
      */
-    public void createNewQuickTestArchive(String shortHashedGuid, MultipartFile pdf) throws QuickTestServiceException {
-        Optional<QuickTest> quickTest = quickTestRepository.findById(shortHashedGuid);
-        if (quickTest.get() == null) {
+    public void createNewQuickTestArchive(Map<String, String> ids, String shortHashedGuid, MultipartFile pdf) throws QuickTestServiceException {
+        QuickTest quickTest = quickTestRepository.findByPocIdAndShortHashedGuid(
+            ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHashedGuid);
+        if (quickTest == null) {
             log.info("Requested Quick Test with shortHash {} could not be found.", shortHashedGuid);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);
         }
         try {
-            quickTestArchiveRepository.saveAndFlush(mappingQuickTestToQuickTestAchive(quickTest.get(), pdf));
+            quickTestArchiveRepository.saveAndFlush(mappingQuickTestToQuickTestAchive(quickTest, pdf));
             shortHashedGuid = "123";
             quickTestRepository.deleteById(shortHashedGuid);
         } catch (IOException e) {

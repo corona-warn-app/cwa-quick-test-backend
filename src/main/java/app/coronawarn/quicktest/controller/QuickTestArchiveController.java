@@ -27,6 +27,7 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
+import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -51,9 +52,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class QuickTestArchiveController {
 
-    private final QuickTestService quickTestService;
     private final QuickTestArchiveService quickTestArchiveService;
-
+    private final Utilities utilities;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
 
     /**
@@ -85,7 +85,7 @@ public class QuickTestArchiveController {
         }
         log.debug("Persisting new file: {}", pdf.getOriginalFilename());
         try {
-            quickTestArchiveService.createNewQuickTestArchive(shortHashedGuid, pdf);
+            quickTestArchiveService.createNewQuickTestArchive(utilities.getIdsFromToken(), shortHashedGuid, pdf);
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
                 return ResponseEntity.status(HttpStatus.CONFLICT).build();

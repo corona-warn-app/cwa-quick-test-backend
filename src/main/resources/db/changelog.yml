@@ -2,3 +2,6 @@ databaseChangeLog:
   - include:
       file: changelog/create-tables.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_add_UniqueConstraints.yml
+      relativeToChangelogFile: true

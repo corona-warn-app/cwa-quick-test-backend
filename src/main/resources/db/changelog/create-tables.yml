@@ -7,19 +7,28 @@ databaseChangeLog:
             tableName: quick_test
             columns:
               - column:
-                  name: short_hashed_guid
-                  type: varchar(8)
+                  name: hashed_guid
+                  type: varchar(64)
                   constraints:
                     primaryKey: true
                     nullable: false
               - column:
-                  name: hashed_guid
-                  type: varchar(108)
+                  name: short_hashed_guid
+                  type: varchar(8)
                   constraints:
                     nullable: false
               - column:
-                  name: confirmation_cwa
-                  type: varchar(24)
+                  # test provider identifier
+                  name: tenant_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  # test spot identifier
+                  name: poc_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
               - column:
                   name: created_at
                   type: datetime
@@ -31,23 +40,14 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  # test provider identifier
-                  name: tenant_id
-                  type: varchar(24)
-                  constraints:
-                    nullable: false
+                  name: version
+                  type: int
               - column:
-                  # test spot identifier
-                  name: poc_id
+                  name: confirmation_cwa
                   type: varchar(24)
-                  constraints:
-                    nullable: false
               - column:
                   name: test_result
                   type: varchar(24)
-              - column:
-                  name: version
-                  type: int
               - column:
                   name: insurance_bill_status
                   type: varchar(24)
@@ -59,7 +59,7 @@ databaseChangeLog:
                   type: varchar(108)
               - column:
                   name: email
-                  type: varchar(108)
+                  type: varchar(344)
               - column:
                   name: phone_number
                   type: varchar(108)
@@ -68,7 +68,7 @@ databaseChangeLog:
                   type: varchar(24)
               - column:
                   name: street
-                  type: varchar(108)
+                  type: varchar(344)
               - column:
                   name: house_number
                   type: varchar(24)
@@ -77,7 +77,7 @@ databaseChangeLog:
                   type: varchar(24)
               - column:
                   name: city
-                  type: varchar(108)
+                  type: varchar(344)
               # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
               - column:
                   name: test_brand_id

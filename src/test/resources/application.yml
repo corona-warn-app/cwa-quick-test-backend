@@ -27,7 +27,9 @@ keycloak:
 
 server:
   port: 8093
+
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   tenantPointOfCareIdKey: pocId
+  dbEncryptionPassword: abcdefghjklmnopq

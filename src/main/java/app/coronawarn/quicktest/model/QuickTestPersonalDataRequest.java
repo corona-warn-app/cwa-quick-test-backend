@@ -23,6 +23,7 @@ package app.coronawarn.quicktest.model;
 import app.coronawarn.quicktest.validation.ValidPhoneNumber;
 import app.coronawarn.quicktest.validation.ValidZipCode;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDate;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -84,4 +85,8 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     @Size(min = 1, max = 255)
     private String city;
+
+    @NotNull
+    private LocalDate birthday;
+
 }

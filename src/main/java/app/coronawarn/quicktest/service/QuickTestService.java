@@ -135,6 +135,7 @@ public class QuickTestService {
         quicktest.setCity(quickTestPersonalData.getCity());
         quicktest.setTestBrandId(quickTestPersonalData.getTestBrandId());
         quicktest.setTestBrandName(quickTestPersonalData.getTestBrandName());
+        quicktest.setBirthday(quickTestPersonalData.getBirthday());
         quickTestRepository.saveAndFlush(quicktest);
 
 

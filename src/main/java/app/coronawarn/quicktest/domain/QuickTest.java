@@ -129,6 +129,10 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testBrandName;
 
+    @Column(name = "birthday")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String birthday;
+
     @PrePersist
     private void onCreate() {
         createdAt = LocalDateTime.now();

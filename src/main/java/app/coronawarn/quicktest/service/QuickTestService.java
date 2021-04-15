@@ -96,12 +96,17 @@ public class QuickTestService {
 
         quicktest.setTestResult(result);
         quickTestRepository.saveAndFlush(quicktest);
-        try {
-            sendResultToTestResultServer(quicktest.getHashedGuid(), result);
-        } catch (TestResultServiceException e) {
-            log.error("Failed to send updated TestResult on TestResult-Server", e);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+
+        if (quicktest.getConfirmationCwa()) {
+            log.debug("Sending TestResult to TestResult-Server");
+            try {
+                sendResultToTestResultServer(quicktest.getHashedGuid(), result);
+            } catch (TestResultServiceException e) {
+                log.error("Failed to send updated TestResult on TestResult-Server", e);
+                throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+            }
         }
+
         log.info("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
     }
 
@@ -133,14 +138,17 @@ public class QuickTestService {
         quickTestRepository.saveAndFlush(quicktest);
 
 
-        log.debug("Sending TestResult to TestResult-Server");
-        try {
-            sendResultToTestResultServer(quicktest.getHashedGuid(), quicktest.getTestResult());
-        } catch (TestResultServiceException e) {
-            // TODO reset it not available
-            log.error("Failed to send TestResult to TestResult-Server", e);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+        if (quickTestPersonalData.getConfirmationCwa()) {
+            log.debug("Sending TestResult to TestResult-Server");
+            try {
+                sendResultToTestResultServer(quicktest.getHashedGuid(), quicktest.getTestResult());
+            } catch (TestResultServiceException e) {
+                log.error("Failed to send TestResult to TestResult-Server", e);
+                throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+            }
         }
+
+        log.info("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
 
     }
 
@@ -154,7 +162,7 @@ public class QuickTestService {
         return quicktest;
     }
 
-    private void sendResultToTestResultServer(String hashedGuid, int result) throws TestResultServiceException {
+    private void sendResultToTestResultServer(String hashedGuid, short result) throws TestResultServiceException {
         QuickTestResult quickTestResult = new QuickTestResult();
         quickTestResult.setId(hashedGuid);
         quickTestResult.setResult(result);

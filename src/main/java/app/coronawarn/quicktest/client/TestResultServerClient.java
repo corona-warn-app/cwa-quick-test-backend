@@ -20,11 +20,14 @@
 
 package app.coronawarn.quicktest.client;
 
-import app.coronawarn.quicktest.model.QuickTestResult;
+import app.coronawarn.quicktest.model.QuickTestResultList;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @FeignClient(
     name = "testResultServerClient",
@@ -36,12 +39,11 @@ public interface TestResultServerClient {
     /**
      * Insert or update the quick test results.
      *
-     * @param quickTestResult for TestResult
-     * @return TestResult from server
+     * @param quickTestResults for QuickTestResults
      */
     @PostMapping(value = "/api/v1/quicktest/results",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    ResponseEntity<Void> result(QuickTestResult quickTestResult);
+    ResponseEntity<Void> results(@RequestBody @NotNull @Valid QuickTestResultList quickTestResults);
 
 }

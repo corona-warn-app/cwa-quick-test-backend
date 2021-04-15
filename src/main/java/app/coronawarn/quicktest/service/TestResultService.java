@@ -22,7 +22,10 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
 import app.coronawarn.quicktest.model.QuickTestResult;
+import app.coronawarn.quicktest.model.QuickTestResultList;
 import feign.FeignException;
+import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -42,7 +45,9 @@ public class TestResultService {
      */
     public void createOrUpdateTestResult(QuickTestResult quickTestResult) throws TestResultServiceException {
         try {
-            if (testResultServerClient.result(quickTestResult).getStatusCode() != HttpStatus.CREATED) {
+            QuickTestResultList resultList = new QuickTestResultList();
+            resultList.setTestResults(Collections.singletonList(quickTestResult));
+            if (testResultServerClient.results(resultList).getStatusCode() != HttpStatus.NO_CONTENT) {
                 log.error("Failed to update testresult");
                 throw new TestResultServiceException(TestResultServiceException.Reason.SERVER_ERROR);
             }

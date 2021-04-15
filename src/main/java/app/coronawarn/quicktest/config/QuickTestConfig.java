@@ -15,4 +15,6 @@ public class QuickTestConfig {
     private String tenantIdKey;
     private String tenantPointOfCareIdKey;
 
+    private String dbEncryptionPassword;
+
 }

@@ -52,12 +52,12 @@ import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 public class DbEncryptionTest {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
-    private static final String dbEncryptionPassword = System.getenv("quicktest_dbencryption_password");
     private final Cipher cipher = AesBytesEncryptor.CipherAlgorithm.CBC.createCipher();
-    private final Key key = new SecretKeySpec(dbEncryptionPassword.getBytes(), "AES");
+    private final Key key = new SecretKeySpec("abcdefghjklmnopq".getBytes(StandardCharsets.UTF_8), "AES");
 
     @Autowired
     QuickTestRepository quickTestRepository;
+
     @Autowired
     EntityManager entityManager;
 
@@ -65,7 +65,6 @@ public class DbEncryptionTest {
     @AfterEach
     public void setup() {
         quickTestRepository.deleteAll();
-
     }
 
     @Test

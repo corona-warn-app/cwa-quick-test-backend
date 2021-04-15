@@ -20,11 +20,12 @@
 
 package app.coronawarn.quicktest.model;
 
-import app.coronawarn.quicktest.validation.ValidName;
 import app.coronawarn.quicktest.validation.ValidPhoneNumber;
+import app.coronawarn.quicktest.validation.ValidZipCode;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Schema(
@@ -40,42 +41,47 @@ public class QuickTestPersonalDataRequest {
     private Boolean insuranceBillStatus;
 
     @NotNull
+    @Size(min = 1, max = 15)
     private String testBrandId;
 
+    @Size(max = 79)
     private String testBrandName;
 
-    @ValidName
     @NotNull
+    @Size(min = 1, max = 79)
     private String lastName;
 
-    @ValidName
     @NotNull
+    @Size(min = 1, max = 79)
     private String firstName;
 
     @Email
     @NotNull
+    @Size(min = 5, max = 255)
     private String email;
 
     @ValidPhoneNumber
     @NotNull
+    @Size(min = 1, max = 79)
     private String phoneNumber;
 
     @NotNull
     private Sex sex;
 
-    // TODO
     @NotNull
+    @Size(min = 1, max = 255)
     private String street;
 
-    // TODO
     @NotNull
+    @Size(min = 1, max = 15)
     private String houseNumber;
 
-    // TODO
+    @ValidZipCode
     @NotNull
+    @Size(min = 5, max = 5)
     private String zipCode;
 
-    // TODO
     @NotNull
+    @Size(min = 1, max = 255)
     private String city;
 }

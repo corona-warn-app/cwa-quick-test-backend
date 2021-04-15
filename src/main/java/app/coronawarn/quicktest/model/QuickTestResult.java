@@ -20,12 +20,12 @@
 
 package app.coronawarn.quicktest.model;
 
+import app.coronawarn.quicktest.validation.ValidGuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -39,13 +39,13 @@ import lombok.ToString;
 @Getter
 @ToString
 @EqualsAndHashCode
-public class TestResult {
+public class QuickTestResult {
 
     /**
      * Hash (SHA256) of test result id (aka QR-Code, GUID) encoded as hex string.
      */
     @NotBlank
-    @Pattern(regexp = "^([A-Fa-f0-9]){64}$")
+    @ValidGuid
     private String id;
 
     /**
@@ -56,17 +56,17 @@ public class TestResult {
      * 8: Invalid
      * 9: Redeemed
      */
-    @Min(1)
-    @Max(3)
+    @Min(5)
+    @Max(9)
     @NotNull
-    private Integer result;
+    private Short result;
 
-    public TestResult setId(String id) {
+    public QuickTestResult setId(String id) {
         this.id = id;
         return this;
     }
 
-    public TestResult setResult(Integer result) {
+    public QuickTestResult setResult(Short result) {
         this.result = result;
         return this;
     }

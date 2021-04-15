@@ -27,10 +27,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Schema(
-    description = "The quick test update ."
+    description = "The quick test update."
 )
 @Data
-@AllArgsConstructor
 public class QuickTestUpdateRequest {
     /**
      * The test result.
@@ -42,6 +41,6 @@ public class QuickTestUpdateRequest {
      */
     @Min(6)
     @Max(8)
-    private final int result;
+    private short result;
 
 }

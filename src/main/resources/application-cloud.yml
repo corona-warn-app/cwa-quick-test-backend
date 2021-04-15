@@ -7,6 +7,18 @@ spring:
     url: ${DB_ARCHIVE_JDBC_URL}
   jpa:
     database-platform: ${DB_HIBERNATE_DIALECT}
+  mail:
+    host: ${SMTP_SERVER_HOST}
+    port: ${SMTP_SERVER_PORT}
+    username: ${SMTP_SERVER_USERNAME}
+    password: ${SMTP_SERVER_PASSWORD}
+    from: ${SMTP_SERVER_FROM}
+    test-connection: false
+    protocol: smtp
+    properties:
+      "[mail.smtp.auth]": true
+      "[mail.smtp.starttls.enable]": true
+      "[mail.smtp.starttls.required]": true
 
 management:
   server:
@@ -34,6 +46,9 @@ management:
     export:
       prometheus:
         enabled: true
+  health:
+    mail:
+      enabled: off
 
 server:
   ssl:
@@ -47,6 +62,11 @@ server:
       - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
       - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
       - TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384
+  error:
+    include-stacktrace: never
+    include-exception: false
+    include-binding-errors: never
+    include-message: never
 testresultserver:
   enabled: false
   oneWay: false

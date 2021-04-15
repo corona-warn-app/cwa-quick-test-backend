@@ -89,10 +89,13 @@ public class QuickTestService {
      * @param result    the result of the quick test.
      */
     @Transactional(rollbackOn = QuickTestServiceException.class)
-    public void updateQuickTest(Map<String, String> ids, String shortHash, int result)
+    public void updateQuickTest(Map<String, String> ids, String shortHash, short result)
         throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
+
+        quicktest.setTestResult(result);
+        quickTestRepository.saveAndFlush(quicktest);
         try {
             sendResultToTestResultServer(quicktest.getHashedGuid(), result);
         } catch (TestResultServiceException e) {

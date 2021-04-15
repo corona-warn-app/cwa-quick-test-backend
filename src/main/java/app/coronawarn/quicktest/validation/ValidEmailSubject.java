@@ -1,7 +1,6 @@
 package app.coronawarn.quicktest.validation;
 
-
-import app.coronawarn.quicktest.validation.validators.NameValidator;
+import app.coronawarn.quicktest.validation.validators.EmailSubjectValidator;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -10,19 +9,19 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * Validation annotation for name.
+ * Validation annotation for email text.
  */
+@Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.FIELD, ElementType.ANNOTATION_TYPE})
-@Constraint(validatedBy = NameValidator.class)
-public @interface ValidName {
+@Constraint(validatedBy = EmailSubjectValidator.class)
+public @interface ValidEmailSubject {
 
     /**
-     * Get the error message for an invalid name.
+     * Get the error message for an invalid email subject.
      *
      * @return clear text error message
      */
-    String message() default "Invalid name";
+    String message() default "Invalid email text";
 
     /**
      * Default groups() method.

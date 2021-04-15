@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
 public class GuidValidator implements ConstraintValidator<ValidGuid, String> {
-    private static final String GUID_PATTERN = "^([A-Fa-f0-9]{2}){32}$";
+    private static final Pattern GUID_PATTERN = Pattern.compile("^([A-Fa-f0-9]{64})$");
 
     @Override
     public boolean isValid(String guid, ConstraintValidatorContext context) {
@@ -20,8 +20,7 @@ public class GuidValidator implements ConstraintValidator<ValidGuid, String> {
     }
 
     private boolean validateGuid(String guid) {
-        Pattern pattern = Pattern.compile(GUID_PATTERN);
-        Matcher matcher = pattern.matcher(guid);
+        Matcher matcher = GUID_PATTERN.matcher(guid);
         return matcher.matches();
     }
 }

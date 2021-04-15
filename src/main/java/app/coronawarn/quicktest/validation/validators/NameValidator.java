@@ -8,8 +8,8 @@ import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
 public class NameValidator implements ConstraintValidator<ValidName, String> {
-    private static final String NAME_PATTERN = "^[^- '](?=(?![A-Z]?[A-Z]))(?=(?![a-z]+[A-Z]))"
-        + "(?=(?!.*[A-Z][A-Z]))(?=(?!.*[- '][- '.]))(?=(?!.*[.][-'.]))[A-Za-z- '.]{2,64}$";
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[^- '](?=(?![A-Z]?[A-Z]))(?=(?![a-z]+[A-Z]))"
+            + "(?=(?!.*[A-Z][A-Z]))(?=(?!.*[- '][- '.]))(?=(?!.*[.][-'.]))[A-Za-z- '.]{2,79}$");
 
     @Override
     public boolean isValid(String name, ConstraintValidatorContext context) {
@@ -21,8 +21,7 @@ public class NameValidator implements ConstraintValidator<ValidName, String> {
     }
 
     private boolean validateName(String name) {
-        Pattern pattern = Pattern.compile(NameValidator.NAME_PATTERN);
-        Matcher matcher = pattern.matcher(name);
+        Matcher matcher = NAME_PATTERN.matcher(name);
         return matcher.matches();
     }
 }

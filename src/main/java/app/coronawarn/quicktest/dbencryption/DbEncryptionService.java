@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.dbencryption;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -33,12 +34,14 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
+import org.springframework.stereotype.Service;
 
 @Slf4j
+@Configuration
 public class DbEncryptionService {
 
-    private static final String PASSWORD_PROPERTY_NAME = "quicktest_dbencryption_password";
     private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static DbEncryptionService instance;
     private final Cipher cipher;
@@ -48,12 +51,9 @@ public class DbEncryptionService {
      * Constructor for DbEncryptionService.
      * Initializes Cipher with ciphersuite configured in application properties.
      */
-    private DbEncryptionService() {
+    public DbEncryptionService(QuickTestConfig quickTestConfig) {
         cipher = AesBytesEncryptor.CipherAlgorithm.CBC.createCipher();
-
-        String dbEncryptionPassword = System.getenv().containsKey(PASSWORD_PROPERTY_NAME)
-            ? System.getenv(PASSWORD_PROPERTY_NAME)
-            : System.getProperty(PASSWORD_PROPERTY_NAME);
+        String dbEncryptionPassword = quickTestConfig.getDbEncryptionPassword();
 
         if (dbEncryptionPassword != null) {
             int passwordLength = dbEncryptionPassword.length();
@@ -67,6 +67,8 @@ public class DbEncryptionService {
         } else {
             throw new ValidationException("DB encryption password must be set!");
         }
+
+        DbEncryptionService.instance = this;
     }
 
     /**
@@ -75,10 +77,6 @@ public class DbEncryptionService {
      * @return The DbEncryptionService instance
      */
     public static DbEncryptionService getInstance() {
-        if (DbEncryptionService.instance == null) {
-            DbEncryptionService.instance = new DbEncryptionService();
-        }
-
         return instance;
     }
 

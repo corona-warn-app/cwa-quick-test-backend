@@ -18,9 +18,22 @@ spring:
     url: jdbc:h2:mem:quicktest-archive
     username: sa
     password: ''
+  mail:
+    host:
+    port:
+    username:
+    password:
+    from:
+    test-connection: false
+    protocol: smtp
+    properties:
+      "[mail.smtp.auth]": true
+      "[mail.smtp.starttls.enable]": true
+      "[mail.smtp.starttls.required]": true
+      "[mail.smtp.ssl.trust]": "*"
 
 cwa-testresult-server:
-  url: http://localhost:1234
+  url: http://localhost:8080
 
 keycloak:
   auth-server-url:
@@ -31,10 +44,17 @@ keycloak:
 
 server:
   port: 8093
+  error:
+    include-stacktrace: always
+    include-exception: true
+    include-binding-errors: always
+    include-message: always
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   tenantPointOfCareIdKey: pocId
+  db-encryption-password: abcdefghjklmnopq
+
 testresultserver:
   enabled: false
   oneWay: false
@@ -44,3 +64,8 @@ testresultserver:
   keyStorePassword: changeit
   trustStorePath: classpath:truststore.jks
   trustStorePassword: changeit
+
+management:
+  health:
+    mail:
+      enabled: off

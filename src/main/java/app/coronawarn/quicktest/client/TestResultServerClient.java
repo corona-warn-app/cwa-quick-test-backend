@@ -20,9 +20,7 @@
 
 package app.coronawarn.quicktest.client;
 
-import app.coronawarn.quicktest.model.HashedGuid;
-import app.coronawarn.quicktest.model.TestResult;
-import app.coronawarn.quicktest.model.TestResultList;
+import app.coronawarn.quicktest.model.QuickTestResultList;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -34,31 +32,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(
     name = "testResultServerClient",
     url = "${cwa-testresult-server.url}",
-    configuration = TestResultServerClientConfig.class)
+    configuration = TestResultServerClientConfig.class
+)
 public interface TestResultServerClient {
 
     /**
-     * This method gets a testResult from the LabServer.
+     * Insert or update the quick test results.
      *
-     * @param guid for TestResult
-     * @return TestResult from server
+     * @param quickTestResults for QuickTestResults
      */
-    @PostMapping(value = "/api/v1/app/result",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
+    @PostMapping(value = "/api/v1/quicktest/results",
+        consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    TestResult result(HashedGuid guid);
+    ResponseEntity<Void> results(@RequestBody @NotNull @Valid QuickTestResultList quickTestResults);
 
-    /**
-     * Insert or update the test results.
-     *
-     * @param list the test result list request
-     * @return the response
-     */
-    @PostMapping(
-        value = "/api/v1/lab/results",
-        consumes = MediaType.APPLICATION_JSON_VALUE,
-        produces = MediaType.APPLICATION_JSON_VALUE
-    )
-    ResponseEntity<?> results(@RequestBody @NotNull @Valid TestResultList list);
 }

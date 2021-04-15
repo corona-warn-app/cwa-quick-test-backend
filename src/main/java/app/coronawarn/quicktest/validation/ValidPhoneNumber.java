@@ -24,12 +24,13 @@ public @interface ValidPhoneNumber {
     String message() default "Invalid phone number";
 
     /**
-     * Validator does not support validation groups.
+     * Default groups() method.
      */
     Class<?>[] groups() default {};
 
     /**
-     * Validator does not support any payload.
+     * Default payload() method.
      */
     Class<? extends Payload>[] payload() default {};
+
 }

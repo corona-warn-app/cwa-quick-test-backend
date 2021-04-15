@@ -1,4 +1,9 @@
 spring:
+  mail:
+    protocol: smtp
+    host: example.localdomain
+    port: 25
+    from:
   profiles:
     active: test
   liquibase:
@@ -27,7 +32,9 @@ keycloak:
 
 server:
   port: 8093
+
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   tenantPointOfCareIdKey: pocId
+  dbEncryptionPassword: abcdefghjklmnopq

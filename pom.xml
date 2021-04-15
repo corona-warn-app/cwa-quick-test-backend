@@ -132,7 +132,11 @@
             <artifactId>modelmapper-spring</artifactId>
             <version>2.4.0</version>
         </dependency>
-      
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
         <!-- DB drivers -->
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -206,11 +210,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <environmentVariables>
-                        <quicktest_dbencryption_password>abcdefghjklmnopq</quicktest_dbencryption_password>
-                    </environmentVariables>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

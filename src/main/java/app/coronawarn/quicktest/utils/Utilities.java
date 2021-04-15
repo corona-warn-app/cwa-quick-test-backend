@@ -48,7 +48,7 @@ public class Utilities {
             }
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
-            && !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
+            || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
             log.debug("Ids not found in User-Token");
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }

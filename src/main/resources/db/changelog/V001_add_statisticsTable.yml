@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: create-archive-table
+      id: create-statistics-table
       author: mbaude
       changes:
         - createTable:

@@ -36,6 +36,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,7 +67,7 @@ public class QuickTestStatisticsController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Get statistic data"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
-    @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<QuickTestStatisticsResponse> getQuicktestStatistics() {
         try {

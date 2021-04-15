@@ -44,31 +44,26 @@ public class QuickTestStatistics {
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @Column(name = "poc_id")
+    private String pocId;
+    @Column(name = "tenant_id")
+    private String tenantId;
+    @Column(name = "created_at")
+    private LocalDate createdAt;
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+    @Column(name = "total_test_count")
+    private Integer totalTestCount;
+    @Column(name = "positive_test_count")
+    private Integer positiveTestCount;
 
     public QuickTestStatistics(String pocId, String tenantId) {
         this.pocId = pocId;
         this.tenantId = tenantId;
     }
-
-    @Column(name = "poc_id")
-    private String pocId;
-
-    @Column(name = "tenant_id")
-    private String tenantId;
-
-    @Column(name = "created_at")
-    private LocalDate createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
-
-    @Column(name = "total_test_count")
-    private Integer totalTestCount;
-
-    @Column(name = "positive_test_count")
-    private Integer positiveTestCount;
 
     @PrePersist
     private void onCreate() {

@@ -1,6 +1,5 @@
 package app.coronawarn.quicktest.config;
 
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.SneakyThrows;
@@ -24,6 +23,7 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
     @SneakyThrows
     @Override
     public KeycloakDeployment resolve(HttpFacade.Request request) {
+        AdapterConfig tenantConfig = this.adapterConfig;
         JSONObject jwtBodyAsJson = null;
         String realm = null;
         if (
@@ -47,12 +47,9 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
             realm = issuerUriElements[issuerUriElements.length - 1];
         }
         if (realm != null) {
-            AdapterConfig tenantConfig = this.adapterConfig;
             tenantConfig.setRealm(realm);
-            return KeycloakDeploymentBuilder.build(tenantConfig);
-        } else {
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
+        return KeycloakDeploymentBuilder.build(tenantConfig);
     }
 
 }

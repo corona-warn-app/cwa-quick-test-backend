@@ -112,7 +112,11 @@ public class QuickTestCreationController {
         try {
             quickTestService.updateQuickTest(
                 utilities.getIdsFromToken(),
-                shortHash, quickTestUpdateRequest.getResult());
+                shortHash,
+                quickTestUpdateRequest.getResult(),
+                quickTestUpdateRequest.getTestBrandId(),
+                quickTestUpdateRequest.getTestBrandName()
+            );
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

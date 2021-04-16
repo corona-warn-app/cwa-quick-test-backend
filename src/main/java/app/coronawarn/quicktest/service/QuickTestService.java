@@ -22,8 +22,17 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.domain.QuickTestStatistics;
 import app.coronawarn.quicktest.model.QuickTestResult;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
+import app.coronawarn.quicktest.utils.PdfGenerator;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -40,6 +49,8 @@ public class QuickTestService {
     private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
+    private final QuickTestArchiveRepository quickTestArchiveRepository;
+    private final QuickTestStatisticsRepository quickTestStatisticsRepository;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -57,10 +68,13 @@ public class QuickTestService {
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
 
         Optional<QuickTest> conflictingQuickTestByHashed =
-            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(hashedGuid,
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
+            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash, hashedGuid);
 
-        if (conflictingQuickTestByHashed.isPresent()) {
+        Optional<QuickTestArchive> conflictingQuickTestArchiveByHashed =
+            quickTestArchiveRepository.findByHashedGuid(hashedGuid);
+
+        if (conflictingQuickTestByHashed.isPresent() || conflictingQuickTestArchiveByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }
@@ -89,15 +103,43 @@ public class QuickTestService {
      * @param result    the result of the quick test.
      */
     @Transactional(rollbackOn = QuickTestServiceException.class)
-    public void updateQuickTest(Map<String, String> ids, String shortHash, short result)
-        throws QuickTestServiceException {
+    public void updateQuickTest(Map<String, String> ids, String shortHash, short result, String testBrandId,
+                                String testBrandName) throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
 
         quicktest.setTestResult(result);
+        quicktest.setTestBrandId(testBrandId);
+        quicktest.setTestBrandName(testBrandName);
         quickTestRepository.saveAndFlush(quicktest);
 
-        if (quicktest.getConfirmationCwa()) {
+        addStatistics(quicktest);
+        byte[] pdf;
+        try {
+            pdf = createPdf(quicktest);
+        } catch (IOException e) {
+            log.error("generating PDF failed. Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+        }
+        try {
+            quickTestArchiveRepository.save(mappingQuickTestToQuickTestAchive(quicktest, pdf));
+            log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
+                    quicktest.getPocId(), quicktest.getShortHashedGuid());
+        } catch (IOException e) {
+            log.error("Could not read pdf. createNewQuickTestArchive failed. IO Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+        }
+        try {
+            quickTestRepository.deleteById(quicktest.getHashedGuid());
+            log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
+                    quicktest.getPocId(), quicktest.getShortHashedGuid());
+        } catch (Exception e) {
+            log.error("createNewQuickTestArchive failed. Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+        }
+
+        Boolean confirmationCwa = quicktest.getConfirmationCwa();
+        if (confirmationCwa != null && confirmationCwa) {
             log.debug("Sending TestResult to TestResult-Server");
             try {
                 sendResultToTestResultServer(quicktest.getHashedGuid(), result);
@@ -133,8 +175,7 @@ public class QuickTestService {
         quicktest.setHouseNumber(quickTestPersonalData.getHouseNumber());
         quicktest.setZipCode(quickTestPersonalData.getZipCode());
         quicktest.setCity(quickTestPersonalData.getCity());
-        quicktest.setTestBrandId(quickTestPersonalData.getTestBrandId());
-        quicktest.setTestBrandName(quickTestPersonalData.getTestBrandName());
+        quicktest.setBirthday(quickTestPersonalData.getBirthday());
         quickTestRepository.saveAndFlush(quicktest);
 
 
@@ -152,6 +193,47 @@ public class QuickTestService {
 
     }
 
+    @Transactional
+    protected void addStatistics(QuickTest quickTest) {
+        if (quickTestStatisticsRepository.findByPocIdAndCreatedAt(quickTest.getPocId(), LocalDate.now()).isEmpty()) {
+            quickTestStatisticsRepository.save(new QuickTestStatistics(quickTest.getPocId(), quickTest.getTenantId()));
+            log.debug("New QuickTestStatistics created for poc {}", quickTest.getPocId());
+        }
+        if (quickTest.getTestResult() == 7) {
+            quickTestStatisticsRepository.incrementPositiveAndTotalTestCount(quickTest.getPocId(), LocalDate.now());
+        } else {
+            quickTestStatisticsRepository.incrementTotalTestCount(quickTest.getPocId(), LocalDate.now());
+        }
+    }
+
+    private QuickTestArchive mappingQuickTestToQuickTestAchive(
+            QuickTest quickTest, byte[] pdf) throws IOException {
+        QuickTestArchive quickTestArchive = new QuickTestArchive();
+        quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
+        quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
+        quickTestArchive.setConfirmationCwa(quickTest.getConfirmationCwa());
+        quickTestArchive.setCreatedAt(quickTest.getCreatedAt());
+        quickTestArchive.setUpdatedAt(quickTest.getUpdatedAt());
+        quickTestArchive.setTenantId(quickTest.getTenantId());
+        quickTestArchive.setPocId(quickTest.getPocId());
+        quickTestArchive.setTestResult(quickTest.getTestResult());
+        quickTestArchive.setInsuranceBillStatus(quickTest.getInsuranceBillStatus());
+        quickTestArchive.setFirstName(quickTest.getFirstName());
+        quickTestArchive.setLastName(quickTest.getLastName());
+        quickTestArchive.setBirthday(quickTest.getBirthday());
+        quickTestArchive.setEmail(quickTest.getEmail());
+        quickTestArchive.setPhoneNumber(quickTest.getPhoneNumber());
+        quickTestArchive.setSex(quickTest.getSex());
+        quickTestArchive.setStreet(quickTest.getStreet());
+        quickTestArchive.setHouseNumber(quickTest.getHouseNumber());
+        quickTestArchive.setZipCode(quickTest.getZipCode());
+        quickTestArchive.setCity(quickTest.getCity());
+        quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
+        quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
+        quickTestArchive.setPdf(pdf);
+        return quickTestArchive;
+    }
+
     private QuickTest getQuickTest(String pocId, String shortHash) throws QuickTestServiceException {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
         QuickTest quicktest = quickTestRepository.findByPocIdAndShortHashedGuid(pocId, shortHash);
@@ -167,5 +249,12 @@ public class QuickTestService {
         quickTestResult.setId(hashedGuid);
         quickTestResult.setResult(result);
         testResultService.createOrUpdateTestResult(quickTestResult);
+    }
+
+    private byte[] createPdf(QuickTest quicktest) throws IOException {
+        // TODO change to real data from keycloak
+        PdfGenerator pdf = new PdfGenerator("Point of Care Teststelle", "Augustinweg", "11", "42275",
+                "Wuppertal", "0202101010", "Dr. Bad th Mill er", quicktest);
+        return pdf.get().toByteArray();
     }
 }

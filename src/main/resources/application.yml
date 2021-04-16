@@ -37,7 +37,7 @@ cwa-testresult-server:
 
 keycloak:
   auth-server-url:
-  realm: c19quicktest
+  realm:
   resource: quick-test-portal
   public-client: true
   bearer-only: true

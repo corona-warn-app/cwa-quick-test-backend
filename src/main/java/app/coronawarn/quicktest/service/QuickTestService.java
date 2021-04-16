@@ -195,7 +195,7 @@ public class QuickTestService {
 
     @Transactional
     protected void addStatistics(QuickTest quickTest) {
-        if (quickTestStatisticsRepository.findByPocIdAndDate(quickTest.getPocId(), LocalDate.now()) == null) {
+        if (quickTestStatisticsRepository.findByPocIdAndCreatedAt(quickTest.getPocId(), LocalDate.now()).isEmpty()) {
             quickTestStatisticsRepository.save(new QuickTestStatistics(quickTest.getPocId(), quickTest.getTenantId()));
             log.debug("New QuickTestStatistics created for poc {}", quickTest.getPocId());
         }

@@ -43,6 +43,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -70,10 +71,10 @@ public class QuickTestArchiveController {
       @ApiResponse(responseCode = "200", description = "PDF found"),
       @ApiResponse(responseCode = "404", description = "Quicktest not found"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
-    @RequestMapping(path = "/pdf", method = RequestMethod.GET)
+    @RequestMapping(path = "/{hashedGuid}/pdf", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<byte[]> createQuickTestArchive(
-            @RequestParam String hashedGuid) {
+            @PathVariable String hashedGuid) {
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""

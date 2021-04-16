@@ -71,7 +71,10 @@ public class QuickTestService {
             quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash, hashedGuid);
 
-        if (conflictingQuickTestByHashed.isPresent()) {
+        Optional<QuickTestArchive> conflictingQuickTestArchiveByHashed =
+            quickTestArchiveRepository.findByHashedGuid(hashedGuid);
+
+        if (conflictingQuickTestByHashed.isPresent() || conflictingQuickTestArchiveByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }

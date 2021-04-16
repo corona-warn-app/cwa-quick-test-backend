@@ -115,10 +115,6 @@ public class QuickTestService {
         byte[] pdf;
         try {
             pdf = createPdf(quicktest);
-            // TODO remove after ready (creates the pdf in local system)
-            OutputStream out = new FileOutputStream("testPdf.pdf");
-            out.write(pdf);
-            out.close();
         } catch (IOException e) {
             log.error("generating PDF failed. Exception = {}", e.getMessage());
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
@@ -256,7 +252,7 @@ public class QuickTestService {
     }
 
     private byte[] createPdf(QuickTest quicktest) throws IOException {
-        // TODO change to real data
+        // TODO change to real data from keycloak
         PdfGenerator pdf = new PdfGenerator("Point of Care Teststelle", "Augustinweg", "11", "42275",
                 "Wuppertal", "0202101010", "Dr. Bad th Mill er", quicktest);
         return pdf.get().toByteArray();

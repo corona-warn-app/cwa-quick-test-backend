@@ -30,10 +30,7 @@ public class Utilities {
 
         Map<String, String> ids = new HashMap<>();
 
-        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
-            SecurityContextHolder.getContext().getAuthentication();
-
-        Principal principal = authentication != null ? (Principal) authentication.getPrincipal() : null;
+        Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
@@ -46,6 +43,9 @@ public class Utilities {
                 ids.put(quickTestConfig.getTenantPointOfCareIdKey(),
                     String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
             }
+            if (customClaims.containsKey("poc_id")) {
+                String result = customClaims.get("poc_id").toString();
+            }
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
             || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
@@ -53,5 +53,12 @@ public class Utilities {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }
         return ids;
+    }
+
+    private Principal getPrincipal() {
+        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
+            SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication != null ? (Principal) authentication.getPrincipal() : null;
     }
 }

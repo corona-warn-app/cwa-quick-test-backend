@@ -29,9 +29,7 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
@@ -91,7 +89,7 @@ public class QuickTestService {
             log.info("Created new QuickTest with hashedGUID {}", hashedGuid);
         } catch (Exception e) {
             log.error("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
         }
         return newQuickTest;
     }
@@ -119,23 +117,24 @@ public class QuickTestService {
             pdf = createPdf(quicktest);
         } catch (IOException e) {
             log.error("generating PDF failed. Exception = {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.PDF_GENERATOR);
         }
         try {
             quickTestArchiveRepository.save(mappingQuickTestToQuickTestAchive(quicktest, pdf));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                     quicktest.getPocId(), quicktest.getShortHashedGuid());
-        } catch (IOException e) {
-            log.error("Could not read pdf. createNewQuickTestArchive failed. IO Exception = {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+        } catch (Exception e) {
+            log.error("Could save quickTestArchive. updateQuickTest failed. Exception "
+                    + "= {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
         }
         try {
             quickTestRepository.deleteById(quicktest.getHashedGuid());
             log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
                     quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
-            log.error("createNewQuickTestArchive failed. Exception = {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+            log.error("updateQuickTest failed. Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.DELETE_FAILED);
         }
 
         Boolean confirmationCwa = quicktest.getConfirmationCwa();
@@ -176,7 +175,12 @@ public class QuickTestService {
         quicktest.setZipCode(quickTestPersonalData.getZipCode());
         quicktest.setCity(quickTestPersonalData.getCity());
         quicktest.setBirthday(quickTestPersonalData.getBirthday());
-        quickTestRepository.saveAndFlush(quicktest);
+        try {
+            quickTestRepository.saveAndFlush(quicktest);
+        } catch (Exception e) {
+            log.error("Could not save. updateQuickTestWithPersonalData failed. Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
+        }
 
 
         if (quickTestPersonalData.getConfirmationCwa()) {
@@ -207,7 +211,7 @@ public class QuickTestService {
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestAchive(
-            QuickTest quickTest, byte[] pdf) throws IOException {
+            QuickTest quickTest, byte[] pdf) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
         quickTestArchive.setHashedGuid(quickTest.getHashedGuid());

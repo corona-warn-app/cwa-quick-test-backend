@@ -39,6 +39,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
@@ -76,7 +77,13 @@ public class QuickTestStatisticsController {
 
             return ResponseEntity.ok(quickTestStatisticsResponse);
         } catch (QuickTestServiceException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
+        } catch (Exception e) {
+            log.error("Couldn't execute getQuicktestStatistics."
+                    + " Message: {}", e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "trying to get statistics failed");
         }
 
     }

@@ -17,6 +17,11 @@ public class QuickTestServiceException extends Exception {
         INSERT_CONFLICT,
         UPDATE_NOT_FOUND,
         TEST_RESULT_SERVER_ERROR,
-        INTERNAL_ERROR
+        INTERNAL_ERROR,
+        EMPTY_OR_NOT_FOUND,
+        SAVE_FAILED,
+        PDF_GENERATOR,
+        DELETE_FAILED;
+
     }
 }

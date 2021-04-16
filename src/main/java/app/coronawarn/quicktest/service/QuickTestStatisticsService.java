@@ -33,7 +33,7 @@ public class QuickTestStatisticsService {
             return quickTestStatisticsOptional.get();
         } else {
             log.error("Could not read statistics");
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.EMPTY_OR_NOT_FOUND);
         }
     }
 

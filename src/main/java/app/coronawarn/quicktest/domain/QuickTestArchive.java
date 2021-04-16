@@ -132,6 +132,10 @@ public class QuickTestArchive {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testBrandName;
 
+    @Column(name = "birthday")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String birthday;
+
     @Lob
     @Column(name = "pdf")
     @Convert(converter = DbEncryptionByteArrayConverter.class)

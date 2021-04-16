@@ -25,11 +25,13 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Schema(
     description = "The quick test update."
 )
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class QuickTestUpdateRequest {
     /**

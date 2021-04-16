@@ -257,9 +257,7 @@ public class QuickTestService {
     private byte[] createPdf(QuickTest quicktest) throws IOException {
         // TODO change to real data
         PdfGenerator pdf = new PdfGenerator("Point of Care Teststelle", "Augustinweg", "11", "42275",
-                "Wuppertal", "0202101010", quicktest.getFirstName(), quicktest.getLastName(),
-                quicktest.getBirthday(), quicktest.getStreet(), quicktest.getHouseNumber(),
-                quicktest.getZipCode(), quicktest.getCity(), "Dr. Bad th Mill er");
+                "Wuppertal", "0202101010", "Dr. Bad th Mill er", quicktest);
         return pdf.get().toByteArray();
     }
 }

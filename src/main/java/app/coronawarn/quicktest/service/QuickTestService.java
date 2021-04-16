@@ -103,12 +103,14 @@ public class QuickTestService {
      * @param result    the result of the quick test.
      */
     @Transactional(rollbackOn = QuickTestServiceException.class)
-    public void updateQuickTest(Map<String, String> ids, String shortHash, short result)
-            throws QuickTestServiceException {
+    public void updateQuickTest(Map<String, String> ids, String shortHash, short result, String testBrandId,
+                                String testBrandName) throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
 
         quicktest.setTestResult(result);
+        quicktest.setTestBrandId(testBrandId);
+        quicktest.setTestBrandName(testBrandName);
         quickTestRepository.saveAndFlush(quicktest);
 
         addStatistics(quicktest);
@@ -173,8 +175,6 @@ public class QuickTestService {
         quicktest.setHouseNumber(quickTestPersonalData.getHouseNumber());
         quicktest.setZipCode(quickTestPersonalData.getZipCode());
         quicktest.setCity(quickTestPersonalData.getCity());
-        quicktest.setTestBrandId(quickTestPersonalData.getTestBrandId());
-        quicktest.setTestBrandName(quickTestPersonalData.getTestBrandName());
         quicktest.setBirthday(quickTestPersonalData.getBirthday());
         quickTestRepository.saveAndFlush(quicktest);
 

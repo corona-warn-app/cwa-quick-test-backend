@@ -47,7 +47,7 @@ public class QuickTestTest {
                 "insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, " +
                 "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, " +
                 "city=oyvkpigcga, testBrandId=AT116/21, " +
-                "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal))",
+                "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal), birthday=null)",
             quickTest.toString());
     }
 

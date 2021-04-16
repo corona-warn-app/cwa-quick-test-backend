@@ -8,3 +8,8 @@ databaseChangeLog:
             columns:
               name: birthday
               type: varchar(255)
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              name: birthday
+              type: varchar(255)

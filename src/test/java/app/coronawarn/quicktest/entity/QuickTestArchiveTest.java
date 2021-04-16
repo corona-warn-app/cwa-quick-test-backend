@@ -35,18 +35,19 @@ public class QuickTestArchiveTest {
         quickTestArchive.setUpdatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
         quickTestArchive.setFirstName("Joe");
         quickTestArchive.setLastName("Miller");
+        quickTestArchive.setBirthday("01.01.1954");
         quickTestArchive.setStreet("Boe");
         quickTestArchive.setHouseNumber("11");
         quickTestArchive.setInsuranceBillStatus(Boolean.FALSE);
         quickTestArchive.setSex(Sex.DIVERSE);
         quickTestArchive.setPdf("Hello".getBytes());
-        assertEquals("QuickTestArchive(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, " +
-                "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, " +
-                "createdAt=2021-04-08T08:11:11, updatedAt=2021-04-08T08:11:12, version=null, confirmationCwa=true, " +
-                "testResult=5, insuranceBillStatus=false, " +
-                "lastName=Miller, firstName=Joe, email=test@test.test, phoneNumber=00491777777777777, " +
-                "sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, city=oyvkpigcga, testBrandId=AT116/21, " +
-                "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal), pdf=[72, 101, 108, 108, 111])",
+        assertEquals("QuickTestArchive(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybuba" +
+                        "mwnht, shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11," +
+                        " updatedAt=2021-04-08T08:11:12, version=null, confirmationCwa=true, testResult=5, " +
+                        "insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, phoneNumber" +
+                        "=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, city=oyvkpigcga," +
+                        " testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal), " +
+                        "birthday=01.01.1954, pdf=[72, 101, 108, 108, 111])",
                 quickTestArchive.toString());
     }
 

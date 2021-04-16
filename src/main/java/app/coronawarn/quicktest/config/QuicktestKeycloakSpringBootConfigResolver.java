@@ -28,8 +28,8 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
         String realm = null;
         if (
             request.getHeader("Authorization") != null
-            && request.getHeader("Authorization").split("Bearer ").length > 1
-            && request.getHeader("Authorization").split("Bearer ")[1].split("\\.").length > 1
+                && request.getHeader("Authorization").split("Bearer ").length > 1
+                && request.getHeader("Authorization").split("Bearer ")[1].split("\\.").length > 1
         ) {
             //Remove Bearer and split in three parts => take the second with the body information
             String jwtBody = request.getHeader("Authorization").split("Bearer ")[1].split("\\.")[1];
@@ -37,22 +37,20 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
             jwtBodyAsJson = new JSONObject(new String(Base64.getDecoder().decode(jwtBody),
                 StandardCharsets.UTF_8));
         }
-        if(
+        if (
             jwtBodyAsJson != null
-            && jwtBodyAsJson.get("iss") != null
-            &&  jwtBodyAsJson.get("iss").toString().split("/").length > 0)
-        {
+                && jwtBodyAsJson.get("iss") != null
+                && jwtBodyAsJson.get("iss").toString().split("/").length > 0) {
             //get issuerUri from body and split url by /
             String[] issuerUriElements = jwtBodyAsJson.get("iss").toString().split("/");
             //get last element from issuerUriElements => realm name
             realm = issuerUriElements[issuerUriElements.length - 1];
         }
-        if(realm != null) {
+        if (realm != null) {
             AdapterConfig tenantConfig = this.adapterConfig;
             tenantConfig.setRealm(realm);
             return KeycloakDeploymentBuilder.build(tenantConfig);
-        }
-        else {
+        } else {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
     }

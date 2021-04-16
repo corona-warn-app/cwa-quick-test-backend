@@ -165,7 +165,7 @@ public class QuickTestService {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
-        quicktest.setInsuranceBillStatus(quickTestPersonalData.getInsuranceBillStatus());
+        quicktest.setPrivacyAgreement(quickTestPersonalData.getPrivacyAgreement());
         quicktest.setLastName(quickTestPersonalData.getLastName());
         quicktest.setFirstName(quickTestPersonalData.getFirstName());
         quicktest.setEmail(quickTestPersonalData.getEmail());
@@ -217,7 +217,7 @@ public class QuickTestService {
         quickTestArchive.setTenantId(quickTest.getTenantId());
         quickTestArchive.setPocId(quickTest.getPocId());
         quickTestArchive.setTestResult(quickTest.getTestResult());
-        quickTestArchive.setInsuranceBillStatus(quickTest.getInsuranceBillStatus());
+        quickTestArchive.setPrivacyAgreement(quickTest.getPrivacyAgreement());
         quickTestArchive.setFirstName(quickTest.getFirstName());
         quickTestArchive.setLastName(quickTest.getLastName());
         quickTestArchive.setBirthday(quickTest.getBirthday());

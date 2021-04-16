@@ -81,9 +81,9 @@ public class QuickTest {
     @Convert(converter = DbEncryptionShortConverter.class)
     private Short testResult;
 
-    @Column(name = "insurance_bill_status")
+    @Column(name = "privacy_agreement")
     @Convert(converter = DbEncryptionBooleanConverter.class)
-    private Boolean insuranceBillStatus;
+    private Boolean privacyAgreement;
 
     @Column(name = "last_name")
     @Convert(converter = DbEncryptionStringConverter.class)

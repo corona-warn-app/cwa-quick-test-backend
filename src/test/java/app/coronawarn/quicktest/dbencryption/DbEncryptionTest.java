@@ -75,7 +75,7 @@ public class DbEncryptionTest {
         quickTest.setHashedGuid("8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         quickTest.setShortHashedGuid("8fa4dcec");
         quickTest.setConfirmationCwa(true);
-        quickTest.setInsuranceBillStatus(false);
+        quickTest.setPrivacyAgreement(false);
         quickTest.setLastName("LastName");
         quickTest.setFirstName("FirstName");
         quickTest.setEmail("email@email.email");
@@ -106,18 +106,18 @@ public class DbEncryptionTest {
 
         assertNotEquals(quickTest.getConfirmationCwa(), ((Object[]) databaseEntry)[7]);
         assertNotEquals(quickTest.getTestResult(), ((Object[]) databaseEntry)[8]);
-        assertNotEquals(quickTest.getInsuranceBillStatus(), ((Object[]) databaseEntry)[9]);
-        assertNotEquals(quickTest.getFirstName(), ((Object[]) databaseEntry)[10]);
-        assertNotEquals(quickTest.getLastName(), ((Object[]) databaseEntry)[11]);
-        assertNotEquals(quickTest.getEmail(), ((Object[]) databaseEntry)[12]);
-        assertNotEquals(quickTest.getPhoneNumber(), ((Object[]) databaseEntry)[13]);
-        assertNotEquals(quickTest.getSex(), ((Object[]) databaseEntry)[14]);
-        assertNotEquals(quickTest.getStreet(), ((Object[]) databaseEntry)[15]);
-        assertNotEquals(quickTest.getHouseNumber(), ((Object[]) databaseEntry)[16]);
-        assertNotEquals(quickTest.getZipCode(), ((Object[]) databaseEntry)[17]);
-        assertNotEquals(quickTest.getCity(), ((Object[]) databaseEntry)[18]);
-        assertNotEquals(quickTest.getTestBrandId(), ((Object[]) databaseEntry)[19]);
-        assertNotEquals(quickTest.getTestBrandName(), ((Object[]) databaseEntry)[20]);
+        assertNotEquals(quickTest.getFirstName(), ((Object[]) databaseEntry)[9]);
+        assertNotEquals(quickTest.getLastName(), ((Object[]) databaseEntry)[10]);
+        assertNotEquals(quickTest.getEmail(), ((Object[]) databaseEntry)[11]);
+        assertNotEquals(quickTest.getPhoneNumber(), ((Object[]) databaseEntry)[12]);
+        assertNotEquals(quickTest.getSex(), ((Object[]) databaseEntry)[13]);
+        assertNotEquals(quickTest.getStreet(), ((Object[]) databaseEntry)[14]);
+        assertNotEquals(quickTest.getHouseNumber(), ((Object[]) databaseEntry)[15]);
+        assertNotEquals(quickTest.getZipCode(), ((Object[]) databaseEntry)[16]);
+        assertNotEquals(quickTest.getCity(), ((Object[]) databaseEntry)[17]);
+        assertNotEquals(quickTest.getTestBrandId(), ((Object[]) databaseEntry)[18]);
+        assertNotEquals(quickTest.getTestBrandName(), ((Object[]) databaseEntry)[19]);
+        assertNotEquals(quickTest.getPrivacyAgreement(), ((Object[]) databaseEntry)[20]);
         try {
             assertEquals(quickTest.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
@@ -125,42 +125,42 @@ public class DbEncryptionTest {
             assertEquals(quickTest.getTestResult(), Short.valueOf(new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[8]))), CHARSET)));
 
-            assertEquals(quickTest.getInsuranceBillStatus(),
-                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                    String.valueOf(((Object[]) databaseEntry)[9]))), CHARSET)));
-
             assertEquals(quickTest.getFirstName(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[10]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[9]))), CHARSET));
 
             assertEquals(quickTest.getLastName(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[11]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[10]))), CHARSET));
 
             assertEquals(quickTest.getEmail(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[12]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[11]))), CHARSET));
 
             assertEquals(quickTest.getPhoneNumber(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[13]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[12]))), CHARSET));
 
             assertEquals(quickTest.getSex().name(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[14]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[13]))), CHARSET));
 
             assertEquals(quickTest.getStreet(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[15]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[14]))), CHARSET));
 
             assertEquals(quickTest.getHouseNumber(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[16]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[15]))), CHARSET));
 
             assertEquals(quickTest.getZipCode(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[17]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[16]))), CHARSET));
 
             assertEquals(quickTest.getCity(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[18]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[17]))), CHARSET));
 
             assertEquals(quickTest.getTestBrandId(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[19]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[18]))), CHARSET));
 
             assertEquals(quickTest.getTestBrandName(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET));
+                String.valueOf(((Object[]) databaseEntry)[19]))), CHARSET));
+
+            assertEquals(quickTest.getPrivacyAgreement(),
+                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET)));
 
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();

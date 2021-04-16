@@ -57,8 +57,8 @@ public class QuickTestService {
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
 
         Optional<QuickTest> conflictingQuickTestByHashed =
-            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(hashedGuid,
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
+            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash, hashedGuid);
 
         if (conflictingQuickTestByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);

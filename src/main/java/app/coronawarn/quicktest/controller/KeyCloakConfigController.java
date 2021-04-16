@@ -39,6 +39,6 @@ public class KeyCloakConfigController {
     @GetMapping(value = "keycloak.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<KeyCloakConfigFile> getKeyCloakConfig() {
         return ResponseEntity.ok(
-            new KeyCloakConfigFile(keycloakConfig.getRealm(), keycloakConfig.getAuthServerUrl()));
+            new KeyCloakConfigFile(keycloakConfig.getAuthServerUrl()));
     }
 }

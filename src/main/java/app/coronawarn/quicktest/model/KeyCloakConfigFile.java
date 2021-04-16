@@ -32,8 +32,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class KeyCloakConfigFile {
 
-    private final String realm;
-
     @JsonProperty("auth-server-url")
     private final String authServerUrl;
 

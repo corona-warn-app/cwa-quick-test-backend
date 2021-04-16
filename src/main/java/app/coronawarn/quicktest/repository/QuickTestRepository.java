@@ -30,6 +30,5 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
     QuickTest findByPocIdAndShortHashedGuid(String pocId, String shortHash);
 
-    Optional<QuickTest> findByPocIdAndShortHashedGuidOrHashedGuid(String hashedGuid, String pocId,
-                                                                         String shortHash);
+    Optional<QuickTest> findByPocIdAndShortHashedGuidOrHashedGuid(String pocId, String shortHash, String hashedGuid);
 }

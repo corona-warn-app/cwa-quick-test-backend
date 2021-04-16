@@ -9,6 +9,8 @@ import lombok.Data;
 @Data
 public class QuickTestArchiveResponse {
 
+    private String hashedGuid;
+
     private String lastName;
 
     private String firstName;

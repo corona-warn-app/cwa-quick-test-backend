@@ -26,12 +26,12 @@ public class QuickTestArchiveService {
      */
     public byte[] getPdf(String hashedGuid)
         throws QuickTestServiceException {
-        QuickTestArchive quickTestArchive = quickTestArchiveRepository.findById(hashedGuid).get();
-        if (quickTestArchive == null) {
+        Optional<QuickTestArchive> quickTestArchive = quickTestArchiveRepository.findByHashedGuid(hashedGuid);
+        if (quickTestArchive.isEmpty()) {
             log.info("Requested Quick Test with HashedGuid {} could not be found or wrong poc", hashedGuid);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.NOT_FOUND);
         }
-        return quickTestArchive.getPdf();
+        return quickTestArchive.get().getPdf();
     }
 
 

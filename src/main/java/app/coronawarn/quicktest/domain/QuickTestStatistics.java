@@ -20,8 +20,12 @@
 
 package app.coronawarn.quicktest.domain;
 
+import app.coronawarn.quicktest.utils.Utilities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -67,15 +71,16 @@ public class QuickTestStatistics {
 
     @PrePersist
     private void onCreate() {
-        createdAt = LocalDate.now();
-        updatedAt = LocalDateTime.now();
+        createdAt = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault())
+                .withZoneSameInstant(ZoneOffset.UTC).toLocalDate();
+        updatedAt = Utilities.getCurrentLocalDateTimeUtc();
         totalTestCount = 0;
         positiveTestCount = 0;
     }
 
     @PreUpdate
     private void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = Utilities.getCurrentLocalDateTimeUtc();
     }
 
 }

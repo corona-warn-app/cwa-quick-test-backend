@@ -140,7 +140,8 @@ public class QuickTestService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
 
-        if (quicktest.getConfirmationCwa()) {
+        Boolean confirmationCwa = quicktest.getConfirmationCwa();
+        if (confirmationCwa != null && confirmationCwa) {
             log.debug("Sending TestResult to TestResult-Server");
             try {
                 sendResultToTestResultServer(quicktest.getHashedGuid(), result);

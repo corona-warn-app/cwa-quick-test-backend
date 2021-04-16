@@ -42,13 +42,6 @@ public class QuickTestPersonalDataRequest {
     private Boolean insuranceBillStatus;
 
     @NotNull
-    @Size(min = 1, max = 15)
-    private String testBrandId;
-
-    @Size(max = 79)
-    private String testBrandName;
-
-    @NotNull
     @Size(min = 1, max = 79)
     private String lastName;
 

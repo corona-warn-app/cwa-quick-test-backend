@@ -8,7 +8,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SinglePageApplicationConfiguration implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/api/**");
-        registry.addViewController("/**").setViewName("forward:/index.html");
+        registry.addViewController("{_:^(?!api).*$").setViewName("forward:/index.html");
     }
 }

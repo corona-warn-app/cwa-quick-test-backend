@@ -5,3 +5,15 @@ databaseChangeLog:
   - include:
       file: changelog/V001_add_UniqueConstraints.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_add_archivTable.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_add_statisticsTable.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_add_birthdayColumn.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_add_privacyAgreeColumn.yml
+      relativeToChangelogFile: true

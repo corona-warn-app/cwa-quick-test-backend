@@ -21,18 +21,17 @@
 package app.coronawarn.quicktest.domain;
 
 import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
+import app.coronawarn.quicktest.dbencryption.DbEncryptionByteArrayConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.Sex;
-import app.coronawarn.quicktest.utils.Utilities;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.AccessLevel;
@@ -45,22 +44,25 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "quick_test")
-public class QuickTest {
+@Table(name = "quick_test_archive")
+public class QuickTestArchive {
 
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
     @Column(name = "hashed_guid")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String hashedGuid;
 
     @Column(name = "short_hashed_guid")
     private String shortHashedGuid;
 
     @Column(name = "tenant_id")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String tenantId;
 
     @Column(name = "poc_id")
+    @Convert(converter = DbEncryptionStringConverter.class)
     private String pocId;
 
     @Column(name = "created_at")
@@ -134,17 +136,8 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String birthday;
 
-    @PrePersist
-    private void onCreate() {
-        LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();
-        createdAt = now;
-        updatedAt = now;
-        testResult = 5;
-    }
-
-    @PreUpdate
-    private void onUpdate() {
-        updatedAt = Utilities.getCurrentLocalDateTimeUtc();
-    }
-
+    @Lob
+    @Column(name = "pdf")
+    @Convert(converter = DbEncryptionByteArrayConverter.class)
+    private byte[] pdf;
 }

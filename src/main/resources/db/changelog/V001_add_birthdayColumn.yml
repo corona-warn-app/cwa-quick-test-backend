@@ -1,0 +1,15 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-birthday-column
+      author: bjarne1337
+      changes:
+        - addColumn:
+            tableName: quick_test
+            columns:
+              name: birthday
+              type: varchar(255)
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              name: birthday
+              type: varchar(255)

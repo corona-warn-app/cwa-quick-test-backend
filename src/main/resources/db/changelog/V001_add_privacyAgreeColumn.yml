@@ -1,0 +1,21 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-privacy-agreement-column
+      author: bjarne1337
+      changes:
+        - dropColumn:
+            tableName: quick_test
+            columnName: insurance_bill_status
+        - addColumn:
+            tableName: quick_test
+            columns:
+              name: privacy_agreement
+              type: varchar(24)
+        - dropColumn:
+            tableName: quick_test_archive
+            columnName: insurance_bill_status
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              name: privacy_agreement
+              type: varchar(24)

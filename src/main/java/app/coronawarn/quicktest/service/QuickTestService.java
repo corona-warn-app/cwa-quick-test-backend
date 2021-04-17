@@ -22,10 +22,16 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
-import app.coronawarn.quicktest.model.TestResult;
-import app.coronawarn.quicktest.model.TestResultList;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.domain.QuickTestStatistics;
+import app.coronawarn.quicktest.model.QuickTestResult;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
-import java.util.Collections;
+import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
+import app.coronawarn.quicktest.utils.PdfGenerator;
+import app.coronawarn.quicktest.utils.Utilities;
+import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -42,6 +48,8 @@ public class QuickTestService {
     private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
+    private final QuickTestArchiveRepository quickTestArchiveRepository;
+    private final QuickTestStatisticsRepository quickTestStatisticsRepository;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -59,10 +67,13 @@ public class QuickTestService {
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
 
         Optional<QuickTest> conflictingQuickTestByHashed =
-            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(hashedGuid,
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
+            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash, hashedGuid);
 
-        if (conflictingQuickTestByHashed.isPresent()) {
+        Optional<QuickTestArchive> conflictingQuickTestArchiveByHashed =
+            quickTestArchiveRepository.findByHashedGuid(hashedGuid);
+
+        if (conflictingQuickTestByHashed.isPresent() || conflictingQuickTestArchiveByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }
@@ -90,16 +101,53 @@ public class QuickTestService {
      * @param shortHash the short-hash of the testresult to be updated
      * @param result    the result of the quick test.
      */
-    public void updateQuickTest(Map<String, String> ids, String shortHash, int result)
-        throws QuickTestServiceException {
+    @Transactional(rollbackOn = QuickTestServiceException.class)
+    public void updateQuickTest(Map<String, String> ids, String shortHash, short result, String testBrandId,
+                                String testBrandName) throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
+
+        quicktest.setTestResult(result);
+        quicktest.setTestBrandId(testBrandId);
+        quicktest.setTestBrandName(testBrandName);
+        quickTestRepository.saveAndFlush(quicktest);
+
+        addStatistics(quicktest);
+        byte[] pdf;
         try {
-            sendResultToTestResultServer(quicktest.getHashedGuid(), result);
-        } catch (Exception e) {
-            log.error("Failed to send updated TestResult on TestResult-Server", e);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+            pdf = createPdf(quicktest);
+        } catch (IOException e) {
+            log.error("generating PDF failed. Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
         }
+        try {
+            quickTestArchiveRepository.save(mappingQuickTestToQuickTestAchive(quicktest, pdf));
+            log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
+                    quicktest.getPocId(), quicktest.getShortHashedGuid());
+        } catch (IOException e) {
+            log.error("Could not read pdf. createNewQuickTestArchive failed. IO Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+        }
+        try {
+            quickTestRepository.deleteById(quicktest.getHashedGuid());
+            log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
+                    quicktest.getPocId(), quicktest.getShortHashedGuid());
+        } catch (Exception e) {
+            log.error("createNewQuickTestArchive failed. Exception = {}", e.getMessage());
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+        }
+
+        Boolean confirmationCwa = quicktest.getConfirmationCwa();
+        if (confirmationCwa != null && confirmationCwa) {
+            log.debug("Sending TestResult to TestResult-Server");
+            try {
+                sendResultToTestResultServer(quicktest.getHashedGuid(), result);
+            } catch (TestResultServiceException e) {
+                log.error("Failed to send updated TestResult on TestResult-Server", e);
+                throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+            }
+        }
+
         log.info("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
     }
 
@@ -109,13 +157,14 @@ public class QuickTestService {
      * @param shortHash             the short-hash of the testresult to be updated
      * @param quickTestPersonalData the quick test personaldata.
      */
+    @Transactional(rollbackOn = QuickTestServiceException.class)
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
         throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
-        quicktest.setInsuranceBillStatus(quickTestPersonalData.getInsuranceBillStatus());
+        quicktest.setPrivacyAgreement(quickTestPersonalData.getPrivacyAgreement());
         quicktest.setLastName(quickTestPersonalData.getLastName());
         quicktest.setFirstName(quickTestPersonalData.getFirstName());
         quicktest.setEmail(quickTestPersonalData.getEmail());
@@ -125,20 +174,64 @@ public class QuickTestService {
         quicktest.setHouseNumber(quickTestPersonalData.getHouseNumber());
         quicktest.setZipCode(quickTestPersonalData.getZipCode());
         quicktest.setCity(quickTestPersonalData.getCity());
-        quicktest.setTestBrandId(quickTestPersonalData.getTestBrandId());
-        quicktest.setTestBrandName(quickTestPersonalData.getTestBrandName());
+        quicktest.setBirthday(quickTestPersonalData.getBirthday());
         quickTestRepository.saveAndFlush(quicktest);
 
 
-        log.debug("Sending TestResult to TestResult-Server");
-        try {
-            sendResultToTestResultServer(quicktest.getHashedGuid(), quicktest.getTestResult());
-        } catch (Exception e) {
-            // TODO reset it not available
-            log.error("Failed to send TestResult to TestResult-Server", e);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+        if (quickTestPersonalData.getConfirmationCwa()) {
+            log.debug("Sending TestResult to TestResult-Server");
+            try {
+                sendResultToTestResultServer(quicktest.getHashedGuid(), quicktest.getTestResult());
+            } catch (TestResultServiceException e) {
+                log.error("Failed to send TestResult to TestResult-Server", e);
+                throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
+            }
         }
 
+        log.info("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
+
+    }
+
+    @Transactional
+    protected void addStatistics(QuickTest quickTest) {
+        LocalDate currentDate = Utilities.getCurrentLocalDateInGermany();
+        if (quickTestStatisticsRepository.findByPocIdAndCreatedAt(quickTest.getPocId(), currentDate).isEmpty()) {
+            quickTestStatisticsRepository.save(new QuickTestStatistics(quickTest.getPocId(), quickTest.getTenantId()));
+            log.debug("New QuickTestStatistics created for poc {}", quickTest.getPocId());
+        }
+        if (quickTest.getTestResult() == 7) {
+            quickTestStatisticsRepository.incrementPositiveAndTotalTestCount(quickTest.getPocId(), currentDate);
+        } else {
+            quickTestStatisticsRepository.incrementTotalTestCount(quickTest.getPocId(), currentDate);
+        }
+    }
+
+    private QuickTestArchive mappingQuickTestToQuickTestAchive(
+            QuickTest quickTest, byte[] pdf) throws IOException {
+        QuickTestArchive quickTestArchive = new QuickTestArchive();
+        quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
+        quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
+        quickTestArchive.setConfirmationCwa(quickTest.getConfirmationCwa());
+        quickTestArchive.setCreatedAt(quickTest.getCreatedAt());
+        quickTestArchive.setUpdatedAt(quickTest.getUpdatedAt());
+        quickTestArchive.setTenantId(quickTest.getTenantId());
+        quickTestArchive.setPocId(quickTest.getPocId());
+        quickTestArchive.setTestResult(quickTest.getTestResult());
+        quickTestArchive.setPrivacyAgreement(quickTest.getPrivacyAgreement());
+        quickTestArchive.setFirstName(quickTest.getFirstName());
+        quickTestArchive.setLastName(quickTest.getLastName());
+        quickTestArchive.setBirthday(quickTest.getBirthday());
+        quickTestArchive.setEmail(quickTest.getEmail());
+        quickTestArchive.setPhoneNumber(quickTest.getPhoneNumber());
+        quickTestArchive.setSex(quickTest.getSex());
+        quickTestArchive.setStreet(quickTest.getStreet());
+        quickTestArchive.setHouseNumber(quickTest.getHouseNumber());
+        quickTestArchive.setZipCode(quickTest.getZipCode());
+        quickTestArchive.setCity(quickTest.getCity());
+        quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
+        quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
+        quickTestArchive.setPdf(pdf);
+        return quickTestArchive;
     }
 
     private QuickTest getQuickTest(String pocId, String shortHash) throws QuickTestServiceException {
@@ -151,14 +244,17 @@ public class QuickTestService {
         return quicktest;
     }
 
-    private void sendResultToTestResultServer(String hashedGuid, int result) {
-        TestResult testResultObject = new TestResult();
-        testResultObject.setResult(result);
-        testResultObject.setId(hashedGuid);
+    private void sendResultToTestResultServer(String hashedGuid, short result) throws TestResultServiceException {
+        QuickTestResult quickTestResult = new QuickTestResult();
+        quickTestResult.setId(hashedGuid);
+        quickTestResult.setResult(result);
+        testResultService.createOrUpdateTestResult(quickTestResult);
+    }
 
-        TestResultList testResultList = new TestResultList();
-        testResultList.setTestResults(Collections.singletonList(testResultObject));
-
-        testResultService.updateTestResult(testResultList);
+    private byte[] createPdf(QuickTest quicktest) throws IOException {
+        // TODO change to real data from keycloak
+        PdfGenerator pdf = new PdfGenerator("Point of Care Teststelle", "Augustinweg", "11", "42275",
+                "Wuppertal", "0202101010", "Dr. Bad th Mill er", quicktest);
+        return pdf.get().toByteArray();
     }
 }

@@ -2,33 +2,20 @@ package app.coronawarn.quicktest.entity;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.Sex;
-import app.coronawarn.quicktest.utils.Generators;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @Slf4j
 @SpringBootTest
 public class QuickTestTest {
-
-    private static Validator validator;
-    private final Generators generators = new Generators();
-
-    @BeforeAll
-    public static void setUp() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
 
     @Test
     void constructorTest() {
@@ -51,47 +38,17 @@ public class QuickTestTest {
         quickTest.setLastName("Miller");
         quickTest.setStreet("Boe");
         quickTest.setHouseNumber("11");
-        quickTest.setInsuranceBillStatus(Boolean.FALSE);
+        quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         assertEquals(
             "QuickTest(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, " +
                 "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, " +
                 "updatedAt=2021-04-08T08:11:12, version=null, confirmationCwa=true, testResult=5, " +
-                "insuranceBillStatus=false, lastName=Miller, firstName=Joe, email=test@test.test, " +
+                "privacyAgreement=false, lastName=Miller, firstName=Joe, email=test@test.test, " +
                 "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, " +
                 "city=oyvkpigcga, testBrandId=AT116/21, " +
-                "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal))",
+                "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal), birthday=null)",
             quickTest.toString());
-    }
-
-    @Test
-    void checkShortHashedGuidSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setShortHashedGuid(generators.generateString(13));
-    }
-
-    @Test
-    void checkHashedGuidSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setHashedGuid(generators.generateString(65));
-    }
-
-    @Test
-    void checkTenantIdSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setTenantId(generators.generateString(260));
-    }
-
-    @Test
-    void checkPocIdSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setPocId(generators.generateString(260));
-    }
-
-    @Test
-    void checkTestResultSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setTestResult(Short.parseShort("1"));
     }
 
     @Test
@@ -133,39 +90,8 @@ public class QuickTestTest {
     void checkVersionNotHasSetter() {
         try {
             Method method = QuickTest.class.getDeclaredMethod("setVersion");
-            assertTrue(false, "setVersion method not allowed");
+           fail("setVersion method not allowed");
         } catch (NoSuchMethodException e) {
-            assertTrue(true);
         }
-    }
-
-    @Test
-    void checkEmailValidator() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setEmail(generators.generateString(13));
-    }
-
-    @Test
-    void checkPhoneNumberSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setPhoneNumber(generators.generateString(130));
-    }
-
-    @Test
-    void checkZipCodeSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setZipCode(generators.generateString(12));
-    }
-
-    @Test
-    void checkTestBrandIdSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setTestBrandId(generators.generateString(13));
-    }
-
-    @Test
-    void checkTestBrandNameSize() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setTestBrandName(generators.generateString(270));
     }
 }

@@ -8,7 +8,7 @@ import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
 public class ShortHashValidator implements ConstraintValidator<ValidShortHash, String> {
-    private static final String SHORTHASH_PATTERN = "^[A-Fa-f0-9]{8}$";
+    private static final Pattern SHORTHASH_PATTERN = Pattern.compile("^[A-Fa-f0-9]{8}$");
 
     @Override
     public boolean isValid(String shortHash, ConstraintValidatorContext context) {
@@ -20,8 +20,7 @@ public class ShortHashValidator implements ConstraintValidator<ValidShortHash, S
     }
 
     private boolean validateGuid(String shortHash) {
-        Pattern pattern = Pattern.compile(SHORTHASH_PATTERN);
-        Matcher matcher = pattern.matcher(shortHash);
+        Matcher matcher = SHORTHASH_PATTERN.matcher(shortHash);
         return matcher.matches();
     }
 }

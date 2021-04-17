@@ -1,4 +1,9 @@
 spring:
+  mail:
+    protocol: smtp
+    host: example.localdomain
+    port: 25
+    from:
   profiles:
     active: test
   liquibase:

@@ -24,12 +24,12 @@ public @interface ValidGuid {
     String message() default "Invalid guid";
 
     /**
-     * Validator does not support validation groups.
+     * Default groups() method.
      */
     Class<?>[] groups() default {};
 
     /**
-     * Validator does not support any payload.
+     * Default payload() method.
      */
     Class<? extends Payload>[] payload() default {};
 

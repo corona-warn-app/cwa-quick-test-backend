@@ -18,17 +18,16 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.repository;
+package app.coronawarn.quicktest.model;
 
-import app.coronawarn.quicktest.domain.QuickTest;
-import java.util.Optional;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
 
-@Repository
-public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
-
-    QuickTest findByPocIdAndShortHashedGuid(String pocId, String shortHash);
-
-    Optional<QuickTest> findByPocIdAndShortHashedGuidOrHashedGuid(String pocId, String shortHash, String hashedGuid);
+@Schema(
+    description = "The quick test statistics model."
+)
+@Data
+public class QuickTestStatisticsResponse {
+    private Integer totalTestCount;
+    private Integer positiveTestCount;
 }

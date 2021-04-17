@@ -3,7 +3,7 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestStatistics;
 import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
-import java.time.LocalDate;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -22,18 +22,19 @@ public class QuickTestStatisticsService {
 
     /**
      * Return statistic for QuickTest for today by pocid.
-     *
-     * @throws QuickTestServiceException if no data available.
      */
-    public QuickTestStatistics getStatistics(Map<String, String> ids) throws QuickTestServiceException {
+    public QuickTestStatistics getStatistics(Map<String, String> ids) {
         Optional<QuickTestStatistics> quickTestStatisticsOptional =
             quickTestStatisticRepository.findByPocIdAndCreatedAt(
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), LocalDate.now());
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), Utilities.getCurrentLocalDateInGermany());
         if (quickTestStatisticsOptional.isPresent()) {
             return quickTestStatisticsOptional.get();
         } else {
-            log.error("Could not read statistics");
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR);
+            log.info("Statistics not present yet. Set stats to 0");
+            QuickTestStatistics emptyStats = new QuickTestStatistics();
+            emptyStats.setTotalTestCount(0);
+            emptyStats.setPositiveTestCount(0);
+            return emptyStats;
         }
     }
 

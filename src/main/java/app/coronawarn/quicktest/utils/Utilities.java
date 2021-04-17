@@ -3,6 +3,10 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import java.security.Principal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -54,4 +58,19 @@ public class Utilities {
         }
         return ids;
     }
+
+    /**
+     * Returns current utc datetime.
+     */
+    public static LocalDateTime getCurrentLocalDateTimeUtc() {
+        return ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime();
+    }
+
+    /**
+     * Returns current date in Germany.
+     */
+    public static LocalDate getCurrentLocalDateInGermany() {
+        return ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toLocalDate();
+    }
+
 }

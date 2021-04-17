@@ -25,6 +25,7 @@ import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -81,9 +82,9 @@ public class QuickTest {
     @Convert(converter = DbEncryptionShortConverter.class)
     private Short testResult;
 
-    @Column(name = "insurance_bill_status")
+    @Column(name = "privacy_agreement")
     @Convert(converter = DbEncryptionBooleanConverter.class)
-    private Boolean insuranceBillStatus;
+    private Boolean privacyAgreement;
 
     @Column(name = "last_name")
     @Convert(converter = DbEncryptionStringConverter.class)
@@ -135,14 +136,15 @@ public class QuickTest {
 
     @PrePersist
     private void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
+        LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();
+        createdAt = now;
+        updatedAt = now;
         testResult = 5;
     }
 
     @PreUpdate
     private void onUpdate() {
-        updatedAt = LocalDateTime.now();
+        updatedAt = Utilities.getCurrentLocalDateTimeUtc();
     }
 
 }

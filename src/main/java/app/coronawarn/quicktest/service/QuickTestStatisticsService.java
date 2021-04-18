@@ -3,7 +3,7 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestStatistics;
 import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
-import java.time.LocalDate;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;

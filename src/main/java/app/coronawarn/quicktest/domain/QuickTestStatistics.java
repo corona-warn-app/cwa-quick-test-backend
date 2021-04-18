@@ -71,8 +71,7 @@ public class QuickTestStatistics {
 
     @PrePersist
     private void onCreate() {
-        createdAt = ZonedDateTime.of(LocalDateTime.now(), ZoneId.systemDefault())
-                .withZoneSameInstant(ZoneOffset.UTC).toLocalDate();
+        createdAt = Utilities.getCurrentLocalDateInGermany();
         updatedAt = Utilities.getCurrentLocalDateTimeUtc();
         totalTestCount = 0;
         positiveTestCount = 0;

@@ -53,6 +53,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
@@ -89,13 +90,16 @@ public class QuickTestArchiveController {
                     .body(quickTestArchiveService.getPdf(hashedGuid));
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.NOT_FOUND) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Quicktest with requested ID not found");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, "trying to get pdf failed");
             }
         } catch (Exception e) {
             log.error("Couldn't prepare stored pdf for download. Message: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "trying to get pdf failed");
         }
     }
 
@@ -134,7 +138,10 @@ public class QuickTestArchiveController {
             response.setQuickTestArchives(quickTestArchiveResponses);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."
+                    + " Message: {}", e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "trying to find quicktests failed");
         }
     }
 

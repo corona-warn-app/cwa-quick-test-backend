@@ -7,7 +7,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +27,20 @@ public class Utilities {
     private final QuickTestConfig quickTestConfig;
 
     /**
+     * Returns current utc datetime.
+     */
+    public static LocalDateTime getCurrentLocalDateTimeUtc() {
+        return ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime();
+    }
+
+    /**
+     * Returns current date in Germany.
+     */
+    public static LocalDate getCurrentLocalDateInGermany() {
+        return ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toLocalDate();
+    }
+
+    /**
      * Get tenantID and pocID from Token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
@@ -33,11 +49,7 @@ public class Utilities {
     public Map<String, String> getIdsFromToken() throws QuickTestServiceException {
 
         Map<String, String> ids = new HashMap<>();
-
-        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
-            SecurityContextHolder.getContext().getAuthentication();
-
-        Principal principal = authentication != null ? (Principal) authentication.getPrincipal() : null;
+        Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
@@ -60,17 +72,59 @@ public class Utilities {
     }
 
     /**
-     * Returns current utc datetime.
+     * Get tenantID and pocID from Token.
+     *
+     * @return Map with tokens from keycloak (tenantID and pocID)
+     * @throws QuickTestServiceException TenantID or pocID not found
      */
-    public static LocalDateTime getCurrentLocalDateTimeUtc() {
-        return ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime();
+    public List<String> getPocInformationFromToken() throws QuickTestServiceException {
+
+        String information = null;
+        Principal principal = getPrincipal();
+
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            Map<String, Object> customClaims = token.getOtherClaims();
+
+            if (customClaims.containsKey(quickTestConfig.getPointOfCareInformationName())) {
+                information = String.valueOf(customClaims.get(quickTestConfig.getPointOfCareInformationName()));
+            }
+        }
+        if (information == null) {
+            log.debug("Poc Information not found in User-Token");
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+        }
+        return Arrays.asList(information.split(quickTestConfig.getPointOfCareInformationDelimiter()));
     }
 
     /**
-     * Returns current date in Germany.
+     * Get tenantID and pocID from Token.
+     *
+     * @return Map with tokens from keycloak (tenantID and pocID)
+     * @throws QuickTestServiceException TenantID or pocID not found
      */
-    public static LocalDate getCurrentLocalDateInGermany() {
-        return ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toLocalDate();
+    public String getUserNameFromToken() throws QuickTestServiceException {
+
+        String information = null;
+        Principal principal = getPrincipal();
+
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            information = token.getName();
+        }
+        if (information == null) {
+            log.debug("Name not found in User-Token");
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+        }
+        return information;
     }
 
+    private Principal getPrincipal() {
+        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
+            SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication != null ? (Principal) authentication.getPrincipal() : null;
+    }
 }

@@ -32,6 +32,7 @@ import app.coronawarn.quicktest.utils.PdfGenerator;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -103,7 +104,8 @@ public class QuickTestService {
      */
     @Transactional(rollbackOn = QuickTestServiceException.class)
     public void updateQuickTest(Map<String, String> ids, String shortHash, short result, String testBrandId,
-                                String testBrandName) throws QuickTestServiceException {
+                                String testBrandName, List<String> pocInformation,
+                                String user) throws QuickTestServiceException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
 
@@ -115,7 +117,7 @@ public class QuickTestService {
         addStatistics(quicktest);
         byte[] pdf;
         try {
-            pdf = createPdf(quicktest);
+            pdf = createPdf(quicktest, pocInformation, user);
         } catch (IOException e) {
             log.error("generating PDF failed. Exception = {}", e.getMessage());
             throw new QuickTestServiceException(QuickTestServiceException.Reason.PDF_GENERATOR);
@@ -257,10 +259,8 @@ public class QuickTestService {
         testResultService.createOrUpdateTestResult(quickTestResult);
     }
 
-    private byte[] createPdf(QuickTest quicktest) throws IOException {
-        // TODO change to real data from keycloak
-        PdfGenerator pdf = new PdfGenerator("Point of Care Teststelle", "Augustinweg", "11", "42275",
-                "Wuppertal", "0202101010", "Dr. Bad th Mill er", quicktest);
+    private byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {
+        PdfGenerator pdf = new PdfGenerator(pocInformation, quicktest, user);
         return pdf.get().toByteArray();
     }
 }

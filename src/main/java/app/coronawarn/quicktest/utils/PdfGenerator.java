@@ -133,7 +133,7 @@ public class PdfGenerator {
         String dateAndTimeInGermany =
             ZonedDateTime.of(quicktest.getUpdatedAt(),ZoneId.of("UTC"))
                 .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
-        cos.showText("Schnelltestergebnis von " + dateAndTimeInGermany);
+        cos.showText("Schnelltestergebnis vom " + dateAndTimeInGermany);
         cos.newLine();
         cos.endText();
 

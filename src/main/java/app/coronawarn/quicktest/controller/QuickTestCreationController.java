@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @RestController
@@ -82,10 +83,17 @@ public class QuickTestCreationController {
                 quicktestCreationRequest.getHashedGuid());
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT, "Quicktest with short hash already exists");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
             }
+        } catch (Exception e) {
+            log.error("Couldn't execute createQuickTest."
+                    + " Message: {}", e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Inserting failed because of internal error.");
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -103,7 +111,8 @@ public class QuickTestCreationController {
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
-      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
+      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists"),
+      @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @PutMapping(value = "/{shortHash}/testResult", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<Void> updateQuickTestStatus(
@@ -121,10 +130,17 @@ public class QuickTestCreationController {
             );
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Short Hash doesn't exists");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
             }
+        } catch (Exception e) {
+            log.error("Couldn't execute updateQuickTestStatus."
+                    + " Message: {}", e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Updating failed because of internal error.");
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -141,7 +157,8 @@ public class QuickTestCreationController {
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
-      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists")})
+      @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists"),
+      @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @PutMapping(value = "/{shortHash}/personalData", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> updateQuickTestWithPersonalData(
@@ -153,10 +170,17 @@ public class QuickTestCreationController {
                 modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+                throw new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Short Hash doesn't exists");
             } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
             }
+        } catch (Exception e) {
+            log.error("Couldn't execute updateQuickTestStatus."
+                    + " Message: {}", e.getMessage());
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR, "Updating failed because of internal error.");
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

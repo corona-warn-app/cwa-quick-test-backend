@@ -18,17 +18,57 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 @Service
+@EnableConfigurationProperties
+@ConfigurationProperties(prefix = "pdf")
 public class PdfGenerator {
 
+    private int offsetX = 70;
+    private float leading = 14.5f;
+    private int fontSize = 12;
+    private PDType1Font fontType = PDType1Font.HELVETICA;
     private final int pending = 5;
     private final int negative = 6;
     private final int positive = 7;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private String signatureText = "Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift.";
+    private String positiveIstructionText = "Ihr Antigen-Schnelltests ist positiv ausgefallen, begeben Sie sich "
+            + "bitte unverzüglich in die häusliche Quarantäne und informieren Sie Hausstandsangehörige und "
+            + "weitere nahe Kontaktpersonen. Kontaktieren Sie umgehend Ihren Hausarzt oder die Leitstelle des "
+            + "Ärztlichen Bereitschaftsdienstes unter der Nummern 116117 für weitere Verhaltensregeln und zur nun"
+            + " benötigten Durchführung eines PCR-Tests. ";
+    private String negativeIstructionText = "Bitte beachten Sie, dass ein negatives Ergebnis eine mögliche "
+            + "Infektion nicht vollständig ausschließen kann und lediglich eine Momentaufnahme darstellt.";
+    private String testBrandNameDescriptionText = "Handelsname: ";
+    private String tradeNameEmptyText = "nicht angegeben";
+    private String testBrandIdDescriptionText = "Hersteller-ID: ";
+    private String quickTestHeadlineText = "Corona-Antigen-Schnelltest";
+    private String authorPdfPropertiesText = "Schnelltestportal";
+    private String creatorPdfPropertiesText = "Schnelltestportal";
+    private String personPhoneDescriptionText = "Tel.: ";
+    private String logoPath = "/logo.png";
+    private String quickTestOfDateText = "Schnelltestergebnis vom ";
+    private String personEmailDescriptionText = "E-mail: ";
+    private String testResultDescritionText = "Testergebnis: ";
+    private String testResultPendingText = "ausstehend";
+    private String testResultNegativeText = "negativ";
+    private String testResiltPositiveText = "positiv";
+    private String testResultDefaultText = "fehlgeschlagen";
+    private String executedByDescriptionText = "Durchgeführt: ";
+    private String furtherDataAboutThePersonText = "Weitere Angaben zu der Person: ";
+    private String genderDescriptionText = "Geschlecht: ";
+    private String maleText = "männlich";
+    private String femaleText = "weiblich";
+    private String diverseText = "divers";
+    private String birthDateDescriptionText = "Geburtstag: ";
+    private String furtherDataAboutTestDescritionText = "Weitere Angaben zum Test: ";
+    private String executedFromDescritionText = "Durchgeführt durch: ";
 
     /**
      * Generates a PDF file for rapid test result to print.
@@ -55,9 +95,9 @@ public class PdfGenerator {
 
     private void config(PDDocument document, PDPageContentStream cos) throws IOException {
         PDDocumentInformation pdd = document.getDocumentInformation();
-        pdd.setAuthor("Schnelltestportal");
-        pdd.setTitle("Schnelltest-Ergebnis");
-        pdd.setCreator("Schnelltestportal");
+        pdd.setAuthor(authorPdfPropertiesText);
+        pdd.setTitle(quickTestHeadlineText);
+        pdd.setCreator(creatorPdfPropertiesText);
         LocalDate date = LocalDate.now();
         GregorianCalendar gcal = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()));
         pdd.setCreationDate(gcal);
@@ -78,9 +118,9 @@ public class PdfGenerator {
     private void generatePoCAddress(PDPageContentStream cos, PDRectangle rect, List<String> pocInformation)
         throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.HELVETICA, 12);
-        cos.setLeading(14.5f);
-        cos.newLineAtOffset(70, rect.getHeight() - 100);
+        cos.setFont(fontType, fontSize);
+        cos.setLeading(leading);
+        cos.newLineAtOffset(offsetX, rect.getHeight() - 100);
         pocInformation.forEach(s -> {
             try {
                 cos.showText(s);
@@ -94,26 +134,26 @@ public class PdfGenerator {
 
     private void addCoronaAppIcon(PDDocument document, PDPageContentStream cos, PDRectangle rect) throws IOException {
         PDImageXObject pdImage =
-            PDImageXObject.createFromFile(PdfGenerator.class.getResource("/logo.png").getPath(), document);
-        cos.drawImage(pdImage, 280, rect.getHeight() - 70, 50, 50);
+            PDImageXObject.createFromFile(PdfGenerator.class.getResource(logoPath).getPath(), document);
+        cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
         cos.beginText();
-        cos.setFont(PDType1Font.HELVETICA, 8);
+        cos.setFont(fontType, 8);
         cos.newLineAtOffset(260, rect.getHeight() - 77);
-        cos.showText("Corona-Antigen-Schnelltest");
+        cos.showText(quickTestHeadlineText);
         cos.endText();
     }
 
     private void generatePersonAddress(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest)
         throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.HELVETICA, 12);
-        cos.setLeading(14.5f);
+        cos.setFont(fontType, fontSize);
+        cos.setLeading(leading);
         cos.newLineAtOffset(0, rect.getHeight() - 220);
         rightAlignment(cos, rect, quicktest.getFirstName() + " " + quicktest.getLastName());
         rightAlignment(cos, rect, quicktest.getStreet() + " " + quicktest.getHouseNumber());
         rightAlignment(cos, rect, quicktest.getZipCode() + " " + quicktest.getCity());
-        rightAlignment(cos, rect, "Tel.: " + quicktest.getPhoneNumber());
-        rightAlignment(cos, rect, "E-mail: " + quicktest.getEmail());
+        rightAlignment(cos, rect, personPhoneDescriptionText + quicktest.getPhoneNumber());
+        rightAlignment(cos, rect, personEmailDescriptionText + quicktest.getEmail());
         cos.endText();
 
     }
@@ -123,7 +163,7 @@ public class PdfGenerator {
         float textWidth;
         float padding;
         pagewidth = rect.getWidth();
-        textWidth = (PDType1Font.HELVETICA.getStringWidth(text) / 1000.0f) * 12;
+        textWidth = (fontType.getStringWidth(text) / 1000.0f) * fontSize;
         padding = pagewidth - ((40 * 2) + textWidth);
 
         cos.newLineAtOffset(padding, 0);
@@ -134,13 +174,13 @@ public class PdfGenerator {
 
     private void generateSubject(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest) throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.HELVETICA_BOLD, 12);
-        cos.setLeading(14.5f);
-        cos.newLineAtOffset(70, rect.getHeight() - 340);
+        cos.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
+        cos.setLeading(leading);
+        cos.newLineAtOffset(offsetX, rect.getHeight() - 340);
         String dateAndTimeInGermany =
             ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
                 .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
-        cos.showText("Schnelltestergebnis vom " + dateAndTimeInGermany);
+        cos.showText(quickTestOfDateText + dateAndTimeInGermany);
         cos.newLine();
         cos.endText();
 
@@ -149,24 +189,24 @@ public class PdfGenerator {
     private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest, String user)
         throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.HELVETICA, 12);
-        cos.setLeading(14.5f);
-        cos.newLineAtOffset(70, rect.getHeight() - 380);
+        cos.setFont(fontType, fontSize);
+        cos.setLeading(leading);
+        cos.newLineAtOffset(offsetX, rect.getHeight() - 380);
         switch (quicktest.getTestResult()) {
           case pending:
-              cos.showText("Testergebnis: ausstehend");
+              cos.showText(testResultDescritionText + testResultPendingText);
               cos.newLine();
               break;
           case negative:
-              cos.showText("Testergebnis: negativ");
+              cos.showText(testResultDescritionText + testResultNegativeText);
               cos.newLine();
               break;
           case positive:
-              cos.showText("Testergebnis: positiv");
+              cos.showText(testResultDescritionText + testResiltPositiveText);
               cos.newLine();
               break;
           default:
-              cos.showText("Testergebnis: fehlgeschlagen");
+              cos.showText(testResultDescritionText + testResultDefaultText);
               cos.newLine();
               break;
         }
@@ -174,95 +214,89 @@ public class PdfGenerator {
         String dateAndTimeInGermany =
             ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
                 .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
-        cos.showText("Durchgeführt: " + dateAndTimeInGermany);
+        cos.showText(executedByDescriptionText + dateAndTimeInGermany);
         cos.newLine();
         cos.newLine();
-        cos.showText("Weitere Angaben zu der Person: ");
+        cos.showText(furtherDataAboutThePersonText);
         cos.newLine();
 
         switch (quicktest.getSex()) {
           case MALE:
-              cos.showText("Geschlecht: männlich");
+              cos.showText(genderDescriptionText + maleText);
               cos.newLine();
               break;
           case FEMALE:
-              cos.showText("Geschlecht: weiblich");
+              cos.showText(genderDescriptionText + femaleText);
               cos.newLine();
               break;
           default:
-              cos.showText("Geschlecht: divers");
+              cos.showText(genderDescriptionText + diverseText);
               cos.newLine();
               break;
         }
 
         LocalDate datetime = LocalDate.parse(quicktest.getBirthday(), dtf);
-        cos.showText("Geburtstag: " + datetime.format(formatterDate));
+        cos.showText(birthDateDescriptionText + datetime.format(formatterDate));
         cos.newLine();
         cos.newLine();
-        cos.showText("Weitere Angaben zum Test: ");
+        cos.showText(furtherDataAboutTestDescritionText);
         cos.newLine();
-        cos.showText("Durchgeführt durch : " + user);
+        cos.showText(executedFromDescritionText + user);
         cos.newLine();
-        cos.showText("Hersteller-ID: " + quicktest.getTestBrandId());
+        cos.showText(testBrandIdDescriptionText + quicktest.getTestBrandId());
         cos.newLine();
         if (quicktest.getTestBrandName() == null) {
-            cos.showText("Handelsname: Unbekannt");
+            cos.showText(testBrandNameDescriptionText + tradeNameEmptyText);
         } else {
-            cos.showText("Handelsname: " + quicktest.getTestBrandName());
+            cos.showText(testBrandNameDescriptionText + quicktest.getTestBrandName());
         }
         cos.newLine();
+        String useText = negativeIstructionText;
         if (quicktest.getTestResult() == positive) {
-            cos.newLine();
-            cos.newLine();
-            String text = "Ihr Antigen-Schnelltests ist positiv ausgefallen, begeben Sie sich "
-                + "bitte unverzüglich in die häusliche Quarantäne und informieren Sie Hausstandsangehörige und "
-                + "weitere nahe Kontaktpersonen. Kontaktieren Sie umgehend Ihren Hausarzt oder die Leitstelle des "
-                + "Ärztlichen Bereitschaftsdienstes unter der Nummern 116117 für weitere Verhaltensregeln und zur nun"
-                + " benötigten Durchführung eines PCR-Tests. Bitte beachten Sie, dass auch ein negatives Ergebnis "
-                + "eine mögliche Infektion nicht vollständig ausschließen kann und lediglich eine Momentaufnahme "
-                + "darstellt.";
-
-            List<String> lines = new ArrayList<>();
-            int lastSpace = -1;
-            while (text.length() > 0) {
-                int spaceIndex = text.indexOf(' ', lastSpace + 1);
-                if (spaceIndex < 0) {
-                    spaceIndex = text.length();
-                }
-                String subString = text.substring(0, spaceIndex);
-                float size = 12 * PDType1Font.HELVETICA.getStringWidth(subString) / 1000;
-                if (size > rect.getWidth() - 150) {
-                    if (lastSpace < 0) {
-                        lastSpace = spaceIndex;
-                    }
-                    subString = text.substring(0, lastSpace);
-                    lines.add(subString);
-                    text = text.substring(lastSpace).trim();
-                    lastSpace = -1;
-                } else if (spaceIndex == text.length()) {
-                    lines.add(text);
-                    text = "";
-                } else {
+            useText = positiveIstructionText;
+        }
+        cos.newLine();
+        cos.newLine();
+        List<String> lines = new ArrayList<>();
+        int lastSpace = -1;
+        while (useText.length() > 0) {
+            int spaceIndex = useText.indexOf(' ', lastSpace + 1);
+            if (spaceIndex < 0) {
+                spaceIndex = useText.length();
+            }
+            String subString = useText.substring(0, spaceIndex);
+            float size = fontSize * fontType.getStringWidth(subString) / 1000;
+            if (size > rect.getWidth() - 150) {
+                if (lastSpace < 0) {
                     lastSpace = spaceIndex;
                 }
+                subString = useText.substring(0, lastSpace);
+                lines.add(subString);
+                useText = useText.substring(lastSpace).trim();
+                lastSpace = -1;
+            } else if (spaceIndex == useText.length()) {
+                lines.add(useText);
+                useText = "";
+            } else {
+                lastSpace = spaceIndex;
             }
-            for (String line : lines) {
-                cos.showText(line);
-                cos.newLineAtOffset(0, -1.5f * 12);
-            }
-            cos.newLine();
-            cos.newLine();
         }
+        for (String line : lines) {
+            cos.showText(line);
+            cos.newLineAtOffset(0, -1.5f * fontSize);
+        }
+        cos.newLine();
+        cos.newLine();
         cos.endText();
 
     }
 
     private void generateEnd(PDPageContentStream cos, PDRectangle rect) throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.HELVETICA, 12);
-        cos.setLeading(14.5f);
-        cos.newLineAtOffset(70, rect.getHeight() - 800);
-        cos.showText("Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift.");
+        cos.setFont(fontType, fontSize);
+        cos.setLeading(leading);
+        cos.newLineAtOffset(offsetX, rect.getHeight() - 800);
+        cos.showText(signatureText);
         cos.newLine();
         cos.endText();
 

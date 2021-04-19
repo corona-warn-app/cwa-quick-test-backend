@@ -31,6 +31,9 @@ spring:
       "[mail.smtp.starttls.enable]": true
       "[mail.smtp.starttls.required]": true
       "[mail.smtp.ssl.trust]": "*"
+  profiles:
+    include:
+      - pdf
 
 cwa-testresult-server:
   url: http://localhost:8080

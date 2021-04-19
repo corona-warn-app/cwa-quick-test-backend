@@ -17,6 +17,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 public class PdfGenerator {
 
@@ -75,6 +76,7 @@ public class PdfGenerator {
 
     private void write() throws IOException {
         generatePoCAddress();
+        addCoronaAppIcon();
         generatePersonAddress();
         generateSubject();
         generateText();
@@ -96,6 +98,12 @@ public class PdfGenerator {
             }
         });
         cos.endText();
+    }
+
+    private void addCoronaAppIcon() throws IOException {
+        PDImageXObject pdImage =
+            PDImageXObject.createFromFile(PdfGenerator.class.getResource("/logo.png").getPath(), this.document);
+        cos.drawImage(pdImage, 280, rect.getHeight() - 70, 50, 50);
     }
 
     private void generatePersonAddress() throws IOException {

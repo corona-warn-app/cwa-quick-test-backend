@@ -3,10 +3,12 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
+import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -19,19 +21,13 @@ public class PdfGenerator {
     private final int pending = 5;
     private final int negative = 6;
     private final int positive = 7;
-    private final int failed = 8;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    private String pocName;
-    private String pocStreet;
-    private String pocHouseNumber;
-    private String pocZip;
-    private String pocCity;
-    private String pocPhone;
-    private String responsiblePersonFullName;
+    private List<String> pocInformation;
     private QuickTest quicktest;
+    private String user;
     private PDDocument document;
     private PDRectangle rect;
     private PDPageContentStream cos;
@@ -40,27 +36,16 @@ public class PdfGenerator {
     /**
      * Generates a PDF file for rapid test result to print.
      *
-     * @param pocName                   point of care data used in pdf
-     * @param pocStreet                 point of care data used in pdf
-     * @param pocHouseNumber            point of care data used in pdf
-     * @param pocZip                    point of care data used in pdf
-     * @param pocCity                   point of care data used in pdf
-     * @param pocPhone                  point of care data used in pdf
+     * @param pocInformation            point of care data used in pdf
      * @param quicktest                 Quicktest
-     * @param responsiblePersonFullName responsible doctor
+     * @param user                      carried out by user
      * @throws IOException when creating pdf went wrong
      */
-    public PdfGenerator(String pocName, String pocStreet, String pocHouseNumber,
-                        String pocZip, String pocCity, String pocPhone, String responsiblePersonFullName,
-                        QuickTest quicktest) throws IOException {
-        this.pocName = pocName;
-        this.pocStreet = pocStreet;
-        this.pocHouseNumber = pocHouseNumber;
-        this.pocZip = pocZip;
-        this.pocCity = pocCity;
-        this.pocPhone = pocPhone;
+    public PdfGenerator(List<String> pocInformation, QuickTest quicktest,
+                        String user) throws IOException {
+        this.pocInformation = pocInformation;
         this.quicktest = quicktest;
-        this.responsiblePersonFullName = responsiblePersonFullName;
+        this.user = user;
         config();
         write();
         close();
@@ -74,6 +59,7 @@ public class PdfGenerator {
         document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.LETTER);
         document.addPage(page1);
+        page1.setMediaBox(PDRectangle.A4);
         rect = page1.getMediaBox();
         cos = new PDPageContentStream(document, page1);
         PDDocumentInformation pdd = document.getDocumentInformation();
@@ -99,14 +85,14 @@ public class PdfGenerator {
         cos.setFont(PDType1Font.TIMES_ROMAN, 12);
         cos.setLeading(14.5f);
         cos.newLineAtOffset(100, rect.getHeight() - 100);
-        cos.showText(pocName);
-        cos.newLine();
-        cos.showText(pocStreet + " " + pocHouseNumber);
-        cos.newLine();
-        cos.showText(pocZip + " " + pocCity);
-        cos.newLine();
-        cos.showText("Tel.: " + pocPhone);
-        cos.newLine();
+        pocInformation.forEach(s -> {
+            try {
+                cos.showText(s);
+                cos.newLine();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
         cos.endText();
     }
 
@@ -134,7 +120,7 @@ public class PdfGenerator {
         cos.setFont(PDType1Font.TIMES_BOLD, 12);
         cos.setLeading(14.5f);
         cos.newLineAtOffset(100, rect.getHeight() - 250);
-        cos.showText("Schnelltestergebnis von " + quicktest.getUpdatedAt().format(formatter) + " UTC");
+        cos.showText("Schnelltestergebnis von " + quicktest.getUpdatedAt().format(formatter));
         cos.newLine();
         cos.endText();
 
@@ -164,7 +150,7 @@ public class PdfGenerator {
               break;
         }
 
-        cos.showText("Durchgeführt: " + quicktest.getUpdatedAt().format(formatter) + " UTC");
+        cos.showText("Durchgeführt: " + quicktest.getUpdatedAt().format(formatter));
         cos.newLine();
         cos.newLine();
         cos.showText("Weitere Angaben zu der Person: ");
@@ -191,7 +177,7 @@ public class PdfGenerator {
         cos.newLine();
         cos.showText("Weitere Angaben zum Test: ");
         cos.newLine();
-        cos.showText("Durchgeführt durch : " + responsiblePersonFullName);
+        cos.showText("Durchgeführt durch : " + this.user);
         cos.newLine();
         cos.showText("HerstellerID: " + quicktest.getTestBrandId());
         cos.newLine();

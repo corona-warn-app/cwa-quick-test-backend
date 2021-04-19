@@ -3,7 +3,9 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,10 +32,7 @@ public class Utilities {
 
         Map<String, String> ids = new HashMap<>();
 
-        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
-            SecurityContextHolder.getContext().getAuthentication();
-
-        Principal principal = authentication != null ? (Principal) authentication.getPrincipal() : null;
+        Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
@@ -54,4 +53,65 @@ public class Utilities {
         }
         return ids;
     }
+
+    /**
+     * Get tenantID and pocID from Token.
+     *
+     * @return Map with tokens from keycloak (tenantID and pocID)
+     * @throws QuickTestServiceException TenantID or pocID not found
+     */
+    public List<String> getPocInformationFromToken() throws QuickTestServiceException {
+
+        String information = null;
+
+        Principal principal = getPrincipal();
+
+        information = getValueFromToken(information, principal, quickTestConfig.getGetPointOfCareInformationName());
+        if (information == null) {
+            log.debug("Poc Information not found in User-Token");
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+        }
+        return Arrays.asList(information.split(quickTestConfig.getGetGetPointOfCareInformationDelimiter()));
+    }
+
+    /**
+     * Get tenantID and pocID from Token.
+     *
+     * @return Map with tokens from keycloak (tenantID and pocID)
+     * @throws QuickTestServiceException TenantID or pocID not found
+     */
+    public String getUserNameFromToken() throws QuickTestServiceException {
+
+        String information = null;
+
+        Principal principal = getPrincipal();
+
+        information = getValueFromToken(information, principal, quickTestConfig.getGetPointOfCareInformationName());
+        if (information == null) {
+            log.debug("Name not found in User-Token");
+            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+        }
+        return information;
+    }
+
+    private Principal getPrincipal() {
+        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
+            SecurityContextHolder.getContext().getAuthentication();
+
+        return authentication != null ? (Principal) authentication.getPrincipal() : null;
+    }
+
+    private String getValueFromToken(String information, Principal principal, String key) {
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            Map<String, Object> customClaims = token.getOtherClaims();
+
+            if (customClaims.containsKey(key)) {
+                information = String.valueOf(customClaims.get(key));
+            }
+        }
+        return information;
+    }
+
 }

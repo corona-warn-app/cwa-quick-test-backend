@@ -115,7 +115,9 @@ public class QuickTestCreationController {
                 shortHash,
                 quickTestUpdateRequest.getResult(),
                 quickTestUpdateRequest.getTestBrandId(),
-                quickTestUpdateRequest.getTestBrandName()
+                quickTestUpdateRequest.getTestBrandName(),
+                utilities.getPocInformationFromToken(),
+                utilities.getUserNameFromToken()
             );
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {

@@ -53,6 +53,9 @@ quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   tenantPointOfCareIdKey: pocId
+  getPointOfCareInformationName: poc_information
+  getGetPointOfCareInformationDelimiter: \,
+  getUserInformationName: name
   db-encryption-password: abcdefghjklmnopq
 
 testresultserver:

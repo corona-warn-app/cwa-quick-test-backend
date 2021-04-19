@@ -31,6 +31,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -98,6 +100,7 @@ public class QuickTestArchiveController {
     }
 
     /**
+     * TODO: Maybe add custom ROLE
      * Endpoint for getting quicktests in archive table by query parameters.
      *
      * @return QuickTestArchiveListResponse with all found archives
@@ -114,11 +117,13 @@ public class QuickTestArchiveController {
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestArchiveListResponse> findArchivesByTestResultAndUpdatedAtBetween(
             @RequestParam @Min(5) @Max(8) Short testResult,
-            @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateFrom,
-            @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime localDateTo) {
+            @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateFrom,
+            @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateTo) {
         try {
+            LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
+            LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
             List<QuickTestArchive> archives = quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
-                    testResult, localDateFrom, localDateTo);
+                    testResult, utcDateFrom, utcDateTo);
             TypeToken<List<QuickTestArchiveResponse>> typeToken = new TypeToken<List<QuickTestArchiveResponse>>() {
             };
             List<QuickTestArchiveResponse> quickTestArchiveResponses = modelMapper.map(

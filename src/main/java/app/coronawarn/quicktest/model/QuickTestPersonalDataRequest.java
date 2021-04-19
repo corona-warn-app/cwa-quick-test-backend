@@ -39,7 +39,7 @@ public class QuickTestPersonalDataRequest {
     private Boolean confirmationCwa;
 
     @NotNull
-    private Boolean insuranceBillStatus;
+    private Boolean privacyAgreement;
 
     @NotNull
     @Size(min = 1, max = 79)

@@ -29,9 +29,8 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
-import java.io.FileOutputStream;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -167,7 +166,7 @@ public class QuickTestService {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
-        quicktest.setInsuranceBillStatus(quickTestPersonalData.getInsuranceBillStatus());
+        quicktest.setPrivacyAgreement(quickTestPersonalData.getPrivacyAgreement());
         quicktest.setLastName(quickTestPersonalData.getLastName());
         quicktest.setFirstName(quickTestPersonalData.getFirstName());
         quicktest.setEmail(quickTestPersonalData.getEmail());
@@ -197,14 +196,15 @@ public class QuickTestService {
 
     @Transactional
     protected void addStatistics(QuickTest quickTest) {
-        if (quickTestStatisticsRepository.findByPocIdAndCreatedAt(quickTest.getPocId(), LocalDate.now()).isEmpty()) {
+        LocalDate currentDate = Utilities.getCurrentLocalDateInGermany();
+        if (quickTestStatisticsRepository.findByPocIdAndCreatedAt(quickTest.getPocId(), currentDate).isEmpty()) {
             quickTestStatisticsRepository.save(new QuickTestStatistics(quickTest.getPocId(), quickTest.getTenantId()));
             log.debug("New QuickTestStatistics created for poc {}", quickTest.getPocId());
         }
         if (quickTest.getTestResult() == 7) {
-            quickTestStatisticsRepository.incrementPositiveAndTotalTestCount(quickTest.getPocId(), LocalDate.now());
+            quickTestStatisticsRepository.incrementPositiveAndTotalTestCount(quickTest.getPocId(), currentDate);
         } else {
-            quickTestStatisticsRepository.incrementTotalTestCount(quickTest.getPocId(), LocalDate.now());
+            quickTestStatisticsRepository.incrementTotalTestCount(quickTest.getPocId(), currentDate);
         }
     }
 
@@ -219,7 +219,7 @@ public class QuickTestService {
         quickTestArchive.setTenantId(quickTest.getTenantId());
         quickTestArchive.setPocId(quickTest.getPocId());
         quickTestArchive.setTestResult(quickTest.getTestResult());
-        quickTestArchive.setInsuranceBillStatus(quickTest.getInsuranceBillStatus());
+        quickTestArchive.setPrivacyAgreement(quickTest.getPrivacyAgreement());
         quickTestArchive.setFirstName(quickTest.getFirstName());
         quickTestArchive.setLastName(quickTest.getLastName());
         quickTestArchive.setBirthday(quickTest.getBirthday());

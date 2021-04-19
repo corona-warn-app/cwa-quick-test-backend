@@ -72,7 +72,7 @@ testresultserver:
   oneWay: false
   twoWay: false
   hostnameVerify: false
-  keyStorePassword: ${QUICK_TEST_KEYSTORE_PASSWORD}
+  keyStorePassword: ${QUICK_TEST_KEYSTORE_TRS_PASSWORD}
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
 quicktest:

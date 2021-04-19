@@ -3,64 +3,52 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
+import java.util.List;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 
 public class PdfGenerator {
 
-    private String pocName;
-    private String pocStreet;
-    private String pocHouseNumber;
-    private String pocZip;
-    private String pocCity;
-    private String pocPhone;
-    private String responsiblePersonFullName;
+    private final int pending = 5;
+    private final int negative = 6;
+    private final int positive = 7;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+    private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    private List<String> pocInformation;
     private QuickTest quicktest;
-
-    private LocalDate time;
+    private String user;
     private PDDocument document;
     private PDRectangle rect;
     private PDPageContentStream cos;
-    private PDFont fontPlain;
-    private PDFont fontBold;
-    private PDFont fontItalic;
-    private PDFont fontMono;
     private ByteArrayOutputStream output = new ByteArrayOutputStream();
 
     /**
      * Generates a PDF file for rapid test result to print.
      *
-     * @param pocName                   point of care data used in pdf
-     * @param pocStreet                 point of care data used in pdf
-     * @param pocHouseNumber            point of care data used in pdf
-     * @param pocZip                    point of care data used in pdf
-     * @param pocCity                   point of care data used in pdf
-     * @param pocPhone                  point of care data used in pdf
+     * @param pocInformation            point of care data used in pdf
      * @param quicktest                 Quicktest
-     * @param responsiblePersonFullName responsible doctor
-     * @throws IOException              when creating pdf went wrong
+     * @param user                      carried out by user
+     * @throws IOException when creating pdf went wrong
      */
-    public PdfGenerator(String pocName, String pocStreet, String pocHouseNumber,
-                        String pocZip, String pocCity, String pocPhone, String responsiblePersonFullName,
-                        QuickTest quicktest) throws IOException {
-        this.pocName = pocName;
-        this.pocStreet = pocStreet;
-        this.pocHouseNumber = pocHouseNumber;
-        this.pocZip = pocZip;
-        this.pocCity = pocCity;
-        this.pocPhone = pocPhone;
+    public PdfGenerator(List<String> pocInformation, QuickTest quicktest,
+                        String user) throws IOException {
+        this.pocInformation = pocInformation;
         this.quicktest = quicktest;
-        this.responsiblePersonFullName = responsiblePersonFullName;
-        this.time = LocalDate.now();
+        this.user = user;
         config();
         write();
         close();
@@ -71,13 +59,10 @@ public class PdfGenerator {
     }
 
     private void config() throws IOException {
-        fontPlain = PDType1Font.HELVETICA;
-        fontBold = PDType1Font.HELVETICA_BOLD;
-        fontItalic = PDType1Font.HELVETICA_OBLIQUE;
-        fontMono = PDType1Font.COURIER;
         document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.LETTER);
         document.addPage(page1);
+        page1.setMediaBox(PDRectangle.A4);
         rect = page1.getMediaBox();
         cos = new PDPageContentStream(document, page1);
         PDDocumentInformation pdd = document.getDocumentInformation();
@@ -91,33 +76,41 @@ public class PdfGenerator {
 
     private void write() throws IOException {
         generatePoCAddress();
+        addCoronaAppIcon();
         generatePersonAddress();
-
+        generateSubject();
+        generateText();
+        generateEnd();
         cos.close();
     }
 
     private void generatePoCAddress() throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.TIMES_ROMAN, 12);
+        cos.setFont(PDType1Font.HELVETICA, 12);
         cos.setLeading(14.5f);
-        cos.newLineAtOffset(25, 700);
-        cos.showText(pocName);
-        cos.newLine();
-        cos.showText(pocStreet + " " + pocHouseNumber);
-        cos.newLine();
-        cos.showText(pocZip + " " + pocCity);
-        cos.newLine();
-        cos.showText("Tel.: " + pocPhone);
-        cos.newLine();
+        cos.newLineAtOffset(70, rect.getHeight() - 100);
+        pocInformation.forEach(s -> {
+            try {
+                cos.showText(s);
+                cos.newLine();
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        });
         cos.endText();
-        cos.moveTo(0,0);
+    }
+
+    private void addCoronaAppIcon() throws IOException {
+        PDImageXObject pdImage =
+            PDImageXObject.createFromFile(PdfGenerator.class.getResource("/logo.png").getPath(), this.document);
+        cos.drawImage(pdImage, 280, rect.getHeight() - 70, 50, 50);
     }
 
     private void generatePersonAddress() throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.TIMES_ROMAN, 12);
+        cos.setFont(PDType1Font.HELVETICA, 12);
         cos.setLeading(14.5f);
-        cos.newLineAtOffset(325, 700);
+        cos.newLineAtOffset(370, rect.getHeight() - 100);
         cos.showText(this.quicktest.getFirstName() + " " + this.quicktest.getLastName());
         cos.newLine();
         cos.showText(this.quicktest.getStreet() + " " + this.quicktest.getHouseNumber());
@@ -126,8 +119,101 @@ public class PdfGenerator {
         cos.newLine();
         cos.showText("Tel.: " + this.quicktest.getPhoneNumber());
         cos.newLine();
+        cos.showText("E-mail: " + this.quicktest.getEmail());
+        cos.newLine();
         cos.endText();
-        cos.moveTo(5000,5000);
+
+    }
+
+    private void generateSubject() throws IOException {
+        cos.beginText();
+        cos.setFont(PDType1Font.HELVETICA_BOLD, 12);
+        cos.setLeading(14.5f);
+        cos.newLineAtOffset(70, rect.getHeight() - 250);
+        String dateAndTimeInGermany =
+            ZonedDateTime.of(quicktest.getUpdatedAt(),ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        cos.showText("Schnelltestergebnis vom " + dateAndTimeInGermany);
+        cos.newLine();
+        cos.endText();
+
+    }
+
+    private void generateText() throws IOException {
+        cos.beginText();
+        cos.setFont(PDType1Font.HELVETICA, 12);
+        cos.setLeading(14.5f);
+        cos.newLineAtOffset(70, rect.getHeight() - 350);
+        switch (quicktest.getTestResult()) {
+          case pending:
+              cos.showText("Testergebnis: ausstehend");
+              cos.newLine();
+              break;
+          case negative:
+              cos.showText("Testergebnis: negativ");
+              cos.newLine();
+              break;
+          case positive:
+              cos.showText("Testergebnis: positiv");
+              cos.newLine();
+              break;
+          default:
+              cos.showText("Testergebnis: fehlgeschlagen");
+              cos.newLine();
+              break;
+        }
+
+        String dateAndTimeInGermany =
+            ZonedDateTime.of(quicktest.getUpdatedAt(),ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        cos.showText("Durchgeführt: " + dateAndTimeInGermany);
+        cos.newLine();
+        cos.newLine();
+        cos.showText("Weitere Angaben zu der Person: ");
+        cos.newLine();
+
+        switch (quicktest.getSex()) {
+          case MALE:
+              cos.showText("Geschlecht: männlich");
+              cos.newLine();
+              break;
+          case FEMALE:
+              cos.showText("Geschlecht: weiblich");
+              cos.newLine();
+              break;
+          default:
+              cos.showText("Geschlecht: divers");
+              cos.newLine();
+              break;
+        }
+
+        LocalDate datetime = LocalDate.parse(quicktest.getBirthday(), dtf);
+        cos.showText("Geburtstag: " + datetime.format(formatterDate));
+        cos.newLine();
+        cos.newLine();
+        cos.showText("Weitere Angaben zum Test: ");
+        cos.newLine();
+        cos.showText("Durchgeführt durch : " + this.user);
+        cos.newLine();
+        cos.showText("HerstellerID: " + quicktest.getTestBrandId());
+        cos.newLine();
+        if (quicktest.getTestBrandName() != null) {
+            cos.showText("HerstellerName: " + quicktest.getTestBrandName());
+            cos.newLine();
+        }
+        cos.endText();
+
+    }
+
+    private void generateEnd() throws IOException {
+        cos.beginText();
+        cos.setFont(PDType1Font.HELVETICA, 12);
+        cos.setLeading(14.5f);
+        cos.newLineAtOffset(70, rect.getHeight() - 550);
+        cos.showText("Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift.");
+        cos.newLine();
+        cos.endText();
+
     }
 
     private void close() throws IOException {

@@ -27,6 +27,20 @@ public class Utilities {
     private final QuickTestConfig quickTestConfig;
 
     /**
+     * Returns current utc datetime.
+     */
+    public static LocalDateTime getCurrentLocalDateTimeUtc() {
+        return ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime();
+    }
+
+    /**
+     * Returns current date in Germany.
+     */
+    public static LocalDate getCurrentLocalDateInGermany() {
+        return ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toLocalDate();
+    }
+
+    /**
      * Get tenantID and pocID from Token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
@@ -35,7 +49,6 @@ public class Utilities {
     public Map<String, String> getIdsFromToken() throws QuickTestServiceException {
 
         Map<String, String> ids = new HashMap<>();
-
         Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
@@ -59,21 +72,6 @@ public class Utilities {
     }
 
     /**
-     * Returns current utc datetime.
-     */
-    public static LocalDateTime getCurrentLocalDateTimeUtc() {
-        return ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime();
-    }
-
-    /**
-     * Returns current date in Germany.
-     */
-    public static LocalDate getCurrentLocalDateInGermany() {
-        return ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toLocalDate();
-    }
-
-
-    /**
      * Get tenantID and pocID from Token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
@@ -82,15 +80,22 @@ public class Utilities {
     public List<String> getPocInformationFromToken() throws QuickTestServiceException {
 
         String information = null;
-
         Principal principal = getPrincipal();
 
-        information = getValueFromToken(information, principal, quickTestConfig.getGetPointOfCareInformationName());
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            Map<String, Object> customClaims = token.getOtherClaims();
+
+            if (customClaims.containsKey(quickTestConfig.getPointOfCareInformationName())) {
+                information = String.valueOf(customClaims.get(quickTestConfig.getPointOfCareInformationName()));
+            }
+        }
         if (information == null) {
             log.debug("Poc Information not found in User-Token");
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
         }
-        return Arrays.asList(information.split(quickTestConfig.getGetGetPointOfCareInformationDelimiter()));
+        return Arrays.asList(information.split(quickTestConfig.getPointOfCareInformationDelimiter()));
     }
 
     /**
@@ -102,10 +107,13 @@ public class Utilities {
     public String getUserNameFromToken() throws QuickTestServiceException {
 
         String information = null;
-
         Principal principal = getPrincipal();
 
-        information = getValueFromToken(information, principal, quickTestConfig.getGetPointOfCareInformationName());
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            information = token.getName();
+        }
         if (information == null) {
             log.debug("Name not found in User-Token");
             throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
@@ -119,18 +127,4 @@ public class Utilities {
 
         return authentication != null ? (Principal) authentication.getPrincipal() : null;
     }
-
-    private String getValueFromToken(String information, Principal principal, String key) {
-        if (principal instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
-            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
-            Map<String, Object> customClaims = token.getOtherClaims();
-
-            if (customClaims.containsKey(key)) {
-                information = String.valueOf(customClaims.get(key));
-            }
-        }
-        return information;
-    }
-
 }

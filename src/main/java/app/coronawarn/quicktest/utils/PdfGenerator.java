@@ -5,7 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -82,9 +84,9 @@ public class PdfGenerator {
 
     private void generatePoCAddress() throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.TIMES_ROMAN, 12);
+        cos.setFont(PDType1Font.HELVETICA, 12);
         cos.setLeading(14.5f);
-        cos.newLineAtOffset(100, rect.getHeight() - 100);
+        cos.newLineAtOffset(70, rect.getHeight() - 100);
         pocInformation.forEach(s -> {
             try {
                 cos.showText(s);
@@ -98,9 +100,9 @@ public class PdfGenerator {
 
     private void generatePersonAddress() throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.TIMES_ROMAN, 12);
+        cos.setFont(PDType1Font.HELVETICA, 12);
         cos.setLeading(14.5f);
-        cos.newLineAtOffset(400, rect.getHeight() - 100);
+        cos.newLineAtOffset(370, rect.getHeight() - 100);
         cos.showText(this.quicktest.getFirstName() + " " + this.quicktest.getLastName());
         cos.newLine();
         cos.showText(this.quicktest.getStreet() + " " + this.quicktest.getHouseNumber());
@@ -117,10 +119,13 @@ public class PdfGenerator {
 
     private void generateSubject() throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.TIMES_BOLD, 12);
+        cos.setFont(PDType1Font.HELVETICA_BOLD, 12);
         cos.setLeading(14.5f);
-        cos.newLineAtOffset(100, rect.getHeight() - 250);
-        cos.showText("Schnelltestergebnis von " + quicktest.getUpdatedAt().format(formatter));
+        cos.newLineAtOffset(70, rect.getHeight() - 250);
+        String dateAndTimeInGermany =
+            ZonedDateTime.of(quicktest.getUpdatedAt(),ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        cos.showText("Schnelltestergebnis von " + dateAndTimeInGermany);
         cos.newLine();
         cos.endText();
 
@@ -128,9 +133,9 @@ public class PdfGenerator {
 
     private void generateText() throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.TIMES_ROMAN, 12);
+        cos.setFont(PDType1Font.HELVETICA, 12);
         cos.setLeading(14.5f);
-        cos.newLineAtOffset(100, rect.getHeight() - 350);
+        cos.newLineAtOffset(70, rect.getHeight() - 350);
         switch (quicktest.getTestResult()) {
           case pending:
               cos.showText("Testergebnis: ausstehend");
@@ -150,7 +155,10 @@ public class PdfGenerator {
               break;
         }
 
-        cos.showText("Durchgeführt: " + quicktest.getUpdatedAt().format(formatter));
+        String dateAndTimeInGermany =
+            ZonedDateTime.of(quicktest.getUpdatedAt(),ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        cos.showText("Durchgeführt: " + dateAndTimeInGermany);
         cos.newLine();
         cos.newLine();
         cos.showText("Weitere Angaben zu der Person: ");
@@ -191,9 +199,9 @@ public class PdfGenerator {
 
     private void generateEnd() throws IOException {
         cos.beginText();
-        cos.setFont(PDType1Font.TIMES_ROMAN, 12);
+        cos.setFont(PDType1Font.HELVETICA, 12);
         cos.setLeading(14.5f);
-        cos.newLineAtOffset(100, rect.getHeight() - 550);
+        cos.newLineAtOffset(70, rect.getHeight() - 550);
         cos.showText("Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift.");
         cos.newLine();
         cos.endText();

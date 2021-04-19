@@ -15,9 +15,9 @@ public class QuickTestConfig {
     private String tenantIdKey;
     private String tenantPointOfCareIdKey;
 
-    private String getPointOfCareInformationName;
-    private String getGetPointOfCareInformationDelimiter;
-    private String getUserInformationName;
+    private String pointOfCareInformationName;
+    private String pointOfCareInformationDelimiter;
+    private String userInformationName;
 
     private String dbEncryptionPassword;
 

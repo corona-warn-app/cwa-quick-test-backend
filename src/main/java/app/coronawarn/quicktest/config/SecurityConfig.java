@@ -78,7 +78,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
         http
-            .headers().addHeaderWriter(this::addSameSiteToOAuthCookie).and()
+            .headers().frameOptions().disable().addHeaderWriter(this::addSameSiteToOAuthCookie).and()
             .csrf().disable()
             .authorizeRequests()
             .mvcMatchers(HttpMethod.GET, KEYCLOAK_CONFIG_ROUTE).permitAll()

@@ -73,6 +73,9 @@ management:
     mail:
       enabled: off
 
+auditlogs:
+  pattern: "User: {}; tenantId: {}; pocID: {}; pocName {}; action: {}; Object: {}; ID: {}"
+
 pdf:
   signatureText: "Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift."
   positiveInstructionText: "Ihr Antigen-Schnelltests ist positiv ausgefallen, begeben Sie sich bitte unverzüglich in die häusliche Quarantäne und informieren Sie Hausstandsangehörige und weitere nahe Kontaktpersonen. Kontaktieren Sie umgehend Ihren Hausarzt oder die Leitstelle des Ärztlichen Bereitschaftsdienstes unter der Nummern 116117 für weitere Verhaltensregeln und zur nun benötigten Durchführung eines PCR-Tests."

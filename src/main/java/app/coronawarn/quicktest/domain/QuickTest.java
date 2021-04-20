@@ -24,12 +24,14 @@ import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
+import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTest;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
@@ -44,6 +46,7 @@ import lombok.Setter;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(SecurityAuditListenerQuickTest.class)
 @Entity
 @Table(name = "quick_test")
 public class QuickTest {

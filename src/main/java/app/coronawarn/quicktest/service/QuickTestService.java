@@ -60,10 +60,9 @@ public class QuickTestService {
      *
      * @param ids        Map with tenantId and testscopeId
      * @param hashedGuid SHA256 hash of the test GUID.
-     * @return saved QuickTest
      * @throws QuickTestServiceException with reason CONFLICT if a QuickTest with short hash already exists.
      */
-    public QuickTest createNewQuickTest(Map<String, String> ids, String hashedGuid)
+    public void createNewQuickTest(Map<String, String> ids, String hashedGuid)
         throws QuickTestServiceException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
@@ -88,13 +87,12 @@ public class QuickTestService {
 
         log.debug("Persisting QuickTest in database");
         try {
-            newQuickTest = quickTestRepository.save(newQuickTest);
+            quickTestRepository.save(newQuickTest);
             log.info("Created new QuickTest with hashedGUID {}", hashedGuid);
         } catch (Exception e) {
             log.error("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
         }
-        return newQuickTest;
     }
 
     /**

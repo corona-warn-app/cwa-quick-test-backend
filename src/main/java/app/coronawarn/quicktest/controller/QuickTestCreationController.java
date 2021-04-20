@@ -89,13 +89,7 @@ public class QuickTestCreationController {
                 throw new ResponseStatusException(
                         HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
             }
-        } catch (Exception e) {
-            log.error("Couldn't execute createQuickTest."
-                    + " Message: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Inserting failed because of internal error.");
         }
-
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 

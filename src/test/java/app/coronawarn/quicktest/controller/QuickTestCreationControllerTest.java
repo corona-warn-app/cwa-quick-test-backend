@@ -3,14 +3,11 @@ package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
-import static org.h2.util.IntIntHashMap.NOT_FOUND;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyShort;
-import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
@@ -28,7 +25,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -121,18 +117,17 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName("brandName");
 
-        for(short result =0; result <= 10; result++){
+        for (short result = 0; result <= 10; result++) {
             quickTestUpdateRequest.setResult((short) result);
 
-            if(result>5 && result < 9) {
+            if (result > 5 && result < 9) {
                 mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
                     .put("/api/quicktest/6fa4dcec/testResult")
                     .accept(MediaType.APPLICATION_JSON_VALUE)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .content(new Gson().toJson(quickTestUpdateRequest)))
                     .andExpect(status().isNoContent());
-            }
-            else{
+            } else {
                 mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
                     .put("/api/quicktest/6fa4dcec/testResult")
                     .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -142,6 +137,20 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             }
         }
         quickTestUpdateRequest.setResult((short) 6);
+
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/testResult")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(new Gson().toJson(quickTestUpdateRequest)))
+            .andExpect(status().isForbidden());
+
+        mockMvc().with(authentication()).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/testResult")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(new Gson().toJson(quickTestUpdateRequest)))
+            .andExpect(status().isForbidden());
 
         quickTestUpdateRequest.setTestBrandName(null);
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
@@ -198,7 +207,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName(null);
         doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND))
-            .when(quickTestService).updateQuickTest(any(),any(),anyShort(),any(),any(),any(),any());
+            .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put("/api/quicktest/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -210,7 +219,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
                 result.getResolvedException().getMessage()));
 
         doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT))
-            .when(quickTestService).updateQuickTest(any(),any(),anyShort(),any(),any(),any(),any());
+            .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put("/api/quicktest/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)

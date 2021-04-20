@@ -51,6 +51,7 @@ public class QuickTestService {
     private final TestResultService testResultService;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestStatisticsRepository quickTestStatisticsRepository;
+    private final PdfGenerator pdf;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -260,7 +261,6 @@ public class QuickTestService {
     }
 
     private byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {
-        PdfGenerator pdf = new PdfGenerator(pocInformation, quicktest, user);
-        return pdf.get().toByteArray();
+        return pdf.generatePdf(pocInformation, quicktest, user).toByteArray();
     }
 }

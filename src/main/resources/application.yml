@@ -72,3 +72,32 @@ management:
   health:
     mail:
       enabled: off
+
+pdf:
+  signatureText: "Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift."
+  positiveInstructionText: "Ihr Antigen-Schnelltests ist positiv ausgefallen, begeben Sie sich bitte unverzüglich in die häusliche Quarantäne und informieren Sie Hausstandsangehörige und weitere nahe Kontaktpersonen. Kontaktieren Sie umgehend Ihren Hausarzt oder die Leitstelle des Ärztlichen Bereitschaftsdienstes unter der Nummern 116117 für weitere Verhaltensregeln und zur nun benötigten Durchführung eines PCR-Tests."
+  negativeInstructionText: "Bitte beachten Sie, dass ein negatives Ergebnis eine mögliche Infektion nicht vollständig ausschließen kann und lediglich eine Momentaufnahme darstellt."
+  testBrandNameDescriptionText: "Handelsname: "
+  tradeNameEmptyText: "nicht angegeben"
+  testBrandIdDescriptionText: "Hersteller-ID: "
+  quickTestHeadlineText: "Corona-Antigen-Schnelltest"
+  authorPdfPropertiesText: "Schnelltestportal"
+  creatorPdfPropertiesText: "Schnelltestportal"
+  personPhoneDescriptionText: "Tel.: "
+  logoPath: "/logo.png"
+  quickTestOfDateText: "Schnelltestergebnis vom "
+  personEmailDescriptionText: "E-mail: "
+  testResultDescriptionText: "Testergebnis: "
+  testResultPendingText: "ausstehend"
+  testResultNegativeText: "negativ"
+  testResultPositiveText: "positiv"
+  testResultDefaultText: "fehlgeschlagen"
+  executedByDescriptionText: "Durchgeführt: "
+  furtherDataAboutThePersonText: "Weitere Angaben zu der Person: "
+  genderDescriptionText: "Geschlecht: "
+  maleText: "männlich"
+  femaleText: "weiblich"
+  diverseText: "divers"
+  birthDateDescriptionText: "Geburtstag: "
+  furtherDataAboutTestDescriptionText: "Weitere Angaben zum Test: "
+  executedFromDescriptionText: "Durchgeführt durch: "

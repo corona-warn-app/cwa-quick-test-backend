@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -45,6 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 
 @SpringBootTest
@@ -60,6 +62,9 @@ public class DbEncryptionTest {
 
     @Autowired
     EntityManager entityManager;
+
+    @MockBean
+    Utilities utilities;
 
     @BeforeEach
     @AfterEach

@@ -17,3 +17,6 @@ databaseChangeLog:
   - include:
       file: changelog/V001_add_privacyAgreeColumn.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_add_testResultServerHash.yml
+      relativeToChangelogFile: true

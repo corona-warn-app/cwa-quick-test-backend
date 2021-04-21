@@ -41,13 +41,13 @@ public class QuickTestTest {
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         assertEquals(
-            "QuickTest(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, " +
-                "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, " +
-                "updatedAt=2021-04-08T08:11:12, version=null, confirmationCwa=true, testResult=5, " +
-                "privacyAgreement=false, lastName=Miller, firstName=Joe, email=test@test.test, " +
-                "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, " +
-                "city=oyvkpigcga, testBrandId=AT116/21, " +
-                "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal), birthday=null)",
+            "QuickTest(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, "
+                    + "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, "
+                    + "updatedAt=2021-04-08T08:11:12, version=null, confirmationCwa=true, testResult=5, "
+                    + "privacyAgreement=false, lastName=Miller, firstName=Joe, email=test@test.test, "
+                    + "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, "
+                    + "city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid "
+                    + "Test Device (Nasal), birthday=null, testResultServerHash=null)",
             quickTest.toString());
     }
 

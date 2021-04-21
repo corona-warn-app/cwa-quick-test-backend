@@ -37,6 +37,7 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -165,6 +166,7 @@ public class QuickTestCreationController {
         @PathVariable String shortHash,
         @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
         try {
+            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
             quickTestService.updateQuickTestWithPersonalData(
                 utilities.getIdsFromToken(), shortHash,
                 modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));

@@ -140,4 +140,8 @@ public class QuickTestArchive {
     @Column(name = "pdf")
     @Convert(converter = DbEncryptionByteArrayConverter.class)
     private byte[] pdf;
+
+    @Column(name = "test_result_server_hash")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String testResultServerHash;
 }

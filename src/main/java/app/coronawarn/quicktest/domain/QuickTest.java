@@ -134,6 +134,10 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String birthday;
 
+    @Column(name = "test_result_server_hash")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String testResultServerHash;
+
     @PrePersist
     private void onCreate() {
         LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();

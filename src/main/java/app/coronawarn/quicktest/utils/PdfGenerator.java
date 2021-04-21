@@ -3,6 +3,7 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.LocalDate;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -20,9 +22,11 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PdfGenerator {
 
@@ -101,9 +105,15 @@ public class PdfGenerator {
     }
 
     private void addCoronaAppIcon(PDDocument document, PDPageContentStream cos, PDRectangle rect) throws IOException {
-        PDImageXObject pdImage =
-            PDImageXObject.createFromFile(PdfGenerator.class.getResource(pdfConfig.getLogoPath()).getPath(), document);
-        cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
+        try {
+            final ClassPathResource classPathResource = new ClassPathResource(pdfConfig.getLogoPath());
+            final File file = classPathResource.getFile();
+            PDImageXObject pdImage =
+                PDImageXObject.createFromFileByExtension(file, document);
+            cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.newLineAtOffset(230, rect.getHeight() - 85);

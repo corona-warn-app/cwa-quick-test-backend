@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.model;
 
+import app.coronawarn.quicktest.validation.ValidGuid;
 import app.coronawarn.quicktest.validation.ValidPhoneNumber;
 import app.coronawarn.quicktest.validation.ValidZipCode;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -81,5 +82,9 @@ public class QuickTestPersonalDataRequest {
 
     @NotNull
     private LocalDate birthday;
+
+    @NotNull
+    @ValidGuid
+    private String testResultServerHash;
 
 }

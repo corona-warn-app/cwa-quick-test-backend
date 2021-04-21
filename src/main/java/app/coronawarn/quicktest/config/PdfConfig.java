@@ -26,7 +26,7 @@ public class PdfConfig {
     private String authorPdfPropertiesText = "Schnelltestportal";
     private String creatorPdfPropertiesText = "Schnelltestportal";
     private String personPhoneDescriptionText = "Tel.: ";
-    private String logoPath = "/logo.png";
+    private String logoPath = "logo.png";
     private String quickTestOfDateText = "Schnelltestergebnis vom ";
     private String personEmailDescriptionText = "E-mail: ";
     private String testResultDescriptionText = "Testergebnis: ";

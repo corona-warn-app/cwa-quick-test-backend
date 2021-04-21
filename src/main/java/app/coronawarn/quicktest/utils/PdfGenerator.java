@@ -3,6 +3,7 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.LocalDate;
@@ -20,8 +21,8 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -102,9 +103,10 @@ public class PdfGenerator {
     }
 
     private void addCoronaAppIcon(PDDocument document, PDPageContentStream cos, PDRectangle rect) throws IOException {
+        final ClassPathResource classPathResource = new ClassPathResource(pdfConfig.getLogoPath());
+        final File file = classPathResource.getFile();
         PDImageXObject pdImage =
-            PDImageXObject.createFromFileByExtension(ResourceUtils.getFile(
-                "classpath:" + pdfConfig.getLogoPath()), document);
+            PDImageXObject.createFromFileByExtension(file, document);
         cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
         cos.beginText();
         cos.setFont(fontType, fontSize);

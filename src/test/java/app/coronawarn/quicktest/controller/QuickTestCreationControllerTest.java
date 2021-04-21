@@ -78,6 +78,13 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isForbidden());
 
+        mockMvc().perform(MockMvcRequestBuilders
+            .post("/api/quicktest/")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(new Gson().toJson(quicktestCreationRequest)))
+            .andExpect(status().isUnauthorized());
+
         doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT))
             .when(quickTestService).createNewQuickTest(any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
@@ -161,6 +168,13 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isForbidden());
+
+        mockMvc().perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/testResult")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(new Gson().toJson(quickTestUpdateRequest)))
+            .andExpect(status().isUnauthorized());
 
         quickTestUpdateRequest.setTestBrandName(null);
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
@@ -283,6 +297,13 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
             .andExpect(status().isForbidden());
+
+        mockMvc().perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isUnauthorized());
 
         // test cwa
         boolean oldCwaValue = quickTestPersonalDataRequest.getConfirmationCwa();

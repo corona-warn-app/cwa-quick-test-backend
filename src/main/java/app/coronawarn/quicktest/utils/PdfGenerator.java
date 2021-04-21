@@ -21,6 +21,7 @@ import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 @Service
 @RequiredArgsConstructor
@@ -102,7 +103,8 @@ public class PdfGenerator {
 
     private void addCoronaAppIcon(PDDocument document, PDPageContentStream cos, PDRectangle rect) throws IOException {
         PDImageXObject pdImage =
-            PDImageXObject.createFromFile(PdfGenerator.class.getResource(pdfConfig.getLogoPath()).getPath(), document);
+            PDImageXObject.createFromFileByExtension(ResourceUtils.getFile(
+                "classpath:" + pdfConfig.getLogoPath()), document);
         cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
         cos.beginText();
         cos.setFont(fontType, fontSize);

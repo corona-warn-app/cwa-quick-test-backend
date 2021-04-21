@@ -93,6 +93,7 @@ public class DbEncryptionTest {
         quickTest.setTestBrandId("FakeBrand");
         quickTest.setTestBrandName("FakeId");
         quickTest.setBirthday("01.02.1990");
+        quickTest.setTestResultServerHash("f1a8a9da03155aa760e0c38f9bed645c48fa4dcecf716d8dd96c9e927dda5484");
         quickTest = quickTestRepository.saveAndFlush(quickTest);
 
         Object databaseEntry =
@@ -125,6 +126,7 @@ public class DbEncryptionTest {
         assertNotEquals(quickTest.getTestBrandName(), ((Object[]) databaseEntry)[19]);
         assertNotEquals(quickTest.getBirthday(), ((Object[]) databaseEntry)[20]);
         assertNotEquals(quickTest.getPrivacyAgreement(), ((Object[]) databaseEntry)[21]);
+        assertNotEquals(quickTest.getTestResultServerHash(), ((Object[]) databaseEntry)[22]);
         try {
             assertEquals(quickTest.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
@@ -171,6 +173,9 @@ public class DbEncryptionTest {
             assertEquals(quickTest.getPrivacyAgreement(),
                     Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
                             String.valueOf(((Object[]) databaseEntry)[21]))), CHARSET)));
+
+            assertEquals(quickTest.getTestResultServerHash(), new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[22]))), CHARSET));
 
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();

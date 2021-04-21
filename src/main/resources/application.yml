@@ -84,7 +84,7 @@ pdf:
   authorPdfPropertiesText: "Schnelltestportal"
   creatorPdfPropertiesText: "Schnelltestportal"
   personPhoneDescriptionText: "Tel.: "
-  logoPath: "/logo.png"
+  logoPath: "logo.png"
   quickTestOfDateText: "Schnelltestergebnis vom "
   personEmailDescriptionText: "E-mail: "
   testResultDescriptionText: "Testergebnis: "

@@ -12,12 +12,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
+import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
+import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
@@ -233,6 +243,543 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
     }
 
     @Test
-    void updateQuickTestWithPersonalData() {
+    void updateQuickTestWithPersonalData() throws Exception {
+        Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(LocalDate.class, new LocalDateAdapter())
+            .create();
+
+        QuickTestPersonalDataRequest quickTestPersonalDataRequest = new QuickTestPersonalDataRequest();
+        quickTestPersonalDataRequest.setConfirmationCwa(true);
+        quickTestPersonalDataRequest.setPrivacyAgreement(true);
+        quickTestPersonalDataRequest.setLastName("1");
+        quickTestPersonalDataRequest.setFirstName("1");
+        quickTestPersonalDataRequest.setEmail("v@e.o");
+        quickTestPersonalDataRequest.setPhoneNumber("+490000");
+        quickTestPersonalDataRequest.setSex(Sex.DIVERSE);
+        quickTestPersonalDataRequest.setStreet("f");
+        quickTestPersonalDataRequest.setHouseNumber("a");
+        quickTestPersonalDataRequest.setZipCode("11111");
+        quickTestPersonalDataRequest.setCity("f");
+        quickTestPersonalDataRequest.setBirthday(LocalDate.now());
+
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isForbidden());
+
+        mockMvc().with(authentication()).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isForbidden());
+
+        // test cwa
+        boolean oldCwaValue = quickTestPersonalDataRequest.getConfirmationCwa();
+        quickTestPersonalDataRequest.setConfirmationCwa(false);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setConfirmationCwa(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+        quickTestPersonalDataRequest.setConfirmationCwa(oldCwaValue);
+
+        // test privacyAgreement
+        boolean privacyAgreement = quickTestPersonalDataRequest.getPrivacyAgreement();
+        quickTestPersonalDataRequest.setPrivacyAgreement(false);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setPrivacyAgreement(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+        quickTestPersonalDataRequest.setPrivacyAgreement(privacyAgreement);
+
+        // test lastName
+        String lastName = quickTestPersonalDataRequest.getLastName();
+        quickTestPersonalDataRequest.setLastName(
+            "0123456789012345678901234567890123456789012345678901234567890123456789012345678");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setLastName(
+            "01234567890123456789012345678901234567890123456789012345678901234567890123456789");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setLastName("");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setLastName(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setLastName(lastName);
+
+        // test firstName
+        String firstName = quickTestPersonalDataRequest.getFirstName();
+        quickTestPersonalDataRequest.setFirstName(
+            "0123456789012345678901234567890123456789012345678901234567890123456789012345678");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setFirstName(
+            "01234567890123456789012345678901234567890123456789012345678901234567890123456789");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setFirstName("");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setFirstName(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+        quickTestPersonalDataRequest.setFirstName(firstName);
+
+        //Test email
+        String email = quickTestPersonalDataRequest.getEmail();
+        quickTestPersonalDataRequest.setEmail("a@be");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setEmail(
+            "extralooooooooooooooooooooooooolongemail555555555577777778888999" +
+                "@extralooooooooooooooooooooooooolongemail55555555557777777888899" +
+                ".extralooooooooooooooooooooooooolongemail55555555557777777888899");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setEmail(
+            "extralooooooooooooooooooooooooolongemail5555555555777777788889990" +
+                "@extralooooooooooooooooooooooooolongemail55555555557777777888899" +
+                ".extralooooooooooooooooooooooooolongemail55555555557777777888899");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setEmail(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+        quickTestPersonalDataRequest.setEmail(email);
+
+
+        //Test email
+        String phone = quickTestPersonalDataRequest.getPhoneNumber();
+        quickTestPersonalDataRequest.setPhoneNumber("0100000");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setPhoneNumber(
+            "0100000012345678901234567890123456789012345678901234567890123456789012345678900");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setPhoneNumber(
+            "+491000000123456789012345678901234567890123456789012345678901234567890123456789");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setPhoneNumber(
+            "01000000123456789012345678901234567890123456789012345678901234567890123456789000");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setPhoneNumber(
+            "+4910000001234567890123456789012345678901234567890123456789012345678901234567890");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setPhoneNumber(
+            "010000");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setPhoneNumber(
+            "+49100");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setPhoneNumber(
+            "123456789");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setPhoneNumber(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+        quickTestPersonalDataRequest.setPhoneNumber(phone);
+
+        //test sex
+        Sex sex = quickTestPersonalDataRequest.getSex();
+        quickTestPersonalDataRequest.setSex(Sex.MALE);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setSex(Sex.DIVERSE);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setSex(Sex.FEMALE);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setSex(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setSex(sex);
+
+        //test street
+        String street = quickTestPersonalDataRequest.getStreet();
+        quickTestPersonalDataRequest.setStreet(
+            "extraloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "ooooooooooooooooooooooooooooooooooooooooongstreetname");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setStreet(
+            "extraloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "oooooooooooooooooooooooooooooooooooooooooongstreetname");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setStreet("");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setStreet(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setStreet(street);
+
+        //test housenumber
+        String housenumber = quickTestPersonalDataRequest.getHouseNumber();
+        quickTestPersonalDataRequest.setHouseNumber("012345678901234");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setHouseNumber("0123456789012345");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setHouseNumber("");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setHouseNumber(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setHouseNumber(housenumber);
+
+        //test zipcode
+        String zipcode = quickTestPersonalDataRequest.getZipCode();
+        quickTestPersonalDataRequest.setZipCode("01111");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setZipCode("10111");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setZipCode("1011");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setZipCode("101111");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setZipCode("00111");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setZipCode(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+        quickTestPersonalDataRequest.setZipCode(zipcode);
+
+        //test city
+        String city = quickTestPersonalDataRequest.getCity();
+        quickTestPersonalDataRequest.setCity(
+            "extraloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "ooooooooooooooooooooooooooooooooooooooooooongcityname");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setCity(
+            "extraloooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
+                + "oooooooooooooooooooooooooooooooooooooooooooongcityname");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setCity("");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setCity(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setCity(city);
+
+        //test birthday
+        LocalDate birthday = quickTestPersonalDataRequest.getBirthday();
+        quickTestPersonalDataRequest.setBirthday(LocalDate.of(1900, 1, 1));
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setBirthday(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setBirthday(birthday);
+
+
+        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND))
+            .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isNotFound())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+            .andExpect(result -> assertEquals("404 NOT_FOUND \"Short Hash doesn't exists\"",
+                result.getResolvedException().getMessage()));
+
+        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT))
+            .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isInternalServerError())
+            .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR \"INSERT_CONFLICT\"",
+                result.getResolvedException().getMessage()));
+
+
+    }
+
+    class LocalDateAdapter implements JsonSerializer<LocalDate> {
+
+        public JsonElement serialize(LocalDate date, Type typeOfSrc, JsonSerializationContext context) {
+            return new JsonPrimitive(date.format(DateTimeFormatter.ISO_LOCAL_DATE)); // "yyyy-mm-dd"
+        }
     }
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -25,6 +26,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PdfGenerator {
 
@@ -103,11 +105,15 @@ public class PdfGenerator {
     }
 
     private void addCoronaAppIcon(PDDocument document, PDPageContentStream cos, PDRectangle rect) throws IOException {
-        final ClassPathResource classPathResource = new ClassPathResource(pdfConfig.getLogoPath());
-        final File file = classPathResource.getFile();
-        PDImageXObject pdImage =
-            PDImageXObject.createFromFileByExtension(file, document);
-        cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
+        try {
+            final ClassPathResource classPathResource = new ClassPathResource(pdfConfig.getLogoPath());
+            final File file = classPathResource.getFile();
+            PDImageXObject pdImage =
+                PDImageXObject.createFromFileByExtension(file, document);
+            cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.newLineAtOffset(230, rect.getHeight() - 85);

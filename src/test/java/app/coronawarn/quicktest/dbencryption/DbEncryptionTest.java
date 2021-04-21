@@ -165,9 +165,8 @@ public class DbEncryptionTest {
             assertEquals(quickTest.getTestBrandName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[19]))), CHARSET));
 
-            assertEquals(quickTest.getBirthday(),
-                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                    String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET)));
+            assertEquals(quickTest.getBirthday(), new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET));
 
             assertEquals(quickTest.getPrivacyAgreement(),
                     Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(

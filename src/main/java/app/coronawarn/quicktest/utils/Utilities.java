@@ -3,10 +3,11 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
 import java.security.Principal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -34,10 +35,21 @@ public class Utilities {
     }
 
     /**
-     * Returns current date in Germany.
+     * Returns start datetime in Germany.
      */
-    public static LocalDate getCurrentLocalDateInGermany() {
-        return ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toLocalDate();
+    public static ZonedDateTime getStartTimeForLocalDateInGermany() {
+        ZonedDateTime time = ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
+                .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay());
+        return time.withZoneSameInstant(ZoneId.of("UTC"));
+    }
+
+    /**
+     * Returns end datetime date in Germany.
+     */
+    public static ZonedDateTime getEndTimeForLocalDateInGermany() {
+        ZonedDateTime time = ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
+                .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay());
+        return time.withZoneSameInstant(ZoneId.of("UTC"));
     }
 
     /**

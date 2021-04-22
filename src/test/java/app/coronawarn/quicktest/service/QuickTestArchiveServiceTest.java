@@ -21,7 +21,7 @@ public class QuickTestArchiveServiceTest {
     @InjectMocks
     private QuickTestArchiveService quickTestArchiveService;
 
-    @Test // TODO FIXME
+    @Test
     void createNewQuickTestArchiveQuickTestNotFound() {
         when(quickTestArchiveRepository.findById("sgserh")).thenReturn(null);
         try {

@@ -1,9 +1,9 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.domain.QuickTestStatistics;
-import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
-import app.coronawarn.quicktest.utils.Utilities;
+import app.coronawarn.quicktest.model.QuickTestStatistics;
+import app.coronawarn.quicktest.repository.QuickTestLogRepository;
+import java.time.LocalDateTime;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuickTestStatisticsService {
 
     private final QuickTestConfig quickTestConfig;
-    private final QuickTestStatisticsRepository quickTestStatisticRepository;
+    private final QuickTestLogRepository quickTestStatisticRepository;
 
     /**
-     * Return statistic for QuickTest for today by pocid.
+     * Return statistic for QuickTest by pocid and time range.
      */
     public QuickTestStatistics getStatistics(Map<String, String> ids, LocalDateTime utcDateFrom,
                                              LocalDateTime utcDateTo) {

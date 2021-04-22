@@ -143,7 +143,7 @@ public class QuickTestService {
         if (confirmationCwa != null && confirmationCwa) {
             log.debug("Sending TestResult to TestResult-Server");
             try {
-                sendResultToTestResultServer(quicktest.getHashedGuid(), result);
+                sendResultToTestResultServer(quicktest.getTestResultServerHash(), result);
             } catch (TestResultServiceException e) {
                 log.error("Failed to send updated TestResult on TestResult-Server", e);
                 throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
@@ -177,6 +177,7 @@ public class QuickTestService {
         quicktest.setZipCode(quickTestPersonalData.getZipCode());
         quicktest.setCity(quickTestPersonalData.getCity());
         quicktest.setBirthday(quickTestPersonalData.getBirthday());
+        quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
@@ -184,11 +185,10 @@ public class QuickTestService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
         }
 
-
         if (quickTestPersonalData.getConfirmationCwa()) {
             log.debug("Sending TestResult to TestResult-Server");
             try {
-                sendResultToTestResultServer(quicktest.getHashedGuid(), quicktest.getTestResult());
+                sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult());
             } catch (TestResultServiceException e) {
                 log.error("Failed to send TestResult to TestResult-Server", e);
                 throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
@@ -238,6 +238,7 @@ public class QuickTestService {
         quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setPdf(pdf);
+        quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
         return quickTestArchive;
     }
 
@@ -251,9 +252,10 @@ public class QuickTestService {
         return quicktest;
     }
 
-    private void sendResultToTestResultServer(String hashedGuid, short result) throws TestResultServiceException {
+    private void sendResultToTestResultServer(String testResultServerHash, short result)
+            throws TestResultServiceException {
         QuickTestResult quickTestResult = new QuickTestResult();
-        quickTestResult.setId(hashedGuid);
+        quickTestResult.setId(testResultServerHash);
         quickTestResult.setResult(result);
         testResultService.createOrUpdateTestResult(quickTestResult);
     }

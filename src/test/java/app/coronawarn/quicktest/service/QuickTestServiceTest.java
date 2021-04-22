@@ -43,8 +43,6 @@ public class QuickTestServiceTest {
     @Mock
     private QuickTestRepository quickTestRepository;
     @Mock
-    private TestResultService testResultService;
-    @Mock
     private QuickTestArchiveRepository quickTestArchiveRepository;
     @Mock
     private QuickTestLogRepository quickTestLogRepository;
@@ -201,6 +199,29 @@ public class QuickTestServiceTest {
         } catch (QuickTestServiceException e) {
             assertTrue(e.getReason().equals(QuickTestServiceException.Reason.DELETE_FAILED),
                     "Wrong message!");
+        }
+    }
+
+    @Test
+    void callResultServerInUpdateQuickTestTest() throws IOException, QuickTestServiceException {
+        Map<String, String> ids = new HashMap<>();
+        QuickTest quickTest = new QuickTest();
+        quickTest.setConfirmationCwa(true);
+        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+                .thenReturn(quickTest);
+        when(pdf.generatePdf(any(), any(), any()))
+                .thenReturn(new ByteArrayOutputStream());
+        try {
+            quickTestService.updateQuickTest(ids,
+                    "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
+                    (short) 6,
+                    "testBrandId",
+                    "TestBrandName",
+                    new ArrayList<>(),
+                    "User");
+            fail("has to throw exception");
+        } catch (NullPointerException e) {
+            // Test OK. testResultService not initialized. Call try successful
         }
     }
 }

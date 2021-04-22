@@ -121,7 +121,7 @@ public class QuickTestService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.PDF_GENERATOR);
         }
         try {
-            quickTestArchiveRepository.save(mappingQuickTestToQuickTestAchive(quicktest, pdf));
+            quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                     quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
@@ -206,7 +206,7 @@ public class QuickTestService {
         quickTestLogRepository.save(quickTestLog);
     }
 
-    private QuickTestArchive mappingQuickTestToQuickTestAchive(
+    private QuickTestArchive mappingQuickTestToQuickTestArchive(
             QuickTest quickTest, byte[] pdf) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());

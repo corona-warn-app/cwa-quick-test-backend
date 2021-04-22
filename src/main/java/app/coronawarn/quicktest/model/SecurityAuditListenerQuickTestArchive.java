@@ -20,7 +20,7 @@ public class SecurityAuditListenerQuickTestArchive {
 
     private final Utilities utilities;
     private final QuickTestConfig quickTestConfig;
-    private String pattern = "User: {}; tenantId: {}; pocID: {}; pocName {}; action: {}; Object: {}; ID: {}";
+    private String pattern = "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}";
 
     @PostLoad
     private void afterSelectQuickTestArchive(QuickTestArchive quickTestArchive) throws QuickTestServiceException {
@@ -28,7 +28,6 @@ public class SecurityAuditListenerQuickTestArchive {
                 utilities.getUserNameFromToken(),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey()),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey()),
-                utilities.getIdsFromToken().get(quickTestConfig.getPointOfCareIdName()),
                 "Select",
                 "QuickTestArchive",
                 quickTestArchive.getHashedGuid());
@@ -41,7 +40,6 @@ public class SecurityAuditListenerQuickTestArchive {
                 utilities.getUserNameFromToken(),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey()),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey()),
-                utilities.getIdsFromToken().get(quickTestConfig.getPointOfCareIdName()),
                 "Save",
                 "QuickTestArchive",
                 quickTestArchive.getHashedGuid());

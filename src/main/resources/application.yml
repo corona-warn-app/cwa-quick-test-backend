@@ -73,7 +73,7 @@ management:
       enabled: off
 
 auditlogs:
-  pattern: "User: {}; tenantId: {}; pocID: {}; pocName {}; action: {}; Object: {}; ID: {}"
+  pattern: "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}"
 
 pdf:
   signatureText: "Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift."

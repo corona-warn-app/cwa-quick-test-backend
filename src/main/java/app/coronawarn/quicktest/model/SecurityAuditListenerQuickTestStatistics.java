@@ -18,7 +18,7 @@ public class SecurityAuditListenerQuickTestStatistics {
 
     private final QuickTestConfig quickTestConfig;
     private final Utilities utilities;
-    private String pattern = "User: {}; tenantId: {}; pocID: {}; pocName {}; action: {}; Object: {}; ID: {}";
+    private String pattern = "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}";
 
     @PostLoad
     private void afterSelectQuickTest(QuickTestStatistics quickTestStatistics) throws QuickTestServiceException {
@@ -26,7 +26,6 @@ public class SecurityAuditListenerQuickTestStatistics {
                 utilities.getUserNameFromToken(),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey()),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey()),
-                utilities.getIdsFromToken().get(quickTestConfig.getPointOfCareIdName()),
                 "Select",
                 "QuickTestStatistics",
                 quickTestStatistics.getId());

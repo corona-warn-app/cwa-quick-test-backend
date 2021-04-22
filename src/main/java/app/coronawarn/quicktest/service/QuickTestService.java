@@ -139,8 +139,7 @@ public class QuickTestService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.DELETE_FAILED);
         }
 
-        Boolean confirmationCwa = quicktest.getConfirmationCwa();
-        if (confirmationCwa != null && confirmationCwa) {
+        if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
             log.debug("Sending TestResult to TestResult-Server");
             try {
                 sendResultToTestResultServer(quicktest.getTestResultServerHash(), result);

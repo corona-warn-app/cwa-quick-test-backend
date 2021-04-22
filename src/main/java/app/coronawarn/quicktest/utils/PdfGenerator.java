@@ -1,9 +1,10 @@
 package app.coronawarn.quicktest.utils;
 
+import static app.coronawarn.quicktest.model.Sex.DIVERSE;
+
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.LocalDate;
@@ -13,8 +14,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -107,9 +110,10 @@ public class PdfGenerator {
     private void addCoronaAppIcon(PDDocument document, PDPageContentStream cos, PDRectangle rect) throws IOException {
         try {
             final ClassPathResource classPathResource = new ClassPathResource(pdfConfig.getLogoPath());
-            final File file = classPathResource.getFile();
-            PDImageXObject pdImage =
-                PDImageXObject.createFromFileByExtension(file, document);
+            final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
+                Objects.requireNonNull(classPathResource.getClassLoader())
+                .getResourceAsStream(pdfConfig.getLogoPath())));
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "logo");
             cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
         } catch (IOException e) {
             log.error(e.getMessage());
@@ -160,9 +164,14 @@ public class PdfGenerator {
         cos.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 340);
-        String dateAndTimeInGermany =
-            ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
-                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        String dateAndTimeInGermany;
+        if (quicktest.getUpdatedAt() != null) {
+            dateAndTimeInGermany =
+                ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        } else {
+            dateAndTimeInGermany = "-";
+        }
         cos.showText(pdfConfig.getQuickTestOfDateText() + dateAndTimeInGermany);
         cos.newLine();
         cos.endText();
@@ -175,7 +184,7 @@ public class PdfGenerator {
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 380);
-        switch (quicktest.getTestResult()) {
+        switch (quicktest.getTestResult() != null ? quicktest.getTestResult() : -1) {
           case pending:
               cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultPendingText());
               cos.newLine();
@@ -194,16 +203,21 @@ public class PdfGenerator {
               break;
         }
 
-        String dateAndTimeInGermany =
-            ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
-                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        String dateAndTimeInGermany;
+        if (quicktest.getUpdatedAt() != null) {
+            dateAndTimeInGermany =
+                ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
+                    .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        } else {
+            dateAndTimeInGermany = "-";
+        }
         cos.showText(pdfConfig.getExecutedByDescriptionText() + dateAndTimeInGermany);
         cos.newLine();
         cos.newLine();
         cos.showText(pdfConfig.getFurtherDataAboutThePersonText());
         cos.newLine();
 
-        switch (quicktest.getSex()) {
+        switch (quicktest.getSex() != null ? quicktest.getSex() : DIVERSE) {
           case MALE:
               cos.showText(pdfConfig.getGenderDescriptionText() + pdfConfig.getMaleText());
               cos.newLine();
@@ -217,9 +231,12 @@ public class PdfGenerator {
               cos.newLine();
               break;
         }
-
-        LocalDate datetime = LocalDate.parse(quicktest.getBirthday(), dtf);
-        cos.showText(pdfConfig.getBirthDateDescriptionText() + datetime.format(formatterDate));
+        if (quicktest.getBirthday() != null) {
+            LocalDate datetime = LocalDate.parse(quicktest.getBirthday(), dtf);
+            cos.showText(pdfConfig.getBirthDateDescriptionText() + datetime.format(formatterDate));
+        } else {
+            cos.showText(pdfConfig.getBirthDateDescriptionText() + "-");
+        }
         cos.newLine();
         cos.newLine();
         cos.showText(pdfConfig.getFurtherDataAboutTestDescriptionText());
@@ -234,9 +251,11 @@ public class PdfGenerator {
             cos.showText(pdfConfig.getTestBrandNameDescriptionText() + quicktest.getTestBrandName());
         }
         cos.newLine();
-        String useText = pdfConfig.getNegativeInstructionText();
-        if (quicktest.getTestResult() == positive) {
+        String useText = "";
+        if (quicktest.getTestResult() != null && quicktest.getTestResult() == positive) {
             useText = pdfConfig.getPositiveInstructionText();
+        } else if (quicktest.getTestResult() != null && quicktest.getTestResult() == negative) {
+            useText = pdfConfig.getNegativeInstructionText();
         }
         cos.newLine();
         cos.newLine();

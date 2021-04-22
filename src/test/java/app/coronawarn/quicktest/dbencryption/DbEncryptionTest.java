@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -45,6 +46,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 
 @SpringBootTest
@@ -60,6 +62,9 @@ public class DbEncryptionTest {
 
     @Autowired
     EntityManager entityManager;
+
+    @MockBean
+    Utilities utilities;
 
     @BeforeEach
     @AfterEach
@@ -87,6 +92,8 @@ public class DbEncryptionTest {
         quickTest.setCity("FakeCity");
         quickTest.setTestBrandId("FakeBrand");
         quickTest.setTestBrandName("FakeId");
+        quickTest.setBirthday("01.02.1990");
+        quickTest.setTestResultServerHash("f1a8a9da03155aa760e0c38f9bed645c48fa4dcecf716d8dd96c9e927dda5484");
         quickTest = quickTestRepository.saveAndFlush(quickTest);
 
         Object databaseEntry =
@@ -117,7 +124,9 @@ public class DbEncryptionTest {
         assertNotEquals(quickTest.getCity(), ((Object[]) databaseEntry)[17]);
         assertNotEquals(quickTest.getTestBrandId(), ((Object[]) databaseEntry)[18]);
         assertNotEquals(quickTest.getTestBrandName(), ((Object[]) databaseEntry)[19]);
-        assertNotEquals(quickTest.getPrivacyAgreement(), ((Object[]) databaseEntry)[20]);
+        assertNotEquals(quickTest.getBirthday(), ((Object[]) databaseEntry)[20]);
+        assertNotEquals(quickTest.getPrivacyAgreement(), ((Object[]) databaseEntry)[21]);
+        assertNotEquals(quickTest.getTestResultServerHash(), ((Object[]) databaseEntry)[22]);
         try {
             assertEquals(quickTest.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
@@ -158,9 +167,15 @@ public class DbEncryptionTest {
             assertEquals(quickTest.getTestBrandName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[19]))), CHARSET));
 
+            assertEquals(quickTest.getBirthday(), new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET));
+
             assertEquals(quickTest.getPrivacyAgreement(),
-                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                    String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET)));
+                    Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
+                            String.valueOf(((Object[]) databaseEntry)[21]))), CHARSET)));
+
+            assertEquals(quickTest.getTestResultServerHash(), new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[22]))), CHARSET));
 
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();

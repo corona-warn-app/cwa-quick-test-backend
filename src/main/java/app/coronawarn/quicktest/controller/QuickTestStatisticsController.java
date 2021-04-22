@@ -32,12 +32,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -69,10 +71,23 @@ public class QuickTestStatisticsController {
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
-    public ResponseEntity<QuickTestStatisticsResponse> getQuicktestStatistics() {
+    public ResponseEntity<QuickTestStatisticsResponse> getQuicktestStatistics(
+            @RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                    ZonedDateTime zonedDateFrom,
+            @RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+                    ZonedDateTime zonedDateTo
+    ) {
         try {
+            if (zonedDateFrom == null) {
+                zonedDateFrom = Utilities.getStartTimeForLocalDateInGermany();
+            }
+            if (zonedDateTo == null) {
+                zonedDateTo = Utilities.getEndTimeForLocalDateInGermany();
+            }
+            LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
+            LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
             QuickTestStatisticsResponse quickTestStatisticsResponse = modelMapper.map(
-                quickTestStatisticsService.getStatistics(utilities.getIdsFromToken()),
+                quickTestStatisticsService.getStatistics(utilities.getIdsFromToken(), utcDateFrom, utcDateTo),
                 QuickTestStatisticsResponse.class);
 
             return ResponseEntity.ok(quickTestStatisticsResponse);

@@ -48,8 +48,6 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
     @MockBean
     private QuickTestService quickTestService;
     @MockBean
-    private ModelMapper modelMapper;
-    @MockBean
     private Utilities utilities;
 
     @Test
@@ -276,6 +274,8 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
         quickTestPersonalDataRequest.setZipCode("11111");
         quickTestPersonalDataRequest.setCity("f");
         quickTestPersonalDataRequest.setBirthday(LocalDate.now());
+        quickTestPersonalDataRequest.setTestResultServerHash(
+            "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
 
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .put("/api/quicktest/6fa4dcec/personalData")
@@ -769,6 +769,35 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
 
         quickTestPersonalDataRequest.setBirthday(birthday);
 
+        //test testResultServerHash
+        String testResultServerHash = quickTestPersonalDataRequest.getTestResultServerHash();
+        quickTestPersonalDataRequest.setTestResultServerHash(
+            "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setTestResultServerHash(
+            "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55");
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setTestResultServerHash(null);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .put("/api/quicktest/6fa4dcec/personalData")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE)
+            .content(gson.toJson(quickTestPersonalDataRequest)))
+            .andExpect(status().isBadRequest());
+
+        quickTestPersonalDataRequest.setTestResultServerHash(testResultServerHash);
 
         doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND))
             .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());

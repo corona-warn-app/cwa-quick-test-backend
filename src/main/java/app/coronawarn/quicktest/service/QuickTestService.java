@@ -253,7 +253,7 @@ public class QuickTestService {
         testResultService.createOrUpdateTestResult(quickTestResult);
     }
 
-    private byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {
+    protected byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {
         return pdf.generatePdf(pocInformation, quicktest, user).toByteArray();
     }
 }

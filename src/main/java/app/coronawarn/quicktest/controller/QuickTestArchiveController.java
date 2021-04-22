@@ -86,7 +86,8 @@ public class QuickTestArchiveController {
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
-                            + "Schnelltest_" + hashedGuid + "\"")
+                            + "Schnelltest_" + hashedGuid + ".pdf\"")
+                    .contentType(MediaType.APPLICATION_PDF)
                     .body(quickTestArchiveService.getPdf(hashedGuid));
         } catch (QuickTestServiceException e) {
             if (e.getReason() == QuickTestServiceException.Reason.NOT_FOUND) {

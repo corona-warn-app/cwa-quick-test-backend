@@ -23,15 +23,14 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.domain.QuickTestStatistics;
+import app.coronawarn.quicktest.domain.QuickTestLog;
 import app.coronawarn.quicktest.model.QuickTestResult;
+import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
+import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
-import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
-import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -50,7 +49,7 @@ public class QuickTestService {
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
-    private final QuickTestStatisticsRepository quickTestStatisticsRepository;
+    private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
 
     /**
@@ -198,18 +197,13 @@ public class QuickTestService {
 
     }
 
-    @Transactional
     protected void addStatistics(QuickTest quickTest) {
-        LocalDate currentDate = Utilities.getCurrentLocalDateInGermany();
-        if (quickTestStatisticsRepository.findByPocIdAndCreatedAt(quickTest.getPocId(), currentDate).isEmpty()) {
-            quickTestStatisticsRepository.save(new QuickTestStatistics(quickTest.getPocId(), quickTest.getTenantId()));
-            log.debug("New QuickTestStatistics created for poc {}", quickTest.getPocId());
-        }
-        if (quickTest.getTestResult() == 7) {
-            quickTestStatisticsRepository.incrementPositiveAndTotalTestCount(quickTest.getPocId(), currentDate);
-        } else {
-            quickTestStatisticsRepository.incrementTotalTestCount(quickTest.getPocId(), currentDate);
-        }
+        QuickTestLog quickTestLog = new QuickTestLog();
+        quickTestLog.setCreatedAt(quickTest.getCreatedAt());
+        quickTestLog.setPocId(quickTest.getPocId());
+        quickTestLog.setPositiveTestResult(quickTest.getTestResult() == TestResult.fromName("positive").getValue());
+        quickTestLog.setTenantId(quickTest.getTenantId());
+        quickTestLogRepository.save(quickTestLog);
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestAchive(

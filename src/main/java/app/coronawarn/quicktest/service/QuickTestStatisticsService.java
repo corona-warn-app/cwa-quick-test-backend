@@ -1,11 +1,10 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.domain.QuickTestStatistics;
-import app.coronawarn.quicktest.repository.QuickTestStatisticsRepository;
-import app.coronawarn.quicktest.utils.Utilities;
+import app.coronawarn.quicktest.model.QuickTestStatistics;
+import app.coronawarn.quicktest.repository.QuickTestLogRepository;
+import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,24 +17,24 @@ import org.springframework.transaction.annotation.Transactional;
 public class QuickTestStatisticsService {
 
     private final QuickTestConfig quickTestConfig;
-    private final QuickTestStatisticsRepository quickTestStatisticRepository;
+    private final QuickTestLogRepository quickTestStatisticRepository;
 
     /**
-     * Return statistic for QuickTest for today by pocid.
+     * Return statistic for QuickTest by pocid and time range.
      */
-    public QuickTestStatistics getStatistics(Map<String, String> ids) {
-        Optional<QuickTestStatistics> quickTestStatisticsOptional =
-            quickTestStatisticRepository.findByPocIdAndCreatedAt(
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), Utilities.getCurrentLocalDateInGermany());
-        if (quickTestStatisticsOptional.isPresent()) {
-            return quickTestStatisticsOptional.get();
-        } else {
-            log.info("Statistics not present yet. Set stats to 0");
-            QuickTestStatistics emptyStats = new QuickTestStatistics();
-            emptyStats.setTotalTestCount(0);
-            emptyStats.setPositiveTestCount(0);
-            return emptyStats;
-        }
+    public QuickTestStatistics getStatistics(Map<String, String> ids, LocalDateTime utcDateFrom,
+                                             LocalDateTime utcDateTo) {
+        int totalCount = quickTestStatisticRepository.countAllByPocIdAndCreatedAtBetween(
+                        ids.get(quickTestConfig.getTenantPointOfCareIdKey()), utcDateFrom, utcDateTo);
+
+        int totalPositiveCount = quickTestStatisticRepository
+                .countAllByPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(
+                        ids.get(quickTestConfig.getTenantPointOfCareIdKey()), utcDateFrom, utcDateTo);
+
+        QuickTestStatistics quickTestStatistics = new QuickTestStatistics();
+        quickTestStatistics.setTotalTestCount(totalCount);
+        quickTestStatistics.setPositiveTestCount(totalPositiveCount);
+        return quickTestStatistics;
     }
 
 }

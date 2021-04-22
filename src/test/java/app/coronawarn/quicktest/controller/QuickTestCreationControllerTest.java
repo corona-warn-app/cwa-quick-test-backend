@@ -5,12 +5,15 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
+import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
@@ -25,13 +28,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+
+import liquibase.pro.packaged.T;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.stubbing.OngoingStubbing;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -39,6 +50,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
+
+import javax.validation.Valid;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(QuickTestCreationController.class)
@@ -49,6 +62,8 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
     private QuickTestService quickTestService;
     @MockBean
     private Utilities utilities;
+    @InjectMocks
+    private QuickTestCreationController quickTestCreationController;
 
     @Test
     void createQuickTest() throws Exception {
@@ -124,6 +139,47 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void catchAndConvertExceptionTests() {
+        QuickTestCreationRequest quicktestCreationRequest = null;
+        QuickTestUpdateRequest quickTestUpdateRequest = null;
+        QuickTestPersonalDataRequest quickTestPersonalDataRequest = null;
+
+        try {
+            quickTestCreationController.createQuickTest(quicktestCreationRequest);
+            fail("has to throw exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getReason().equals("Inserting failed because of internal error."),
+                    "Wrong message!");
+        } catch (Exception e) {
+            fail("catch exception and convert to ResponseStatusException failed");
+        }
+
+        try {
+            quickTestCreationController.updateQuickTestStatus(
+                    "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55",
+                    quickTestUpdateRequest);
+            fail("has to throw exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getReason().equals("Updating failed because of internal error."),
+                    "Wrong message!");
+        } catch (Exception e) {
+            fail("catch exception and convert to ResponseStatusException failed");
+        }
+
+        try {
+            quickTestCreationController.updateQuickTestWithPersonalData(
+                    "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55",
+                    quickTestPersonalDataRequest);
+            fail("has to throw exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getReason().equals("Updating failed because of internal error."),
+                    "Wrong message!");
+        } catch (Exception e) {
+            fail("catch exception and convert to ResponseStatusException failed");
+        }
     }
 
     @Test

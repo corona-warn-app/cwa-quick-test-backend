@@ -128,8 +128,7 @@ public class QuickTestArchiveController {
             LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
             List<QuickTestArchive> archives = quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
                     testResult, utcDateFrom, utcDateTo);
-            TypeToken<List<QuickTestArchiveResponse>> typeToken = new TypeToken<List<QuickTestArchiveResponse>>() {
-            };
+            TypeToken<List<QuickTestArchiveResponse>> typeToken = new TypeToken<>(){};
             List<QuickTestArchiveResponse> quickTestArchiveResponses = modelMapper.map(
                     archives,
                     typeToken.getType()

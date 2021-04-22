@@ -20,11 +20,13 @@
 
 package app.coronawarn.quicktest.domain;
 
+import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTestStatistics;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -38,6 +40,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(SecurityAuditListenerQuickTestStatistics.class)
 @Entity
 @Table(name = "quick_test_statistics")
 public class QuickTestStatistics {

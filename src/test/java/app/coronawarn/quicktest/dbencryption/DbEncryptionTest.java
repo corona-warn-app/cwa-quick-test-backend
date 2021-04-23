@@ -73,13 +73,17 @@ public class DbEncryptionTest {
     @MockBean
     Utilities utilities;
 
-    Object databaseEntry;
-    QuickTestArchive quickTestArchive;
-
     @BeforeEach
+    @AfterEach
     public void setup() {
+        quickTestArchiveRepository.deleteAll();
+
+    }
+
+    @Test
+    public void testThatDiagnosisKeyDataIsStoredEncrypted() {
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
-        quickTestArchive = new QuickTestArchive();
+        QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid("8fa4dcec");
         quickTestArchive.setHashedGuid("8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         quickTestArchive.setTenantId("08");
@@ -104,16 +108,7 @@ public class DbEncryptionTest {
         quickTestArchive.setTestResultServerHash("f1a8a9da03155aa760e0c38f9bed645c48fa4dcecf716d8dd96c9e927dda5484");
         quickTestArchive.setPdf(pdf.toByteArray());
         quickTestArchive = quickTestArchiveRepository.saveAndFlush(quickTestArchive);
-    }
-
-    @AfterEach
-    public void clear(){
-        quickTestArchiveRepository.deleteAll();
-    }
-
-    @Test
-    public void testThatDiagnosisKeyDataIsStoredEncrypted() {
-        databaseEntry =
+        Object databaseEntry =
             entityManager.createNativeQuery("SELECT * FROM quick_test_archive q WHERE HASHED_GUID='" +
                 "8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4'")
                 .getSingleResult();

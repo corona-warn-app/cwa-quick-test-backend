@@ -80,6 +80,8 @@ public class QuickTestCreationController {
         try {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
                 quicktestCreationRequest.getHashedGuid());
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Couldn't execute createQuickTest.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -116,6 +118,8 @@ public class QuickTestCreationController {
                 utilities.getPocInformationFromToken(),
                 utilities.getUserNameFromToken()
             );
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -146,6 +150,8 @@ public class QuickTestCreationController {
             quickTestService.updateQuickTestWithPersonalData(
                 utilities.getIdsFromToken(), shortHash,
                 modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

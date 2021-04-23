@@ -244,7 +244,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             quickTestArchiveController.createQuickTestArchive(null);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR), "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }
@@ -258,8 +258,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
                 ZonedDateTime.now());
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getReason().equals("trying to find quicktests failed"),
-                "Wrong message!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }

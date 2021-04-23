@@ -8,6 +8,12 @@ import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import app.coronawarn.quicktest.utils.Utilities;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -16,20 +22,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.validation.constraints.AssertTrue;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -63,8 +59,7 @@ public class QuickTestServiceTest {
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
             fail("conflict did not recognized");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
-                    "wrong status");
+            assertEquals(e.getStatus(),HttpStatus.CONFLICT, "wrong status");
         }
     }
 
@@ -79,8 +74,7 @@ public class QuickTestServiceTest {
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
             fail("conflict did not recognized");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),
-                    "wrong status");
+            assertEquals(e.getStatus(),HttpStatus.CONFLICT, "wrong status");
         }
     }
 
@@ -91,8 +85,7 @@ public class QuickTestServiceTest {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
-                    "wrong status");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
     }
 
@@ -132,8 +125,7 @@ public class QuickTestServiceTest {
                     "User");
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
-                    "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
     }
 
@@ -152,8 +144,7 @@ public class QuickTestServiceTest {
                     "User");
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.NOT_FOUND),
-                    "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.NOT_FOUND, "wrong status");
         }
     }
 
@@ -176,8 +167,7 @@ public class QuickTestServiceTest {
                     "User");
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
-                    "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
     }
 
@@ -199,8 +189,7 @@ public class QuickTestServiceTest {
                     "User");
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
-                    "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
     }
 

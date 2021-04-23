@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
@@ -30,7 +30,7 @@ public class QuickTestArchiveServiceTest {
             quickTestArchiveService.getPdf("sgserh");
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.NOT_FOUND), "wrong status");
+            assertEquals(e.getStatus(),HttpStatus.NOT_FOUND, "wrong status");
         }
     }
 }

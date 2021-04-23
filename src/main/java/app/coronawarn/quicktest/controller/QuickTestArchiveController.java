@@ -88,6 +88,8 @@ public class QuickTestArchiveController {
                             + "Schnelltest_" + hashedGuid + ".pdf\"")
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(quickTestArchiveService.getPdf(hashedGuid));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Couldn't prepare stored pdf for download.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

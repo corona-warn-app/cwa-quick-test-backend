@@ -138,7 +138,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             quickTestCreationController.createQuickTest(quicktestCreationRequest);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR), "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }
@@ -149,7 +149,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
                     quickTestUpdateRequest);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR), "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }
@@ -160,7 +160,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
                     quickTestPersonalDataRequest);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR), "Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }

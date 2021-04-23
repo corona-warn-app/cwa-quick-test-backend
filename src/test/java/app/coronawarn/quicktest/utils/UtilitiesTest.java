@@ -22,7 +22,6 @@ package app.coronawarn.quicktest.utils;
 
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -126,7 +125,7 @@ class UtilitiesTest {
             utilities.getIdsFromToken();
             fail("No ResponseStatusException is coming");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),"Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
     }
 
@@ -182,7 +181,7 @@ class UtilitiesTest {
             utilities.getPocInformationFromToken();
             fail("No ResponseStatusException is coming");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),"Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
     }
 
@@ -235,7 +234,7 @@ class UtilitiesTest {
             utilities.getUserNameFromToken();
             fail("No ResponseStatusException is coming");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),"Wrong status!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
     }
 

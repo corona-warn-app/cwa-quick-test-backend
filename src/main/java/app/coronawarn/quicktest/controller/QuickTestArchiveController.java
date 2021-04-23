@@ -121,7 +121,7 @@ public class QuickTestArchiveController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestArchiveListResponse> findArchivesByTestResultAndUpdatedAtBetween(
-            @RequestParam @Min(5) @Max(8) Short testResult,
+            @RequestParam(required = false) @Min(5) @Max(8) Short testResult,
             @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateFrom,
             @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateTo) {
         try {

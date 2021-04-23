@@ -31,4 +31,6 @@ public class QuickTestArchiveResponse {
 
     private String birthday;
 
+    private String testResult;
+
 }

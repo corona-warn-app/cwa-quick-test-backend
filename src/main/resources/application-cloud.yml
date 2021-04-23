@@ -67,6 +67,7 @@ server:
     include-exception: false
     include-binding-errors: never
     include-message: never
+
 testresultserver:
   enabled: false
   oneWay: false

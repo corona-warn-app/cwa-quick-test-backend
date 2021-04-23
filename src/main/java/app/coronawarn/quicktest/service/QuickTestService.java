@@ -37,7 +37,9 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Component
@@ -59,10 +61,10 @@ public class QuickTestService {
      *
      * @param ids        Map with tenantId and testscopeId
      * @param hashedGuid SHA256 hash of the test GUID.
-     * @throws QuickTestServiceException with reason CONFLICT if a QuickTest with short hash already exists.
+     * @throws ResponseStatusException with status CONFLICT if a QuickTest with short hash already exists.
      */
     public void createNewQuickTest(Map<String, String> ids, String hashedGuid)
-        throws QuickTestServiceException {
+        throws ResponseStatusException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
 
@@ -75,7 +77,7 @@ public class QuickTestService {
 
         if (conflictingQuickTestByHashed.isPresent() || conflictingQuickTestArchiveByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
         QuickTest newQuickTest = new QuickTest();
@@ -87,10 +89,11 @@ public class QuickTestService {
         log.debug("Persisting QuickTest in database");
         try {
             quickTestRepository.save(newQuickTest);
-            log.info("Created new QuickTest with hashedGUID {}", hashedGuid);
+            log.debug("Created new QuickTest with hashedGUID {}", hashedGuid);
         } catch (Exception e) {
-            log.error("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
+            log.debug("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
+            log.error("Failed to insert new QuickTest");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -100,55 +103,45 @@ public class QuickTestService {
      * @param shortHash the short-hash of the testresult to be updated
      * @param result    the result of the quick test.
      */
-    @Transactional(rollbackOn = QuickTestServiceException.class)
+    @Transactional(rollbackOn = ResponseStatusException.class)
     public void updateQuickTest(Map<String, String> ids, String shortHash, short result, String testBrandId,
                                 String testBrandName, List<String> pocInformation,
-                                String user) throws QuickTestServiceException {
+                                String user) throws ResponseStatusException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
-
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
         quickTestRepository.saveAndFlush(quicktest);
-
         addStatistics(quicktest);
         byte[] pdf;
         try {
             pdf = createPdf(quicktest, pocInformation, user);
         } catch (IOException e) {
-            log.error("generating PDF failed. Exception = {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.PDF_GENERATOR);
+            log.error("generating PDF failed.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
             quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                     quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
-            log.error("Could save quickTestArchive. updateQuickTest failed. Exception "
-                    + "= {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
+            log.error("Could not save quickTestArchive. updateQuickTest failed.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
             quickTestRepository.deleteById(quicktest.getHashedGuid());
             log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
                     quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
-            log.error("updateQuickTest failed. Exception = {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.DELETE_FAILED);
+            log.error("Could not delete QuickTest. updateQuickTest failed.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
             log.debug("Sending TestResult to TestResult-Server");
-            try {
-                sendResultToTestResultServer(quicktest.getTestResultServerHash(), result);
-            } catch (TestResultServiceException e) {
-                log.error("Failed to send updated TestResult on TestResult-Server", e);
-                throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
-            }
+            sendResultToTestResultServer(quicktest.getTestResultServerHash(), result);
         }
-
-        log.info("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
+        log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
     }
 
     /**
@@ -157,10 +150,10 @@ public class QuickTestService {
      * @param shortHash             the short-hash of the testresult to be updated
      * @param quickTestPersonalData the quick test personaldata.
      */
-    @Transactional(rollbackOn = QuickTestServiceException.class)
+    @Transactional(rollbackOn = ResponseStatusException.class)
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
-        throws QuickTestServiceException {
+        throws ResponseStatusException {
         QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
@@ -179,21 +172,15 @@ public class QuickTestService {
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
-            log.error("Could not save. updateQuickTestWithPersonalData failed. Exception = {}", e.getMessage());
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
+            log.error("Could not save. updateQuickTestWithPersonalData failed.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         if (quickTestPersonalData.getConfirmationCwa()) {
             log.debug("Sending TestResult to TestResult-Server");
-            try {
-                sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult());
-            } catch (TestResultServiceException e) {
-                log.error("Failed to send TestResult to TestResult-Server", e);
-                throw new QuickTestServiceException(QuickTestServiceException.Reason.TEST_RESULT_SERVER_ERROR);
-            }
+            sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult());
         }
-
-        log.info("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
+        log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
 
     }
 
@@ -235,18 +222,18 @@ public class QuickTestService {
         return quickTestArchive;
     }
 
-    private QuickTest getQuickTest(String pocId, String shortHash) throws QuickTestServiceException {
+    private QuickTest getQuickTest(String pocId, String shortHash) throws ResponseStatusException {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
         QuickTest quicktest = quickTestRepository.findByPocIdAndShortHashedGuid(pocId, shortHash);
         if (quicktest == null) {
-            log.info("Requested Quick Test with shortHash {} could not be found.", shortHash);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND);
+            log.debug("Requested Quick Test with shortHash could not be found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return quicktest;
     }
 
     private void sendResultToTestResultServer(String testResultServerHash, short result)
-            throws TestResultServiceException {
+            throws ResponseStatusException {
         QuickTestResult quickTestResult = new QuickTestResult();
         quickTestResult.setId(testResultServerHash);
         quickTestResult.setResult(result);

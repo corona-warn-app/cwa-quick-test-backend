@@ -28,7 +28,6 @@ import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,7 +36,6 @@ import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -82,21 +80,10 @@ public class QuickTestCreationController {
         try {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
                 quicktestCreationRequest.getHashedGuid());
-        } catch (QuickTestServiceException e) {
-            if (e.getReason() == QuickTestServiceException.Reason.INSERT_CONFLICT) {
-                throw new ResponseStatusException(
-                        HttpStatus.CONFLICT, "Quicktest with short hash already exists");
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
-            }
         } catch (Exception e) {
-            log.error("Couldn't execute createQuickTest."
-                    + " Message: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Inserting failed because of internal error.");
+            log.error("Couldn't execute createQuickTest.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
@@ -129,19 +116,9 @@ public class QuickTestCreationController {
                 utilities.getPocInformationFromToken(),
                 utilities.getUserNameFromToken()
             );
-        } catch (QuickTestServiceException e) {
-            if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Short Hash doesn't exists");
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
-            }
         } catch (Exception e) {
-            log.error("Couldn't execute updateQuickTestStatus."
-                    + " Message: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Updating failed because of internal error.");
+            log.error("Couldn't execute updateQuickTestStatus.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -169,19 +146,9 @@ public class QuickTestCreationController {
             quickTestService.updateQuickTestWithPersonalData(
                 utilities.getIdsFromToken(), shortHash,
                 modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
-        } catch (QuickTestServiceException e) {
-            if (e.getReason() == QuickTestServiceException.Reason.UPDATE_NOT_FOUND) {
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Short Hash doesn't exists");
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
-            }
         } catch (Exception e) {
-            log.error("Couldn't execute updateQuickTestStatus."
-                    + " Message: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "Updating failed because of internal error.");
+            log.error("Couldn't execute updateQuickTestStatus.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

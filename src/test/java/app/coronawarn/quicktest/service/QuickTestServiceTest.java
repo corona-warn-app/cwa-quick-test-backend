@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.constraints.AssertTrue;
 import java.io.ByteArrayOutputStream;
@@ -60,9 +62,9 @@ public class QuickTestServiceTest {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
             fail("conflict did not recognized");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.INSERT_CONFLICT),
-                    "wrong exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
+                    "wrong status");
         }
     }
 
@@ -76,9 +78,9 @@ public class QuickTestServiceTest {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
             fail("conflict did not recognized");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.INSERT_CONFLICT),
-                    "wrong exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),
+                    "wrong status");
         }
     }
 
@@ -88,14 +90,14 @@ public class QuickTestServiceTest {
         try {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.SAVE_FAILED),
-                    "wrong exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
+                    "wrong status");
         }
     }
 
     @Test
-    void addStatisticsInUpdateQuickTestIsCalledTest() throws QuickTestServiceException {
+    void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException {
         QuickTestService qs = spy(quickTestService);
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
@@ -129,9 +131,9 @@ public class QuickTestServiceTest {
                     new ArrayList<>(),
                     "User");
             fail("has to throw exception");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.PDF_GENERATOR),
-                    "Wrong message!");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
+                    "Wrong status!");
         }
     }
 
@@ -149,9 +151,9 @@ public class QuickTestServiceTest {
                     new ArrayList<>(),
                     "User");
             fail("has to throw exception");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.UPDATE_NOT_FOUND),
-                    "Wrong message!");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.NOT_FOUND),
+                    "Wrong status!");
         }
     }
 
@@ -173,9 +175,9 @@ public class QuickTestServiceTest {
                     new ArrayList<>(),
                     "User");
             fail("has to throw exception");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.SAVE_FAILED),
-                    "Wrong message!");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
+                    "Wrong status!");
         }
     }
 
@@ -196,14 +198,14 @@ public class QuickTestServiceTest {
                     new ArrayList<>(),
                     "User");
             fail("has to throw exception");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.DELETE_FAILED),
-                    "Wrong message!");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR),
+                    "Wrong status!");
         }
     }
 
     @Test
-    void callResultServerInUpdateQuickTestTest() throws IOException, QuickTestServiceException {
+    void callResultServerInUpdateQuickTestTest() throws IOException, ResponseStatusException {
         Map<String, String> ids = new HashMap<>();
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);

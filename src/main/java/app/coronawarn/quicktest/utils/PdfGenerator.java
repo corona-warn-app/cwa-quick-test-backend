@@ -116,7 +116,8 @@ public class PdfGenerator {
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "logo");
             cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
         } catch (IOException e) {
-            log.error(e.getMessage());
+            log.debug("Kein logo geladen! " + e.getMessage());
+            log.error("Kein logo geladen!");
         }
         cos.beginText();
         cos.setFont(fontType, fontSize);

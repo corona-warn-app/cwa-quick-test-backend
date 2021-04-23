@@ -19,7 +19,6 @@ import app.coronawarn.quicktest.model.QuickTestArchiveListResponse;
 import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.google.gson.Gson;
 import java.time.LocalDate;
@@ -36,6 +35,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
@@ -80,24 +80,24 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             .get("/api/quicktestarchive/6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4/pdf"))
             .andExpect(status().isUnauthorized());
 
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.NOT_FOUND))
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
             .when(quickTestArchiveService).getPdf(any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4/pdf")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isNotFound())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("404 NOT_FOUND \"Quicktest with requested ID not found\"",
+            .andExpect(result -> assertEquals("404 NOT_FOUND",
                 result.getResolvedException().getMessage()));
 
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INTERNAL_ERROR))
+        doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
             .when(quickTestArchiveService).getPdf(any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4/pdf")
             .contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(status().isInternalServerError())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR \"trying to get pdf failed\"",
+            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR",
                 result.getResolvedException().getMessage()));
     }
 
@@ -244,8 +244,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             quickTestArchiveController.createQuickTestArchive(null);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getReason().equals("trying to get pdf failed"),
-                "Wrong message!");
+            assertTrue(e.getStatus().equals(HttpStatus.INTERNAL_SERVER_ERROR), "Wrong status!");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }

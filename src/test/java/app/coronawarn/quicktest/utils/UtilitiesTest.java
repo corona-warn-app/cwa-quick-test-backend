@@ -22,15 +22,13 @@ package app.coronawarn.quicktest.utils;
 
 import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Arrays;
@@ -49,9 +47,11 @@ import org.keycloak.representations.AccessToken;
 import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @SpringBootTest
@@ -92,8 +92,8 @@ class UtilitiesTest {
         try {
             Utilities utilities = new Utilities(quickTestConfig);
             assertEquals(tokens, utilities.getIdsFromToken());
-        } catch (QuickTestServiceException e) {
-            e.printStackTrace();
+        } catch (ResponseStatusException e) {
+            // Expected
         }
     }
 
@@ -124,9 +124,9 @@ class UtilitiesTest {
         try {
             Utilities utilities = new Utilities(quickTestConfig);
             utilities.getIdsFromToken();
-            fail("No QuickTestServiceException is coming");
-        } catch (QuickTestServiceException e) {
-            assertEquals(QuickTestServiceException.Reason.INSERT_CONFLICT, e.getReason());
+            fail("No ResponseStatusException is coming");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),"Wrong status!");
         }
     }
 
@@ -153,8 +153,8 @@ class UtilitiesTest {
         try {
             Utilities utilities = new Utilities(quickTestConfig);
             assertEquals(Arrays.asList(pocInformation.split(quickTestConfig.getPointOfCareInformationDelimiter())), utilities.getPocInformationFromToken());
-        } catch (QuickTestServiceException e) {
-            e.printStackTrace();
+        } catch (ResponseStatusException e) {
+            // Expected
         }
     }
 
@@ -180,9 +180,9 @@ class UtilitiesTest {
         try {
             Utilities utilities = new Utilities(quickTestConfig);
             utilities.getPocInformationFromToken();
-            fail("No QuickTestServiceException is coming");
-        } catch (QuickTestServiceException e) {
-            assertEquals(QuickTestServiceException.Reason.INSERT_CONFLICT, e.getReason());
+            fail("No ResponseStatusException is coming");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),"Wrong status!");
         }
     }
 
@@ -208,8 +208,8 @@ class UtilitiesTest {
         try {
             Utilities utilities = new Utilities(quickTestConfig);
             assertEquals(name, utilities.getUserNameFromToken());
-        } catch (QuickTestServiceException e) {
-            e.printStackTrace();
+        } catch (ResponseStatusException e) {
+            // Expected
         }
     }
 
@@ -233,21 +233,11 @@ class UtilitiesTest {
         try {
             Utilities utilities = new Utilities(quickTestConfig);
             utilities.getUserNameFromToken();
-            fail("No QuickTestServiceException is coming");
-        } catch (QuickTestServiceException e) {
-            assertEquals(QuickTestServiceException.Reason.INSERT_CONFLICT, e.getReason());
+            fail("No ResponseStatusException is coming");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getStatus().equals(HttpStatus.CONFLICT),"Wrong status!");
         }
     }
-//
-//    @Test
-//    void testGetCurrentLocalDateTimeUtc(){
-//        LocalDateTime time = Utilities.getCurrentLocalDateTimeUtc();
-//        ZoneOffset offest = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("Europe/Berlin")).getOffset();
-//        assertEquals(
-//            time.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Europe/Berlin")).toLocalDateTime(),
-//            time.atOffset(offest).toZonedDateTime().toLocalDateTime()
-//        );
-//    }
 
     @Test
     void testGetStartTimeForLocalDateInGermanyInUtc(){

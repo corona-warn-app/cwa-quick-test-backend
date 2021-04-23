@@ -1,7 +1,6 @@
 package app.coronawarn.quicktest.utils;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -17,8 +16,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -56,9 +57,9 @@ public class Utilities {
      * Get tenantID and pocID from Token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
-     * @throws QuickTestServiceException TenantID or pocID not found
+     * @throws ResponseStatusException 500 if Ids not found in User-Token
      */
-    public Map<String, String> getIdsFromToken() throws QuickTestServiceException {
+    public Map<String, String> getIdsFromToken() throws ResponseStatusException {
 
         Map<String, String> ids = new HashMap<>();
         Principal principal = getPrincipal();
@@ -77,8 +78,8 @@ public class Utilities {
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
             || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
-            log.debug("Ids not found in User-Token");
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+            log.error("Ids not found in User-Token");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ids;
     }
@@ -87,9 +88,9 @@ public class Utilities {
      * Get tenantID and pocID from Token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
-     * @throws QuickTestServiceException TenantID or pocID not found
+     * @throws ResponseStatusException 500 if Poc Information not found in User-Token
      */
-    public List<String> getPocInformationFromToken() throws QuickTestServiceException {
+    public List<String> getPocInformationFromToken() throws ResponseStatusException {
 
         String information = null;
         Principal principal = getPrincipal();
@@ -104,8 +105,8 @@ public class Utilities {
             }
         }
         if (information == null) {
-            log.debug("Poc Information not found in User-Token");
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+            log.error("Poc Information not found in User-Token");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return Arrays.asList(information.split(quickTestConfig.getPointOfCareInformationDelimiter()));
     }
@@ -114,9 +115,9 @@ public class Utilities {
      * Get tenantID and pocID from Token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
-     * @throws QuickTestServiceException TenantID or pocID not found
+     * @throws ResponseStatusException 500 Name not found in User-Token
      */
-    public String getUserNameFromToken() throws QuickTestServiceException {
+    public String getUserNameFromToken() throws ResponseStatusException {
 
         String information = null;
         Principal principal = getPrincipal();
@@ -128,7 +129,7 @@ public class Utilities {
         }
         if (information == null) {
             log.debug("Name not found in User-Token");
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return information;
     }

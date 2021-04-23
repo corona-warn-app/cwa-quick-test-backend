@@ -26,7 +26,6 @@ import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.QuickTestArchiveListResponse;
 import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -89,18 +88,9 @@ public class QuickTestArchiveController {
                             + "Schnelltest_" + hashedGuid + ".pdf\"")
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(quickTestArchiveService.getPdf(hashedGuid));
-        } catch (QuickTestServiceException e) {
-            if (e.getReason() == QuickTestServiceException.Reason.NOT_FOUND) {
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Quicktest with requested ID not found");
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, "trying to get pdf failed");
-            }
         } catch (Exception e) {
-            log.error("Couldn't prepare stored pdf for download. Message: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "trying to get pdf failed");
+            log.error("Couldn't prepare stored pdf for download.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

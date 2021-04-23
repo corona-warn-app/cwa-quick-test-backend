@@ -37,15 +37,22 @@ public class QuickTestArchiveService {
 
     /**
      * Finds all quicktests in archive table by test result and time range.
-     * @param testResult test result value (5...9)
-     * @param dateFrom Start date
-     * @param dateTo End date
+     *
+     * @param testResult test result value (5...9) or null
+     * @param dateFrom   Start date
+     * @param dateTo     End date
      * @return quickTestArchives List of all found quickTestArchives
      */
     public List<QuickTestArchive> findByTestResultAndUpdatedAtBetween(
-            Short testResult, LocalDateTime dateFrom, LocalDateTime dateTo) {
-        List<QuickTestArchive> archives = quickTestArchiveRepository.findAllByTestResultAndUpdatedAtBetween(
+        Short testResult, LocalDateTime dateFrom, LocalDateTime dateTo) {
+        List<QuickTestArchive> archives;
+        if (testResult == null) {
+            archives = quickTestArchiveRepository.findAllByUpdatedAtBetween(
+                dateFrom, dateTo);
+        } else {
+            archives = quickTestArchiveRepository.findAllByTestResultAndUpdatedAtBetween(
                 testResult, dateFrom, dateTo);
+        }
         return archives;
     }
 

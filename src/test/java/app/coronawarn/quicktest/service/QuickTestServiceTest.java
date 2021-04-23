@@ -212,7 +212,40 @@ public class QuickTestServiceTest {
                     "User");
             fail("has to throw exception");
         } catch (NullPointerException e) {
-            // Test OK. testResultService not initialized. Call try successful
+            // Test passed. testResultService not initialized. Call try successful
         }
     }
+
+    @Test
+    void updateQuickTestSaveFailedTest() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setConfirmationCwa(true);
+        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+                .thenReturn(quickTest);
+        when(quickTestRepository.saveAndFlush(any())).thenThrow(new RuntimeException());
+        try {
+            quickTestService.updateQuickTestWithPersonalData(utilities.getIdsFromToken(),
+                    "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
+                    quickTest);
+        } catch (ResponseStatusException e) {
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
+        }
+    }
+
+    @Test
+    void callResultServerInUpdateQuickTestWithPersonalDataTest() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setConfirmationCwa(true);
+        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+                .thenReturn(quickTest);
+        try {
+            quickTestService.updateQuickTestWithPersonalData(utilities.getIdsFromToken(),
+                    "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
+                    quickTest);
+            fail("has to throw exception");
+        } catch (NullPointerException e) {
+            // Test passed. testResultService not initialized. Call try successful
+        }
+    }
+
 }

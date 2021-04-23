@@ -82,10 +82,10 @@ public class QuickTestStatisticsController {
     ) {
         try {
             if (zonedDateFrom == null) {
-                zonedDateFrom = Utilities.getStartTimeForLocalDateInGermany();
+                zonedDateFrom = Utilities.getStartTimeForLocalDateInGermanyInUtc();
             }
             if (zonedDateTo == null) {
-                zonedDateTo = Utilities.getEndTimeForLocalDateInGermany();
+                zonedDateTo = Utilities.getEndTimeForLocalDateInGermanyInUtc();
             }
             LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
             LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);

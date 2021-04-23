@@ -5,9 +5,11 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -29,6 +31,8 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
+import org.mockito.InjectMocks;
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -46,6 +50,9 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
 
     @MockBean
     private QuickTestArchiveService quickTestArchiveService;
+
+    @InjectMocks
+    private QuickTestArchiveController quickTestArchiveController;
 
     @Test
     void createQuickTestArchive() throws Exception {
@@ -223,6 +230,35 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             e.getRootCause().getMessage().equals("findArchivesByTestResultAndUpdatedAtBetween.testResult: " +
                 "must be less than or equal to 8")
         );
+    }
+
+    @Test
+    void getQuicktestStatisticsFail() {
+        try {
+            quickTestArchiveController.createQuickTestArchive(null);
+            fail("has to throw exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getReason().equals("trying to get pdf failed"),
+                "Wrong message!");
+        } catch (Exception e) {
+            fail("catch exception and convert to ResponseStatusException failed");
+        }
+
+        ModelMapper modelMapper = mock(ModelMapper.class);
+        when(modelMapper.map(any(), any())).thenReturn(null);
+        try {
+            quickTestArchiveController.findArchivesByTestResultAndUpdatedAtBetween(
+                (short) 6,
+                ZonedDateTime.now(),
+                ZonedDateTime.now());
+            fail("has to throw exception");
+        } catch (ResponseStatusException e) {
+            assertTrue(e.getReason().equals("trying to find quicktests failed"),
+                "Wrong message!");
+        } catch (Exception e) {
+            fail("catch exception and convert to ResponseStatusException failed");
+        }
+
     }
 
     private void checkResponse(QuickTestArchiveResponse response, QuickTestArchive quickTestArchive) {

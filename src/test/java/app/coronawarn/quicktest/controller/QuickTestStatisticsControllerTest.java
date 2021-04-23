@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,9 +43,6 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
     private QuickTestStatisticsService quickTestStatisticsService;
 
     @MockBean
-    private ModelMapper modelMapper;
-
-    @MockBean
     private Utilities utilities;
 
     @InjectMocks
@@ -55,7 +53,6 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
         QuickTestStatisticsResponse quickTestStatisticsResponse = new QuickTestStatisticsResponse();
         quickTestStatisticsResponse.setPositiveTestCount(1);
         quickTestStatisticsResponse.setTotalTestCount(2);
-        when(modelMapper.map(any(), any())).thenReturn(quickTestStatisticsResponse);
 
         QuickTestStatistics quickTestStatistics = new QuickTestStatistics();
         quickTestStatistics.setPositiveTestCount(1);
@@ -145,6 +142,7 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
 
     @Test
     void getQuicktestStatisticsFail() {
+        ModelMapper modelMapper = mock(ModelMapper.class);
         when(modelMapper.map(any(), any())).thenReturn(null);
         try {
             quickTestStatisticsController.getQuicktestStatistics(ZonedDateTime.now(), ZonedDateTime.now());

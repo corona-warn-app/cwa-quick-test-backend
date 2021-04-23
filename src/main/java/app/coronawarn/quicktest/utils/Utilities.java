@@ -37,18 +37,18 @@ public class Utilities {
     /**
      * Returns start datetime in Germany.
      */
-    public static ZonedDateTime getStartTimeForLocalDateInGermany() {
+    public static ZonedDateTime getStartTimeForLocalDateInGermanyInUtc() {
         ZonedDateTime time = ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
-                .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay());
+            .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay());
         return time.withZoneSameInstant(ZoneId.of("UTC"));
     }
 
     /**
      * Returns end datetime date in Germany.
      */
-    public static ZonedDateTime getEndTimeForLocalDateInGermany() {
+    public static ZonedDateTime getEndTimeForLocalDateInGermanyInUtc() {
         ZonedDateTime time = ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
-                .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay());
+            .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay());
         return time.withZoneSameInstant(ZoneId.of("UTC"));
     }
 

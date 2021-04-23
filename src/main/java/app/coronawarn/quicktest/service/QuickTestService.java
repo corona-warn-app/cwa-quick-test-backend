@@ -59,10 +59,9 @@ public class QuickTestService {
      *
      * @param ids        Map with tenantId and testscopeId
      * @param hashedGuid SHA256 hash of the test GUID.
-     * @return saved QuickTest
      * @throws QuickTestServiceException with reason CONFLICT if a QuickTest with short hash already exists.
      */
-    public QuickTest createNewQuickTest(Map<String, String> ids, String hashedGuid)
+    public void createNewQuickTest(Map<String, String> ids, String hashedGuid)
         throws QuickTestServiceException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
@@ -87,13 +86,12 @@ public class QuickTestService {
 
         log.debug("Persisting QuickTest in database");
         try {
-            newQuickTest = quickTestRepository.save(newQuickTest);
+            quickTestRepository.save(newQuickTest);
             log.info("Created new QuickTest with hashedGUID {}", hashedGuid);
         } catch (Exception e) {
             log.error("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
             throw new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED);
         }
-        return newQuickTest;
     }
 
     /**
@@ -123,7 +121,7 @@ public class QuickTestService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.PDF_GENERATOR);
         }
         try {
-            quickTestArchiveRepository.save(mappingQuickTestToQuickTestAchive(quicktest, pdf));
+            quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                     quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
@@ -140,8 +138,7 @@ public class QuickTestService {
             throw new QuickTestServiceException(QuickTestServiceException.Reason.DELETE_FAILED);
         }
 
-        Boolean confirmationCwa = quicktest.getConfirmationCwa();
-        if (confirmationCwa != null && confirmationCwa) {
+        if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
             log.debug("Sending TestResult to TestResult-Server");
             try {
                 sendResultToTestResultServer(quicktest.getTestResultServerHash(), result);
@@ -209,7 +206,7 @@ public class QuickTestService {
         quickTestLogRepository.save(quickTestLog);
     }
 
-    private QuickTestArchive mappingQuickTestToQuickTestAchive(
+    private QuickTestArchive mappingQuickTestToQuickTestArchive(
             QuickTest quickTest, byte[] pdf) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
@@ -256,7 +253,7 @@ public class QuickTestService {
         testResultService.createOrUpdateTestResult(quickTestResult);
     }
 
-    private byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {
+    protected byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {
         return pdf.generatePdf(pocInformation, quicktest, user).toByteArray();
     }
 }

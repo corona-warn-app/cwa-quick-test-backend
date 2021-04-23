@@ -23,6 +23,7 @@
         <springdoc.version>1.4.2</springdoc.version>
         <liquibase.version>4.3.2</liquibase.version>
         <pdfbox.version>2.0.23</pdfbox.version>
+        <springTestAddons.version>2.5.2</springTestAddons.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
         <license.projectName>Corona-Warn-App / cwa-quick-test-backend</license.projectName>
@@ -70,10 +71,6 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.openfeign</groupId>
@@ -141,6 +138,24 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.c4-soft.springaddons</groupId>
+            <artifactId>spring-security-oauth2-test-addons</artifactId>
+            <version>${springTestAddons.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.c4-soft.springaddons</groupId>
+            <artifactId>spring-security-oauth2-test-webmvc-addons</artifactId>
+            <version>${springTestAddons.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.6</version>
+            <scope>test</scope>
         </dependency>
 
         <!-- DB drivers -->

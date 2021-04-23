@@ -166,7 +166,6 @@ public class QuickTestCreationController {
         @PathVariable String shortHash,
         @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
         try {
-            modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
             quickTestService.updateQuickTestWithPersonalData(
                 utilities.getIdsFromToken(), shortHash,
                 modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));

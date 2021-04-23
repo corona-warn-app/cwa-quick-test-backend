@@ -143,6 +143,20 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             = new Gson().fromJson(responseBody, QuickTestArchiveListResponse.class);
         checkResponse(response.getQuickTestArchives().get(0), quickTestArchive);
 
+        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+            .get("/api/quicktestarchive/")
+            .param("dateFrom",
+                ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .contentType(MediaType.APPLICATION_PDF_VALUE))
+            .andExpect(status().isOk()).andReturn();
+        responseBody = mvcResult.getResponse().getContentAsString();
+
+        response
+            = new Gson().fromJson(responseBody, QuickTestArchiveListResponse.class);
+        checkResponse(response.getQuickTestArchives().get(0), quickTestArchive);
+
+
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/")
             .param("testResult", "6")
@@ -169,14 +183,6 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .contentType(MediaType.APPLICATION_PDF_VALUE))
             .andExpect(status().isUnauthorized());
-
-        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .get("/api/quicktestarchive/")
-            .param("dateFrom",
-                ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-            .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-            .contentType(MediaType.APPLICATION_PDF_VALUE))
-            .andExpect(status().isBadRequest());
 
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/")
@@ -262,17 +268,17 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
     }
 
     private void checkResponse(QuickTestArchiveResponse response, QuickTestArchive quickTestArchive) {
-        assertEquals(response.getHashedGuid(), quickTestArchive.getHashedGuid());
-        assertEquals(response.getLastName(), quickTestArchive.getLastName());
-        assertEquals(response.getFirstName(), quickTestArchive.getFirstName());
-        assertEquals(response.getEmail(), quickTestArchive.getEmail());
-        assertEquals(response.getPhoneNumber(), quickTestArchive.getPhoneNumber());
-        assertEquals(response.getSex(), quickTestArchive.getSex());
-        assertEquals(response.getStreet(), quickTestArchive.getStreet());
-        assertEquals(response.getHouseNumber(), quickTestArchive.getHouseNumber());
-        assertEquals(response.getZipCode(), quickTestArchive.getZipCode());
-        assertEquals(response.getSex(), quickTestArchive.getSex());
-        assertEquals(response.getCity(), quickTestArchive.getCity());
-        assertEquals(response.getBirthday(), quickTestArchive.getBirthday());
+        assertEquals(quickTestArchive.getHashedGuid(), response.getHashedGuid());
+        assertEquals(quickTestArchive.getLastName(), response.getLastName());
+        assertEquals(quickTestArchive.getFirstName(), response.getFirstName());
+        assertEquals(quickTestArchive.getEmail(), response.getEmail());
+        assertEquals(quickTestArchive.getPhoneNumber(), response.getPhoneNumber());
+        assertEquals(quickTestArchive.getSex(), response.getSex());
+        assertEquals(quickTestArchive.getStreet(), response.getStreet());
+        assertEquals(quickTestArchive.getHouseNumber(), response.getHouseNumber());
+        assertEquals(quickTestArchive.getZipCode(), response.getZipCode());
+        assertEquals(quickTestArchive.getCity(), response.getCity());
+        assertEquals(quickTestArchive.getBirthday(), response.getBirthday());
+        assertEquals(quickTestArchive.getTestResult().toString(), response.getTestResult());
     }
 }

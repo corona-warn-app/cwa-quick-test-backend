@@ -20,19 +20,25 @@
 
 package app.coronawarn.quicktest.dbencryption;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
-import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.utils.Utilities;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.sql.Clob;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.Base64;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -41,6 +47,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -58,7 +65,7 @@ public class DbEncryptionTest {
     private final Key key = new SecretKeySpec("abcdefghjklmnopq".getBytes(StandardCharsets.UTF_8), "AES");
 
     @Autowired
-    QuickTestRepository quickTestRepository;
+    QuickTestArchiveRepository quickTestArchiveRepository;
 
     @Autowired
     EntityManager entityManager;
@@ -69,119 +76,123 @@ public class DbEncryptionTest {
     @BeforeEach
     @AfterEach
     public void setup() {
-        quickTestRepository.deleteAll();
+        quickTestArchiveRepository.deleteAll();
+
     }
 
     @Test
     public void testThatDiagnosisKeyDataIsStoredEncrypted() {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setTenantId("08");
-        quickTest.setPocId("15");
-        quickTest.setHashedGuid("8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
-        quickTest.setShortHashedGuid("8fa4dcec");
-        quickTest.setConfirmationCwa(true);
-        quickTest.setPrivacyAgreement(false);
-        quickTest.setLastName("LastName");
-        quickTest.setFirstName("FirstName");
-        quickTest.setEmail("email@email.email");
-        quickTest.setPhoneNumber("0800000001");
-        quickTest.setSex(Sex.FEMALE);
-        quickTest.setStreet("fakestreet");
-        quickTest.setHouseNumber("2a");
-        quickTest.setZipCode("10000");
-        quickTest.setCity("FakeCity");
-        quickTest.setTestBrandId("FakeBrand");
-        quickTest.setTestBrandName("FakeId");
-        quickTest.setBirthday("01.02.1990");
-        quickTest.setTestResultServerHash("f1a8a9da03155aa760e0c38f9bed645c48fa4dcecf716d8dd96c9e927dda5484");
-        quickTest = quickTestRepository.saveAndFlush(quickTest);
-
+        ByteArrayOutputStream pdf = new ByteArrayOutputStream();
+        QuickTestArchive quickTestArchive = new QuickTestArchive();
+        quickTestArchive.setShortHashedGuid("8fa4dcec");
+        quickTestArchive.setHashedGuid("8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
+        quickTestArchive.setTenantId("08");
+        quickTestArchive.setTestResult((short) 5);
+        quickTestArchive.setPocId("15");
+        quickTestArchive.setCreatedAt(LocalDateTime.now());
+        quickTestArchive.setUpdatedAt(LocalDateTime.now());
+        quickTestArchive.setConfirmationCwa(true);
+        quickTestArchive.setPrivacyAgreement(false);
+        quickTestArchive.setLastName("LastName");
+        quickTestArchive.setFirstName("FirstName");
+        quickTestArchive.setEmail("email@email.email");
+        quickTestArchive.setPhoneNumber("0800000001");
+        quickTestArchive.setSex(Sex.FEMALE);
+        quickTestArchive.setStreet("fakestreet");
+        quickTestArchive.setHouseNumber("2a");
+        quickTestArchive.setZipCode("10000");
+        quickTestArchive.setCity("FakeCity");
+        quickTestArchive.setTestBrandId("FakeBrand");
+        quickTestArchive.setTestBrandName("FakeId");
+        quickTestArchive.setBirthday("01.02.1990");
+        quickTestArchive.setTestResultServerHash("f1a8a9da03155aa760e0c38f9bed645c48fa4dcecf716d8dd96c9e927dda5484");
+        quickTestArchive.setPdf(pdf.toByteArray());
+        quickTestArchive = quickTestArchiveRepository.saveAndFlush(quickTestArchive);
         Object databaseEntry =
-            entityManager.createNativeQuery("SELECT * FROM quick_test q WHERE HASHED_GUID='" +
+            entityManager.createNativeQuery("SELECT * FROM quick_test_archive q WHERE HASHED_GUID='" +
                 "8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4'")
                 .getSingleResult();
-
-        assertEquals(quickTest.getHashedGuid(), ((Object[]) databaseEntry)[0]);
-        assertEquals(quickTest.getShortHashedGuid(), ((Object[]) databaseEntry)[1]);
-        assertEquals(quickTest.getTenantId(), ((Object[]) databaseEntry)[2]);
-        assertEquals(quickTest.getPocId(), ((Object[]) databaseEntry)[3]);
-        assertEquals(quickTest.getCreatedAt().withNano(0),
+        assertEquals(quickTestArchive.getShortHashedGuid(), ((Object[]) databaseEntry)[0]);
+        assertEquals(quickTestArchive.getHashedGuid(), ((Object[]) databaseEntry)[1]);
+        assertNotEquals(quickTestArchive.getTenantId(), ((Object[]) databaseEntry)[2]);
+        assertNotEquals(quickTestArchive.getPocId(), ((Object[]) databaseEntry)[3]);
+        assertEquals(quickTestArchive.getCreatedAt().withNano(0),
             ((Timestamp) ((Object[]) databaseEntry)[4]).toLocalDateTime().withNano(0));
-        assertEquals(quickTest.getUpdatedAt().withNano(0),
+        assertEquals(quickTestArchive.getUpdatedAt().withNano(0),
             ((Timestamp) ((Object[]) databaseEntry)[5]).toLocalDateTime().withNano(0));
-        assertEquals(quickTest.getVersion(), ((Object[]) databaseEntry)[6]);
-
-        assertNotEquals(quickTest.getConfirmationCwa(), ((Object[]) databaseEntry)[7]);
-        assertNotEquals(quickTest.getTestResult(), ((Object[]) databaseEntry)[8]);
-        assertNotEquals(quickTest.getFirstName(), ((Object[]) databaseEntry)[9]);
-        assertNotEquals(quickTest.getLastName(), ((Object[]) databaseEntry)[10]);
-        assertNotEquals(quickTest.getEmail(), ((Object[]) databaseEntry)[11]);
-        assertNotEquals(quickTest.getPhoneNumber(), ((Object[]) databaseEntry)[12]);
-        assertNotEquals(quickTest.getSex(), ((Object[]) databaseEntry)[13]);
-        assertNotEquals(quickTest.getStreet(), ((Object[]) databaseEntry)[14]);
-        assertNotEquals(quickTest.getHouseNumber(), ((Object[]) databaseEntry)[15]);
-        assertNotEquals(quickTest.getZipCode(), ((Object[]) databaseEntry)[16]);
-        assertNotEquals(quickTest.getCity(), ((Object[]) databaseEntry)[17]);
-        assertNotEquals(quickTest.getTestBrandId(), ((Object[]) databaseEntry)[18]);
-        assertNotEquals(quickTest.getTestBrandName(), ((Object[]) databaseEntry)[19]);
-        assertNotEquals(quickTest.getBirthday(), ((Object[]) databaseEntry)[20]);
-        assertNotEquals(quickTest.getPrivacyAgreement(), ((Object[]) databaseEntry)[21]);
-        assertNotEquals(quickTest.getTestResultServerHash(), ((Object[]) databaseEntry)[22]);
+        assertNotEquals(quickTestArchive.getConfirmationCwa(), ((Object[]) databaseEntry)[7]);
+        assertNotEquals(quickTestArchive.getTestResult(), ((Object[]) databaseEntry)[8]);
+        assertNotEquals(quickTestArchive.getFirstName(), ((Object[]) databaseEntry)[9]);
+        assertNotEquals(quickTestArchive.getLastName(), ((Object[]) databaseEntry)[10]);
+        assertNotEquals(quickTestArchive.getEmail(), ((Object[]) databaseEntry)[11]);
+        assertNotEquals(quickTestArchive.getPhoneNumber(), ((Object[]) databaseEntry)[12]);
+        assertNotEquals(quickTestArchive.getSex(), ((Object[]) databaseEntry)[13]);
+        assertNotEquals(quickTestArchive.getStreet(), ((Object[]) databaseEntry)[14]);
+        assertNotEquals(quickTestArchive.getHouseNumber(), ((Object[]) databaseEntry)[15]);
+        assertNotEquals(quickTestArchive.getZipCode(), ((Object[]) databaseEntry)[16]);
+        assertNotEquals(quickTestArchive.getCity(), ((Object[]) databaseEntry)[17]);
+        assertNotEquals(quickTestArchive.getTestBrandId(), ((Object[]) databaseEntry)[18]);
+        assertNotEquals(quickTestArchive.getTestBrandName(), ((Object[]) databaseEntry)[19]);
+        assertNotEquals(quickTestArchive.getBirthday(), ((Object[]) databaseEntry)[20]);
+        assertNotEquals(quickTestArchive.getPrivacyAgreement(), ((Object[]) databaseEntry)[21]);
+        assertNotEquals(quickTestArchive.getTestResultServerHash(), ((Object[]) databaseEntry)[22]);
         try {
-            assertEquals(quickTest.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
 
-            assertEquals(quickTest.getTestResult(), Short.valueOf(new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getTestResult(), Short.valueOf(new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[8]))), CHARSET)));
 
-            assertEquals(quickTest.getFirstName(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getFirstName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[9]))), CHARSET));
 
-            assertEquals(quickTest.getLastName(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getLastName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[10]))), CHARSET));
 
-            assertEquals(quickTest.getEmail(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getEmail(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[11]))), CHARSET));
 
-            assertEquals(quickTest.getPhoneNumber(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getPhoneNumber(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[12]))), CHARSET));
 
-            assertEquals(quickTest.getSex().name(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getSex().name(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[13]))), CHARSET));
 
-            assertEquals(quickTest.getStreet(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getStreet(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[14]))), CHARSET));
 
-            assertEquals(quickTest.getHouseNumber(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getHouseNumber(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[15]))), CHARSET));
 
-            assertEquals(quickTest.getZipCode(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getZipCode(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[16]))), CHARSET));
 
-            assertEquals(quickTest.getCity(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getCity(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[17]))), CHARSET));
 
-            assertEquals(quickTest.getTestBrandId(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getTestBrandId(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[18]))), CHARSET));
 
-            assertEquals(quickTest.getTestBrandName(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getTestBrandName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[19]))), CHARSET));
 
-            assertEquals(quickTest.getBirthday(), new String(decrypt(Base64.getDecoder().decode(
-                    String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET));
+            assertArrayEquals(quickTestArchive.getPdf(),
+                decrypt(Base64.getDecoder().decode(IOUtils.toByteArray(((Clob) ((Object[]) databaseEntry)[20]).getAsciiStream()))));
 
-            assertEquals(quickTest.getPrivacyAgreement(),
-                    Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                            String.valueOf(((Object[]) databaseEntry)[21]))), CHARSET)));
+            assertEquals(quickTestArchive.getBirthday(), new String(decrypt(Base64.getDecoder().decode(
+                String.valueOf(((Object[]) databaseEntry)[21]))), CHARSET));
 
-            assertEquals(quickTest.getTestResultServerHash(), new String(decrypt(Base64.getDecoder().decode(
-                    String.valueOf(((Object[]) databaseEntry)[22]))), CHARSET));
+            assertEquals(quickTestArchive.getPrivacyAgreement(),
+                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[22]))), CHARSET)));
 
-        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
+            assertEquals(quickTestArchive.getTestResultServerHash(), new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[23]))), CHARSET));
+
+        } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException | SQLException | IOException e) {
             e.printStackTrace();
         }
     }
-
 
     private byte[] decrypt(byte[] encrypted)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
@@ -189,15 +200,6 @@ public class DbEncryptionTest {
             cipher.init(Cipher.DECRYPT_MODE, key, getInitializationVector());
             return cipher.doFinal(encrypted);
         }
-    }
-
-    private byte[] encrypt(byte[] plain)
-        throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        synchronized (cipher) {
-            cipher.init(Cipher.ENCRYPT_MODE, key, getInitializationVector());
-            return cipher.doFinal(plain);
-        }
-
     }
 
     private IvParameterSpec getInitializationVector() {

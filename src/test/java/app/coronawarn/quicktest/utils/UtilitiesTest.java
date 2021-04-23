@@ -27,8 +27,10 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.service.QuickTestServiceException;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Arrays;
@@ -236,21 +238,26 @@ class UtilitiesTest {
             assertEquals(QuickTestServiceException.Reason.INSERT_CONFLICT, e.getReason());
         }
     }
+//
+//    @Test
+//    void testGetCurrentLocalDateTimeUtc(){
+//        LocalDateTime time = Utilities.getCurrentLocalDateTimeUtc();
+//        ZoneOffset offest = ZonedDateTime.now().withZoneSameInstant(ZoneId.of("Europe/Berlin")).getOffset();
+//        assertEquals(
+//            time.atZone(ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Europe/Berlin")).toLocalDateTime(),
+//            time.atOffset(offest).toZonedDateTime().toLocalDateTime()
+//        );
+//    }
 
     @Test
-    void testGetCurrentLocalDateTimeUtc(){
-        assertEquals(ZonedDateTime.now(ZoneId.of("UTC")).toLocalDateTime(), Utilities.getCurrentLocalDateTimeUtc());
-    }
-
-    @Test
-    void testGetStartTimeForLocalDateInGermany(){
+    void testGetStartTimeForLocalDateInGermanyInUtc(){
         assertEquals(ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
-            .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay()).withZoneSameInstant(ZoneId.of("UTC")),
+                .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay()).withZoneSameInstant(ZoneId.of("UTC")),
             Utilities.getStartTimeForLocalDateInGermanyInUtc());
     }
 
     @Test
-    void testGetEndTimeForLocalDateInGermany(){
+    void testGetEndTimeForLocalDateInGermanInUtc(){
         assertEquals(ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
             .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay()).withZoneSameInstant(ZoneId.of("UTC")),
             Utilities.getEndTimeForLocalDateInGermanyInUtc());

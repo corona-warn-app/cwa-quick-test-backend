@@ -71,5 +71,97 @@ public class PdfGeneratorTest {
         String user = "Mr. Unittest";
         ByteArrayOutputStream file = pdfGenerator.generatePdf(pocInformation, quicktest, user);
         log.info(file.toString());
+        assertEquals("%PDF-1.4\n" +
+                "%����\n" +
+                "1 0 obj\n" +
+                "<<\n" +
+                "/Type /Catalog\n" +
+                "/Version /1.4\n" +
+                "/Pages 2 0 R\n" +
+                ">>\n" +
+                "endobj\n" +
+                "3 0 obj\n" +
+                "<<\n" +
+                "/Author (Unittest)\n" +
+                "/Title (Unittest)\n" +
+                "/Creator (Rapid Test)\n" +
+                "/CreationDate (D:20210426000000+02'00')\n" +
+                ">>\n" +
+                "endobj\n" +
+                "2 0 obj\n" +
+                "<<\n" +
+                "/Type /Pages\n" +
+                "/Kids [4 0 R]\n" +
+                "/Count 1\n" +
+                ">>\n" +
+                "endobj\n" +
+                "4 0 obj\n" +
+                "<<\n" +
+                "/Type /Page\n" +
+                "/MediaBox [0.0 0.0 595.27563 841.8898]\n" +
+                "/Parent 2 0 R\n" +
+                "/Contents 5 0 R\n" +
+                "/Resources 6 0 R\n" +
+                ">>\n" +
+                "endobj\n" +
+                "5 0 obj\n" +
+                "<<\n" +
+                "/Length 363\n" +
+                "/Filter /FlateDecode\n" +
+                ">>\n" +
+                "stream\n" +
+                "x��R]O�0\u0014}�W�GfB�[�G���h�,�Ɨ�ԍ�*��p���� R�&\u0002%i�9��sҙ��s\u0004d 7\u0016r⁼�(\u0004.�0\u0014A rmq\u001E\u0010��g@뭽�#x�tY&�r\u0004��r\u0006|byaq�\u0012/\u0010��pZ<<�#���LPMC��B�nCCZ��0�tyl�&�D\u0015\u00065Ri:\u0001��u�PP��D1 ^Kk�O���\u007F���o\u001Bf��6����z��wy\u0002�NӤ8�I��:B축6�A~<���v�U]!�LSJ����\u0018�Z�e�#���\u0015v�ͣ}m�\u0001!��0�*'t�8A6��G�\u000F���T�{�\u001A\u0012'�\u0005�f���P�γ$3�g�\u007F�\u3098W�-L%�?fh\u001C.T��sX�2^� �\u000Fz��\u0016\u001E�N�A�w�*9�UR�\u001E�^��QOM���W?�x~Ӌ�\u000BƬ�\n" +
+                "\n" +
+                "endstream\n" +
+                "endobj\n" +
+                "6 0 obj\n" +
+                "<<\n" +
+                "/Font 7 0 R\n" +
+                ">>\n" +
+                "endobj\n" +
+                "7 0 obj\n" +
+                "<<\n" +
+                "/F1 8 0 R\n" +
+                "/F2 9 0 R\n" +
+                ">>\n" +
+                "endobj\n" +
+                "8 0 obj\n" +
+                "<<\n" +
+                "/Type /Font\n" +
+                "/Subtype /Type1\n" +
+                "/BaseFont /Helvetica\n" +
+                "/Encoding /WinAnsiEncoding\n" +
+                ">>\n" +
+                "endobj\n" +
+                "9 0 obj\n" +
+                "<<\n" +
+                "/Type /Font\n" +
+                "/Subtype /Type1\n" +
+                "/BaseFont /Helvetica-Bold\n" +
+                "/Encoding /WinAnsiEncoding\n" +
+                ">>\n" +
+                "endobj\n" +
+                "xref\n" +
+                "0 10\n" +
+                "0000000000 65535 f\n" +
+                "0000000015 00000 n\n" +
+                "0000000198 00000 n\n" +
+                "0000000078 00000 n\n" +
+                "0000000255 00000 n\n" +
+                "0000000374 00000 n\n" +
+                "0000000811 00000 n\n" +
+                "0000000844 00000 n\n" +
+                "0000000885 00000 n\n" +
+                "0000000982 00000 n\n" +
+                "trailer\n" +
+                "<<\n" +
+                "/Root 1 0 R\n" +
+                "/Info 3 0 R\n" +
+                "/ID [<70BB22DC111C2DB736763272BC6D7C6A> <70BB22DC111C2DB736763272BC6D7C6A>]\n" +
+                "/Size 10\n" +
+                ">>\n" +
+                "startxref\n" +
+                "1084\n" +
+                "%%EOF\n", file.toString());
     }
 }

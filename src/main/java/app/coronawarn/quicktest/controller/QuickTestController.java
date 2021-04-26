@@ -26,25 +26,31 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
+import app.coronawarn.quicktest.model.QuickTestResponse;
+import app.coronawarn.quicktest.model.QuickTestResponseList;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.util.List;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -52,13 +58,48 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping(value = "/api/quicktest")
 @RequiredArgsConstructor
-public class QuickTestCreationController {
+public class QuickTestController {
 
     private final QuickTestService quickTestService;
-
     private final ModelMapper modelMapper;
-
     private final Utilities utilities;
+
+    /**
+     * Endpoint for getting pending quicktests for poc and tenant.
+     */
+    @Operation(
+        summary = "Get poc specific quicktests",
+        description = "Returns all found (pending) quicktests for a specific poc"
+    )
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "OK"),
+      @ApiResponse(responseCode = "500", description = "Query failed due to an internal server error"),
+      @ApiResponse(responseCode = "501", description = "Not implemented yet")
+    })
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured(ROLE_LAB)
+    public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId(
+            @RequestParam Boolean onlyCompletedRegistrations
+    ) {
+        if (onlyCompletedRegistrations) {
+            try {
+                List<QuickTest> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
+                        utilities.getIdsFromToken());
+                TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
+                List<QuickTestResponse> quickTestResponses = modelMapper.map(
+                        quickTests,
+                        typeToken.getType()
+                );
+                QuickTestResponseList response = new QuickTestResponseList();
+                response.setQuickTests(quickTestResponses);
+                return ResponseEntity.ok(response);
+            } catch (Exception e) {
+                log.error("Failed to find pending quicktests");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot get quicktests.");
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
+    }
 
     /**
      * Endpoint for creating new QuickTest entities.

@@ -24,9 +24,11 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import liquibase.pro.packaged.T;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
@@ -41,16 +43,16 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(QuickTestCreationController.class)
+@WebMvcTest(QuickTestController.class)
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
-class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
+class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
     @MockBean
     private QuickTestService quickTestService;
     @MockBean
     private Utilities utilities;
     @InjectMocks
-    private QuickTestCreationController quickTestCreationController;
+    private QuickTestController quickTestController;
 
     @Test
     void createQuickTest() throws Exception {
@@ -135,7 +137,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
         QuickTestPersonalDataRequest quickTestPersonalDataRequest = null;
 
         try {
-            quickTestCreationController.createQuickTest(quicktestCreationRequest);
+            quickTestController.createQuickTest(quicktestCreationRequest);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
@@ -144,7 +146,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
         }
 
         try {
-            quickTestCreationController.updateQuickTestStatus(
+            quickTestController.updateQuickTestStatus(
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55",
                     quickTestUpdateRequest);
             fail("has to throw exception");
@@ -155,7 +157,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
         }
 
         try {
-            quickTestCreationController.updateQuickTestWithPersonalData(
+            quickTestController.updateQuickTestWithPersonalData(
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55",
                     quickTestPersonalDataRequest);
             fail("has to throw exception");

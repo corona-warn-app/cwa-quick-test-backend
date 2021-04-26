@@ -1,19 +1,8 @@
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.model.QuickTestStatistics;
 import app.coronawarn.quicktest.model.QuickTestStatisticsResponse;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import app.coronawarn.quicktest.service.QuickTestStatisticsService;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
@@ -29,10 +18,21 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
+
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(QuickTestStatisticsController.class)
@@ -129,13 +129,13 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
             .andExpect(status().isUnauthorized());
 
         when(utilities.getIdsFromToken())
-            .thenThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT));
+            .thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).get("/api/quickteststatistics/")
             .andExpect(status().isInternalServerError())
             .andExpect(resultException -> assertTrue(
                 resultException.getResolvedException() instanceof ResponseStatusException))
             .andExpect(resultException -> assertEquals(
-                "500 INTERNAL_SERVER_ERROR \"" + QuickTestServiceException.Reason.INSERT_CONFLICT + "\"",
+                "500 INTERNAL_SERVER_ERROR",
                 resultException.getResolvedException().getMessage()));
 
     }
@@ -148,8 +148,7 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
             quickTestStatisticsController.getQuicktestStatistics(ZonedDateTime.now(), ZonedDateTime.now());
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getReason().equals("trying to get statistics failed"),
-                "Wrong message!");
+            assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }

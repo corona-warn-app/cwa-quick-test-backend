@@ -6,8 +6,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
@@ -27,8 +29,8 @@ public class QuickTestArchiveServiceTest {
         try {
             quickTestArchiveService.getPdf("sgserh");
             fail("has to throw exception");
-        } catch (QuickTestServiceException e) {
-            assertTrue(e.getReason().equals(QuickTestServiceException.Reason.NOT_FOUND), "wrong exception");
+        } catch (ResponseStatusException e) {
+            assertEquals(e.getStatus(),HttpStatus.NOT_FOUND, "wrong status");
         }
     }
 }

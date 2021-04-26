@@ -9,17 +9,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
-import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.service.QuickTestService;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.google.gson.Gson;
@@ -28,30 +24,21 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-
-import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-
-import liquibase.pro.packaged.T;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.stubbing.OngoingStubbing;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
-
-import javax.validation.Valid;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(QuickTestCreationController.class)
@@ -98,7 +85,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isUnauthorized());
 
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT))
+        doThrow(new ResponseStatusException(HttpStatus.CONFLICT))
             .when(quickTestService).createNewQuickTest(any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .post("/api/quicktest/")
@@ -107,10 +94,10 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isConflict())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("409 CONFLICT \"Quicktest with short hash already exists\"",
+            .andExpect(result -> assertEquals("409 CONFLICT",
                 result.getResolvedException().getMessage()));
 
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.SAVE_FAILED))
+        doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
             .when(quickTestService).createNewQuickTest(any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .post("/api/quicktest/")
@@ -119,7 +106,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isInternalServerError())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR \"SAVE_FAILED\"",
+            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR",
                 result.getResolvedException().getMessage()));
 
         quicktestCreationRequest.setHashedGuid("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c");
@@ -151,8 +138,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             quickTestCreationController.createQuickTest(quicktestCreationRequest);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getReason().equals("Inserting failed because of internal error."),
-                    "Wrong message!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }
@@ -163,8 +149,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
                     quickTestUpdateRequest);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getReason().equals("Updating failed because of internal error."),
-                    "Wrong message!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }
@@ -175,8 +160,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
                     quickTestPersonalDataRequest);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
-            assertTrue(e.getReason().equals("Updating failed because of internal error."),
-                    "Wrong message!");
+            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         } catch (Exception e) {
             fail("catch exception and convert to ResponseStatusException failed");
         }
@@ -284,7 +268,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
         quickTestUpdateRequest.setResult((short) 6);
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName(null);
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND))
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
             .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put("/api/quicktest/6fa4dcec/testResult")
@@ -293,10 +277,10 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isNotFound())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("404 NOT_FOUND \"Short Hash doesn't exists\"",
+            .andExpect(result -> assertEquals("404 NOT_FOUND",
                 result.getResolvedException().getMessage()));
 
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT))
+        doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
             .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put("/api/quicktest/6fa4dcec/testResult")
@@ -305,7 +289,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isInternalServerError())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR \"INSERT_CONFLICT\"",
+            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR",
                 result.getResolvedException().getMessage()));
 
     }
@@ -855,7 +839,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
 
         quickTestPersonalDataRequest.setTestResultServerHash(testResultServerHash);
 
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.UPDATE_NOT_FOUND))
+        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
             .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .put("/api/quicktest/6fa4dcec/personalData")
@@ -864,10 +848,10 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(gson.toJson(quickTestPersonalDataRequest)))
             .andExpect(status().isNotFound())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("404 NOT_FOUND \"Short Hash doesn't exists\"",
+            .andExpect(result -> assertEquals("404 NOT_FOUND",
                 result.getResolvedException().getMessage()));
 
-        doThrow(new QuickTestServiceException(QuickTestServiceException.Reason.INSERT_CONFLICT))
+        doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
             .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .put("/api/quicktest/6fa4dcec/personalData")
@@ -876,7 +860,7 @@ class QuickTestCreationControllerTest extends ServletKeycloakAuthUnitTestingSupp
             .content(gson.toJson(quickTestPersonalDataRequest)))
             .andExpect(status().isInternalServerError())
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
-            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR \"INSERT_CONFLICT\"",
+            .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR",
                 result.getResolvedException().getMessage()));
 
 

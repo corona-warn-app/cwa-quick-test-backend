@@ -50,7 +50,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -73,32 +72,26 @@ public class QuickTestController {
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "OK"),
-      @ApiResponse(responseCode = "500", description = "Query failed due to an internal server error"),
-      @ApiResponse(responseCode = "501", description = "Not implemented yet")
+      @ApiResponse(responseCode = "500", description = "Query failed due to an internal server error")
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
-    public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId(
-            @RequestParam Boolean onlyCompletedRegistrations
-    ) {
-        if (onlyCompletedRegistrations) {
-            try {
-                List<QuickTest> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
-                        utilities.getIdsFromToken());
-                TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
-                List<QuickTestResponse> quickTestResponses = modelMapper.map(
-                        quickTests,
-                        typeToken.getType()
-                );
-                QuickTestResponseList response = new QuickTestResponseList();
-                response.setQuickTests(quickTestResponses);
-                return ResponseEntity.ok(response);
-            } catch (Exception e) {
-                log.error("Failed to find pending quicktests");
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot get quicktests.");
-            }
+    public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId() {
+        try {
+            List<QuickTest> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
+                    utilities.getIdsFromToken());
+            TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
+            List<QuickTestResponse> quickTestResponses = modelMapper.map(
+                    quickTests,
+                    typeToken.getType()
+            );
+            QuickTestResponseList response = new QuickTestResponseList();
+            response.setQuickTests(quickTestResponses);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Failed to find pending quicktests");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot get quicktests.");
         }
-        throw new ResponseStatusException(HttpStatus.NOT_IMPLEMENTED);
     }
 
     /**

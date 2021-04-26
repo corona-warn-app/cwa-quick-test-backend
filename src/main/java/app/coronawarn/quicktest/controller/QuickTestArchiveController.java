@@ -80,7 +80,7 @@ public class QuickTestArchiveController {
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @RequestMapping(path = "/{hashedGuid}/pdf", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     @Secured(ROLE_LAB)
-    public ResponseEntity<byte[]> createQuickTestArchive(
+    public ResponseEntity<byte[]> getTestArchive(
             @PathVariable String hashedGuid) {
         try {
             return ResponseEntity.ok()
@@ -130,8 +130,9 @@ public class QuickTestArchiveController {
             response.setQuickTestArchives(quickTestArchiveResponses);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."
+            log.debug("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."
                     + " Message: {}", e.getMessage());
+            log.error("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween.");
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "trying to find quicktests failed");
         }

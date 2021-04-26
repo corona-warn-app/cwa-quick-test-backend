@@ -3,9 +3,6 @@ databaseChangeLog:
       id: add-unique-constraint
       author: mbaude
       changes:
-        - dropUniqueConstraint:
-            constraintName: short_hashed_guid
-            tableName: quick_test
         - addUniqueConstraint:
             columnNames: short_hashed_guid, poc_id, tenant_id
             constraintName: shorthashedAndPocAndTenant

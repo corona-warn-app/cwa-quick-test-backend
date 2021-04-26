@@ -245,6 +245,8 @@ public class QuickTestServiceTest {
                     quickTest);
             fail("has to throw exception");
         } catch (NullPointerException e) {
+            log.error("XY hat nicht funktioniert");
+            e.printStackTrace();
             // Test passed. testResultService not initialized. Call try successful
         }
     }

@@ -19,6 +19,7 @@ import app.coronawarn.quicktest.model.QuickTestArchiveListResponse;
 import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
+import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.google.gson.Gson;
 import java.time.LocalDate;
@@ -53,6 +54,9 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
 
     @InjectMocks
     private QuickTestArchiveController quickTestArchiveController;
+
+    @MockBean
+    private Utilities utilities;
 
     @Test
     void createQuickTestArchive() throws Exception {
@@ -126,7 +130,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
         quickTestArchive.setTestBrandName("brandname");
         quickTestArchive.setBirthday(LocalDate.now().toString());
         quickTestArchive.setPdf("test output".getBytes());
-        when(quickTestArchiveService.findByTestResultAndUpdatedAtBetween(anyShort(), any(), any())).thenReturn(
+        when(quickTestArchiveService.findByTestResultAndUpdatedAtBetween(any(), anyShort(), any(), any())).thenReturn(
             Collections.singletonList(quickTestArchive));
 
         MvcResult mvcResult = mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
@@ -241,7 +245,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
     @Test
     void getQuicktestStatisticsFail() {
         try {
-            quickTestArchiveController.getTestArchive(null);
+            quickTestArchiveController.getQuickTestPdf(null);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");

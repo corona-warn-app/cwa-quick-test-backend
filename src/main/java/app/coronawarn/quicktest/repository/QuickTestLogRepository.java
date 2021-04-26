@@ -28,10 +28,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface QuickTestLogRepository extends JpaRepository<QuickTestLog, String> {
 
-    int countAllByPocIdAndCreatedAtBetween(String pocId, LocalDateTime utcDateFrom, LocalDateTime utcDateTo);
+    int countAllByTenantIdAndPocIdAndCreatedAtBetween(String tenantId, String pocId, LocalDateTime utcDateFrom,
+                                                      LocalDateTime utcDateTo);
 
-    int countAllByPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(String pocId, LocalDateTime utcDateFrom,
-                                                                      LocalDateTime utcDateTo);
+    int countAllByTenantIdAndPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(String tenantId, String pocId,
+                                                                                 LocalDateTime utcDateFrom,
+                                                                                 LocalDateTime utcDateTo);
 
     int countAllByTenantIdAndCreatedAtBetween(String tenantId, LocalDateTime utcDateFrom, LocalDateTime utcDateTo);
 

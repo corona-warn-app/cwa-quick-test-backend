@@ -5,4 +5,5 @@ databaseChangeLog:
       changes:
         - addUniqueConstraint:
             columnNames: short_hashed_guid, poc_id
+            constraintName: short_hashed_guid
             tableName: quick_test

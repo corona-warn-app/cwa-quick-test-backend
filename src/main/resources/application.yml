@@ -9,12 +9,12 @@ spring:
       ddl-auto: validate
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:quicktest
+    url: jdbc:h2:mem:quicktest;MODE=MYSQL
     username: sa
     password: ''
   archive-datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:quicktest-archive
+    url: jdbc:h2:mem:quicktest-archive;MODE=MYSQL
     username: sa
     password: ''
   mail:

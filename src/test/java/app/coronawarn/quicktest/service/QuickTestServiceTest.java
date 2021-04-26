@@ -52,7 +52,7 @@ public class QuickTestServiceTest {
     @Test
     void conflictInQuickTestShortAndFullHashTest() {
         QuickTest conflictingQuickTestByHashed = new QuickTest();
-        when(quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(any(), any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(any(), any(), any(), any()))
                 .thenReturn(Optional.of(conflictingQuickTestByHashed));
         try {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
@@ -93,7 +93,7 @@ public class QuickTestServiceTest {
     void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException {
         QuickTestService qs = spy(quickTestService);
         Map<String, String> ids = new HashMap<>();
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(new QuickTest());
         try {
             qs.updateQuickTest(ids,
@@ -111,7 +111,7 @@ public class QuickTestServiceTest {
     @Test
     void createPdfInUpdateQuickTestIoExceptionTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(new QuickTest());
         when(pdf.generatePdf(any(), any(), any()))
                 .thenThrow(new IOException());
@@ -132,7 +132,7 @@ public class QuickTestServiceTest {
     @Test
     void UpdateNotFoundTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(null);
         try {
             quickTestService.updateQuickTest(ids,
@@ -151,7 +151,7 @@ public class QuickTestServiceTest {
     @Test
     void saveFailedInUpdateQuickTestTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(new QuickTest());
         when(pdf.generatePdf(any(), any(), any()))
                 .thenReturn(new ByteArrayOutputStream());
@@ -174,7 +174,7 @@ public class QuickTestServiceTest {
     @Test
     void deleteFailedInUpdateQuickTestTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(new QuickTest());
         when(pdf.generatePdf(any(), any(), any()))
                 .thenReturn(new ByteArrayOutputStream());
@@ -198,7 +198,7 @@ public class QuickTestServiceTest {
         Map<String, String> ids = new HashMap<>();
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(quickTest);
         when(pdf.generatePdf(any(), any(), any()))
                 .thenReturn(new ByteArrayOutputStream());
@@ -220,7 +220,7 @@ public class QuickTestServiceTest {
     void updateQuickTestSaveFailedTest() {
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(quickTest);
         when(quickTestRepository.saveAndFlush(any())).thenThrow(new RuntimeException());
         try {
@@ -237,7 +237,7 @@ public class QuickTestServiceTest {
     void callResultServerInUpdateQuickTestWithPersonalDataTest() {
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
-        when(quickTestRepository.findByPocIdAndShortHashedGuid(any(), any()))
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
                 .thenReturn(quickTest);
         try {
             quickTestService.updateQuickTestWithPersonalData(utilities.getIdsFromToken(),

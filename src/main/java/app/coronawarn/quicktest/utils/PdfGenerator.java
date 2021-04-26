@@ -115,9 +115,8 @@ public class PdfGenerator {
                 .getResourceAsStream(pdfConfig.getLogoPath())));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "logo");
             cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
-        } catch (IOException | NullPointerException e) {
-            log.debug("Kein logo geladen! " + e.getMessage());
-            log.error("Kein logo geladen!");
+        } catch (IOException e) {
+            log.error("Logo not found!");
         }
         cos.beginText();
         cos.setFont(fontType, fontSize);

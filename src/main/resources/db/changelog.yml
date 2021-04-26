@@ -24,5 +24,8 @@ databaseChangeLog:
       file: changelog/V001_recreate_statistics.yml
       relativeToChangelogFile: true
   - include:
-      file: changelog/V001_change_UniqueConstraints.yml
+      file: changelog/V001_delete_UniqueConstraints_mysql.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_add_new_UniqueConstraints.yml
       relativeToChangelogFile: true

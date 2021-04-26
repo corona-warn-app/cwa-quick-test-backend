@@ -226,7 +226,7 @@ public class QuickTestService {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
         QuickTest quicktest = quickTestRepository.findByPocIdAndShortHashedGuid(pocId, shortHash);
         if (quicktest == null) {
-            log.debug("Requested Quick Test with shortHash could not be found.");
+            log.debug("Requested Quick Test with shortHash {} could not be found.", shortHash);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return quicktest;

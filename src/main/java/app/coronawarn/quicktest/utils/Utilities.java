@@ -119,19 +119,19 @@ public class Utilities {
      */
     public String getUserNameFromToken() throws ResponseStatusException {
 
-        String information = null;
+        String name = null;
         Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
             IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
-            information = token.getName();
+            name = token.getName();
         }
-        if (information == null) {
-            log.debug("Name not found in User-Token");
+        if (name == null) {
+            log.error("Name not found in User-Token");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return information;
+        return name;
     }
 
     private Principal getPrincipal() {

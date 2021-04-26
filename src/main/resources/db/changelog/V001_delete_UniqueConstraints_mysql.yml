@@ -1,8 +1,9 @@
 databaseChangeLog:
   - changeSet:
+      dbms: mysql
       id: add-unique-constraint
       author: mbaude
       changes:
-        - addUniqueConstraint:
-            columnNames: short_hashed_guid, poc_id
+        - dropUniqueConstraint:
+            constraintName: short_hashed_guid
             tableName: quick_test

@@ -4,8 +4,6 @@ import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.Sex;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -17,8 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.when;
 
 @Slf4j

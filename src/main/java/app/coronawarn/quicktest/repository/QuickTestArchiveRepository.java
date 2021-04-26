@@ -10,12 +10,16 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
 
     Optional<QuickTestArchive> findByHashedGuid(String hashedGuid);
 
-    List<QuickTestArchive> findAllByUpdatedAtBetween(
+    List<QuickTestArchive> findAllByTenantIdAndPocIdAndUpdatedAtBetween(
+        String tenantId,
+        String pocId,
         LocalDateTime dateFrom,
         LocalDateTime dateTo
     );
 
-    List<QuickTestArchive> findAllByTestResultAndUpdatedAtBetween(
+    List<QuickTestArchive> findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(
+            String tenantId,
+            String pocId,
             Short testResult,
             LocalDateTime dateFrom,
             LocalDateTime dateTo

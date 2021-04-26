@@ -24,12 +24,14 @@ public class QuickTestStatisticsService {
      */
     public QuickTestStatistics getStatistics(Map<String, String> ids, LocalDateTime utcDateFrom,
                                              LocalDateTime utcDateTo) {
-        int totalCount = quickTestStatisticRepository.countAllByPocIdAndCreatedAtBetween(
-                        ids.get(quickTestConfig.getTenantPointOfCareIdKey()), utcDateFrom, utcDateTo);
+        int totalCount = quickTestStatisticRepository.countAllByTenantIdAndPocIdAndCreatedAtBetween(
+            ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+            utcDateFrom, utcDateTo);
 
         int totalPositiveCount = quickTestStatisticRepository
-                .countAllByPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(
-                        ids.get(quickTestConfig.getTenantPointOfCareIdKey()), utcDateFrom, utcDateTo);
+                .countAllByTenantIdAndPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(
+                    ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                    utcDateFrom, utcDateTo);
 
         QuickTestStatistics quickTestStatistics = new QuickTestStatistics();
         quickTestStatistics.setTotalTestCount(totalCount);

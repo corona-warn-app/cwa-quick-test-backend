@@ -69,8 +69,9 @@ public class QuickTestService {
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
 
         Optional<QuickTest> conflictingQuickTestByHashed =
-            quickTestRepository.findByPocIdAndShortHashedGuidOrHashedGuid(
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash, hashedGuid);
+            quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(
+                ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                shortHash, hashedGuid);
 
         Optional<QuickTestArchive> conflictingQuickTestArchiveByHashed =
             quickTestArchiveRepository.findByHashedGuid(hashedGuid);
@@ -107,7 +108,11 @@ public class QuickTestService {
     public void updateQuickTest(Map<String, String> ids, String shortHash, short result, String testBrandId,
                                 String testBrandName, List<String> pocInformation,
                                 String user) throws ResponseStatusException {
-        QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
+        QuickTest quicktest = getQuickTest(
+            ids.get(quickTestConfig.getTenantIdKey()),
+            ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+            shortHash
+        );
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
@@ -154,7 +159,11 @@ public class QuickTestService {
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
         throws ResponseStatusException {
-        QuickTest quicktest = getQuickTest(ids.get(quickTestConfig.getTenantPointOfCareIdKey()), shortHash);
+        QuickTest quicktest = getQuickTest(
+            ids.get(quickTestConfig.getTenantIdKey()),
+            ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+            shortHash
+        );
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
         quicktest.setPrivacyAgreement(quickTestPersonalData.getPrivacyAgreement());
@@ -222,9 +231,9 @@ public class QuickTestService {
         return quickTestArchive;
     }
 
-    private QuickTest getQuickTest(String pocId, String shortHash) throws ResponseStatusException {
+    private QuickTest getQuickTest(String tenantId, String pocId, String shortHash) throws ResponseStatusException {
         log.debug("Requesting QuickTest for short Hash {}", shortHash);
-        QuickTest quicktest = quickTestRepository.findByPocIdAndShortHashedGuid(pocId, shortHash);
+        QuickTest quicktest = quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(tenantId, pocId, shortHash);
         if (quicktest == null) {
             log.debug("Requested Quick Test with shortHash {} could not be found.", shortHash);
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);

@@ -2,7 +2,6 @@ package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import app.coronawarn.quicktest.utils.Utilities;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
@@ -11,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Component
@@ -23,7 +23,7 @@ public class SecurityAuditListenerQuickTestArchive {
     private String pattern = "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}";
 
     @PostLoad
-    private void afterSelectQuickTestArchive(QuickTestArchive quickTestArchive) throws QuickTestServiceException {
+    private void afterSelectQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
         log.info(pattern,
                 utilities.getUserNameFromToken(),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey()),
@@ -35,7 +35,7 @@ public class SecurityAuditListenerQuickTestArchive {
 
     @PostPersist
     @PostUpdate
-    private void afterSaveQuickTestArchive(QuickTestArchive quickTestArchive) throws QuickTestServiceException {
+    private void afterSaveQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
         log.info(pattern,
                 utilities.getUserNameFromToken(),
                 utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey()),

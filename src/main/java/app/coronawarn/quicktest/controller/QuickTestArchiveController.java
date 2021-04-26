@@ -26,7 +26,6 @@ import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.QuickTestArchiveListResponse;
 import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -81,7 +80,7 @@ public class QuickTestArchiveController {
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @RequestMapping(path = "/{hashedGuid}/pdf", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     @Secured(ROLE_LAB)
-    public ResponseEntity<byte[]> createQuickTestArchive(
+    public ResponseEntity<byte[]> getTestArchive(
             @PathVariable String hashedGuid) {
         try {
             return ResponseEntity.ok()
@@ -89,18 +88,11 @@ public class QuickTestArchiveController {
                             + "Schnelltest_" + hashedGuid + ".pdf\"")
                     .contentType(MediaType.APPLICATION_PDF)
                     .body(quickTestArchiveService.getPdf(hashedGuid));
-        } catch (QuickTestServiceException e) {
-            if (e.getReason() == QuickTestServiceException.Reason.NOT_FOUND) {
-                throw new ResponseStatusException(
-                        HttpStatus.NOT_FOUND, "Quicktest with requested ID not found");
-            } else {
-                throw new ResponseStatusException(
-                        HttpStatus.INTERNAL_SERVER_ERROR, "trying to get pdf failed");
-            }
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            log.error("Couldn't prepare stored pdf for download. Message: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "trying to get pdf failed");
+            log.error("Couldn't prepare stored pdf for download.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -138,8 +130,9 @@ public class QuickTestArchiveController {
             response.setQuickTestArchives(quickTestArchiveResponses);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            log.error("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."
+            log.debug("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."
                     + " Message: {}", e.getMessage());
+            log.error("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween.");
             throw new ResponseStatusException(
                     HttpStatus.INTERNAL_SERVER_ERROR, "trying to find quicktests failed");
         }

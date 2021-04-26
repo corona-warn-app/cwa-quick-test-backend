@@ -23,7 +23,6 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 
 import app.coronawarn.quicktest.model.QuickTestStatisticsResponse;
-import app.coronawarn.quicktest.service.QuickTestServiceException;
 import app.coronawarn.quicktest.service.QuickTestStatisticsService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,11 +52,8 @@ import org.springframework.web.server.ResponseStatusException;
 public class QuickTestStatisticsController {
 
     private final QuickTestStatisticsService quickTestStatisticsService;
-
     private final ModelMapper modelMapper;
-
     private final Utilities utilities;
-
 
     //TODO check role
     /**
@@ -78,8 +74,7 @@ public class QuickTestStatisticsController {
             @RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
                     ZonedDateTime zonedDateFrom,
             @RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                    ZonedDateTime zonedDateTo
-    ) {
+                    ZonedDateTime zonedDateTo) {
         try {
             if (zonedDateFrom == null) {
                 zonedDateFrom = Utilities.getStartTimeForLocalDateInGermanyInUtc();
@@ -92,18 +87,10 @@ public class QuickTestStatisticsController {
             QuickTestStatisticsResponse quickTestStatisticsResponse = modelMapper.map(
                 quickTestStatisticsService.getStatistics(utilities.getIdsFromToken(), utcDateFrom, utcDateTo),
                 QuickTestStatisticsResponse.class);
-
             return ResponseEntity.ok(quickTestStatisticsResponse);
-        } catch (QuickTestServiceException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, e.getReason().toString());
         } catch (Exception e) {
-            log.error("Couldn't execute getQuicktestStatistics."
-                    + " Message: {}", e.getMessage());
-            throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "trying to get statistics failed");
+            log.error("Couldn't execute getQuicktestStatistics.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
     }
-
 }

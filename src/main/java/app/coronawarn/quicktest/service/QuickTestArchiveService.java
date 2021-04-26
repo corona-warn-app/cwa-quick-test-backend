@@ -8,7 +8,9 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
 @Service
@@ -23,14 +25,14 @@ public class QuickTestArchiveService {
      *
      * @param hashedGuid to identify quicktest
      * @return PDF as byte array
-     * @throws QuickTestServiceException if quicktest not found.
+     * @throws ResponseStatusException if quicktest not found.
      */
     public byte[] getPdf(String hashedGuid)
-        throws QuickTestServiceException {
+        throws ResponseStatusException {
         Optional<QuickTestArchive> quickTestArchive = quickTestArchiveRepository.findByHashedGuid(hashedGuid);
         if (quickTestArchive.isEmpty()) {
-            log.info("Requested Quick Test with HashedGuid {} could not be found or wrong poc", hashedGuid);
-            throw new QuickTestServiceException(QuickTestServiceException.Reason.NOT_FOUND);
+            log.debug("Requested Quick Test with HashedGuid {} could not be found or wrong poc", hashedGuid);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return quickTestArchive.get().getPdf();
     }

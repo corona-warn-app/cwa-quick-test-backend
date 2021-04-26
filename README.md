@@ -23,7 +23,7 @@ from [Apple](https://www.apple.com/covid19/contacttracing/)
 and [Google](https://www.google.com/covid19/exposurenotifications/). The apps (for both iOS and Android) use Bluetooth
 technology to exchange anonymous encrypted data with other mobile phones (on which the app is also installed) in the
 vicinity of an app user's phone. The data is stored locally on each user's device, preventing authorities or other
-parties from accessing or controlling the data. This repository contains the **log upload** for the Corona-Warn-App.
+parties from accessing or controlling the data.
 
 ## Status
 

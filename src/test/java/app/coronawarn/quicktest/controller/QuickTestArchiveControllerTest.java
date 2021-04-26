@@ -241,7 +241,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
     @Test
     void getQuicktestStatisticsFail() {
         try {
-            quickTestArchiveController.createQuickTestArchive(null);
+            quickTestArchiveController.getTestArchive(null);
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");

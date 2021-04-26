@@ -227,6 +227,7 @@ public class QuickTestServiceTest {
             quickTestService.updateQuickTestWithPersonalData(utilities.getIdsFromToken(),
                     "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
                     quickTest);
+            fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }

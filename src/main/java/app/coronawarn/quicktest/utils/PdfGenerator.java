@@ -62,14 +62,14 @@ public class PdfGenerator {
         page1.setMediaBox(PDRectangle.A4);
         PDRectangle rect = page1.getMediaBox();
         PDPageContentStream cos = new PDPageContentStream(document, page1);
-        config(document, cos);
+        config(document);
         write(document, cos, rect, pocInformation, quicktest, user);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
     }
 
-    private void config(PDDocument document, PDPageContentStream cos) throws IOException {
+    private void config(PDDocument document) {
         PDDocumentInformation pdd = document.getDocumentInformation();
         pdd.setAuthor(pdfConfig.getAuthorPdfPropertiesText());
         pdd.setTitle(pdfConfig.getQuickTestHeadlineText());
@@ -115,7 +115,7 @@ public class PdfGenerator {
                 .getResourceAsStream(pdfConfig.getLogoPath())));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "logo");
             cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             log.debug("Kein logo geladen! " + e.getMessage());
             log.error("Kein logo geladen!");
         }

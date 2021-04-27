@@ -10,7 +10,6 @@ import javax.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -45,11 +44,11 @@ public class SecurityAuditListenerQuickTest {
         String tenantId;
         String pocId;
 
-        try{
+        try {
             name = utilities.getUserNameFromToken();
             tenantId = utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey());
             pocId = utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey());
-        } catch(ResponseStatusException e){
+        } catch (ResponseStatusException e) {
             name = "called by Backend";
             tenantId = quickTest.getTenantId();
             pocId = quickTest.getPocId();

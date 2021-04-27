@@ -19,12 +19,12 @@ public class QuickTestCleanupService {
     private final QuickTestService quickTestService;
 
     /**
-     * Cleanup task to delete all DiagnosisKeys and DiagnosisKeyBatches which are older then configured.
+     * Cleanup task to delete all QuickTest which are older then configured.
      */
     @Scheduled(cron = "${quicktest.clean-up-settings.cron}")
     @SchedulerLock(name = "QuickTestCleanupService_cleanupQuickTests", lockAtLeastFor = "PT0S",
         lockAtMostFor = "${quicktest.clean-up-settings.locklimit}")
-    public void cleanupQuickTests() {
+    protected void cleanupQuickTests() {
         LocalDateTime deleteTimestamp =
             Instant.now().atZone(ZoneId.of("UTC"))
                 .minusMinutes(quickTestConfig.getCleanUpSettings().getMaxAgeInMinutes()).toLocalDateTime();

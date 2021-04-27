@@ -1,6 +1,6 @@
 databaseChangeLog:
   - changeSet:
-      id: add-unique-constraint
+      id: add-unique-constraint-tripple
       author: mbaude
       changes:
         - addUniqueConstraint:

@@ -21,7 +21,7 @@ public class QuickTestCleanupService {
     /**
      * Cleanup task to delete all DiagnosisKeys and DiagnosisKeyBatches which are older then configured.
      */
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "${quicktest.clean-up-settings.cron}")
     @SchedulerLock(name = "QuickTestCleanupService_cleanupQuickTests", lockAtLeastFor = "PT0S",
         lockAtMostFor = "${quicktest.clean-up-settings.locklimit}")
     public void cleanupQuickTests() {

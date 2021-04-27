@@ -38,7 +38,7 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
     List<QuickTest> findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(String tenantId, String pocId);
 
 
-    List<QuickTest> findAllByCreatedAtBefore(LocalDateTime time);
+    List<QuickTest> findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(LocalDateTime time);
 
     void deleteAllByCreatedAtBefore(LocalDateTime time);
 

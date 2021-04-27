@@ -195,7 +195,7 @@ public class QuickTestService {
      * @param deleteTimestamp Timestamp before which everything will be deleted
      */
     public void removeAllBefore(LocalDateTime deleteTimestamp) {
-        quickTestRepository.findAllByCreatedAtBefore(deleteTimestamp).forEach(quickTest -> {
+        quickTestRepository.findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(deleteTimestamp).forEach(quickTest -> {
             this.sendResultToTestResultServer(quickTest.getTestResultServerHash(),
                 TestResult.FAILED.getValue(),
                 quickTest.getConfirmationCwa());

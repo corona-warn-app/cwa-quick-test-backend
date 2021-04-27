@@ -5,6 +5,7 @@ import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.utils.Utilities;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,24 +26,42 @@ public class SecurityAuditListenerQuickTest {
 
     @PostLoad
     private void afterSelectQuickTest(QuickTest quickTest) throws ResponseStatusException {
-        log.info(pattern,
-                utilities.getUserNameFromToken(),
-                utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey()),
-                utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey()),
-                "Select",
-                "QuickTest",
-                quickTest.getHashedGuid());
+        createAuditLog(quickTest, "Select");
     }
 
     @PostPersist
     @PostUpdate
     private void afterSaveQuickTest(QuickTest quickTest) throws ResponseStatusException {
-        log.info(pattern,
-                utilities.getUserNameFromToken(),
-                utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey()),
-                utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey()),
-                "Save",
-                "QuickTest",
-                quickTest.getHashedGuid());
+        createAuditLog(quickTest, "Save");
     }
+
+    @PostRemove
+    private void afterRemoveQuickTest(QuickTest quickTest) throws ResponseStatusException {
+        createAuditLog(quickTest, "Remove");
+    }
+
+    private void createAuditLog(QuickTest quickTest, String action) {
+        String name;
+        String tenantId;
+        String pocId;
+
+        try{
+            name = utilities.getUserNameFromToken();
+            tenantId = utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey());
+            pocId = utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey());
+        } catch(ResponseStatusException e){
+            name = "called by Backend";
+            tenantId = quickTest.getTenantId();
+            pocId = quickTest.getPocId();
+        }
+
+        log.info(pattern,
+            name,
+            tenantId,
+            pocId,
+            action,
+            "QuickTest",
+            quickTest.getHashedGuid());
+    }
+
 }

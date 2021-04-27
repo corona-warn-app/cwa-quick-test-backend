@@ -19,8 +19,7 @@ spring:
       "[mail.smtp.auth]": true
       "[mail.smtp.starttls.enable]": true
       "[mail.smtp.starttls.required]": true
-  devtools:
-    add-properties: false
+
 management:
   server:
     port: 8081

@@ -38,7 +38,7 @@ public class AntigenTestService {
      *
      * @return antigen tests
      */
-    public List<AntigenTest> antigenTests() throws ResponseStatusException, IOException {
+    public List<AntigenTest> getAntigenTests() throws ResponseStatusException, IOException {
         log.debug("Response antigenTests");
         if (antigenTests.isEmpty()) {
             loadAntigenTests();

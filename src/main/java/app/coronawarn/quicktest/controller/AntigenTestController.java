@@ -47,7 +47,7 @@ public class AntigenTestController {
         try {
             return ResponseEntity.ok()
                     .header(HttpHeaders.LAST_MODIFIED, antigenTestService.getLastUpdate().toString())
-                    .body(antigenTestService.antigenTests());
+                    .body(antigenTestService.getAntigenTests());
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {

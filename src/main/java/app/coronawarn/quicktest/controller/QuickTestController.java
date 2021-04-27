@@ -68,7 +68,7 @@ public class QuickTestController {
      */
     @Operation(
         summary = "Get poc specific quicktests",
-        description = "Returns all found (pending) quicktests for a specific poc"
+        description = "Returns all found (pending) quicktests containing personal data for a specific poc"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "OK"),
@@ -90,7 +90,7 @@ public class QuickTestController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Failed to find pending quicktests");
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Cannot get quicktests.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

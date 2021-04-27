@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.QuickTest;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -32,4 +33,7 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
     Optional<QuickTest> findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(String tenantId, String pocId,
                                                                              String shortHash, String hashedGuid);
+
+    List<QuickTest> findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(String tenantId, String pocId);
+
 }

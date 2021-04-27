@@ -23,8 +23,8 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.QuickTestArchiveListResponse;
 import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
+import app.coronawarn.quicktest.model.QuickTestArchiveResponseList;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
@@ -114,7 +114,7 @@ public class QuickTestArchiveController {
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
-    public ResponseEntity<QuickTestArchiveListResponse> findArchivesByTestResultAndUpdatedAtBetween(
+    public ResponseEntity<QuickTestArchiveResponseList> findArchivesByTestResultAndUpdatedAtBetween(
             @RequestParam(required = false) @Min(5) @Max(8) Short testResult,
             @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateFrom,
             @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateTo) {
@@ -131,7 +131,7 @@ public class QuickTestArchiveController {
                     archives,
                     typeToken.getType()
             );
-            QuickTestArchiveListResponse response = new QuickTestArchiveListResponse();
+            QuickTestArchiveResponseList response = new QuickTestArchiveResponseList();
             response.setQuickTestArchives(quickTestArchiveResponses);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

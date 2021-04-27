@@ -9,18 +9,18 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Schema(
-        description = ""
+        description = "Model for quicktest response list."
 )
 @Getter
 @ToString
 @EqualsAndHashCode
-public class QuickTestArchiveListResponse {
+public class QuickTestResponseList {
 
     @NotNull
-    private List<@Valid QuickTestArchiveResponse> quickTestArchives;
+    private List<@Valid QuickTestResponse> quickTests;
 
-    public QuickTestArchiveListResponse setQuickTestArchives(List<QuickTestArchiveResponse> quickTestArchives) {
-        this.quickTestArchives = quickTestArchives;
+    public QuickTestResponseList setQuickTests(List<QuickTestResponse> quickTests) {
+        this.quickTests = quickTests;
         return this;
     }
 

@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Schema(
-        description = ""
+        description = "Response model for quick test archive entries."
 )
 @Data
 public class QuickTestArchiveResponse {

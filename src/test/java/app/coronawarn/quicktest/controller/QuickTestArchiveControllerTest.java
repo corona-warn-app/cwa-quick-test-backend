@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.QuickTestArchiveListResponse;
+import app.coronawarn.quicktest.model.QuickTestArchiveResponseList;
 import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
@@ -143,8 +143,8 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             .andExpect(status().isOk()).andReturn();
         String responseBody = mvcResult.getResponse().getContentAsString();
 
-        QuickTestArchiveListResponse response
-            = new Gson().fromJson(responseBody, QuickTestArchiveListResponse.class);
+        QuickTestArchiveResponseList response
+            = new Gson().fromJson(responseBody, QuickTestArchiveResponseList.class);
         checkResponse(response.getQuickTestArchives().get(0), quickTestArchive);
 
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
@@ -157,7 +157,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
         responseBody = mvcResult.getResponse().getContentAsString();
 
         response
-            = new Gson().fromJson(responseBody, QuickTestArchiveListResponse.class);
+            = new Gson().fromJson(responseBody, QuickTestArchiveResponseList.class);
         checkResponse(response.getQuickTestArchives().get(0), quickTestArchive);
 
 

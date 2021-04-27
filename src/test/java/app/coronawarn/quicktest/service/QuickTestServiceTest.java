@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -247,6 +248,21 @@ public class QuickTestServiceTest {
         } catch (NullPointerException e) {
             // Test passed. testResultService not initialized. Call try successful
         }
+    }
+
+    @Test
+    void findAllPendingQuickTestsByTenantIdAndPocIdTest() {
+        Map<String, String> ids = new HashMap<>();
+        List<QuickTest> quickTests = new ArrayList<>();
+        QuickTest quickTest = new QuickTest();
+        quickTest.setPrivacyAgreement(true);
+        quickTest.setShortHashedGuid("00000000");
+        quickTests.add(quickTest);
+        when(quickTestRepository.findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(any(), any()))
+                .thenReturn(quickTests);
+        List<QuickTest> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
+        assertEquals(quickTests1.get(0).getPrivacyAgreement(), true);
+        assertEquals(quickTests1.get(0).getShortHashedGuid(), "00000000");
     }
 
 }

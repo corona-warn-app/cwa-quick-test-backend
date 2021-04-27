@@ -117,7 +117,7 @@ public class QuickTestService {
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
-        quickTestRepository.saveAndFlush(quicktest);
+
         addStatistics(quicktest);
         byte[] pdf;
         try {
@@ -239,6 +239,19 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return quicktest;
+    }
+
+    /**
+     * Finds all pending quicktests for tenant and poc containing personal data.
+     * @param ids Map with tenantId und pocId from token
+     * @return List including found quicktests
+     */
+    public List<QuickTest> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
+        List<QuickTest> quickTests = quickTestRepository.findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(
+                ids.get(quickTestConfig.getTenantIdKey()),
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey())
+        );
+        return quickTests;
     }
 
     private void sendResultToTestResultServer(String testResultServerHash, short result)

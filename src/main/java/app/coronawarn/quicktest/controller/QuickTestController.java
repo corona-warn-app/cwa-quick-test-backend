@@ -64,7 +64,7 @@ public class QuickTestController {
     private final Utilities utilities;
 
     /**
-     * Endpoint for getting pending quicktests for poc and tenant.
+     * Endpoint for getting pending (registration with name, etc. completed) quicktests for poc and tenant.
      */
     @Operation(
         summary = "Get poc specific quicktests",

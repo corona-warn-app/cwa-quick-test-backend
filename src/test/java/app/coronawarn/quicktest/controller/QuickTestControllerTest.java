@@ -1,6 +1,5 @@
 package app.coronawarn.quicktest.controller;
 
-
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -9,10 +8,13 @@ import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
+import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
+import app.coronawarn.quicktest.model.QuickTestResponseList;
 import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.service.QuickTestService;
@@ -28,7 +30,8 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import liquibase.pro.packaged.T;
+import java.util.Collections;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
@@ -39,6 +42,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -54,34 +58,36 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     @InjectMocks
     private QuickTestController quickTestController;
 
+    private final String API_BASE_PATH = "/api/quicktest";
+
     @Test
     void createQuickTest() throws Exception {
         QuickTestCreationRequest quicktestCreationRequest = new QuickTestCreationRequest();
         quicktestCreationRequest.setHashedGuid("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
 
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isCreated());
 
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isForbidden());
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
             .andExpect(status().isForbidden());
 
         mockMvc().perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
@@ -90,7 +96,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         doThrow(new ResponseStatusException(HttpStatus.CONFLICT))
             .when(quickTestService).createNewQuickTest(any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
@@ -102,7 +108,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
             .when(quickTestService).createNewQuickTest(any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
@@ -114,7 +120,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quicktestCreationRequest.setHashedGuid("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c");
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
@@ -123,7 +129,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quicktestCreationRequest.setHashedGuid("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55");
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
-            .post("/api/quicktest/")
+            .post(API_BASE_PATH)
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
@@ -179,14 +185,14 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
             if (result > 5 && result < 9) {
                 mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-                    .put("/api/quicktest/6fa4dcec/testResult")
+                    .put(API_BASE_PATH + "/6fa4dcec/testResult")
                     .accept(MediaType.APPLICATION_JSON_VALUE)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .content(new Gson().toJson(quickTestUpdateRequest)))
                     .andExpect(status().isNoContent());
             } else {
                 mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-                    .put("/api/quicktest/6fa4dcec/testResult")
+                    .put(API_BASE_PATH + "/6fa4dcec/testResult")
                     .accept(MediaType.APPLICATION_JSON_VALUE)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -196,21 +202,21 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestUpdateRequest.setResult((short) 6);
 
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isForbidden());
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isForbidden());
 
         mockMvc().perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -218,7 +224,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestUpdateRequest.setTestBrandName(null);
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -226,7 +232,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestUpdateRequest.setTestBrandName("1");
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -234,7 +240,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestUpdateRequest.setTestBrandName("");
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -243,7 +249,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestUpdateRequest.setTestBrandName(
             "0123456789012345678901234567890123456789012345678901234567890123456789012345678");
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -252,7 +258,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestUpdateRequest.setTestBrandName(
             "01234567890123456789012345678901234567890123456789012345678901234567890123456789");
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -260,7 +266,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestUpdateRequest.setTestBrandId(null);
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -273,7 +279,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
             .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -285,7 +291,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
             .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/testResult")
+            .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
@@ -320,28 +326,28 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
 
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
             .andExpect(status().isNoContent());
 
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
             .andExpect(status().isForbidden());
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
             .andExpect(status().isForbidden());
 
         mockMvc().perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -351,7 +357,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         boolean oldCwaValue = quickTestPersonalDataRequest.getConfirmationCwa();
         quickTestPersonalDataRequest.setConfirmationCwa(false);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -359,7 +365,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setConfirmationCwa(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -370,7 +376,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         boolean privacyAgreement = quickTestPersonalDataRequest.getPrivacyAgreement();
         quickTestPersonalDataRequest.setPrivacyAgreement(false);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -378,7 +384,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setPrivacyAgreement(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -390,7 +396,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setLastName(
             "0123456789012345678901234567890123456789012345678901234567890123456789012345678");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -399,7 +405,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setLastName(
             "01234567890123456789012345678901234567890123456789012345678901234567890123456789");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -407,7 +413,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setLastName("");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -415,7 +421,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setLastName(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -428,7 +434,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setFirstName(
             "0123456789012345678901234567890123456789012345678901234567890123456789012345678");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -437,7 +443,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setFirstName(
             "01234567890123456789012345678901234567890123456789012345678901234567890123456789");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -445,7 +451,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setFirstName("");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -453,7 +459,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setFirstName(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -464,7 +470,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         String email = quickTestPersonalDataRequest.getEmail();
         quickTestPersonalDataRequest.setEmail("a@be");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -475,7 +481,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 "@extralooooooooooooooooooooooooolongemail55555555557777777888899" +
                 ".extralooooooooooooooooooooooooolongemail55555555557777777888899");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -486,7 +492,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 "@extralooooooooooooooooooooooooolongemail55555555557777777888899" +
                 ".extralooooooooooooooooooooooooolongemail55555555557777777888899");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -494,7 +500,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setEmail(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -506,7 +512,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         String phone = quickTestPersonalDataRequest.getPhoneNumber();
         quickTestPersonalDataRequest.setPhoneNumber("0100000");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -515,7 +521,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber(
             "0100000012345678901234567890123456789012345678901234567890123456789012345678900");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -524,7 +530,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber(
             "+491000000123456789012345678901234567890123456789012345678901234567890123456789");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -533,7 +539,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber(
             "01000000123456789012345678901234567890123456789012345678901234567890123456789000");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -542,7 +548,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber(
             "+4910000001234567890123456789012345678901234567890123456789012345678901234567890");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -551,7 +557,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber(
             "010000");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -560,7 +566,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber(
             "+49100");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -569,7 +575,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber(
             "123456789");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -577,7 +583,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setPhoneNumber(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -588,7 +594,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         Sex sex = quickTestPersonalDataRequest.getSex();
         quickTestPersonalDataRequest.setSex(Sex.MALE);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -596,7 +602,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setSex(Sex.DIVERSE);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -604,7 +610,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setSex(Sex.FEMALE);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -612,7 +618,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setSex(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -627,7 +633,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
                 + "ooooooooooooooooooooooooooooooooooooooooongstreetname");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -638,7 +644,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
                 + "oooooooooooooooooooooooooooooooooooooooooongstreetname");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -646,7 +652,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setStreet("");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -654,7 +660,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setStreet(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -666,7 +672,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         String housenumber = quickTestPersonalDataRequest.getHouseNumber();
         quickTestPersonalDataRequest.setHouseNumber("012345678901234");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -674,7 +680,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setHouseNumber("0123456789012345");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -682,7 +688,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setHouseNumber("");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -690,7 +696,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setHouseNumber(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -702,7 +708,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         String zipcode = quickTestPersonalDataRequest.getZipCode();
         quickTestPersonalDataRequest.setZipCode("01111");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -710,7 +716,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setZipCode("10111");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -718,7 +724,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setZipCode("1011");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -726,7 +732,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setZipCode("101111");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -734,7 +740,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setZipCode("00111");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -742,7 +748,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setZipCode(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -756,7 +762,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
                 + "ooooooooooooooooooooooooooooooooooooooooooongcityname");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -767,7 +773,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 + "oooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooo"
                 + "oooooooooooooooooooooooooooooooooooooooooooongcityname");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -775,7 +781,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setCity("");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -783,7 +789,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setCity(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -795,7 +801,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         LocalDate birthday = quickTestPersonalDataRequest.getBirthday();
         quickTestPersonalDataRequest.setBirthday(LocalDate.of(1900, 1, 1));
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -803,7 +809,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setBirthday(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -816,7 +822,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setTestResultServerHash(
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -825,7 +831,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setTestResultServerHash(
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -833,7 +839,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setTestResultServerHash(null);
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -844,7 +850,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
             .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -856,7 +862,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
             .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put("/api/quicktest/6fa4dcec/personalData")
+            .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
@@ -866,6 +872,50 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 result.getResolvedException().getMessage()));
 
 
+    }
+
+    @Test
+    void getPendingQuickTests() throws Exception {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setShortHashedGuid("00000000");
+        quickTest.setPrivacyAgreement(true);
+        quickTest.setFirstName("firstName");
+        when(quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(any()))
+                .thenReturn(Collections.singletonList(quickTest));
+
+        MvcResult result = mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+                .get(API_BASE_PATH)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String responseBody = result.getResponse().getContentAsString();
+        QuickTestResponseList response = new Gson().fromJson(responseBody, QuickTestResponseList.class);
+
+        Assertions.assertThat(response.getQuickTests().get(0).getShortHashedGuid())
+                .isEqualTo(quickTest.getShortHashedGuid());
+
+        try {
+            Method method1 = response.getQuickTests().get(0).getClass().getMethod("getPrivacyAgreement");
+            Method method2 = response.getQuickTests().get(0).getClass().getMethod("getFirstName");
+            fail("Only short hash must be returned");
+        } catch (NoSuchMethodException e){
+        }
+
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+                .get(API_BASE_PATH)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getPendingQuickFailedTest() throws Exception {
+        when(quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(any()))
+                .thenThrow();
+        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+                .get(API_BASE_PATH)
+                .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isInternalServerError());
     }
 
     class LocalDateAdapter implements JsonSerializer<LocalDate> {

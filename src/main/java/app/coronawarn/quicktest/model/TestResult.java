@@ -8,28 +8,20 @@ import java.util.stream.Collectors;
 public enum TestResult {
     PENDING("pending", (short) 5),
     NEGATIVE("negative", (short) 6),
-    POSITIVE("positive",  (short) 7);
-
-    TestResult(final String name, final short value) {
-        this.name = name;
-        this.value = value;
-    }
-
-    private final String name;
-    private final short value;
-
-    public String getName() {
-        return name;
-    }
-
-    public short getValue() {
-        return value;
-    }
+    POSITIVE("positive",  (short) 7),
+    FAILED("failed",  (short) 8);
 
     static final Map<String, TestResult> names = Arrays.stream(TestResult.values())
             .collect(Collectors.toMap(TestResult::getName, Function.identity()));
     static final Map<Short, TestResult> values = Arrays.stream(TestResult.values())
             .collect(Collectors.toMap(TestResult::getValue, Function.identity()));
+    private final String name;
+    private final short value;
+
+    TestResult(final String name, final short value) {
+        this.name = name;
+        this.value = value;
+    }
 
     public static TestResult fromName(final String name) {
         return names.get(name);
@@ -37,5 +29,13 @@ public enum TestResult {
 
     public static TestResult fromValue(final int value) {
         return values.get(value);
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public short getValue() {
+        return value;
     }
 }

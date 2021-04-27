@@ -78,3 +78,6 @@ testresultserver:
 
 quicktest:
   db-encryption-password: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
+  clean-up-settings:
+    max-age-in-minutes: 3600
+    locklimit: 1800000

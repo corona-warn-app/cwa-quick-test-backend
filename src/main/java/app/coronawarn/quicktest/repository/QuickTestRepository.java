@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.QuickTest;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -35,5 +36,10 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
                                                                              String shortHash, String hashedGuid);
 
     List<QuickTest> findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(String tenantId, String pocId);
+
+
+    List<QuickTest> findAllByCreatedAtBefore(LocalDateTime time);
+
+    void deleteAllByCreatedAtBefore(LocalDateTime time);
 
 }

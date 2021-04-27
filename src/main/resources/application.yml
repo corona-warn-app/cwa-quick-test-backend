@@ -59,6 +59,9 @@ quicktest:
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
   db-encryption-password: abcdefghjklmnopq
+  clean-up-settings:
+    max-age-in-minutes: 2
+    locklimit: 1800000
 
 testresultserver:
   enabled: false

@@ -23,6 +23,7 @@
         <springdoc.version>1.4.2</springdoc.version>
         <liquibase.version>4.3.2</liquibase.version>
         <pdfbox.version>2.0.23</pdfbox.version>
+        <opencsv.version>5.3</opencsv.version>
         <springTestAddons.version>2.5.2</springTestAddons.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
@@ -138,6 +139,11 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.opencsv</groupId>
+            <artifactId>opencsv</artifactId>
+            <version>${opencsv.version}</version>
         </dependency>
         <dependency>
             <groupId>com.c4-soft.springaddons</groupId>

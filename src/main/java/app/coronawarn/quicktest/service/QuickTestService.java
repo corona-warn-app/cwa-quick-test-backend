@@ -143,7 +143,8 @@ public class QuickTestService {
             log.error("Could not delete QuickTest. updateQuickTest failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        sendResultToTestResultServer(quicktest.getTestResultServerHash(), result, quicktest.getConfirmationCwa());
+        sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
+            quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
     }
 
@@ -183,7 +184,7 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
-            quickTestPersonalData.getConfirmationCwa());
+            quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
 
     }
@@ -198,7 +199,7 @@ public class QuickTestService {
         quickTestRepository.findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(deleteTimestamp).forEach(quickTest -> {
             this.sendResultToTestResultServer(quickTest.getTestResultServerHash(),
                 TestResult.FAILED.getValue(),
-                quickTest.getConfirmationCwa());
+                quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false);
         });
 
         quickTestRepository.deleteAllByCreatedAtBefore(deleteTimestamp);

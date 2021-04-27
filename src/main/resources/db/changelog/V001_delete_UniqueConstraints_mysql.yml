@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       dbms: mysql
-      id: add-unique-constraint
+      id: delete-unique-constraint
       author: mbaude
       changes:
         - dropUniqueConstraint:

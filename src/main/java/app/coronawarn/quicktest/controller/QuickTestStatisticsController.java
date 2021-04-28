@@ -21,12 +21,9 @@
 package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
 
-import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.QuickTestStatisticsResponse;
 import app.coronawarn.quicktest.model.QuickTestTenantStatistics;
-import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponse;
 import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponseList;
 import app.coronawarn.quicktest.service.QuickTestStatisticsService;
 import app.coronawarn.quicktest.utils.Utilities;
@@ -63,6 +60,7 @@ public class QuickTestStatisticsController {
     private final Utilities utilities;
 
     //TODO check role
+
     /**
      * Endpoint for get statistic for QuickTest.
      *
@@ -78,10 +76,10 @@ public class QuickTestStatisticsController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<QuickTestStatisticsResponse> getQuicktestStatistics(
-            @RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                    ZonedDateTime zonedDateFrom,
-            @RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-                    ZonedDateTime zonedDateTo) {
+        @RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            ZonedDateTime zonedDateFrom,
+        @RequestParam(value = "dateTo", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            ZonedDateTime zonedDateTo) {
         try {
             if (zonedDateFrom == null) {
                 zonedDateFrom = Utilities.getStartTimeForLocalDateInGermanyInUtc();
@@ -101,7 +99,7 @@ public class QuickTestStatisticsController {
         }
     }
 
-
+    //TODO check role
     /**
      * Endpoint for get statistic for QuickTest.
      *
@@ -112,10 +110,10 @@ public class QuickTestStatisticsController {
         description = "Returns the aggregated statistics for tenant with total and positive counts"
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Get aggregated statistic data for tenant"),
-        @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
+      @ApiResponse(responseCode = "200", description = "Get aggregated statistic data for tenant"),
+      @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @GetMapping(value = "/tenant", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured(ROLE_TENANT_COUNTER)
+    @Secured(ROLE_COUNTER)
     public ResponseEntity<QuickTestTenantStatisticsResponseList> getQuicktestStatisticsForTenantWithAggregation(
         @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             ZonedDateTime zonedDateFrom,
@@ -128,7 +126,8 @@ public class QuickTestStatisticsController {
             List<QuickTestTenantStatistics> quickTestTenantStatistics =
                 quickTestStatisticsService.getStatisticsForTenant(utilities.getIdsFromToken(), utcDateFrom, utcDateTo);
 
-            TypeToken<QuickTestTenantStatisticsResponseList> typeToken = new TypeToken<>(){};
+            TypeToken<QuickTestTenantStatisticsResponseList> typeToken = new TypeToken<>() {
+            };
             QuickTestTenantStatisticsResponseList quickTestTenantStatisticsResponseList = modelMapper.map(
                 quickTestTenantStatistics,
                 typeToken.getType()

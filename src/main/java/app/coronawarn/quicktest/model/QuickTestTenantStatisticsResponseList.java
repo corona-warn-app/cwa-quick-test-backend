@@ -21,7 +21,8 @@ public class QuickTestTenantStatisticsResponseList {
     @NotNull
     private List<@Valid QuickTestTenantStatisticsResponse> quickTestTenantStatistics;
 
-    public QuickTestTenantStatisticsResponseList setQuickTestTenantStatistics(List<QuickTestTenantStatisticsResponse> quickTestTenantStatistics) {
+    public QuickTestTenantStatisticsResponseList setQuickTestTenantStatistics(
+        List<QuickTestTenantStatisticsResponse> quickTestTenantStatistics) {
         this.quickTestTenantStatistics = quickTestTenantStatistics;
         return this;
     }

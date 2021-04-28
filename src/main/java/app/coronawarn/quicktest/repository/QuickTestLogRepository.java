@@ -36,8 +36,9 @@ public interface QuickTestLogRepository extends JpaRepository<QuickTestLog, Stri
                                                                                  LocalDateTime utcDateFrom,
                                                                                  LocalDateTime utcDateTo);
 
-    List<QuickTestLog> findAllByTenantIdAndCreatedAtBetween(String tenantId, LocalDateTime utcDateFrom,
-                                                            LocalDateTime utcDateTo);
+    List<QuickTestLog> findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(String tenantId,
+                                                                                       LocalDateTime utcDateFrom,
+                                                                                       LocalDateTime utcDateTo);
 
 
 }

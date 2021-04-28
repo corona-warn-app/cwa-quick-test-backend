@@ -10,9 +10,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -47,51 +47,40 @@ public class QuickTestStatisticsService {
         return quickTestStatistics;
     }
 
+    /**
+     * Return aggregated statistic for QuickTest by tenant and time range.
+     */
     public List<QuickTestTenantStatistics> getStatisticsForTenant(Map<String, String> ids, LocalDateTime utcDateFrom,
-                                                                  LocalDateTime utcDateTo){
+                                                                  LocalDateTime utcDateTo) {
 
         List<QuickTestTenantStatistics> quickTestTenantStatistics = new ArrayList<>();
 
         Aggregation aggregation = determineAggregation(utcDateFrom, utcDateTo);
 
-        List<QuickTestLog> quickTestLogs = quickTestLogRepository.findAllByTenantIdAndCreatedAtBetween(
-            ids.get(quickTestConfig.getTenantIdKey()),
-            utcDateFrom, utcDateTo);
+        List<QuickTestLog> quickTestLogs =
+            quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(
+                ids.get(quickTestConfig.getTenantIdKey()),
+                utcDateFrom, utcDateTo);
 
+        Map<String, List<QuickTestLog>> quickTestLogSortedByPocId =
+            quickTestLogs.stream().collect(Collectors.groupingBy(QuickTestLog::getPocId));
 
-        Map<String, QuickTestTenantStatistics> aggregatedQuickTestTenantStatistics = new HashMap<>();
-
-
-
-
-
-        QuickTestTenantStatistics statistics = new QuickTestTenantStatistics();
-        statistics.setAggregation(aggregation);
 
         return Collections.emptyList();
     }
 
-
     private Aggregation determineAggregation(LocalDateTime utcDateFrom,
-                                             LocalDateTime utcDateTo){
+                                             LocalDateTime utcDateTo) {
 
-        Duration duration = Duration.between(utcDateFrom,utcDateTo);
+        Duration duration = Duration.between(utcDateFrom, utcDateTo);
         duration.getSeconds();
-        int secondsOfDay= 86400;
-        if (duration.getSeconds() <= secondsOfDay){
+        int secondsOfDay = 86400;
+        if (duration.getSeconds() <= secondsOfDay) {
             return Aggregation.NONE;
-        }
-        else if (duration.getSeconds() <= secondsOfDay*5){
+        } else if (duration.getSeconds() <= secondsOfDay * 5) {
             return Aggregation.HOUR;
-        }
-        else if (duration.getSeconds() <= secondsOfDay*5*4){
+        } else {
             return Aggregation.DAY;
         }
-        else{
-            return Aggregation.MONTH;
-        }
     }
-
-
-
 }

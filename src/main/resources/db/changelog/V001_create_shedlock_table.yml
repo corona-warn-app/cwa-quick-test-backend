@@ -1,7 +1,7 @@
 databaseChangeLog:
   - changeSet:
       id: create-shedlock-table
-      author: f11h
+      author: mbaude
       changes:
         - createTable:
             tableName: shedlock

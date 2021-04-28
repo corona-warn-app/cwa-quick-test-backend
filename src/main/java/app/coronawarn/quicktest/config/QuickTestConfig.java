@@ -22,6 +22,8 @@ public class QuickTestConfig {
     @Getter
     @Setter
     public static class CleanUpSettings {
+        private String cron;
         private int maxAgeInMinutes;
+        private int locklimit;
     }
 }

@@ -78,6 +78,7 @@ public class QuickTestService {
 
         if (conflictingQuickTestByHashed.isPresent() || conflictingQuickTestArchiveByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);
+            log.info("QuickTest with Guid already exists");
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
@@ -91,6 +92,7 @@ public class QuickTestService {
         try {
             quickTestRepository.save(newQuickTest);
             log.debug("Created new QuickTest with hashedGUID {}", hashedGuid);
+            log.info("Created new QuickTest with hashedGUID");
         } catch (Exception e) {
             log.debug("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
             log.error("Failed to insert new QuickTest");
@@ -114,6 +116,7 @@ public class QuickTestService {
             shortHash
         );
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
+        log.info("Updating TestResult on TestResult-Server for hash");
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
@@ -143,10 +146,10 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
-            log.debug("Sending TestResult to TestResult-Server");
             sendResultToTestResultServer(quicktest.getTestResultServerHash(), result);
         }
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
+        log.info("Updated TestResult for hashedGuid with TestResult");
     }
 
     /**
@@ -186,10 +189,10 @@ public class QuickTestService {
         }
 
         if (quickTestPersonalData.getConfirmationCwa()) {
-            log.debug("Sending TestResult to TestResult-Server");
             sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult());
         }
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
+        log.info("Updated TestResult for hashedGuid with PersonalData");
 
     }
 
@@ -236,6 +239,7 @@ public class QuickTestService {
         QuickTest quicktest = quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(tenantId, pocId, shortHash);
         if (quicktest == null) {
             log.debug("Requested Quick Test with shortHash {} could not be found.", shortHash);
+            log.info("Requested Quick Test with shortHash could not be found.");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return quicktest;
@@ -256,10 +260,12 @@ public class QuickTestService {
 
     private void sendResultToTestResultServer(String testResultServerHash, short result)
             throws ResponseStatusException {
+        log.info("Sending TestResult to TestResult-Server");
         QuickTestResult quickTestResult = new QuickTestResult();
         quickTestResult.setId(testResultServerHash);
         quickTestResult.setResult(result);
         testResultService.createOrUpdateTestResult(quickTestResult);
+        log.info("Update TestResult on TestResult-Server successfully.");
     }
 
     protected byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {

@@ -25,6 +25,7 @@
         <pdfbox.version>2.0.23</pdfbox.version>
         <opencsv.version>5.3</opencsv.version>
         <springTestAddons.version>2.5.2</springTestAddons.version>
+        <shedlock.version>4.23.0</shedlock.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
         <license.projectName>Corona-Warn-App / cwa-quick-test-backend</license.projectName>
@@ -144,6 +145,16 @@
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
             <version>${opencsv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-provider-jdbc-template</artifactId>
+            <version>${shedlock.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.javacrumbs.shedlock</groupId>
+            <artifactId>shedlock-spring</artifactId>
+            <version>${shedlock.version}</version>
         </dependency>
         <dependency>
             <groupId>com.c4-soft.springaddons</groupId>

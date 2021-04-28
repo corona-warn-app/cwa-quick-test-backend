@@ -11,13 +11,19 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("quicktest")
 public class QuickTestConfig {
 
+    private CleanUpSettings cleanUpSettings;
     private String pointOfCareIdName;
     private String tenantIdKey;
     private String tenantPointOfCareIdKey;
-
     private String pointOfCareInformationName;
     private String pointOfCareInformationDelimiter;
-
     private String dbEncryptionPassword;
 
+    @Getter
+    @Setter
+    public static class CleanUpSettings {
+        private String cron;
+        private int maxAgeInMinutes;
+        private int locklimit;
+    }
 }

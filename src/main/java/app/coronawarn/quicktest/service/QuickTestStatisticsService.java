@@ -29,14 +29,13 @@ public class QuickTestStatisticsService {
             utcDateFrom, utcDateTo);
 
         int totalPositiveCount = quickTestStatisticRepository
-                .countAllByTenantIdAndPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(
-                    ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                    utcDateFrom, utcDateTo);
+            .countAllByTenantIdAndPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(
+                ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                utcDateFrom, utcDateTo);
 
         QuickTestStatistics quickTestStatistics = new QuickTestStatistics();
         quickTestStatistics.setTotalTestCount(totalCount);
         quickTestStatistics.setPositiveTestCount(totalPositiveCount);
         return quickTestStatistics;
     }
-
 }

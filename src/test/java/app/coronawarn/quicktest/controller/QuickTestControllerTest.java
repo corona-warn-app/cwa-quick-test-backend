@@ -51,14 +51,13 @@ import org.springframework.web.server.ResponseStatusException;
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
 class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
+    private final String API_BASE_PATH = "/api/quicktest";
     @MockBean
     private QuickTestService quickTestService;
     @MockBean
     private Utilities utilities;
     @InjectMocks
     private QuickTestController quickTestController;
-
-    private final String API_BASE_PATH = "/api/quicktest";
 
     @Test
     void createQuickTest() throws Exception {

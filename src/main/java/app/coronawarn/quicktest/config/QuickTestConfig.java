@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("quicktest")
 public class QuickTestConfig {
 
-    private final CleanUpSettings cleanUpSettings;
+    private CleanUpSettings cleanUpSettings;
     private String pointOfCareIdName;
     private String tenantIdKey;
     private String tenantPointOfCareIdKey;

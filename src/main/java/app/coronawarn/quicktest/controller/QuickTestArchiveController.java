@@ -85,11 +85,13 @@ public class QuickTestArchiveController {
     public ResponseEntity<byte[]> getQuickTestPdf(
             @PathVariable String hashedGuid) {
         try {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
-                            + "Schnelltest_" + hashedGuid + ".pdf\"")
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(quickTestArchiveService.getPdf(hashedGuid));
+            ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
+                    + "Schnelltest_" + hashedGuid + ".pdf\"")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(quickTestArchiveService.getPdf(hashedGuid));
+            log.info("pdf successfully downloaded.");
+            return responseEntity;
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
@@ -133,6 +135,7 @@ public class QuickTestArchiveController {
             );
             QuickTestArchiveResponseList response = new QuickTestArchiveResponseList();
             response.setQuickTestArchives(quickTestArchiveResponses);
+            log.info("quicktest found successfully.");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.debug("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."

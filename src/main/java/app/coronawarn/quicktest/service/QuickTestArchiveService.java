@@ -32,7 +32,8 @@ public class QuickTestArchiveService {
         throws ResponseStatusException {
         Optional<QuickTestArchive> quickTestArchive = quickTestArchiveRepository.findByHashedGuid(hashedGuid);
         if (quickTestArchive.isEmpty()) {
-            log.debug("Requested Quick Test with HashedGuid {} could not be found or wrong poc", hashedGuid);
+            log.info("Requested Quick Test with HashedGuid {} could not be found or wrong poc", hashedGuid);
+            log.debug("Requested Quick Test with HashedGuid could not be found or wrong poc");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
         return quickTestArchive.get().getPdf();

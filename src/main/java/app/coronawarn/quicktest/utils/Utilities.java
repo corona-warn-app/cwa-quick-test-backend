@@ -78,7 +78,7 @@ public class Utilities {
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
             || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
-            log.error("Ids not found in User-Token");
+            log.warn("Ids not found in User-Token");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ids;
@@ -105,7 +105,7 @@ public class Utilities {
             }
         }
         if (information == null) {
-            log.error("Poc Information not found in User-Token");
+            log.warn("Poc Information not found in User-Token");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return Arrays.asList(information.split(quickTestConfig.getPointOfCareInformationDelimiter()));
@@ -128,7 +128,7 @@ public class Utilities {
             name = token.getName();
         }
         if (name == null) {
-            log.error("Name not found in User-Token");
+            log.warn("Name not found in User-Token");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return name;

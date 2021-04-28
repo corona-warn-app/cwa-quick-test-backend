@@ -40,3 +40,7 @@ quicktest:
   dbEncryptionPassword: abcdefghjklmnopq
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
+  clean-up-settings:
+    cron: "0 0 0 29 2 ?"
+    max-age-in-minutes: 2
+    locklimit: 1800000

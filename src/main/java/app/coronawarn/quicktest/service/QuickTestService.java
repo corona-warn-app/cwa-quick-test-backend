@@ -31,6 +31,7 @@ import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -132,7 +133,7 @@ public class QuickTestService {
         try {
             quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
-                    quicktest.getPocId(), quicktest.getShortHashedGuid());
+                quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
             log.error("Could not save quickTestArchive. updateQuickTest failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -140,14 +141,13 @@ public class QuickTestService {
         try {
             quickTestRepository.deleteById(quicktest.getHashedGuid());
             log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
-                    quicktest.getPocId(), quicktest.getShortHashedGuid());
+                quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
             log.error("Could not delete QuickTest. updateQuickTest failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
-            sendResultToTestResultServer(quicktest.getTestResultServerHash(), result);
-        }
+        sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
+            quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
         log.info("Updated TestResult for hashedGuid with TestResult");
     }
@@ -187,13 +187,27 @@ public class QuickTestService {
             log.error("Could not save. updateQuickTestWithPersonalData failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        if (quickTestPersonalData.getConfirmationCwa()) {
-            sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult());
-        }
+        sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
+            quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
 
+    }
+
+    /**
+     * Remove all quicktests before timestamp.
+     * If quicktest already has personal data, a fail-Result is sent to the testresultserver.
+     *
+     * @param deleteTimestamp Timestamp before which everything will be deleted
+     */
+    public void removeAllBefore(LocalDateTime deleteTimestamp) {
+        quickTestRepository.findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(deleteTimestamp).forEach(quickTest -> {
+            this.sendResultToTestResultServer(quickTest.getTestResultServerHash(),
+                TestResult.FAILED.getValue(),
+                quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false);
+        });
+
+        quickTestRepository.deleteAllByCreatedAtBefore(deleteTimestamp);
     }
 
     protected void addStatistics(QuickTest quickTest) {
@@ -206,7 +220,7 @@ public class QuickTestService {
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestArchive(
-            QuickTest quickTest, byte[] pdf) {
+        QuickTest quickTest, byte[] pdf) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
         quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
@@ -247,25 +261,28 @@ public class QuickTestService {
 
     /**
      * Finds all pending quicktests for tenant and poc containing personal data.
+     *
      * @param ids Map with tenantId und pocId from token
      * @return List including found quicktests
      */
     public List<QuickTest> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
         List<QuickTest> quickTests = quickTestRepository.findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(
-                ids.get(quickTestConfig.getTenantIdKey()),
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey())
+            ids.get(quickTestConfig.getTenantIdKey()),
+            ids.get(quickTestConfig.getTenantPointOfCareIdKey())
         );
         return quickTests;
     }
 
-    private void sendResultToTestResultServer(String testResultServerHash, short result)
-            throws ResponseStatusException {
-        log.info("Sending TestResult to TestResult-Server");
-        QuickTestResult quickTestResult = new QuickTestResult();
-        quickTestResult.setId(testResultServerHash);
-        quickTestResult.setResult(result);
-        testResultService.createOrUpdateTestResult(quickTestResult);
-        log.info("Update TestResult on TestResult-Server successfully.");
+    private void sendResultToTestResultServer(String testResultServerHash, short result, boolean confirmationCwa)
+        throws ResponseStatusException {
+        if (confirmationCwa) {
+            log.info("Sending TestResult to TestResult-Server");
+            QuickTestResult quickTestResult = new QuickTestResult();
+            quickTestResult.setId(testResultServerHash);
+            quickTestResult.setResult(result);
+            testResultService.createOrUpdateTestResult(quickTestResult);
+            log.info("Update TestResult on TestResult-Server successfully.");
+        }
     }
 
     protected byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {

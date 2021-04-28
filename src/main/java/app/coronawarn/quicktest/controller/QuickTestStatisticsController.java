@@ -21,8 +21,13 @@
 package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
 
+import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.QuickTestStatisticsResponse;
+import app.coronawarn.quicktest.model.QuickTestTenantStatistics;
+import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponse;
+import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponseList;
 import app.coronawarn.quicktest.service.QuickTestStatisticsService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,9 +36,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -63,7 +70,7 @@ public class QuickTestStatisticsController {
      */
     @Operation(
         summary = "Get quicktest statistics",
-        description = "Returns the statistics for total and positive counts for today"
+        description = "Returns the statistics for total and positive counts (default for today)"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Get statistic data"),
@@ -93,4 +100,45 @@ public class QuickTestStatisticsController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
+    /**
+     * Endpoint for get statistic for QuickTest.
+     *
+     * @return QuickTestStatisticsResponse with total and positive count
+     */
+    @Operation(
+        summary = "Get aggregated statistic data for tenant",
+        description = "Returns the aggregated statistics for tenant with total and positive counts"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Get aggregated statistic data for tenant"),
+        @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
+    @GetMapping(value = "/tenant", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured(ROLE_TENANT_COUNTER)
+    public ResponseEntity<QuickTestTenantStatisticsResponseList> getQuicktestStatisticsForTenantWithAggregation(
+        @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            ZonedDateTime zonedDateFrom,
+        @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            ZonedDateTime zonedDateTo) {
+        try {
+            LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
+            LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
+
+            List<QuickTestTenantStatistics> quickTestTenantStatistics =
+                quickTestStatisticsService.getStatisticsForTenant(utilities.getIdsFromToken(), utcDateFrom, utcDateTo);
+
+            TypeToken<QuickTestTenantStatisticsResponseList> typeToken = new TypeToken<>(){};
+            QuickTestTenantStatisticsResponseList quickTestTenantStatisticsResponseList = modelMapper.map(
+                quickTestTenantStatistics,
+                typeToken.getType()
+            );
+
+            return ResponseEntity.ok(quickTestTenantStatisticsResponseList);
+        } catch (Exception e) {
+            log.error("Couldn't execute getQuicktestStatistics.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 }

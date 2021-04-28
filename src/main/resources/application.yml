@@ -88,7 +88,7 @@ pdf:
   negativeInstructionText: "Bitte beachten Sie, dass ein negatives Ergebnis eine mögliche Infektion nicht vollständig ausschließen kann und lediglich eine Momentaufnahme darstellt."
   testBrandNameDescriptionText: "Handelsname: "
   tradeNameEmptyText: "nicht angegeben"
-  testBrandIdDescriptionText: "Hersteller-ID: "
+  testBrandIdDescriptionText: "Test-ID: "
   quickTestHeadlineText: "Corona-Antigen-Schnelltest"
   authorPdfPropertiesText: "Schnelltestportal"
   creatorPdfPropertiesText: "Schnelltestportal"

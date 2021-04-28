@@ -21,7 +21,7 @@ public class PdfConfig {
             + "Infektion nicht vollständig ausschließen kann und lediglich eine Momentaufnahme darstellt.";
     private String testBrandNameDescriptionText = "Handelsname: ";
     private String tradeNameEmptyText = "nicht angegeben";
-    private String testBrandIdDescriptionText = "Hersteller-ID: ";
+    private String testBrandIdDescriptionText = "Test-ID: ";
     private String quickTestHeadlineText = "Corona-Antigen-Schnelltest";
     private String authorPdfPropertiesText = "Schnelltestportal";
     private String creatorPdfPropertiesText = "Schnelltestportal";

@@ -21,9 +21,12 @@
 package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
 
+import app.coronawarn.quicktest.model.Aggregation;
 import app.coronawarn.quicktest.model.QuickTestStatisticsResponse;
 import app.coronawarn.quicktest.model.QuickTestTenantStatistics;
+import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponse;
 import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponseList;
 import app.coronawarn.quicktest.service.QuickTestStatisticsService;
 import app.coronawarn.quicktest.utils.Utilities;
@@ -113,27 +116,33 @@ public class QuickTestStatisticsController {
       @ApiResponse(responseCode = "200", description = "Get aggregated statistic data for tenant"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @GetMapping(value = "/tenant", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured(ROLE_COUNTER)
+    @Secured({ROLE_COUNTER, ROLE_TENANT_COUNTER})
     public ResponseEntity<QuickTestTenantStatisticsResponseList> getQuicktestStatisticsForTenantWithAggregation(
         @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             ZonedDateTime zonedDateFrom,
         @RequestParam(value = "dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            ZonedDateTime zonedDateTo) {
+            ZonedDateTime zonedDateTo,
+        @RequestParam(value = "aggregation")
+            Aggregation aggregation) {
         try {
             LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
             LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
 
             List<QuickTestTenantStatistics> quickTestTenantStatistics =
-                quickTestStatisticsService.getStatisticsForTenant(utilities.getIdsFromToken(), utcDateFrom, utcDateTo);
+                quickTestStatisticsService.getStatisticsForTenant(utilities.getIdsFromToken(), utcDateFrom, utcDateTo,
+                    aggregation);
 
-            TypeToken<QuickTestTenantStatisticsResponseList> typeToken = new TypeToken<>() {
+            TypeToken<List<QuickTestTenantStatistics>> typeToken = new TypeToken<>() {
             };
-            QuickTestTenantStatisticsResponseList quickTestTenantStatisticsResponseList = modelMapper.map(
+            List<QuickTestTenantStatisticsResponse> quickTestTenantStatisticsResponses = modelMapper.map(
                 quickTestTenantStatistics,
                 typeToken.getType()
             );
 
-            return ResponseEntity.ok(quickTestTenantStatisticsResponseList);
+            QuickTestTenantStatisticsResponseList response = new QuickTestTenantStatisticsResponseList();
+            response.setQuickTestTenantStatistics(quickTestTenantStatisticsResponses);
+
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Couldn't execute getQuicktestStatistics.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

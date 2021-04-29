@@ -26,9 +26,10 @@ class QuickTestStatisticsServiceTest {
 
     @Test
     void getStatistics() {
-        QuickTestStatistics quickTestStatistics = new QuickTestStatistics();
-        quickTestStatistics.setTotalTestCount(5);
-        quickTestStatistics.setPositiveTestCount(3);
+        QuickTestStatistics quickTestStatistics = QuickTestStatistics.builder()
+            .totalTestCount(5)
+            .positiveTestCount(3)
+            .build();
 
         when(quickTestLogRepository.countAllByTenantIdAndPocIdAndCreatedAtBetween(any(), any(), any(), any()))
             .thenReturn(

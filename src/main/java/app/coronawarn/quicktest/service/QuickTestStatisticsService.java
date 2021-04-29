@@ -8,8 +8,8 @@ import app.coronawarn.quicktest.model.QuickTestTenantStatistics;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -41,46 +41,89 @@ public class QuickTestStatisticsService {
                 ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
                 utcDateFrom, utcDateTo);
 
-        QuickTestStatistics quickTestStatistics = new QuickTestStatistics();
-        quickTestStatistics.setTotalTestCount(totalCount);
-        quickTestStatistics.setPositiveTestCount(totalPositiveCount);
-        return quickTestStatistics;
+        return QuickTestStatistics.builder()
+            .totalTestCount(totalCount).positiveTestCount(totalPositiveCount).build();
     }
 
     /**
      * Return aggregated statistic for QuickTest by tenant and time range.
      */
     public List<QuickTestTenantStatistics> getStatisticsForTenant(Map<String, String> ids, LocalDateTime utcDateFrom,
-                                                                  LocalDateTime utcDateTo) {
+                                                                  LocalDateTime utcDateTo, Aggregation aggregation) {
 
         List<QuickTestTenantStatistics> quickTestTenantStatistics = new ArrayList<>();
 
-        Aggregation aggregation = determineAggregation(utcDateFrom, utcDateTo);
-
-        List<QuickTestLog> quickTestLogs =
-            quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(
-                ids.get(quickTestConfig.getTenantIdKey()),
-                utcDateFrom, utcDateTo);
-
+        // Map by pocId and list sorted by time
         Map<String, List<QuickTestLog>> quickTestLogSortedByPocId =
-            quickTestLogs.stream().collect(Collectors.groupingBy(QuickTestLog::getPocId));
+            getQuickTestLogSortedByPocId(ids, utcDateFrom, utcDateTo);
 
+        quickTestLogSortedByPocId.forEach((pocId, quickTestLogs) -> {
+            if (aggregation != Aggregation.NONE) {
+                //aggregate values for the given aggregation
+                for (LocalDateTime start = utcDateFrom; Duration.between(start, utcDateTo).getSeconds() > 0; start =
+                    start.plusSeconds(aggregation.getValue())) {
+                    int totalTestCount =
+                        countOfQuickTestsInTimewindow(quickTestLogs,
+                            start.minusSeconds(1), start.plusSeconds(aggregation.getValue()),
+                            false);
+                    int positiveTestCount =
+                        countOfQuickTestsInTimewindow(quickTestLogs,
+                            start.minusSeconds(1), start.plusSeconds(aggregation.getValue()),
+                            true);
 
-        return Collections.emptyList();
+                    createEntryForQuickTestTenantStatistics(
+                        quickTestTenantStatistics, aggregation, pocId, start, totalTestCount,
+                        positiveTestCount);
+                }
+            } else {
+                quickTestLogs.forEach(quickTestLog -> createEntryForQuickTestTenantStatistics(
+                    quickTestTenantStatistics, aggregation, pocId, quickTestLog.getCreatedAt(), 1,
+                    quickTestLog.getPositiveTestResult() ? 1 : 0));
+            }
+        });
+
+        return quickTestTenantStatistics;
     }
 
-    private Aggregation determineAggregation(LocalDateTime utcDateFrom,
-                                             LocalDateTime utcDateTo) {
+    private void createEntryForQuickTestTenantStatistics(List<QuickTestTenantStatistics> quickTestTenantStatistics,
+                                                         Aggregation aggregation,
+                                                         String pocId, LocalDateTime timestamp, int totalCount,
+                                                         int postiveCount) {
+        QuickTestStatistics quickTestStatistics = QuickTestStatistics.builder()
+            .totalTestCount(totalCount)
+            .positiveTestCount(postiveCount)
+            .build();
 
-        Duration duration = Duration.between(utcDateFrom, utcDateTo);
-        duration.getSeconds();
-        int secondsOfDay = 86400;
-        if (duration.getSeconds() <= secondsOfDay) {
-            return Aggregation.NONE;
-        } else if (duration.getSeconds() <= secondsOfDay * 5) {
-            return Aggregation.HOUR;
-        } else {
-            return Aggregation.DAY;
-        }
+        quickTestTenantStatistics.add(generateQuickTestTenantStatistics(quickTestStatistics, pocId,
+            timestamp, aggregation));
+    }
+
+    private Map<String, List<QuickTestLog>> getQuickTestLogSortedByPocId(Map<String, String> ids,
+                                                                         LocalDateTime utcDateFrom,
+                                                                         LocalDateTime utcDateTo) {
+        return quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(
+            ids.get(quickTestConfig.getTenantIdKey()),
+            utcDateFrom, utcDateTo).stream().collect(Collectors.groupingBy(QuickTestLog::getPocId));
+    }
+
+    private QuickTestTenantStatistics generateQuickTestTenantStatistics(QuickTestStatistics quickTestStatistics,
+                                                                        String pocId, LocalDateTime timestamp,
+                                                                        Aggregation aggregation) {
+        return QuickTestTenantStatistics.builder()
+            .quickTestStatistics(quickTestStatistics)
+            .pocId(pocId)
+            .timestamp(timestamp.atZone(ZoneId.of("UTC")))
+            .aggregation(aggregation)
+            .build();
+
+    }
+
+    private int countOfQuickTestsInTimewindow(List<QuickTestLog> quickTestLogs, LocalDateTime afterTimestamp,
+                                              LocalDateTime beforeTimestamp, boolean onlyPositive) {
+        return (int) quickTestLogs.stream()
+            .filter(quickTestLog ->
+                quickTestLog.getCreatedAt().isBefore(beforeTimestamp)
+                    && quickTestLog.getCreatedAt().isAfter(afterTimestamp)
+                    && (quickTestLog.getPositiveTestResult() || !onlyPositive)).count();
     }
 }

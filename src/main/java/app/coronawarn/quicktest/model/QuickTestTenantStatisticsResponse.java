@@ -10,7 +10,7 @@ import lombok.Data;
 @Data
 public class QuickTestTenantStatisticsResponse {
     Aggregation aggregation;
-    QuickTestStatisticsResponse quickTestStatisticsResponse;
+    QuickTestStatisticsResponse quickTestStatistics;
     String pocId;
     ZonedDateTime timestamp;
 }

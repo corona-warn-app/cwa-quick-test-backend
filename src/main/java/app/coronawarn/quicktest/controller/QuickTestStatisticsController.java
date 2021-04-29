@@ -132,7 +132,7 @@ public class QuickTestStatisticsController {
                 quickTestStatisticsService.getStatisticsForTenant(utilities.getIdsFromToken(), utcDateFrom, utcDateTo,
                     aggregation);
 
-            TypeToken<List<QuickTestTenantStatistics>> typeToken = new TypeToken<>() {
+            TypeToken<List<QuickTestTenantStatisticsResponse>> typeToken = new TypeToken<>() {
             };
             List<QuickTestTenantStatisticsResponse> quickTestTenantStatisticsResponses = modelMapper.map(
                 quickTestTenantStatistics,

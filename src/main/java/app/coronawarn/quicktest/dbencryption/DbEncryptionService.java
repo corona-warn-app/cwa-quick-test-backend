@@ -39,7 +39,6 @@ import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 
 @Slf4j
 @Configuration
@@ -219,7 +218,7 @@ public class DbEncryptionService {
     }
 
     public byte[] decryptByteArray(String encrypted) throws InvalidKeyException,
-            BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+        BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
         return decrypt(Base64.getDecoder().decode(encrypted));
     }
 
@@ -228,16 +227,18 @@ public class DbEncryptionService {
      *
      * @param plain the plain ByteArray.
      * @return encrypted string
-     * @throws InvalidKeyException if the given key is inappropriate for initializing this cipher
-     * @throws BadPaddingException if this cipher is in decryption mode, and (un)padding has been requested,
-     *     but the decrypted data is not bounded by the appropriate padding bytes
-     * @throws IllegalBlockSizeException if this cipher is a block cipher,
-     *     no padding has been requested (only in encryption mode), and the total input length
-     *     of the data processed by this cipher is not a multiple of block size;
+     * @throws InvalidKeyException                if the given key is inappropriate for initializing this cipher
+     * @throws BadPaddingException                if this cipher is in decryption mode, and (un)padding has been
+     *                                            requested, but the decrypted data is not bounded by the appropriate
+     *                                            padding bytes
+     * @throws IllegalBlockSizeException          if this cipher is a block cipher,
+     *                                            no padding has been requested (only in encryption mode), and the total
+     *                                            input length of the data processed by this cipher is not a multiple
+     *                                            of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public String encryptByteArray(byte[] plain) throws InvalidKeyException, BadPaddingException,
-            IllegalBlockSizeException, InvalidAlgorithmParameterException {
+        IllegalBlockSizeException, InvalidAlgorithmParameterException {
         return Base64.getEncoder().encodeToString(encrypt(plain));
     }
 

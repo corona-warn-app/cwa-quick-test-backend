@@ -50,8 +50,8 @@ public class DbEncryptionBooleanConverter implements AttributeConverter<Boolean,
             try {
                 return s == null ? null : DbEncryptionServiceOld.getInstance().decryptBoolean(s);
             } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException eOld) {
-                throw new PersistenceException(eOld);
+                | BadPaddingException | IllegalBlockSizeException exceptionOld) {
+                throw new PersistenceException(exceptionOld);
             }
         }
     }

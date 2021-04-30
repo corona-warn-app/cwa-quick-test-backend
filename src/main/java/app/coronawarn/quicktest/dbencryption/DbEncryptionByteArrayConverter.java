@@ -14,7 +14,7 @@ public class DbEncryptionByteArrayConverter implements AttributeConverter<byte[]
         try {
             return DbEncryptionService.getInstance().encryptByteArray(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException e) {
+            | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }
@@ -24,12 +24,12 @@ public class DbEncryptionByteArrayConverter implements AttributeConverter<byte[]
         try {
             return DbEncryptionService.getInstance().decryptByteArray(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException e) {
+            | BadPaddingException | IllegalBlockSizeException e) {
             try {
                 return DbEncryptionServiceOld.getInstance().decryptByteArray(s);
             } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException eOld) {
-                throw new PersistenceException(eOld);
+                | BadPaddingException | IllegalBlockSizeException exceptionOld) {
+                throw new PersistenceException(exceptionOld);
             }
         }
     }

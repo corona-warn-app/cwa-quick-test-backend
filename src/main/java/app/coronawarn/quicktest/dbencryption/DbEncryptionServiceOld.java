@@ -36,7 +36,6 @@ import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
-import org.springframework.stereotype.Service;
 
 @Slf4j
 @Configuration

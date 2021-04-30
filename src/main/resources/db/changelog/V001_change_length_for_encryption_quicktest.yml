@@ -6,128 +6,128 @@ databaseChangeLog:
         - modifyDataType:
             tableName: quick_test
             columnName: test_result
-            newDataType:  varchar(400)
+            newDataType:  varchar(41)
         - modifyDataType:
             tableName: quick_test
             columnName: confirmation_cwa
-            newDataType:  varchar(400)
+            newDataType:  varchar(50)
         - modifyDataType:
             tableName: quick_test
             columnName: privacy_agreement
-            newDataType:  varchar(400)
+            newDataType:  varchar(50)
         - modifyDataType:
             tableName: quick_test
             columnName: first_name
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test
             columnName: last_name
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test
             columnName: email
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test
             columnName: phone_number
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test
             columnName: sex
-            newDataType:  varchar(400)
+            newDataType:  varchar(60)
         - modifyDataType:
             tableName: quick_test
             columnName: street
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test
             columnName: house_number
-            newDataType:  varchar(400)
+            newDataType:  varchar(70)
         - modifyDataType:
             tableName: quick_test
             columnName: zip_code
-            newDataType:  varchar(400)
+            newDataType:  varchar(50)
         - modifyDataType:
             tableName: quick_test
             columnName: city
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test
             columnName: birthday
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test
             columnName: test_brand_id
-            newDataType:  varchar(400)
+            newDataType:  varchar(70)
         - modifyDataType:
             tableName: quick_test
             columnName: test_brand_name
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test
             columnName: test_result_server_hash
-            newDataType:  varchar(400)
+            newDataType:  varchar(170)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: test_result
-            newDataType:  varchar(400)
+            newDataType:  varchar(41)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: confirmation_cwa
-            newDataType:  varchar(400)
+            newDataType:  varchar(50)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: privacy_agreement
-            newDataType:  varchar(400)
+            newDataType:  varchar(50)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: first_name
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: last_name
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: email
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: phone_number
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: sex
-            newDataType:  varchar(400)
+            newDataType:  varchar(60)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: street
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: house_number
-            newDataType:  varchar(400)
+            newDataType:  varchar(70)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: zip_code
-            newDataType:  varchar(400)
+            newDataType:  varchar(50)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: city
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: birthday
-            newDataType:  varchar(400)
+            newDataType:  varchar(550)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: test_brand_id
-            newDataType:  varchar(400)
+            newDataType:  varchar(70)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: test_brand_name
-            newDataType:  varchar(400)
+            newDataType:  varchar(200)
         - modifyDataType:
             tableName: quick_test_archive
             columnName: test_result_server_hash
-            newDataType:  varchar(400)
+            newDataType:  varchar(170)

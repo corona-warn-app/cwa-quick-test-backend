@@ -32,3 +32,6 @@ databaseChangeLog:
   - include:
       file: changelog/V001_create_shedlock_table.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_change_length_for_encryption_quicktest.yml
+      relativeToChangelogFile: true

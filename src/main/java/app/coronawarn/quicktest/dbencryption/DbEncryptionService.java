@@ -21,22 +21,25 @@
 package app.coronawarn.quicktest.dbencryption;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.util.Base64;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
-import org.springframework.stereotype.Service;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 
 @Slf4j
 @Configuration
@@ -44,15 +47,28 @@ public class DbEncryptionService {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
     private static DbEncryptionService instance;
-    private final Cipher cipher;
     private final Key key;
+
+    private final Cipher encryptCipher;
+    private final Cipher decryptCipher;
+    private SecureRandom random;
+
 
     /**
      * Constructor for DbEncryptionService.
      * Initializes Cipher with ciphersuite configured in application properties.
      */
     public DbEncryptionService(QuickTestConfig quickTestConfig) {
-        cipher = AesBytesEncryptor.CipherAlgorithm.CBC.createCipher();
+        this.encryptCipher = AesBytesEncryptor.CipherAlgorithm.GCM.createCipher();
+        this.decryptCipher = AesBytesEncryptor.CipherAlgorithm.GCM.createCipher();
+        try {
+            this.random = SecureRandom.getInstance("SHA1PRNG");
+        } catch (NoSuchAlgorithmException e) {
+            throw new ValidationException(
+                "Randomstring generation not possible"
+            );
+        }
+
         String dbEncryptionPassword = quickTestConfig.getDbEncryptionPassword();
 
         if (dbEncryptionPassword != null) {
@@ -225,24 +241,35 @@ public class DbEncryptionService {
         return Base64.getEncoder().encodeToString(encrypt(plain));
     }
 
-    private byte[] decrypt(byte[] encrypted)
+    private byte[] decrypt(byte[] ciphertext)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        synchronized (cipher) {
-            cipher.init(Cipher.DECRYPT_MODE, key, getInitializationVector());
-            return cipher.doFinal(encrypted);
+        synchronized (decryptCipher) {
+            ByteBuffer byteBuffer = ByteBuffer.wrap(ciphertext);
+            byte[] iv = new byte[12];
+            byteBuffer.get(iv);
+            byte[] encrypted = new byte[byteBuffer.remaining()];
+            byteBuffer.get(encrypted);
+            decryptCipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(128, iv));
+            return decryptCipher.doFinal(encrypted);
         }
     }
 
     private byte[] encrypt(byte[] plain)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        synchronized (cipher) {
-            cipher.init(Cipher.ENCRYPT_MODE, key, getInitializationVector());
-            return cipher.doFinal(plain);
+        synchronized (encryptCipher) {
+            byte[] iv = new byte[12]; // create new IV
+            random.nextBytes(iv);
+            encryptCipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(128, iv));
+            byte[] encrypted = encryptCipher.doFinal(plain);
+            ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encrypted.length);
+            byteBuffer.put(iv);
+            byteBuffer.put(encrypted);
+            return byteBuffer.array();
         }
 
     }
 
-    private IvParameterSpec getInitializationVector() {
-        return new IvParameterSpec("WnU2IQhlAAN@bK~L".getBytes(CHARSET));
+    private byte[] getInitializationVector() {
+        return KeyGenerators.secureRandom(12).generateKey();
     }
 }

@@ -63,21 +63,21 @@ public class AntigenTestService {
         }
     }
 
-    protected void setAntigenTests(InputStream inputStreamCSV) {
-        List<List<String>> unFilteredAntigentest = createAntigenTestListFromCsvInputStream(inputStreamCSV);
+    protected void setAntigenTests(InputStream inputStreamCsv) {
+        List<List<String>> unFilteredAntigentest = createAntigenTestListFromCsvInputStream(inputStreamCsv);
         antigenTests = mapToAntigenTest(filterAntigenTests(unFilteredAntigentest));
         lastUpdate = Utilities.getCurrentLocalDateTimeUtc();
     }
 
     private void init() {
-        InputStream inputStreamCSV = loadAntigenTestsFromBfArM();
-        if (inputStreamCSV == null) {
+        InputStream inputStreamCsv = loadAntigenTestsFromBfArM();
+        if (inputStreamCsv == null) {
             final ClassPathResource classPathResource = new ClassPathResource("antigentests.csv");
-            inputStreamCSV = Objects.requireNonNull(
+            inputStreamCsv = Objects.requireNonNull(
                     Objects.requireNonNull(classPathResource.getClassLoader())
                             .getResourceAsStream("antigentests.csv"));
         }
-        setAntigenTests(inputStreamCSV);
+        setAntigenTests(inputStreamCsv);
     }
 
     private List<AntigenTest> mapToAntigenTest(List<List<String>> rawAntigenTests) {

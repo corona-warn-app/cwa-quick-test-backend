@@ -27,6 +27,8 @@ import app.coronawarn.quicktest.service.AntigenTestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
+import java.time.ZoneId;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,8 +69,7 @@ public class AntigenTestController {
     @Secured(ROLE_LAB)
     public ResponseEntity<List<AntigenTest>> getAntigenTests() {
         try {
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.LAST_MODIFIED, antigenTestService.getLastUpdate().toString())
+            return ResponseEntity.ok().lastModified(antigenTestService.getLastUpdate().atZone(ZoneId.of("UTC")))
                     .body(antigenTestService.getAntigenTests());
         } catch (ResponseStatusException e) {
             throw e;

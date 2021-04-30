@@ -6,6 +6,8 @@ import app.coronawarn.quicktest.domain.AntigenTest;
 import app.coronawarn.quicktest.service.AntigenTestService;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import org.assertj.core.api.Assertions;
@@ -16,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -23,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.server.ResponseStatusException;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,7 +56,10 @@ class AntigenTestContollerTest extends ServletKeycloakAuthUnitTestingSupport {
                 .contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk()).andReturn();
 
-        assertEquals(antigenTestService.getLastUpdate().toString(), mvcResult.getResponse().getHeader("Last-Modified"));
+        String dateString = mvcResult.getResponse().getHeader("Last-Modified");
+        ZonedDateTime zdt = ZonedDateTime.parse(dateString, DateTimeFormatter.RFC_1123_DATE_TIME);
+
+        assertEquals(antigenTestService.getLastUpdate().withNano(0),zdt.toLocalDateTime());
 
         String responseBody = mvcResult.getResponse().getContentAsString();
         Assertions.assertThat(responseBody)
@@ -60,6 +67,17 @@ class AntigenTestContollerTest extends ServletKeycloakAuthUnitTestingSupport {
                         + ",{\"testBrandId\":\"TestId-2\",\"testBrandName\":\"TestName-2\"},"
                         + "{\"testBrandId\":\"TestId-3\",\"testBrandName\":\"TestName-3\"}]");
 
+        when(antigenTestService.getAntigenTests()).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+                .get("/api/antigentests")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isBadRequest()).andReturn();
+
+        when(antigenTestService.getLastUpdate()).thenThrow(new NullPointerException());
+        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+                .get("/api/antigentests")
+                .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isInternalServerError()).andReturn();
     }
 
     @Test

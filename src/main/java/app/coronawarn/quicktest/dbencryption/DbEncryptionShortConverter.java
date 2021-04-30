@@ -47,7 +47,12 @@ public class DbEncryptionShortConverter implements AttributeConverter<Short, Str
             return s == null ? null : DbEncryptionService.getInstance().decryptShort(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
-            throw new PersistenceException(e);
+            try {
+                return s == null ? null : DbEncryptionServiceOld.getInstance().decryptShort(s);
+            } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException eOld) {
+                throw new PersistenceException(eOld);
+            }
         }
     }
 

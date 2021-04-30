@@ -25,7 +25,12 @@ public class DbEncryptionByteArrayConverter implements AttributeConverter<byte[]
             return DbEncryptionService.getInstance().decryptByteArray(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
                 | BadPaddingException | IllegalBlockSizeException e) {
-            throw new PersistenceException(e);
+            try {
+                return DbEncryptionServiceOld.getInstance().decryptByteArray(s);
+            } catch (InvalidAlgorithmParameterException | InvalidKeyException
+                | BadPaddingException | IllegalBlockSizeException eOld) {
+                throw new PersistenceException(eOld);
+            }
         }
     }
 

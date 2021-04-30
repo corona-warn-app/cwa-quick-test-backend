@@ -268,8 +268,4 @@ public class DbEncryptionService {
         }
 
     }
-
-    private byte[] getInitializationVector() {
-        return KeyGenerators.secureRandom(12).generateKey();
-    }
 }

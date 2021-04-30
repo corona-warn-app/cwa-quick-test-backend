@@ -48,14 +48,14 @@ public class QuickTestStatisticsService {
     /**
      * Return aggregated statistic for QuickTest by tenant and time range.
      */
-    public List<QuickTestTenantStatistics> getStatisticsForTenant(Map<String, String> ids, LocalDateTime utcDateFrom,
+    public List<QuickTestTenantStatistics> getStatisticsForTenant(String tenantId, LocalDateTime utcDateFrom,
                                                                   LocalDateTime utcDateTo, Aggregation aggregation) {
 
         List<QuickTestTenantStatistics> quickTestTenantStatistics = new ArrayList<>();
 
         // Map by pocId and list sorted by time
         Map<String, List<QuickTestLog>> quickTestLogSortedByPocId =
-            getQuickTestLogSortedByPocId(ids, utcDateFrom, utcDateTo);
+            getQuickTestLogSortedByPocId(tenantId, utcDateFrom, utcDateTo);
 
         quickTestLogSortedByPocId.forEach((pocId, quickTestLogs) -> {
             if (aggregation != Aggregation.NONE) {
@@ -98,11 +98,11 @@ public class QuickTestStatisticsService {
             timestamp, aggregation));
     }
 
-    private Map<String, List<QuickTestLog>> getQuickTestLogSortedByPocId(Map<String, String> ids,
+    private Map<String, List<QuickTestLog>> getQuickTestLogSortedByPocId(String tenantId,
                                                                          LocalDateTime utcDateFrom,
                                                                          LocalDateTime utcDateTo) {
         return quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(
-            ids.get(quickTestConfig.getTenantIdKey()),
+            tenantId,
             utcDateFrom, utcDateTo).stream().collect(Collectors.groupingBy(QuickTestLog::getPocId));
     }
 

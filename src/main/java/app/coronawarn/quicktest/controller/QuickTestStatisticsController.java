@@ -128,7 +128,10 @@ public class QuickTestStatisticsController {
             LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
 
             List<QuickTestTenantStatistics> quickTestTenantStatistics =
-                quickTestStatisticsService.getStatisticsForTenant(utilities.getIdsFromToken(), utcDateFrom, utcDateTo,
+                quickTestStatisticsService.getStatisticsForTenant(
+                    utilities.getTenantIdFromToken(),
+                    utcDateFrom,
+                    utcDateTo,
                     aggregation);
 
             TypeToken<List<QuickTestTenantStatisticsResponse>> typeToken = new TypeToken<>() {

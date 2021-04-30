@@ -60,15 +60,15 @@ class QuickTestStatisticsServiceTest {
         when(quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(any(),
             any(), any())).thenReturn(getQuickTestLogTestData());
 
-        List<QuickTestTenantStatistics> result = quickTestStatisticsService.getStatisticsForTenant(new HashMap<>(),
+        List<QuickTestTenantStatistics> result = quickTestStatisticsService.getStatisticsForTenant(null,
             startTime, endTime, Aggregation.NONE);
         assertIterableEquals(getQuickTestTenantStatisticsTestDataAggregationNone(), result);
 
-        result = quickTestStatisticsService.getStatisticsForTenant(new HashMap<>(),
+        result = quickTestStatisticsService.getStatisticsForTenant(null,
             startTime, endTime, Aggregation.HOUR);
         assertIterableEquals(getQuickTestTenantStatisticsTestDataAggregationHour(), result);
 
-        result = quickTestStatisticsService.getStatisticsForTenant(new HashMap<>(),
+        result = quickTestStatisticsService.getStatisticsForTenant(null,
             startTime, endTime, Aggregation.DAY);
         assertIterableEquals(getQuickTestTenantStatisticsTestDataAggregationDay(), result);
 
@@ -117,14 +117,13 @@ class QuickTestStatisticsServiceTest {
         startTime = LocalDateTime.of(2020, 4, 1, 0, 0, 0);
         endTime = startTime.plusDays(2);
 
-        result = quickTestStatisticsService.getStatisticsForTenant(new HashMap<>(),
+        result = quickTestStatisticsService.getStatisticsForTenant(null,
             startTime, endTime, Aggregation.HOUR);
         assertIterableEquals(quickTestTenantStatisticsHour, result);
 
-        result = quickTestStatisticsService.getStatisticsForTenant(new HashMap<>(),
+        result = quickTestStatisticsService.getStatisticsForTenant(null,
             startTime, endTime, Aggregation.DAY);
         assertIterableEquals(quickTestTenantStatisticsDay, result);
-
     }
 
     private List<QuickTestLog> getQuickTestLogTestData() {

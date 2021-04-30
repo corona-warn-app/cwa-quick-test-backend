@@ -362,7 +362,7 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
             .param("aggregation", Aggregation.DAY.toString()))
             .andExpect(status().isUnauthorized());
 
-        when(utilities.getIdsFromToken())
+        when(utilities.getTenantIdFromToken())
             .thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
         mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders.get("/api/quickteststatistics/tenant/")
             .param("dateFrom",

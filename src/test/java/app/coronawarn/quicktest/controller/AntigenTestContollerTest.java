@@ -80,20 +80,6 @@ class AntigenTestContollerTest extends ServletKeycloakAuthUnitTestingSupport {
                 .andExpect(status().isInternalServerError()).andReturn();
     }
 
-    @Test
-    void updateAntigenTests() throws Exception {
-        MockMultipartFile file
-                = new MockMultipartFile(
-                "file",
-                "unittest.csv",
-                "text/csv",
-                getCscMock().getBytes()
-        );
-        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(multipart(
-                "/api/antigentests").file(file))
-                .andExpect(status().isNoContent());
-    }
-
     private String getCscMock() {
         return "AT810/21;ACCU-TELL SARS-CoV-2-Ag Cassette (Nasal Swab);Nein;AccuBioTech Co., Ltd.;Peking;CN;" +
                 "Medical Device Safety Service GmbH;Hannover;DE;POC ;93,2;86,5 - 97,2;99,2;97,10 - 99,90\n" +

@@ -37,9 +37,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -73,37 +71,6 @@ public class AntigenTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't prepare antigen tests response.");
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Endpoint for receiving antigen tests.
-     *
-     * @return AntigenTests
-     */
-    @Operation(
-            summary = "Replace antigen test list with provided CSV",
-            description = ""
-    )
-    @ApiResponses(value = {
-      @ApiResponse(responseCode = "204", description = "antigen tests csv uploaded and list overwritten"),
-      @ApiResponse(responseCode = "400", description = "wrong usage"),
-      @ApiResponse(responseCode = "500", description = "Upload or Update failed due to an internal server error")})
-    @RequestMapping(path = "", method = RequestMethod.POST)
-    @Secured(ROLE_LAB)
-    public ResponseEntity<Void> updateAntigenTests(@RequestParam MultipartFile file) {
-        log.info("updateAntigenTests - this method replaces antigen test list");
-        try {
-            if (file.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
-            }
-            antigenTestService.updateAntigenTestsByCsv(file);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            log.error("Upload or Update failed due to an internal server error.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

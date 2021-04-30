@@ -102,7 +102,6 @@ public class QuickTestStatisticsController {
         }
     }
 
-    //TODO check role
     /**
      * Endpoint for get statistic for QuickTest.
      *
@@ -116,7 +115,7 @@ public class QuickTestStatisticsController {
       @ApiResponse(responseCode = "200", description = "Get aggregated statistic data for tenant"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @GetMapping(value = "/tenant", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({ROLE_COUNTER, ROLE_TENANT_COUNTER})
+    @Secured(ROLE_TENANT_COUNTER)
     public ResponseEntity<QuickTestTenantStatisticsResponseList> getQuicktestStatisticsForTenantWithAggregation(
         @RequestParam(value = "dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             ZonedDateTime zonedDateFrom,

@@ -41,6 +41,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -212,7 +213,8 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
 
         when(quickTestStatisticsService.getStatisticsForTenant(any(), any(), any(), any())).thenReturn(Collections.singletonList(quickTestTenantStatistics));
 
-        MvcResult result = mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        MvcResult result =
+            mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
@@ -238,7 +240,7 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
 
         });
 
-        result = mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        result = mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
@@ -264,7 +266,7 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
 
         });
 
-        result = mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        result = mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
@@ -290,43 +292,51 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
 
         });
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
             .andExpect(status().isBadRequest());
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
             .andExpect(status().isBadRequest());
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
             .andExpect(status().isBadRequest());
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .param("aggregation", Aggregation.DAY.toString()))
             .andExpect(status().isBadRequest());
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .param("aggregation", Aggregation.DAY.toString()))
             .andExpect(status().isBadRequest());
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .param("aggregation", "test"))
             .andExpect(status().isBadRequest());
+
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+            .get("/api/quickteststatistics/tenant/")
+            .param("dateFrom",
+                ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
+            .param("aggregation", Aggregation.DAY.toString()))
+            .andExpect(status().isForbidden());
 
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/tenant/")
@@ -354,7 +364,7 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
 
         when(utilities.getIdsFromToken())
             .thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders.get("/api/quickteststatistics/tenant/")
+        mockMvc().with(authentication().authorities(ROLE_TENANT_COUNTER)).perform(MockMvcRequestBuilders.get("/api/quickteststatistics/tenant/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))

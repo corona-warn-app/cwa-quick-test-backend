@@ -23,6 +23,8 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.core.io.ClassPathResource;
@@ -67,6 +69,37 @@ public class PdfGenerator {
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
+    }
+
+    /**
+     * Encrypts pdf.
+     * @param pdf Unencrypted pdf
+     */
+    public ByteArrayOutputStream encryptPdf(byte[] pdf, String password) {
+        try {
+            AccessPermission ap = new AccessPermission();
+            ap.setCanPrint(true);
+            ap.setCanModify(false);
+            ap.setCanAssembleDocument(false);
+            ap.setCanFillInForm(false);
+            ap.setCanModify(false);
+            ap.setCanModifyAnnotations(false);
+            ap.setCanExtractForAccessibility(false);
+            ap.setCanPrintDegraded(false);
+            // TODO: change owner password
+            StandardProtectionPolicy spp = new StandardProtectionPolicy("changeit", password, ap);
+            spp.setEncryptionKeyLength(256);
+            spp.setPreferAES(true);
+            spp.setPermissions(ap);
+            PDDocument pdDocument = PDDocument.load(pdf);
+            pdDocument.protect(spp);
+            ByteArrayOutputStream encryptedPdf = new ByteArrayOutputStream();
+            close(pdDocument, encryptedPdf);
+            return encryptedPdf;
+        } catch (IOException e) {
+            log.error("Error encrypting existing pdf.");
+            return null;
+        }
     }
 
     private void config(PDDocument document) {

@@ -42,6 +42,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @NoArgsConstructor
@@ -141,12 +142,18 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;
 
+    @Column(name = "email_notification_agreement")
+    private Boolean emailNotificationAgreement;
+
     @PrePersist
     private void onCreate() {
         LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();
         createdAt = now;
         updatedAt = now;
         testResult = 5;
+        if (StringUtils.isBlank(email)) {
+            emailNotificationAgreement = false;
+        }
     }
 
     @PreUpdate

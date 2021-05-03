@@ -54,6 +54,7 @@ public class QuickTestService {
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
+    private final EmailService emailService;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -148,6 +149,7 @@ public class QuickTestService {
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
             quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
+        sendEmail(quicktest, pdf);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
         log.info("Updated TestResult for hashedGuid with TestResult");
     }
@@ -162,6 +164,12 @@ public class QuickTestService {
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
         throws ResponseStatusException {
+
+        if (!quickTestPersonalData.getPrivacyAgreement()) {
+            log.error("Privacy agreement is false");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         QuickTest quicktest = getQuickTest(
             ids.get(quickTestConfig.getTenantIdKey()),
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
@@ -181,6 +189,7 @@ public class QuickTestService {
         quicktest.setCity(quickTestPersonalData.getCity());
         quicktest.setBirthday(quickTestPersonalData.getBirthday());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
+        quicktest.setEmailNotificationAgreement(quickTestPersonalData.getEmailNotificationAgreement());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
@@ -245,6 +254,7 @@ public class QuickTestService {
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setPdf(pdf);
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setEmailNotificationAgreement(quickTest.getEmailNotificationAgreement());
         return quickTestArchive;
     }
 
@@ -282,6 +292,19 @@ public class QuickTestService {
             quickTestResult.setResult(result);
             testResultService.createOrUpdateTestResult(quickTestResult);
             log.info("Update TestResult on TestResult-Server successfully.");
+        }
+    }
+
+    private void sendEmail(QuickTest quickTest, byte[] rawPdf) {
+        boolean emailConfirmation = quickTest.getEmailNotificationAgreement() != null
+                ? quickTest.getEmailNotificationAgreement() : false;
+        if (emailConfirmation) {
+            byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
+            emailService.sendMailToTestedPerson(quickTest.getEmail(), encryptedPdf);
+        }
+        if (quickTest.getZipCode() != null) {
+            byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
+            emailService.sendMailToHealthDepartment("", encryptedPdf);
         }
     }
 

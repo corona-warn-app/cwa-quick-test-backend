@@ -147,4 +147,8 @@ public class QuickTestArchive {
     @Column(name = "test_result_server_hash")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;
+
+    @Column(name = "email_notification_agreement")
+    private Boolean emailNotificationAgreement;
+
 }

@@ -1,0 +1,7 @@
+databaseChangeLog:
+  - changeSet:
+      id: change-length-for-encryption
+      author: mbaude
+      changes:
+        - customChange:
+            class: "app.coronawarn.quicktest.migration.v001tov002.MigrateDataFromV001toV002"

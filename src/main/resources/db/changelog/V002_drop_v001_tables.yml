@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: V002_drop_v001_tables
+      author: mbaude
+      changes:
+        - dropTable:
+            tableName:  quick_test_v001
+        - dropTable:
+            tableName:  quick_test_archive_v001

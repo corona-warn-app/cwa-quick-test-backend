@@ -272,10 +272,10 @@ public class QuickTestServiceTest {
         quickTestResult.setId(quickTest.getTestResultServerHash());
         quickTestResult.setResult(quickTest.getTestResult());
 
-        when(quickTestRepository.findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(now))
+        when(quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(now ,0))
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
         quickTestService.removeAllBefore(now);
-        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(now);
+        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(now, 0);
         verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
         verify(quickTestRepository, times(1)).deleteAllByCreatedAtBefore(now);
     }
@@ -288,7 +288,7 @@ public class QuickTestServiceTest {
         quickTest.setPrivacyAgreement(true);
         quickTest.setShortHashedGuid("00000000");
         quickTests.add(quickTest);
-        when(quickTestRepository.findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(any(), any()))
+        when(quickTestRepository.findAllByTenantIdAndPocIdAndVersionIsGreaterThan(any(), any(), any()))
                 .thenReturn(quickTests);
         List<QuickTest> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
         assertEquals(quickTests1.get(0).getPrivacyAgreement(), true);

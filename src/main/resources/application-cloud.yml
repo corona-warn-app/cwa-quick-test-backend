@@ -77,7 +77,7 @@ testresultserver:
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
 quicktest:
-  db-encryption-password: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
+  db-encryption-key: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
   clean-up-settings:
     cron: 0 0 0 * * *
     max-age-in-minutes: 3600

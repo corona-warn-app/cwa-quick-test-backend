@@ -68,19 +68,19 @@ public class DbEncryptionService {
             );
         }
 
-        String dbEncryptionPassword = quickTestConfig.getDbEncryptionPassword();
+        String dbEncryptionKey = quickTestConfig.getDbEncryptionKey();
 
-        if (dbEncryptionPassword != null) {
-            int passwordLength = dbEncryptionPassword.length();
-            if (passwordLength != 16 && passwordLength != 24 && passwordLength != 32) {
+        if (dbEncryptionKey != null) {
+            int keyLength = dbEncryptionKey.length();
+            if (keyLength != 16 && keyLength != 24 && keyLength != 32) {
                 throw new ValidationException(
-                    "Invalid Application Configuration: Database password must be a string with length of 16, 24 or 32"
+                    "Invalid Application Configuration: Database key must be a string with length of 16, 24 or 32"
                 );
             }
 
-            key = new SecretKeySpec(dbEncryptionPassword.getBytes(), "AES");
+            key = new SecretKeySpec(dbEncryptionKey.getBytes(), "AES");
         } else {
-            throw new ValidationException("DB encryption password must be set!");
+            throw new ValidationException("DB encryption key must be set!");
         }
 
         DbEncryptionService.instance = this;
@@ -267,6 +267,5 @@ public class DbEncryptionService {
             byteBuffer.put(encrypted);
             return byteBuffer.array();
         }
-
     }
 }

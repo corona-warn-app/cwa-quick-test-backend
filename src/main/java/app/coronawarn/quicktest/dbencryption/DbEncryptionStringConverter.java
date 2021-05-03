@@ -47,12 +47,7 @@ public class DbEncryptionStringConverter implements AttributeConverter<String, S
             return s == null ? null : DbEncryptionService.getInstance().decryptString(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
-            try {
-                return s == null ? null : DbEncryptionServiceOld.getInstance().decryptString(s);
-            } catch (InvalidAlgorithmParameterException | InvalidKeyException
-                | BadPaddingException | IllegalBlockSizeException exceptionOld) {
-                throw new PersistenceException(exceptionOld);
-            }
+            throw new PersistenceException(e);
         }
     }
 

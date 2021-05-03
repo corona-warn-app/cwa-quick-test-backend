@@ -114,14 +114,14 @@ public class DbEncryptionTest {
                 .getSingleResult();
         assertEquals(quickTestArchive.getShortHashedGuid(), ((Object[]) databaseEntry)[0]);
         assertEquals(quickTestArchive.getHashedGuid(), ((Object[]) databaseEntry)[1]);
-        assertNotEquals(quickTestArchive.getTenantId(), ((Object[]) databaseEntry)[2]);
-        assertNotEquals(quickTestArchive.getPocId(), ((Object[]) databaseEntry)[3]);
+        assertEquals(quickTestArchive.getTenantId(), ((Object[]) databaseEntry)[2]);
+        assertEquals(quickTestArchive.getPocId(), ((Object[]) databaseEntry)[3]);
         assertEquals(quickTestArchive.getCreatedAt().withNano(0),
             ((Timestamp) ((Object[]) databaseEntry)[4]).toLocalDateTime().withNano(0));
         assertEquals(quickTestArchive.getUpdatedAt().withNano(0),
             ((Timestamp) ((Object[]) databaseEntry)[5]).toLocalDateTime().withNano(0));
         assertNotEquals(quickTestArchive.getConfirmationCwa(), ((Object[]) databaseEntry)[7]);
-        assertNotEquals(quickTestArchive.getTestResult(), ((Object[]) databaseEntry)[8]);
+        assertEquals(quickTestArchive.getTestResult(), ((Object[]) databaseEntry)[8]);
         assertNotEquals(quickTestArchive.getFirstName(), ((Object[]) databaseEntry)[9]);
         assertNotEquals(quickTestArchive.getLastName(), ((Object[]) databaseEntry)[10]);
         assertNotEquals(quickTestArchive.getEmail(), ((Object[]) databaseEntry)[11]);

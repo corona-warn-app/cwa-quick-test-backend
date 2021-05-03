@@ -1,6 +1,6 @@
 /*-
  * ---license-start
- * Corona-Warn-App / cwa-quick-test-backend
+ * EU-Federation-Gateway-Service / efgs-federation-gateway
  * ---
  * Copyright (C) 2020 - 2021 T-Systems International GmbH and all other contributors
  * ---
@@ -18,8 +18,9 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.dbencryption;
+package app.coronawarn.quicktest.migration.v001tov002.dbencryption;
 
+import app.coronawarn.quicktest.model.Sex;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
@@ -29,12 +30,12 @@ import javax.persistence.Converter;
 import javax.persistence.PersistenceException;
 
 @Converter
-public class DbEncryptionShortConverter implements AttributeConverter<Short, String> {
+public class DbEncryptionSexTypeConverterMigrationV001 implements AttributeConverter<Sex, String> {
 
     @Override
-    public String convertToDatabaseColumn(Short s) {
+    public String convertToDatabaseColumn(Sex s) {
         try {
-            return s == null ? null : DbEncryptionService.getInstance().encryptShort(s);
+            return s == null ? null : DbEncryptionServiceMigrationV001.getInstance().encryptString(s.name());
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
@@ -42,9 +43,9 @@ public class DbEncryptionShortConverter implements AttributeConverter<Short, Str
     }
 
     @Override
-    public Short convertToEntityAttribute(String s) {
+    public Sex convertToEntityAttribute(String s) {
         try {
-            return s == null ? null : DbEncryptionService.getInstance().decryptShort(s);
+            return s == null ? null : Sex.valueOf(DbEncryptionServiceMigrationV001.getInstance().decryptString(s));
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);

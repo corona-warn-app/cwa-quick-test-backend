@@ -18,7 +18,8 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.dbencryption;
+package app.coronawarn.quicktest.migration.v001tov002.dbencryption;
+
 
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -29,12 +30,12 @@ import javax.persistence.Converter;
 import javax.persistence.PersistenceException;
 
 @Converter
-public class DbEncryptionShortConverter implements AttributeConverter<Short, String> {
+public class DbEncryptionBooleanConverterMigrationV001 implements AttributeConverter<Boolean, String> {
 
     @Override
-    public String convertToDatabaseColumn(Short s) {
+    public String convertToDatabaseColumn(Boolean s) {
         try {
-            return s == null ? null : DbEncryptionService.getInstance().encryptShort(s);
+            return s == null ? null : DbEncryptionServiceMigrationV001.getInstance().encryptBoolean(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
@@ -42,13 +43,12 @@ public class DbEncryptionShortConverter implements AttributeConverter<Short, Str
     }
 
     @Override
-    public Short convertToEntityAttribute(String s) {
+    public Boolean convertToEntityAttribute(String s) {
         try {
-            return s == null ? null : DbEncryptionService.getInstance().decryptShort(s);
+            return s == null ? null : DbEncryptionServiceMigrationV001.getInstance().decryptBoolean(s);
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }
-
 }

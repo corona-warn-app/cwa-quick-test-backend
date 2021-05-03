@@ -82,7 +82,6 @@ public class QuickTest {
     private Boolean confirmationCwa;
 
     @Column(name = "test_result")
-    @Convert(converter = DbEncryptionShortConverter.class)
     private Short testResult;
 
     @Column(name = "privacy_agreement")

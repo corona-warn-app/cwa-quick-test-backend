@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: V002_rename_v001_tables
+      author: mbaude
+      changes:
+        - dropUniqueConstraint:
+            constraintName: shorthashedAndPocAndTenant
+            tableName: quick_test
+        - renameTable:
+            newTableName:  quick_test_v001
+            oldTableName:  quick_test
+        - renameTable:
+            newTableName:  quick_test_archive_v001
+            oldTableName:  quick_test_archive

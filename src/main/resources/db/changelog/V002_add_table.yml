@@ -1,0 +1,101 @@
+databaseChangeLog:
+  - changeSet:
+      id: V002_add_table
+      author: mbaude
+      changes:
+        - createTable:
+            tableName: quick_test
+            columns:
+              - column:
+                  name: short_hashed_guid
+                  type: varchar(8)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: hashed_guid
+                  type: varchar(108)
+                  constraints:
+                    primaryKeyName: pk_quick_test_v002
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  # test provider identifier
+                  name: tenant_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  # test spot identifier
+                  name: poc_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: confirmation_cwa
+                  type: varchar(50)
+              - column:
+                  name: test_result
+                  type: smallint
+              - column:
+                  name: privacy_agreement
+                  type: varchar(50)
+              - column:
+                  name: first_name
+                  type: varchar(200)
+              - column:
+                  name: last_name
+                  type: varchar(200)
+              - column:
+                  name: email
+                  type: varchar(550)
+              - column:
+                  name: phone_number
+                  type: varchar(200)
+              - column:
+                  name: sex
+                  type: varchar(60)
+              - column:
+                  name: street
+                  type: varchar(550)
+              - column:
+                  name: house_number
+                  type: varchar(70)
+              - column:
+                  name: zip_code
+                  type: varchar(50)
+              - column:
+                  name: city
+                  type: varchar(550)
+              # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
+              - column:
+                  name: test_brand_id
+                  type: varchar(70)
+              - column:
+                  name: test_brand_name
+                  type: varchar(200)
+              - column:
+                  name: test_result_server_hash
+                  type: varchar(170)
+              - column:
+                  name: birthday
+                  type: varchar(550)
+        - addUniqueConstraint:
+            columnNames: short_hashed_guid, poc_id, tenant_id
+            constraintName: shorthashedAndPocAndTenant
+            tableName: quick_test
+

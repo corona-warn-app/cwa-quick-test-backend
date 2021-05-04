@@ -1,0 +1,14 @@
+Test-ID;Handelsname des Herstellers / Europ. Bevollmächtigten;Evaluierung PEI;Hersteller Name;Hersteller Stadt;Hersteller Land;EU Bevollmächtigter Name;EU Bevollmächtigter Stadt;EU Bevollmächtigter Land;Testort*;Sensitivität %;95%iges Vertrauensintervall (Sensitivität);Spezifität %;95%iges Vertrauensintervall (Spezifität)
+AT116/21;Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal);Ja;Abbott Rapid Diagnostics Jena GmbH;Jena;DE;;;;POC (ohne Gerät);98,1;93,2 - 99,8;99,8;98,6 - 100
+AT018/21;Cora Gentest-19;Nein;ABIOTEQ;Lügde;DE;;;;POC (ohne Gerät);98,7;96,25 - 99,56;99,8;99,27 - 99,95
+AT810/21;ACCU-TELL SARS-CoV-2-Ag Cassette (Nasal Swab);Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);93,2;86,5 - 97,2;99,2;97,10 - 99,90
+AT084/21;ACCU-TELL SARS-CoV-2-Ag Cassette;Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);95,7;90,30 - 98,60;99,2;97,60 - 99,80
+AT579/21;ACCU-TELL SARS-CoV-2-Ag Cassette Saliva;Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);91,8;86,1 - 95,7;99,9;98,2 - 100
+AT155/20;SARS-CoV-2-Antigenschnelltest;Ja;ACON Biotech (Hangzhou) Co., Ltd;District, Hangzhou;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);96,9;92,8 - 98,9;99,5;98,1 - 99,9
+AT434/21;FIAflex SARS-CoV-2 Antigen FIA;Nein;ACON Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;MedNet GmbH;Münster;DE;POC (mit Gerät);97,5;93,61 - 99,30;99,5;98,25 - 99,94
+AT495/20;Swiss Point of Care SARS-CoV-2 Antigen Rapid Test;Nein;ACON Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);96,9;92,8 - 98,9;99,5;98,1 - 99,9
+AT874/21;Flowflex SARS-CoV-2 Antigen Rapid Test (Nasal/Saliva);Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);97,1;93,1 - 98,9;99,5;98,2 - 99,9
+AT261/21;Flowflex SARS-CoV-2 Antigen Rapid Test;Ja;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);97,1;93,1 - 98,9;99,5;98,2 - 99,9
+AT594/21;FIAflex SARS-CoV-2 Antigen FIA;Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (mit Gerät);97,5;93,61 - 99,30;99,5;98,25 - 99,94
+AT503/20;SARS-CoV-2-Antigenschnelltest;Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);96,9;92,8 - 98,9;99,5;98,1 - 99,9
+AT542/21;LITUO COVID-19 Antigen Detection Kit (CG);Nein;Zhuhai Lituo Biotechnology Co. Ltd.;Zhuhai;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);95,96;93,60 - 97,48;99,47;98,19 - 99,85

@@ -20,13 +20,12 @@
 
 package app.coronawarn.quicktest.migration.v001tov002.domain;
 
-import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionBooleanConverterMigrationV001;
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionByteArrayConverterMigrationV001;
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionSexTypeConverterMigrationV001;
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionShortConverterMigrationV001;
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionStringConverterMigrationV001;
-import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTestArchive;
+import app.coronawarn.quicktest.migration.v001tov002.model.SecurityAuditListenerQuickTestArchiveMigrationV001;
 import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -46,7 +45,7 @@ import lombok.Setter;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(SecurityAuditListenerQuickTestArchive.class)
+@EntityListeners(SecurityAuditListenerQuickTestArchiveMigrationV001.class)
 @Entity
 @Table(name = "quick_test_archive_v001")
 public class QuickTestArchiveMigrationV001 {
@@ -146,6 +145,6 @@ public class QuickTestArchiveMigrationV001 {
     private byte[] pdf;
 
     @Column(name = "test_result_server_hash")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String testResultServerHash;
 }

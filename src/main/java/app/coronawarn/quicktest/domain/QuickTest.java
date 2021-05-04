@@ -22,7 +22,6 @@ package app.coronawarn.quicktest.domain;
 
 import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTest;
 import app.coronawarn.quicktest.model.Sex;
@@ -143,8 +142,12 @@ public class QuickTest {
     @PrePersist
     private void onCreate() {
         LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();
-        createdAt = now;
-        updatedAt = now;
+        if (createdAt == null) {
+            createdAt = now;
+        }
+        if (updatedAt == null) {
+            updatedAt = now;
+        }
         testResult = 5;
     }
 

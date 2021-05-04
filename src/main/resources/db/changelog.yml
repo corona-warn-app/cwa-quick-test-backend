@@ -33,6 +33,12 @@ databaseChangeLog:
       file: changelog/V001_create_shedlock_table.yml
       relativeToChangelogFile: true
   - include:
+      file: changelog/V001_testdata_quicktest.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/V001_testdata_quicktestarchive.yml
+      relativeToChangelogFile: true
+  - include:
       file: changelog/V002_rename_v001_tables.yml
       relativeToChangelogFile: true
   - include:
@@ -44,6 +50,6 @@ databaseChangeLog:
   - include:
       file: changelog/V002_migrateDataToNewEncryption.yml
       relativeToChangelogFile: true
-  - include:
-      file: changelog/V002_drop_v001_tables.yml
-      relativeToChangelogFile: true
+#  - include:
+#      file: changelog/V002_drop_v001_tables.yml
+#      relativeToChangelogFile: true

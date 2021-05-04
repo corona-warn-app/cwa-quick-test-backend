@@ -24,7 +24,7 @@ import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionBo
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionSexTypeConverterMigrationV001;
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionShortConverterMigrationV001;
 import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionStringConverterMigrationV001;
-import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTest;
+import app.coronawarn.quicktest.migration.v001tov002.model.SecurityAuditListenerQuickTestMigrationV001;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.time.LocalDateTime;
@@ -46,9 +46,9 @@ import lombok.Setter;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(SecurityAuditListenerQuickTest.class)
+@EntityListeners(SecurityAuditListenerQuickTestMigrationV001.class)
 @Entity
-@Table(name = "quick_test_archive_v001")
+@Table(name = "quick_test_v001")
 public class QuickTestMigrationV001 {
 
     static final long SERIAL_VERSION_UID = 1L;

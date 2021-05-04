@@ -51,6 +51,7 @@ server:
     include-exception: true
     include-binding-errors: always
     include-message: always
+
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
@@ -58,6 +59,7 @@ quicktest:
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
   db-encryption-password: abcdefghjklmnopq
+  health-department-download-url:
   clean-up-settings:
     cron: 0 * * * * *
     max-age-in-minutes: 2

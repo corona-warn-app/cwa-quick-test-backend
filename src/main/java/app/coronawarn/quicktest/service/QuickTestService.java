@@ -38,6 +38,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -55,6 +56,7 @@ public class QuickTestService {
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
     private final EmailService emailService;
+    private final HealthDepartmentService hds;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -302,9 +304,10 @@ public class QuickTestService {
             byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
             emailService.sendMailToTestedPerson(quickTest.getEmail(), encryptedPdf);
         }
-        if (quickTest.getZipCode() != null) {
+        if (quickTest.getZipCode() != null && !StringUtils.isBlank(quickTest.getZipCode())) {
+            String emailAddress = hds.findHealthDepartmentEmailByZipCode(quickTest.getZipCode());
             byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
-            emailService.sendMailToHealthDepartment("", encryptedPdf);
+            emailService.sendMailToHealthDepartment(emailAddress, encryptedPdf);
         }
     }
 

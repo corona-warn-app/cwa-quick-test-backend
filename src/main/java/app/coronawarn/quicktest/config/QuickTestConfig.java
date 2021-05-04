@@ -18,6 +18,7 @@ public class QuickTestConfig {
     private String pointOfCareInformationName;
     private String pointOfCareInformationDelimiter;
     private String dbEncryptionPassword;
+    private String healthDepartmentDownloadUrl;
 
     @Getter
     @Setter

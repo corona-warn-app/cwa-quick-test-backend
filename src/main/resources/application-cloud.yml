@@ -78,6 +78,7 @@ testresultserver:
 
 quicktest:
   db-encryption-password: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
+  health-department-download-url: ${HEALTH_DEPARTMENT_DOWNLOAD_URL}
   clean-up-settings:
     cron: 0 0 0 * * *
     max-age-in-minutes: 3600

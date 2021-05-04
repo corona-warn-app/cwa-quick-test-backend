@@ -14,6 +14,7 @@ import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -124,6 +125,94 @@ class QuickTestStatisticsServiceTest {
         result = quickTestStatisticsService.getStatisticsForTenant(null,
             startTime, endTime, Aggregation.DAY);
         assertIterableEquals(quickTestTenantStatisticsDay, result);
+    }
+
+    @Test
+    void getStatisticsForTenantTestNoAgg() {
+        when(quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(any(),
+                any(), any())).thenReturn(manuallyGeneratedLogTestData());
+        LocalDateTime startTime = LocalDateTime.of(2020, 3, 26, 8, 0, 0);
+        LocalDateTime endTime = startTime.plusDays(7);
+        List<QuickTestTenantStatistics> result = quickTestStatisticsService.getStatisticsForTenant("t",
+                startTime, endTime, Aggregation.NONE);
+        assertEquals(336*4, result.size());
+    }
+
+    @Test
+    void getStatisticsForTenantTestAggHour() {
+        when(quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(any(),
+                any(), any())).thenReturn(manuallyGeneratedLogTestData());
+        LocalDateTime startTime = LocalDateTime.of(2020, 3, 26, 8, 0, 0);
+        LocalDateTime endTime = startTime.plusDays(7);
+        List<QuickTestTenantStatistics> result = quickTestStatisticsService.getStatisticsForTenant("t",
+                startTime, endTime, Aggregation.HOUR);
+        assertEquals(336, result.size());
+        result.forEach(r -> {
+            assertEquals(4, r.getQuickTestStatistics().getTotalTestCount(),
+                    "fail @ row with time: "+r.getTimestamp());
+            assertEquals(2, r.getQuickTestStatistics().getPositiveTestCount(),
+                    "fail @ row with time: "+r.getTimestamp());
+        });
+        assertEquals("pocId_1", result.get(167).getPocId());
+        assertEquals("pocId_2", result.get(168).getPocId());
+    }
+
+    @Test
+    void getStatisticsForTenantTestAggDay() {
+        when(quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(any(),
+                any(), any())).thenReturn(manuallyGeneratedLogTestData());
+        LocalDateTime startTime = LocalDateTime.of(2020, 3, 26, 8, 0, 0);
+        LocalDateTime endTime = startTime.plusDays(7);
+        List<QuickTestTenantStatistics> result = quickTestStatisticsService.getStatisticsForTenant("t",
+                startTime, endTime, Aggregation.DAY);
+        assertEquals(16, result.size());
+        assertEquals("pocId_1", result.get(7).getPocId());
+        assertEquals("pocId_2", result.get(8).getPocId());
+
+        assertEquals(16*4, result.get(0).getQuickTestStatistics().getTotalTestCount());
+        assertEquals(16*2, result.get(0).getQuickTestStatistics().getPositiveTestCount());
+
+        for (int i = 1; i != 7; i++) {
+            assertEquals(24*4, result.get(i).getQuickTestStatistics().getTotalTestCount(), "index: "+i);
+            assertEquals(24*2, result.get(i).getQuickTestStatistics().getPositiveTestCount(), "index: "+i);
+
+            assertEquals(24*4, result.get(i+8).getQuickTestStatistics().getTotalTestCount(), "index: "+(i+8));
+            assertEquals(24*2, result.get(i+8).getQuickTestStatistics().getPositiveTestCount(), "index: "+(i+8));
+        }
+
+        assertEquals(8*4, result.get(7).getQuickTestStatistics().getTotalTestCount());
+        assertEquals(8*2, result.get(7).getQuickTestStatistics().getPositiveTestCount());
+
+        assertEquals(8*4, result.get(15).getQuickTestStatistics().getTotalTestCount());
+        assertEquals(8*2, result.get(15).getQuickTestStatistics().getPositiveTestCount());
+
+    }
+
+    private List<QuickTestLog> manuallyGeneratedLogTestData() {
+        LocalDateTime startTime = LocalDateTime.of(2020, 3, 26, 8, 1, 0);
+        List<QuickTestLog> manuallyGeneratedLogs = new ArrayList<>();
+        int currentId = 11511;
+        LocalDateTime currentTime = startTime;
+        // from 2020-03-26T08:01 to 2020-04-02T07:32 = 168h
+        for (int i = 0; i != 336; i++) {
+            manuallyGeneratedLogs.add(generateQuickTestLog(currentId, currentTime,
+                    "pocId_1", "tenant", false));
+            currentId++;
+            manuallyGeneratedLogs.add(generateQuickTestLog(currentId, currentTime,
+                    "pocId_2", "tenant", false));
+            currentId++;
+
+            manuallyGeneratedLogs.add(generateQuickTestLog(currentId, currentTime.plusMinutes(1),
+                    "pocId_1", "tenant", true));
+            currentId++;
+            manuallyGeneratedLogs.add(generateQuickTestLog(currentId, currentTime.plusMinutes(1),
+                    "pocId_2", "tenant", true));
+            currentId++;
+
+            currentTime = currentTime.plusMinutes(30);
+        }
+        manuallyGeneratedLogs.sort(Comparator.comparing(QuickTestLog::getId));
+        return manuallyGeneratedLogs;
     }
 
     private List<QuickTestLog> getQuickTestLogTestData() {

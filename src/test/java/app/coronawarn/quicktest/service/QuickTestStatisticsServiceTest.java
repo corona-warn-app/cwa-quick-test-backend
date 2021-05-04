@@ -57,7 +57,7 @@ class QuickTestStatisticsServiceTest {
     @Test
     void getStatisticsForTenantTest() {
         LocalDateTime startTime = LocalDateTime.of(2020, 4, 1, 0, 0, 0);
-        LocalDateTime endTime = startTime.plusHours(727);
+        LocalDateTime endTime = startTime.plusHours(727).minusNanos(1);
         when(quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(any(),
             any(), any())).thenReturn(getQuickTestLogTestData());
 
@@ -116,7 +116,7 @@ class QuickTestStatisticsServiceTest {
             any(), any())).thenReturn(quickTestLogs);
 
         startTime = LocalDateTime.of(2020, 4, 1, 0, 0, 0);
-        endTime = startTime.plusDays(2);
+        endTime = startTime.plusDays(2).minusNanos(1);
 
         result = quickTestStatisticsService.getStatisticsForTenant(null,
             startTime, endTime, Aggregation.HOUR);
@@ -143,7 +143,7 @@ class QuickTestStatisticsServiceTest {
         when(quickTestLogRepository.findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(any(),
                 any(), any())).thenReturn(manuallyGeneratedLogTestData());
         LocalDateTime startTime = LocalDateTime.of(2020, 3, 26, 8, 0, 0);
-        LocalDateTime endTime = startTime.plusDays(7);
+        LocalDateTime endTime = startTime.plusDays(7).minusNanos(1);
         List<QuickTestTenantStatistics> result = quickTestStatisticsService.getStatisticsForTenant("t",
                 startTime, endTime, Aggregation.HOUR);
         assertEquals(336, result.size());

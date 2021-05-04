@@ -60,7 +60,16 @@ public class QuickTestStatisticsService {
         quickTestLogSortedByPocId.forEach((pocId, quickTestLogs) -> {
             if (aggregation != Aggregation.NONE) {
                 //aggregate values for the given aggregation
-                for (LocalDateTime start = utcDateFrom; Duration.between(start, utcDateTo).getSeconds() > 0; start =
+                LocalDateTime dateFrom = utcDateFrom;
+                LocalDateTime dateTo = utcDateTo;
+                if (aggregation == Aggregation.HOUR) {
+                    dateFrom = utcDateFrom.withMinute(0).withSecond(0).withNano(0);
+                    dateTo = utcDateTo.withMinute(0).withSecond(0).withNano(0).plusHours(1).minusNanos(1);
+                } else if (aggregation == Aggregation.DAY) {
+                    dateFrom = utcDateFrom.withMinute(0).withSecond(0).withNano(0).withHour(0);
+                    dateTo = utcDateTo.withMinute(0).withSecond(0).withNano(0).withHour(0).plusDays(1).minusNanos(1);
+                }
+                for (LocalDateTime start = dateFrom; Duration.between(start, dateTo).getSeconds() > 0; start =
                     start.plusSeconds(aggregation.getValue())) {
                     int totalTestCount =
                         countOfQuickTestsInTimewindow(quickTestLogs,

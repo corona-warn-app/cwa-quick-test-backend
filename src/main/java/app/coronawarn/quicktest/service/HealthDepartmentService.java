@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -39,8 +40,8 @@ public class HealthDepartmentService {
 
     /**
      * Loads health departments (on app start) from RKI. Using local backup file as fallback if download fails.
-     * TODO: refresh
      */
+    @Scheduled(cron = "${quicktest.health-department-download-cron}")
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
         try {
@@ -50,15 +51,17 @@ public class HealthDepartmentService {
             }
             ZipInputStream zis = new ZipInputStream(inputStream);
             ZipEntry ze = zis.getNextEntry();
-            if (ze.isDirectory()) {
-                throw new Exception();
+            String[] split = ze.toString().split("\\.");
+            if (ze.isDirectory() || !split[split.length - 1].equals("xml")) {
+                log.error("Health department zip not valid");
+                return;
             }
             XmlMapper xmlMapper = new XmlMapper();
             healthDepartments = xmlMapper.readValue(zis, TransmittingSites.class).getTransmittingSites();
+            map.clear();
             lastUpdated = Utilities.getCurrentLocalDateTimeUtc();
-        } catch (Exception e) {
+        } catch (IOException | NullPointerException e) {
             log.error("Could not create healthDepartment list");
-            System.out.println(e.toString());
         }
     }
 

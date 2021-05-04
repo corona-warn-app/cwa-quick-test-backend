@@ -151,14 +151,14 @@ public class QuickTest {
         createdAt = now;
         updatedAt = now;
         testResult = 5;
-        if (StringUtils.isBlank(email)) {
-            emailNotificationAgreement = false;
-        }
     }
 
     @PreUpdate
     private void onUpdate() {
         updatedAt = Utilities.getCurrentLocalDateTimeUtc();
+        if (StringUtils.isBlank(email)) {
+            emailNotificationAgreement = false;
+        }
     }
 
 }

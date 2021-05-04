@@ -317,12 +317,13 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setPhoneNumber("+490000");
         quickTestPersonalDataRequest.setSex(Sex.DIVERSE);
         quickTestPersonalDataRequest.setStreet("f");
-        quickTestPersonalDataRequest.setHouseNumber("a");
+        quickTestPersonalDataRequest.setHouseNumber("1a");
         quickTestPersonalDataRequest.setZipCode("11111");
         quickTestPersonalDataRequest.setCity("f");
         quickTestPersonalDataRequest.setBirthday(LocalDate.now());
         quickTestPersonalDataRequest.setTestResultServerHash(
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
+        quickTestPersonalDataRequest.setEmailNotificationAgreement(false);
 
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/personalData")
@@ -467,7 +468,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         //Test email
         String email = quickTestPersonalDataRequest.getEmail();
-        quickTestPersonalDataRequest.setEmail("a@be");
+        quickTestPersonalDataRequest.setEmail("abe");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -669,7 +670,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         //test housenumber
         String housenumber = quickTestPersonalDataRequest.getHouseNumber();
-        quickTestPersonalDataRequest.setHouseNumber("012345678901234");
+        quickTestPersonalDataRequest.setHouseNumber("112345678901234");
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/personalData")
             .accept(MediaType.APPLICATION_JSON_VALUE)

@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
@@ -51,6 +52,8 @@ public class QuickTestServiceTest {
     private QuickTestLogRepository quickTestLogRepository;
     @Mock
     private TestResultService testResultService;
+    @Mock
+    private EmailService emailService;
 
     @Mock
     private PdfGenerator pdf;

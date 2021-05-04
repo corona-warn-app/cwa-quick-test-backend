@@ -40,6 +40,7 @@ public class QuickTestTest {
         quickTest.setHouseNumber("11");
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
+        quickTest.setEmailNotificationAgreement(true);
         assertEquals(
             "QuickTest(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, "
                     + "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, "
@@ -47,7 +48,7 @@ public class QuickTestTest {
                     + "privacyAgreement=false, lastName=Miller, firstName=Joe, email=test@test.test, "
                     + "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, "
                     + "city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid "
-                    + "Test Device (Nasal), birthday=null, testResultServerHash=null)",
+                    + "Test Device (Nasal), birthday=null, testResultServerHash=null, emailNotificationAgreement=true)",
             quickTest.toString());
     }
 
@@ -74,16 +75,19 @@ public class QuickTestTest {
     }
 
     @Test
-    void checkOnUpdateDate() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void checkOnUpdate() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Method method = QuickTest.class.getDeclaredMethod("onUpdate");
         method.setAccessible(true);
         QuickTest quickTest = new QuickTest();
+        quickTest.setEmail("");
         method.invoke(quickTest);
         LocalDateTime localDateTime = LocalDateTime.now();
         assertTrue(quickTest.getUpdatedAt() instanceof LocalDateTime);
         log.info(localDateTime.toString());
         log.info(quickTest.getUpdatedAt().toString());
         assertTrue(localDateTime.isEqual(quickTest.getUpdatedAt()) || localDateTime.isAfter(quickTest.getUpdatedAt()));
+        // check if email notification set to false on empty email string
+        assertEquals(quickTest.getEmailNotificationAgreement(), false);
     }
 
     @Test

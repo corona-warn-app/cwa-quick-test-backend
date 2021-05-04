@@ -38,13 +38,7 @@ public interface QuickTestRepositoryMigrationV001 extends JpaRepository<QuickTes
 
     List<QuickTest> findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(String tenantId, String pocId);
 
-
     List<QuickTest> findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(LocalDateTime time);
 
-    List<QuickTest> findAllByCreatedAtBefore(LocalDateTime time);
-
-    List<QuickTest> findAllByCreatedAtAfter(LocalDateTime time);
-
     void deleteAllByCreatedAtBefore(LocalDateTime time);
-
 }

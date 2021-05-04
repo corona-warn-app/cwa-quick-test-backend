@@ -7,8 +7,6 @@ import app.coronawarn.quicktest.migration.v001tov002.repository.QuickTestArchive
 import app.coronawarn.quicktest.migration.v001tov002.repository.QuickTestRepositoryMigrationV001;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
-import java.time.LocalDateTime;
-import java.util.List;
 import liquibase.change.custom.CustomTaskChange;
 import liquibase.database.Database;
 import liquibase.exception.CustomChangeException;
@@ -42,43 +40,18 @@ public class MigrateDataFromV001toV002 implements CustomTaskChange {
                 BeanAwareSpringLiquibase.getBean(QuickTestArchiveRepositoryMigrationV001.class);
             quickTestRepository = BeanAwareSpringLiquibase.getBean(QuickTestRepository.class);
 
-
-            LocalDateTime time = LocalDateTime.now();
-            quickTestRepositoryMigrationV001.findAllByCreatedAtBefore(time).forEach(
+            quickTestRepositoryMigrationV001.findAll().forEach(
                 quickTestMigrationV002 -> {
                     quickTestRepository.save(modelMapper.map(quickTestMigrationV002, QuickTest.class));
                 }
             );
-            List<QuickTest> afterRunQuickTest = quickTestRepositoryMigrationV001.findAllByCreatedAtAfter(time);
-            while (afterRunQuickTest.size() > 0) {
-                time = LocalDateTime.now();
-                afterRunQuickTest.forEach(
-                    quickTestMigrationV002 -> {
-                        quickTestRepository.save(modelMapper.map(quickTestMigrationV002, QuickTest.class));
-                    }
-                );
-                afterRunQuickTest = quickTestRepositoryMigrationV001.findAllByCreatedAtAfter(time);
-            }
 
-
-            time = LocalDateTime.now();
-            quickTestArchiveRepositoryMigrationV001.findAllByCreatedAtBefore(time).forEach(
+            quickTestArchiveRepositoryMigrationV001.findAll().forEach(
                 quickTestArchiveMigrationV002 -> {
                     quickTestArchiveRepository
                         .save(modelMapper.map(quickTestArchiveMigrationV002, QuickTestArchive.class));
                 }
             );
-            List<QuickTestArchive> afterRunQuickTestArchive =
-                quickTestArchiveRepositoryMigrationV001.findAllByCreatedAtAfter(time);
-            while (afterRunQuickTestArchive.size() > 0) {
-                time = LocalDateTime.now();
-                afterRunQuickTestArchive.forEach(
-                    quickTestMigrationV002 -> {
-                        quickTestRepository.save(modelMapper.map(quickTestMigrationV002, QuickTest.class));
-                    }
-                );
-                afterRunQuickTestArchive = quickTestArchiveRepositoryMigrationV001.findAllByCreatedAtAfter(time);
-            }
         } catch (Exception e) {
             throw new CustomChangeException(e);
         }

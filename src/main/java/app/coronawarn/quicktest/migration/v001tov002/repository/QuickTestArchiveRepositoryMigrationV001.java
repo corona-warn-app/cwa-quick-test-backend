@@ -25,8 +25,4 @@ public interface QuickTestArchiveRepositoryMigrationV001 extends JpaRepository<Q
         LocalDateTime dateFrom,
         LocalDateTime dateTo
     );
-
-    List<QuickTestArchive> findAllByCreatedAtBefore(LocalDateTime time);
-
-    List<QuickTestArchive> findAllByCreatedAtAfter(LocalDateTime time);
 }

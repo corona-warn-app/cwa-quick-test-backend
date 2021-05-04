@@ -23,6 +23,7 @@ package app.coronawarn.quicktest.dbencryption;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
@@ -30,6 +31,7 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
@@ -43,6 +45,7 @@ import java.util.Base64;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManager;
@@ -61,7 +64,7 @@ import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 public class DbEncryptionTest {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
-    private final Cipher cipher = AesBytesEncryptor.CipherAlgorithm.CBC.createCipher();
+    private final Cipher decryptCipher = AesBytesEncryptor.CipherAlgorithm.GCM.createCipher();
     private final Key key = new SecretKeySpec("abcdefghjklmnopq".getBytes(StandardCharsets.UTF_8), "AES");
 
     @Autowired
@@ -140,69 +143,67 @@ public class DbEncryptionTest {
             assertEquals(quickTestArchive.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
 
-            assertEquals(quickTestArchive.getTestResult(), Short.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[8]))), CHARSET)));
+            assertEquals(quickTestArchive.getPrivacyAgreement(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
+                String.valueOf(((Object[]) databaseEntry)[9]))), CHARSET)));
 
             assertEquals(quickTestArchive.getFirstName(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[9]))), CHARSET));
-
-            assertEquals(quickTestArchive.getLastName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[10]))), CHARSET));
 
-            assertEquals(quickTestArchive.getEmail(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getLastName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[11]))), CHARSET));
 
-            assertEquals(quickTestArchive.getPhoneNumber(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getEmail(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[12]))), CHARSET));
 
-            assertEquals(quickTestArchive.getSex().name(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getPhoneNumber(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[13]))), CHARSET));
 
-            assertEquals(quickTestArchive.getStreet(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getSex().name(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[14]))), CHARSET));
 
-            assertEquals(quickTestArchive.getHouseNumber(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getStreet(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[15]))), CHARSET));
 
-            assertEquals(quickTestArchive.getZipCode(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getHouseNumber(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[16]))), CHARSET));
 
-            assertEquals(quickTestArchive.getCity(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getZipCode(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[17]))), CHARSET));
 
-            assertEquals(quickTestArchive.getTestBrandId(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getCity(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[18]))), CHARSET));
 
-            assertEquals(quickTestArchive.getTestBrandName(), new String(decrypt(Base64.getDecoder().decode(
+            assertEquals(quickTestArchive.getTestBrandId(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[19]))), CHARSET));
 
+            assertEquals(quickTestArchive.getTestBrandName(), new String(decrypt(Base64.getDecoder().decode(
+                String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET));
+
             assertArrayEquals(quickTestArchive.getPdf(),
-                decrypt(Base64.getDecoder().decode(IOUtils.toByteArray(((Clob) ((Object[]) databaseEntry)[20]).getAsciiStream()))));
-
-            assertEquals(quickTestArchive.getBirthday(), new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[21]))), CHARSET));
-
-            assertEquals(quickTestArchive.getPrivacyAgreement(),
-                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                    String.valueOf(((Object[]) databaseEntry)[22]))), CHARSET)));
+                decrypt(Base64.getDecoder().decode(IOUtils.toByteArray(((Clob) ((Object[]) databaseEntry)[21]).getAsciiStream()))));
 
             assertEquals(quickTestArchive.getTestResultServerHash(), new String(decrypt(Base64.getDecoder().decode(
-                    String.valueOf(((Object[]) databaseEntry)[23]))), CHARSET));
+                    String.valueOf(((Object[]) databaseEntry)[22]))), CHARSET));
+
+            assertEquals(quickTestArchive.getBirthday(), new String(decrypt(Base64.getDecoder().decode(
+                String.valueOf(((Object[]) databaseEntry)[23]))), CHARSET));
 
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException | SQLException | IOException e) {
+            fail();
             e.printStackTrace();
         }
     }
 
-    private byte[] decrypt(byte[] encrypted)
+    private byte[] decrypt(byte[] ciphertext)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        synchronized (cipher) {
-            cipher.init(Cipher.DECRYPT_MODE, key, getInitializationVector());
-            return cipher.doFinal(encrypted);
+        synchronized (decryptCipher) {
+            ByteBuffer byteBuffer = ByteBuffer.wrap(ciphertext);
+            byte[] iv = new byte[12];
+            byteBuffer.get(iv);
+            byte[] encrypted = new byte[byteBuffer.remaining()];
+            byteBuffer.get(encrypted);
+            decryptCipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(128, iv));
+            return decryptCipher.doFinal(encrypted);
         }
-    }
-
-    private IvParameterSpec getInitializationVector() {
-        return new IvParameterSpec("WnU2IQhlAAN@bK~L".getBytes(CHARSET));
     }
 }

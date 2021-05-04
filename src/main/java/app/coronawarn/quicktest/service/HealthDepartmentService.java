@@ -84,7 +84,7 @@ public class HealthDepartmentService {
         try {
             return rkiToolClient.downloadFile().body().asInputStream();
         } catch (FeignException | IOException e) {
-            log.error("Could not fetch new health department data, using fallback data file");
+            log.error("Could not fetch new health department data.");
             return null;
         }
     }

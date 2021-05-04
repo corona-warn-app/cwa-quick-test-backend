@@ -36,12 +36,10 @@ public class HealthDepartmentService {
 
     private final Map<String, String> map = new HashMap<>();
     private List<TransmittingSite> healthDepartments = new ArrayList<>();
-    private LocalDateTime lastUpdated = Utilities.getCurrentLocalDateTimeUtc();
 
     /**
      * Loads health departments (on app start) from RKI. Using local backup file as fallback if download fails.
      */
-    @Scheduled(cron = "${quicktest.health-department-download-cron}")
     @EventListener(ApplicationReadyEvent.class)
     public void init() {
         try {
@@ -49,20 +47,37 @@ public class HealthDepartmentService {
             if (inputStream == null) {
                 inputStream = loadFallbackFile();
             }
-            ZipInputStream zis = new ZipInputStream(inputStream);
-            ZipEntry ze = zis.getNextEntry();
-            String[] split = ze.toString().split("\\.");
-            if (ze.isDirectory() || !split[split.length - 1].equals("xml")) {
-                log.error("Health department zip not valid");
-                return;
-            }
-            XmlMapper xmlMapper = new XmlMapper();
-            healthDepartments = xmlMapper.readValue(zis, TransmittingSites.class).getTransmittingSites();
-            map.clear();
-            lastUpdated = Utilities.getCurrentLocalDateTimeUtc();
+            createHealthDepartments(inputStream);
+            log.info("Created health department list on initialization");
         } catch (IOException | NullPointerException e) {
-            log.error("Could not create healthDepartment list");
+            log.error("Could not create healthDepartment list on initialization");
         }
+    }
+
+    @Scheduled(cron = "${quicktest.health-department-download-cron}")
+    public void updateHealthDepartments() {
+        try {
+            InputStream inputStream = downloadFileFromRki();
+            if (inputStream != null) {
+                createHealthDepartments(inputStream);
+                log.info("Updated health department list");
+            }
+        } catch (IOException e) {
+            log.error("Could not update healthDepartment list");
+        }
+    }
+
+    private void createHealthDepartments(InputStream inputStream) throws IOException {
+        ZipInputStream zis = new ZipInputStream(inputStream);
+        ZipEntry ze = zis.getNextEntry();
+        String[] split = ze.toString().split("\\.");
+        if (ze.isDirectory() || !split[split.length - 1].equals("xml")) {
+            log.error("Health department zip not valid");
+            return;
+        }
+        XmlMapper xmlMapper = new XmlMapper();
+        healthDepartments = xmlMapper.readValue(zis, TransmittingSites.class).getTransmittingSites();
+        map.clear();
     }
 
     private InputStream downloadFileFromRki() {
@@ -98,7 +113,9 @@ public class HealthDepartmentService {
                 if (searchText.getValue().equals(zipCode)) {
                     String email = StringUtils.isBlank(healthDepartment.getCovid19EMail())
                             ? healthDepartment.getEmail() : healthDepartment.getCovid19EMail();
-                    map.put(zipCode, email);
+                    if (!StringUtils.isBlank(email)) {
+                        map.put(zipCode, email);
+                    }
                     return email;
                 }
             }

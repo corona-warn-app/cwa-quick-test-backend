@@ -31,7 +31,6 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.persistence.EntityManager;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
 import liquibase.database.jvm.JdbcConnection;
@@ -44,12 +43,23 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
+import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
+import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 @Transactional
+@AutoConfigureCache
+@AutoConfigureDataJpa
+@AutoConfigureTestDatabase
+@AutoConfigureTestEntityManager
+@ImportAutoConfiguration
 class MigrateDataFromV001toV002Test {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
@@ -70,7 +80,7 @@ class MigrateDataFromV001toV002Test {
     MigrateDataFromV001toV002 migrateDataFromV001toV002;
 
     @Autowired
-    EntityManager entityManager;
+    TestEntityManager entityManager;
 
     @Autowired
     ModelMapper modelMapper;
@@ -80,7 +90,6 @@ class MigrateDataFromV001toV002Test {
 
     @BeforeEach
     public void setup() {
-        entityManager.clear();
         createMigrationTables();
         quickTestArchiveRepository.deleteAll();
         quickTestRepository.deleteAll();
@@ -88,7 +97,6 @@ class MigrateDataFromV001toV002Test {
 
     @AfterEach
     public void cleanup() {
-        entityManager.clear();
         dropMigrationTables();
         quickTestArchiveRepository.deleteAll();
         quickTestRepository.deleteAll();
@@ -99,7 +107,8 @@ class MigrateDataFromV001toV002Test {
     void migrationV001ToV002Test() {
         quickTestMigrationV001 = createQuickTestMigrationV001();
         quickTestArchiveMigrationV001 = createQuickTestArchiveMigrationV001();
-        Session session = (Session) entityManager.getDelegate();
+
+        Session session = (Session) entityManager.getEntityManager().getDelegate();
         session.doWork(connection -> {
             try {
                 createQuickTestInOldDb(quickTestMigrationV001);
@@ -117,19 +126,22 @@ class MigrateDataFromV001toV002Test {
                 testDecyrptionQuickTest(quickTestRepository.findById(quickTestMigrationV001.getHashedGuid()).get());
 
                 assertEqualsQuickTestArchive(
-                    quickTestArchiveRepositoryMigrationV001.findById(quickTestArchiveMigrationV001.getHashedGuid()).get(),
+                    quickTestArchiveRepositoryMigrationV001.findById(quickTestArchiveMigrationV001.getHashedGuid())
+                        .get(),
                     quickTestArchiveRepository.findById(quickTestArchiveMigrationV001.getHashedGuid()).get()
                 );
-                testDecyrptionQuickTestArchive(quickTestArchiveRepository.findById(quickTestArchiveMigrationV001.getHashedGuid()).get());
+                testDecyrptionQuickTestArchive(
+                    quickTestArchiveRepository.findById(quickTestArchiveMigrationV001.getHashedGuid()).get());
             } catch (Exception e) {
-                    fail();
+                fail();
             }
         });
     }
 
     private void createQuickTestInOldDb(QuickTestMigrationV001 quickTestMigrationV001)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        entityManager.createNativeQuery("INSERT INTO QUICK_TEST_V001 (HASHED_GUID,SHORT_HASHED_GUID,TENANT_ID," +
+        entityManager.getEntityManager().createNativeQuery("INSERT INTO QUICK_TEST_V001 (HASHED_GUID," +
+            "SHORT_HASHED_GUID,TENANT_ID," +
             "POC_ID,CREATED_AT,UPDATED_AT,VERSION,CONFIRMATION_CWA,TEST_RESULT,FIRST_NAME,LAST_NAME,EMAIL, " +
             "PHONE_NUMBER,SEX,STREET,HOUSE_NUMBER,ZIP_CODE,CITY,TEST_BRAND_ID,TEST_BRAND_NAME,BIRTHDAY, " +
             "PRIVACY_AGREEMENT,TEST_RESULT_SERVER_HASH) VALUES " +
@@ -163,36 +175,37 @@ class MigrateDataFromV001toV002Test {
     private void createQuickTestArchiveInOldDb(QuickTestArchiveMigrationV001 quickTestArchiveMigrationV001)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
 
-        entityManager.createNativeQuery("INSERT INTO QUICK_TEST_ARCHIVE_V001 (SHORT_HASHED_GUID,HASHED_GUID," +
-            "TENANT_ID," +
-            "POC_ID,CREATED_AT,UPDATED_AT,VERSION,CONFIRMATION_CWA,TEST_RESULT,FIRST_NAME,LAST_NAME,EMAIL, " +
-            "PHONE_NUMBER,SEX,STREET,HOUSE_NUMBER,ZIP_CODE,CITY,TEST_BRAND_ID,TEST_BRAND_NAME,PDF,BIRTHDAY, " +
-            "PRIVACY_AGREEMENT,TEST_RESULT_SERVER_HASH) VALUES " +
-            "('" + quickTestArchiveMigrationV001.getShortHashedGuid() + "'," +
-            "'" + quickTestArchiveMigrationV001.getHashedGuid() + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getTenantId().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getPocId().getBytes()) + "'," +
-            "'2021-04-19 10:52:05'," +
-            "'2021-04-19 10:53:05'," +
-            "'" + 15 + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getConfirmationCwa().toString().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getTestResult().toString().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getFirstName().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getLastName().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getEmail().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getPhoneNumber().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getSex().toString().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getStreet().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getHouseNumber().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getZipCode().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getCity().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getTestBrandId().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getTestBrandName().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getPdf()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getBirthday().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getPrivacyAgreement().toString().getBytes()) + "'," +
-            "'" + encrypt(quickTestArchiveMigrationV001.getTestResultServerHash().getBytes()) + "');"
-        ).executeUpdate();
+        entityManager.getEntityManager()
+            .createNativeQuery("INSERT INTO QUICK_TEST_ARCHIVE_V001 (SHORT_HASHED_GUID,HASHED_GUID," +
+                "TENANT_ID," +
+                "POC_ID,CREATED_AT,UPDATED_AT,VERSION,CONFIRMATION_CWA,TEST_RESULT,FIRST_NAME,LAST_NAME,EMAIL, " +
+                "PHONE_NUMBER,SEX,STREET,HOUSE_NUMBER,ZIP_CODE,CITY,TEST_BRAND_ID,TEST_BRAND_NAME,PDF,BIRTHDAY, " +
+                "PRIVACY_AGREEMENT,TEST_RESULT_SERVER_HASH) VALUES " +
+                "('" + quickTestArchiveMigrationV001.getShortHashedGuid() + "'," +
+                "'" + quickTestArchiveMigrationV001.getHashedGuid() + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getTenantId().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getPocId().getBytes()) + "'," +
+                "'2021-04-19 10:52:05'," +
+                "'2021-04-19 10:53:05'," +
+                "'" + 15 + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getConfirmationCwa().toString().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getTestResult().toString().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getFirstName().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getLastName().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getEmail().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getPhoneNumber().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getSex().toString().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getStreet().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getHouseNumber().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getZipCode().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getCity().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getTestBrandId().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getTestBrandName().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getPdf()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getBirthday().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getPrivacyAgreement().toString().getBytes()) + "'," +
+                "'" + encrypt(quickTestArchiveMigrationV001.getTestResultServerHash().getBytes()) + "');"
+            ).executeUpdate();
         entityManager.flush();
     }
 
@@ -272,7 +285,7 @@ class MigrateDataFromV001toV002Test {
         return new IvParameterSpec("WnU2IQhlAAN@bK~L".getBytes(CHARSET));
     }
 
-    private void assertEqualsQuickTest(QuickTestMigrationV001 expected, QuickTest act){
+    private void assertEqualsQuickTest(QuickTestMigrationV001 expected, QuickTest act) {
         assertEquals(expected.getHashedGuid(), act.getHashedGuid());
         assertEquals(expected.getShortHashedGuid(), act.getShortHashedGuid());
         assertEquals(expected.getTenantId(), act.getTenantId());
@@ -295,7 +308,7 @@ class MigrateDataFromV001toV002Test {
         assertEquals(expected.getTestResultServerHash(), act.getTestResultServerHash());
     }
 
-    private void assertEqualsQuickTestArchive(QuickTestArchiveMigrationV001 expected, QuickTestArchive act){
+    private void assertEqualsQuickTestArchive(QuickTestArchiveMigrationV001 expected, QuickTestArchive act) {
         assertEquals(expected.getHashedGuid(), act.getHashedGuid());
         assertEquals(expected.getShortHashedGuid(), act.getShortHashedGuid());
         assertEquals(expected.getTenantId(), act.getTenantId());
@@ -319,9 +332,9 @@ class MigrateDataFromV001toV002Test {
 //        assertEquals(expected.getPdf(), act.getPdf());
     }
 
-    private void testDecyrptionQuickTest(QuickTest quickTest){
+    private void testDecyrptionQuickTest(QuickTest quickTest) {
         Object databaseEntry =
-            entityManager.createNativeQuery("SELECT * FROM quick_test q WHERE HASHED_GUID='" +
+            entityManager.getEntityManager().createNativeQuery("SELECT * FROM quick_test q WHERE HASHED_GUID='" +
                 quickTest.getHashedGuid() + "'")
                 .getSingleResult();
         assertEquals(quickTest.getShortHashedGuid(), ((Object[]) databaseEntry)[0]);
@@ -400,10 +413,11 @@ class MigrateDataFromV001toV002Test {
         }
     }
 
-    private void testDecyrptionQuickTestArchive(QuickTestArchive quickTestArchive){
+    private void testDecyrptionQuickTestArchive(QuickTestArchive quickTestArchive) {
         Object databaseEntry =
-            entityManager.createNativeQuery("SELECT * FROM quick_test_archive q WHERE HASHED_GUID='" +
-                quickTestArchive.getHashedGuid() + "'")
+            entityManager.getEntityManager()
+                .createNativeQuery("SELECT * FROM quick_test_archive q WHERE HASHED_GUID='" +
+                    quickTestArchive.getHashedGuid() + "'")
                 .getSingleResult();
         assertEquals(quickTestArchive.getShortHashedGuid(), ((Object[]) databaseEntry)[0]);
         assertEquals(quickTestArchive.getHashedGuid(), ((Object[]) databaseEntry)[1]);
@@ -431,11 +445,13 @@ class MigrateDataFromV001toV002Test {
         assertNotEquals(quickTestArchive.getBirthday(), ((Object[]) databaseEntry)[22]);
         assertNotEquals(quickTestArchive.getPrivacyAgreement(), ((Object[]) databaseEntry)[23]);
         try {
-            assertEquals(quickTestArchive.getConfirmationCwa(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
+            assertEquals(quickTestArchive.getConfirmationCwa(),
+                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[7]))), CHARSET)));
 
-            assertEquals(quickTestArchive.getPrivacyAgreement(), Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
-                String.valueOf(((Object[]) databaseEntry)[9]))), CHARSET)));
+            assertEquals(quickTestArchive.getPrivacyAgreement(),
+                Boolean.valueOf(new String(decrypt(Base64.getDecoder().decode(
+                    String.valueOf(((Object[]) databaseEntry)[9]))), CHARSET)));
 
             assertEquals(quickTestArchive.getFirstName(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[10]))), CHARSET));
@@ -471,7 +487,8 @@ class MigrateDataFromV001toV002Test {
                 String.valueOf(((Object[]) databaseEntry)[20]))), CHARSET));
 
             assertArrayEquals(quickTestArchive.getPdf(),
-                decrypt(Base64.getDecoder().decode(IOUtils.toByteArray(((Clob) ((Object[]) databaseEntry)[21]).getAsciiStream()))));
+                decrypt(Base64.getDecoder()
+                    .decode(IOUtils.toByteArray(((Clob) ((Object[]) databaseEntry)[21]).getAsciiStream()))));
 
             assertEquals(quickTestArchive.getTestResultServerHash(), new String(decrypt(Base64.getDecoder().decode(
                 String.valueOf(((Object[]) databaseEntry)[22]))), CHARSET));
@@ -485,29 +502,31 @@ class MigrateDataFromV001toV002Test {
         }
     }
 
-    private void createMigrationTables(){
-        entityManager.createNativeQuery("CREATE TABLE QUICK_TEST_V001 (HASHED_GUID varchar(108),SHORT_HASHED_GUID " +
-            "varchar(108),TENANT_ID varchar(255)," +
-            "POC_ID varchar(255),CREATED_AT datetime,UPDATED_AT datetime,VERSION int,CONFIRMATION_CWA varchar(50)," +
-            "TEST_RESULT varchar(24),FIRST_NAME varchar(200),LAST_NAME varchar(200),EMAIL varchar(550), " +
-            "PHONE_NUMBER varchar(200),SEX varchar(60),STREET varchar(550),HOUSE_NUMBER varchar(70),ZIP_CODE varchar" +
-            "(50),CITY varchar(550),TEST_BRAND_ID varchar(70),TEST_BRAND_NAME varchar(200),BIRTHDAY varchar(550)," +
-            "PRIVACY_AGREEMENT varchar(50),TEST_RESULT_SERVER_HASH varchar(170))").executeUpdate();
+    private void createMigrationTables() {
+        entityManager.getEntityManager()
+            .createNativeQuery("CREATE TABLE QUICK_TEST_V001 (HASHED_GUID varchar(108),SHORT_HASHED_GUID " +
+                "varchar(108),TENANT_ID varchar(255)," +
+                "POC_ID varchar(255),CREATED_AT datetime,UPDATED_AT datetime,VERSION int,CONFIRMATION_CWA varchar(50)," +
+                "TEST_RESULT varchar(24),FIRST_NAME varchar(200),LAST_NAME varchar(200),EMAIL varchar(550), " +
+                "PHONE_NUMBER varchar(200),SEX varchar(60),STREET varchar(550),HOUSE_NUMBER varchar(70),ZIP_CODE varchar" +
+                "(50),CITY varchar(550),TEST_BRAND_ID varchar(70),TEST_BRAND_NAME varchar(200),BIRTHDAY varchar(550)," +
+                "PRIVACY_AGREEMENT varchar(50),TEST_RESULT_SERVER_HASH varchar(170))").executeUpdate();
 
-        entityManager.createNativeQuery("CREATE TABLE QUICK_TEST_ARCHIVE_V001 (HASHED_GUID varchar(108)," +
-            "SHORT_HASHED_GUID varchar(108),TENANT_ID varchar(255)," +
-            "POC_ID varchar(255),CREATED_AT datetime,UPDATED_AT datetime,VERSION int,CONFIRMATION_CWA varchar(50)," +
-            "TEST_RESULT varchar(24),FIRST_NAME varchar(200),LAST_NAME varchar(200),EMAIL varchar(550), " +
-            "PHONE_NUMBER varchar(200),SEX varchar(60),STREET varchar(550),HOUSE_NUMBER varchar(70),ZIP_CODE varchar" +
-            "(50),CITY varchar(550),TEST_BRAND_ID varchar(70),TEST_BRAND_NAME varchar(200),PDF clob,BIRTHDAY varchar" +
-            "(550)," +
-            "PRIVACY_AGREEMENT varchar(50),TEST_RESULT_SERVER_HASH varchar(170))").executeUpdate();
+        entityManager.getEntityManager()
+            .createNativeQuery("CREATE TABLE QUICK_TEST_ARCHIVE_V001 (HASHED_GUID varchar(108)," +
+                "SHORT_HASHED_GUID varchar(108),TENANT_ID varchar(255)," +
+                "POC_ID varchar(255),CREATED_AT datetime,UPDATED_AT datetime,VERSION int,CONFIRMATION_CWA varchar(50)," +
+                "TEST_RESULT varchar(24),FIRST_NAME varchar(200),LAST_NAME varchar(200),EMAIL varchar(550), " +
+                "PHONE_NUMBER varchar(200),SEX varchar(60),STREET varchar(550),HOUSE_NUMBER varchar(70),ZIP_CODE varchar" +
+                "(50),CITY varchar(550),TEST_BRAND_ID varchar(70),TEST_BRAND_NAME varchar(200),PDF clob,BIRTHDAY varchar" +
+                "(550)," +
+                "PRIVACY_AGREEMENT varchar(50),TEST_RESULT_SERVER_HASH varchar(170))").executeUpdate();
         entityManager.flush();
     }
 
-    private void dropMigrationTables(){
-        entityManager.createNativeQuery("DROP TABLE QUICK_TEST_V001").executeUpdate();
-        entityManager.createNativeQuery("DROP TABLE QUICK_TEST_ARCHIVE_V001").executeUpdate();
+    private void dropMigrationTables() {
+        entityManager.getEntityManager().createNativeQuery("DROP TABLE QUICK_TEST_V001").executeUpdate();
+        entityManager.getEntityManager().createNativeQuery("DROP TABLE QUICK_TEST_ARCHIVE_V001").executeUpdate();
 
         entityManager.flush();
     }

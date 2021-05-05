@@ -255,7 +255,7 @@ class MigrateDataFromV001toV002Test {
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         quickTest.setBirthday("01.01.1990");
-        quickTest.setPdf("".getBytes());
+        quickTest.setPdf("testPDF".getBytes());
         quickTest.setTestResultServerHash("mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht");
         return quickTest;
     }
@@ -329,7 +329,7 @@ class MigrateDataFromV001toV002Test {
         assertEquals(expected.getBirthday(), act.getBirthday());
         assertEquals(expected.getPrivacyAgreement(), act.getPrivacyAgreement());
         assertEquals(expected.getTestResultServerHash(), act.getTestResultServerHash());
-//        assertEquals(expected.getPdf(), act.getPdf());
+        assertEquals(new String(expected.getPdf()), new String(act.getPdf()));
     }
 
     private void testDecyrptionQuickTest(QuickTest quickTest) {

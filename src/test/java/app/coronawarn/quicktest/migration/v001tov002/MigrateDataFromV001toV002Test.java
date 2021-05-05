@@ -292,7 +292,6 @@ class MigrateDataFromV001toV002Test {
         assertEquals(expected.getPocId(), act.getPocId());
         assertEquals(expected.getCreatedAt(), act.getCreatedAt());
         assertEquals(expected.getCreatedAt(), act.getCreatedAt());
-//        assertEquals(expected.getVersion(), act.getVersion());
         assertEquals(expected.getConfirmationCwa(), act.getConfirmationCwa());
         assertEquals(expected.getFirstName(), act.getFirstName());
         assertEquals(expected.getLastName(), act.getLastName());
@@ -315,7 +314,6 @@ class MigrateDataFromV001toV002Test {
         assertEquals(expected.getPocId(), act.getPocId());
         assertEquals(expected.getCreatedAt(), act.getCreatedAt());
         assertEquals(expected.getCreatedAt(), act.getCreatedAt());
-//        assertEquals(expected.getVersion(), act.getVersion());
         assertEquals(expected.getConfirmationCwa(), act.getConfirmationCwa());
         assertEquals(expected.getFirstName(), act.getFirstName());
         assertEquals(expected.getLastName(), act.getLastName());
@@ -409,7 +407,6 @@ class MigrateDataFromV001toV002Test {
 
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException e) {
             fail();
-            e.printStackTrace();
         }
     }
 
@@ -498,7 +495,6 @@ class MigrateDataFromV001toV002Test {
 
         } catch (InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidAlgorithmParameterException | SQLException | IOException e) {
             fail();
-            e.printStackTrace();
         }
     }
 

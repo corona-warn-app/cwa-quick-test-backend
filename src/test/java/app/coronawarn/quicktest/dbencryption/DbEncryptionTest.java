@@ -80,7 +80,7 @@ public class DbEncryptionTest {
     @AfterEach
     public void setup() {
         quickTestArchiveRepository.deleteAll();
-
+        entityManager.clear();
     }
 
     @Test

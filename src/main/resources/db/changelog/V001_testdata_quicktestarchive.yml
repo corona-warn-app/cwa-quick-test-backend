@@ -2,7 +2,7 @@ databaseChangeLog:
   - changeSet:
       id: V001_testdata_quicktestarchive
       author: mbaude
-#      context: test
+      context: prod
       changes:
         - insert:
             tableName: quick_test_archive

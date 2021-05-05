@@ -50,6 +50,6 @@ databaseChangeLog:
   - include:
       file: changelog/V002_migrateDataToNewEncryption.yml
       relativeToChangelogFile: true
-#  - include:
-#      file: changelog/V002_drop_v001_tables.yml
-#      relativeToChangelogFile: true
+  - include:
+      file: changelog/V002_drop_v001_tables.yml
+      relativeToChangelogFile: true

@@ -46,6 +46,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
     public static final String ROLE_LAB = "ROLE_c19_quick_test_lab";
     public static final String ROLE_COUNTER = "ROLE_c19_quick_test_counter";
+    public static final String ROLE_TENANT_COUNTER = "ROLE_c19_quick_tenant_test_counter";
 
     private static final String API_ROUTE = "/api/**";
     private static final String KEYCLOAK_CONFIG_ROUTE = "/api/config/keycloak.json";

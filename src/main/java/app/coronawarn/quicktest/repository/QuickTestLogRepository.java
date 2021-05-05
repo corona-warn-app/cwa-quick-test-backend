@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.QuickTestLog;
 import java.time.LocalDateTime;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -35,9 +36,9 @@ public interface QuickTestLogRepository extends JpaRepository<QuickTestLog, Stri
                                                                                  LocalDateTime utcDateFrom,
                                                                                  LocalDateTime utcDateTo);
 
-    int countAllByTenantIdAndCreatedAtBetween(String tenantId, LocalDateTime utcDateFrom, LocalDateTime utcDateTo);
+    List<QuickTestLog> findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(String tenantId,
+                                                                                       LocalDateTime utcDateFrom,
+                                                                                       LocalDateTime utcDateTo);
 
-    int countAllByTenantIdAndPositiveTestResultIsTrueAndCreatedAtBetween(String tenantId, LocalDateTime utcDateFrom,
-                                                                         LocalDateTime utcDateTo);
 
 }

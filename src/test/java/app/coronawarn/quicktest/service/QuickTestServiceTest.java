@@ -3,6 +3,7 @@ package app.coronawarn.quicktest.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -54,6 +55,8 @@ public class QuickTestServiceTest {
     private TestResultService testResultService;
     @Mock
     private EmailService emailService;
+    @Mock
+    private HealthDepartmentService healthDepartmentService;
 
     @Mock
     private PdfGenerator pdf;
@@ -138,6 +141,32 @@ public class QuickTestServiceTest {
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
         }
+    }
+
+    @Test
+    void sendMailInUpdateQuickTest() throws IOException {
+        Map<String, String> ids = new HashMap<>();
+        List<String> pocInfo = new ArrayList<>();
+        QuickTest quickTest = new QuickTest();
+        quickTest.setConfirmationCwa(false);
+        quickTest.setShortHashedGuid("0");
+        quickTest.setHashedGuid("0");
+        quickTest.setPrivacyAgreement(true);
+        quickTest.setEmailNotificationAgreement(true);
+        quickTest.setEmail("mail@example.tld");
+        quickTest.setZipCode("12345");
+
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any())).thenReturn(quickTest);
+        when(quickTestRepository.save(any())).thenReturn(null);
+        when(pdf.generatePdf(any(), any(), any())).thenReturn(new ByteArrayOutputStream());
+        when(pdf.encryptPdf(any(), any())).thenReturn(new ByteArrayOutputStream());
+        when(healthDepartmentService.findHealthDepartmentEmailByZipCode("12345")).thenReturn("covid@example.tld");
+
+        quickTestService.updateQuickTest(ids, "0", (short) 6, "testBrandId", "testBrandName", pocInfo, "user");
+
+        verify(pdf, times(2)).encryptPdf(any(), any());
+        verify(emailService, times(1)).sendMailToTestedPerson(eq("mail@example.tld"), any());
+        verify(emailService, times(1)).sendMailToHealthDepartment(eq("covid@example.tld"), any());
     }
 
     @Test
@@ -227,6 +256,7 @@ public class QuickTestServiceTest {
     void updateQuickTestSaveFailedTest() {
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
+        quickTest.setPrivacyAgreement(true);
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(quickTestRepository.saveAndFlush(any())).thenThrow(new RuntimeException());

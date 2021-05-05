@@ -7,21 +7,27 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 @Slf4j
 @SpringBootTest
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class PdfGeneratorTest {
 
     @InjectMocks
@@ -29,8 +35,8 @@ public class PdfGeneratorTest {
     @Mock
     private PdfConfig pdfConfig;
 
-    @Test
-    void generatePdfTest() throws IOException {
+    @BeforeAll
+    void beforeAll(){
         when(pdfConfig.getLogoPath()).thenReturn("/logo");
         when(pdfConfig.getAuthorPdfPropertiesText()).thenReturn("Unittest");
         when(pdfConfig.getQuickTestHeadlineText()).thenReturn("Unittest");
@@ -51,8 +57,11 @@ public class PdfGeneratorTest {
         when(pdfConfig.getDiverseText()).thenReturn("divers");
         when(pdfConfig.getTestResultNegativeText()).thenReturn("NEGATIV");
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
+    }
 
-        List<String> pocInformation = new ArrayList();
+    @Test
+    void generatePdfTest() throws IOException {
+        List<String> pocInformation = new ArrayList<>();
         pocInformation.add("PoC Unittest");
         pocInformation.add("Unittest Way 15");
         pocInformation.add("10101 Unittest City");
@@ -92,6 +101,26 @@ public class PdfGeneratorTest {
         }
 
 
+    }
+
+    @Test
+    void encryptPdfTest() throws IOException {
+        byte[] pdf = pdfGenerator.generatePdf(Collections.emptyList(), getQuickTest(), "user").toByteArray();
+        byte[] encryptedPdf = pdfGenerator.encryptPdf(pdf, getQuickTest().getZipCode()).toByteArray();
+        PDDocument encPdfDoc = PDDocument.load(encryptedPdf, "12345");
+        assertTrue(encPdfDoc.isEncrypted());
+        assertEquals(encPdfDoc.getEncryption().getLength(), 256);
+        assertTrue(encPdfDoc.getEncryption().isEncryptMetaData());
+        AccessPermission ap = encPdfDoc.getCurrentAccessPermission();
+        assertTrue(ap.canPrint());
+        assertFalse(ap.canModify());
+        assertFalse(ap.canAssembleDocument());
+        assertFalse(ap.canFillInForm());
+        assertFalse(ap.canModify());
+        assertFalse(ap.canModifyAnnotations());
+        assertFalse(ap.canExtractForAccessibility());
+        assertFalse(ap.canPrintDegraded());
+        assertFalse(ap.isOwnerPermission());
     }
 
     private QuickTest getQuickTest() {

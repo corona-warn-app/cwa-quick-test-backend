@@ -54,6 +54,9 @@ public class HealthDepartmentService {
         }
     }
 
+    /**
+     * Updates health departments provided by RKI based on defined cron pattern.
+     */
     @Scheduled(cron = "${quicktest.health-department-download-cron}")
     public void updateHealthDepartments() {
         try {

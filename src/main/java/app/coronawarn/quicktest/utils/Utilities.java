@@ -87,6 +87,26 @@ public class Utilities {
     /**
      * Get tenantID and pocID from Token.
      *
+     * @return tenantID
+     * @throws ResponseStatusException 500 if Id not found in User-Token
+     */
+    public String getTenantIdFromToken() throws ResponseStatusException {
+
+        Map<String, String> ids = new HashMap<>();
+        Principal principal = getPrincipal();
+
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            return keycloakPrincipal.getKeycloakSecurityContext().getRealm();
+
+        }
+        log.warn("TenantID not found in User-Token");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    /**
+     * Get tenantID and pocID from Token.
+     *
      * @return Map with tokens from keycloak (tenantID and pocID)
      * @throws ResponseStatusException 500 if Poc Information not found in User-Token
      */

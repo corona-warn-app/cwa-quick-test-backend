@@ -276,7 +276,7 @@ public class QuickTestService {
 
     private void sendResultToTestResultServer(String testResultServerHash, short result, boolean confirmationCwa)
         throws ResponseStatusException {
-        if (confirmationCwa) {
+        if (confirmationCwa && testResultServerHash != null) {
             log.info("Sending TestResult to TestResult-Server");
             QuickTestResult quickTestResult = new QuickTestResult();
             quickTestResult.setId(testResultServerHash);

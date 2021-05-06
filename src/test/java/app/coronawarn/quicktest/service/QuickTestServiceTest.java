@@ -206,6 +206,7 @@ public class QuickTestServiceTest {
         Map<String, String> ids = new HashMap<>();
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
+        quickTest.setTestResultServerHash("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(pdf.generatePdf(any(), any(), any()))

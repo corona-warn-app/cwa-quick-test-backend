@@ -83,7 +83,6 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     private LocalDate birthday;
 
-    @NotNull
     @ValidGuid
     private String testResultServerHash;
 

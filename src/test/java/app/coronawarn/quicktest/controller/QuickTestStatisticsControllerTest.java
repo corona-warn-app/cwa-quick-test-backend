@@ -117,7 +117,6 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
             .isEqualTo(quickTestStatisticsResponse.getPositiveTestCount());
         Assertions.assertThat(response.getTotalTestCount()).isEqualTo(quickTestStatisticsResponse.getTotalTestCount());
 
-
         result = mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/")
             .param("dateFrom",
@@ -132,9 +131,19 @@ class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSu
             .isEqualTo(quickTestStatisticsResponse.getPositiveTestCount());
         Assertions.assertThat(response.getTotalTestCount()).isEqualTo(quickTestStatisticsResponse.getTotalTestCount());
 
-        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-            .get("/api/quickteststatistics/"))
-            .andExpect(status().isForbidden());
+        result = mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+            .get("/api/quickteststatistics/")
+            .param("dateFrom",
+                ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME)))
+            .andExpect(status().isOk())
+            .andReturn();
+        responseBody = result.getResponse().getContentAsString();
+        response
+            = new Gson().fromJson(responseBody, QuickTestStatisticsResponse.class);
+
+        Assertions.assertThat(response.getPositiveTestCount())
+            .isEqualTo(quickTestStatisticsResponse.getPositiveTestCount());
+        Assertions.assertThat(response.getTotalTestCount()).isEqualTo(quickTestStatisticsResponse.getTotalTestCount());
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
             .get("/api/quickteststatistics/"))

@@ -207,7 +207,7 @@ public class QuickTestService {
                 quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false);
         });
 
-        quickTestRepository.deleteAllByCreatedAtBefore(deleteTimestamp);
+        quickTestRepository.deleteByCreatedAtBefore(deleteTimestamp);
     }
 
     protected void addStatistics(QuickTest quickTest) {

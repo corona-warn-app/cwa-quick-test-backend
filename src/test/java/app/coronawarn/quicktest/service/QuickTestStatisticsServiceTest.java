@@ -79,11 +79,11 @@ class QuickTestStatisticsServiceTest {
         List<QuickTestTenantStatistics> quickTestTenantStatisticsDay = new ArrayList<>();
         LocalDateTime time = LocalDateTime.of(2020, 4, 1, 0, 0, 0);
         quickTestLogs.add(generateQuickTestLog(1, time, "pocId", "tenant", false));
-        time = LocalDateTime.of(2020, 4, 1, 23, 59, 59);
+        time = LocalDateTime.of(2020, 4, 1, 23, 59, 59,59);
         quickTestLogs.add(generateQuickTestLog(1, time, "pocId", "tenant", true));
-        time = LocalDateTime.of(2020, 4, 2, 0, 0, 0);
+        time = LocalDateTime.of(2020, 4, 2, 0, 0, 0,0);
         quickTestLogs.add(generateQuickTestLog(1, time, "pocId", "tenant", false));
-        time = LocalDateTime.of(2020, 4, 2, 0, 0, 1);
+        time = LocalDateTime.of(2020, 4, 2, 0, 0, 0,1);
         quickTestLogs.add(generateQuickTestLog(1, time, "pocId", "tenant", true));
 
 

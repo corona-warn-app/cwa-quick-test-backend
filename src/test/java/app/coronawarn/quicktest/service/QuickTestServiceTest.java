@@ -238,6 +238,7 @@ public class QuickTestServiceTest {
         Map<String, String> ids = new HashMap<>();
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
+        quickTest.setTestResultServerHash("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(pdf.generatePdf(any(), any(), any()))
@@ -305,12 +306,12 @@ public class QuickTestServiceTest {
         quickTestResult.setId(quickTest.getTestResultServerHash());
         quickTestResult.setResult(quickTest.getTestResult());
 
-        when(quickTestRepository.findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(now))
+        when(quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(now ,0))
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
         quickTestService.removeAllBefore(now);
-        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(now);
+        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(now, 0);
         verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
-        verify(quickTestRepository, times(1)).deleteAllByCreatedAtBefore(now);
+        verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 
     @Test
@@ -321,7 +322,7 @@ public class QuickTestServiceTest {
         quickTest.setPrivacyAgreement(true);
         quickTest.setShortHashedGuid("00000000");
         quickTests.add(quickTest);
-        when(quickTestRepository.findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(any(), any()))
+        when(quickTestRepository.findAllByTenantIdAndPocIdAndVersionIsGreaterThan(any(), any(), any()))
                 .thenReturn(quickTests);
         List<QuickTest> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
         assertEquals(quickTests1.get(0).getPrivacyAgreement(), true);

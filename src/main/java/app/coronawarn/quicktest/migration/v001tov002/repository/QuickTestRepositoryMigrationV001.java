@@ -18,9 +18,10 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.repository;
+package app.coronawarn.quicktest.migration.v001tov002.repository;
 
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.migration.v001tov002.domain.QuickTestMigrationV001;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -28,18 +29,16 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
+public interface QuickTestRepositoryMigrationV001 extends JpaRepository<QuickTestMigrationV001, String> {
 
     QuickTest findByTenantIdAndPocIdAndShortHashedGuid(String tenantId, String pocId, String shortHash);
 
     Optional<QuickTest> findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(String tenantId, String pocId,
                                                                              String shortHash, String hashedGuid);
 
-    List<QuickTest> findAllByTenantIdAndPocIdAndVersionIsGreaterThan(String tenantId, String pocId, Integer version);
+    List<QuickTest> findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(String tenantId, String pocId);
 
+    List<QuickTest> findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(LocalDateTime time);
 
-    List<QuickTest> findAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time, Integer version);
-
-    void deleteByCreatedAtBefore(LocalDateTime time);
-
+    void deleteAllByCreatedAtBefore(LocalDateTime time);
 }

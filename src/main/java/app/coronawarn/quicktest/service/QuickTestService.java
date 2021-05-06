@@ -212,13 +212,13 @@ public class QuickTestService {
      * @param deleteTimestamp Timestamp before which everything will be deleted
      */
     public void removeAllBefore(LocalDateTime deleteTimestamp) {
-        quickTestRepository.findAllByCreatedAtBeforeAndPrivacyAgreementIsTrue(deleteTimestamp).forEach(quickTest -> {
+        quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(deleteTimestamp, 0).forEach(quickTest -> {
             this.sendResultToTestResultServer(quickTest.getTestResultServerHash(),
                 TestResult.FAILED.getValue(),
                 quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false);
         });
 
-        quickTestRepository.deleteAllByCreatedAtBefore(deleteTimestamp);
+        quickTestRepository.deleteByCreatedAtBefore(deleteTimestamp);
     }
 
     protected void addStatistics(QuickTest quickTest) {
@@ -278,16 +278,17 @@ public class QuickTestService {
      * @return List including found quicktests
      */
     public List<QuickTest> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
-        List<QuickTest> quickTests = quickTestRepository.findAllByTenantIdAndPocIdAndPrivacyAgreementIsTrue(
+        List<QuickTest> quickTests = quickTestRepository.findAllByTenantIdAndPocIdAndVersionIsGreaterThan(
             ids.get(quickTestConfig.getTenantIdKey()),
-            ids.get(quickTestConfig.getTenantPointOfCareIdKey())
+            ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+            0
         );
         return quickTests;
     }
 
     private void sendResultToTestResultServer(String testResultServerHash, short result, boolean confirmationCwa)
         throws ResponseStatusException {
-        if (confirmationCwa) {
+        if (confirmationCwa && testResultServerHash != null) {
             log.info("Sending TestResult to TestResult-Server");
             QuickTestResult quickTestResult = new QuickTestResult();
             quickTestResult.setId(testResultServerHash);

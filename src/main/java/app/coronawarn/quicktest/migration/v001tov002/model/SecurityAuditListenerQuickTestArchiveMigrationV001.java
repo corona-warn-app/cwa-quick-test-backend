@@ -1,7 +1,7 @@
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.migration.v001tov002.model;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.migration.v001tov002.domain.QuickTestArchiveMigrationV001;
 import app.coronawarn.quicktest.utils.Utilities;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
@@ -16,24 +16,26 @@ import org.springframework.web.server.ResponseStatusException;
 @Component
 @RequiredArgsConstructor
 @ConfigurationProperties("auditlogs")
-public class SecurityAuditListenerQuickTestArchive {
+public class SecurityAuditListenerQuickTestArchiveMigrationV001 {
 
     private final Utilities utilities;
     private final QuickTestConfig quickTestConfig;
     private String pattern = "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}";
 
     @PostLoad
-    private void afterSelectQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
+    private void afterSelectQuickTestArchive(QuickTestArchiveMigrationV001 quickTestArchive)
+        throws ResponseStatusException {
         createAuditLog(quickTestArchive, "Select");
     }
 
     @PostPersist
     @PostUpdate
-    private void afterSaveQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
+    private void afterSaveQuickTestArchive(QuickTestArchiveMigrationV001 quickTestArchive)
+        throws ResponseStatusException {
         createAuditLog(quickTestArchive, "Save");
     }
 
-    private void createAuditLog(QuickTestArchive quickTestArchive, String action) {
+    private void createAuditLog(QuickTestArchiveMigrationV001 quickTestArchive, String action) {
         String name;
         String tenantId;
         String pocId;

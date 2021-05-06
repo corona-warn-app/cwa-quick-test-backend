@@ -11,9 +11,12 @@ spring:
     contexts: test
   application:
     name: cwa-quick-test-backend
+  jpa:
+    hibernate:
+      ddl-auto: validate
   datasource:
     driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:log
+    url: jdbc:h2:mem:quicktest;MODE=MYSQL
     username: sa
     password: ''
   cloud:
@@ -37,7 +40,7 @@ quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   tenantPointOfCareIdKey: pocId
-  dbEncryptionPassword: abcdefghjklmnopq
+  dbEncryptionKey: abcdefghjklmnopq
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
   health-department-download-url: http://localhost

@@ -54,18 +54,15 @@ public class QuickTestArchive {
 
     @Id
     @Column(name = "hashed_guid")
-    @Convert(converter = DbEncryptionStringConverter.class)
     private String hashedGuid;
 
     @Column(name = "short_hashed_guid")
     private String shortHashedGuid;
 
     @Column(name = "tenant_id")
-    @Convert(converter = DbEncryptionStringConverter.class)
     private String tenantId;
 
     @Column(name = "poc_id")
-    @Convert(converter = DbEncryptionStringConverter.class)
     private String pocId;
 
     @Column(name = "created_at")
@@ -84,7 +81,6 @@ public class QuickTestArchive {
     private Boolean confirmationCwa;
 
     @Column(name = "test_result")
-    @Convert(converter = DbEncryptionShortConverter.class)
     private Short testResult;
 
     @Column(name = "privacy_agreement")

@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.controller;
 
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.QuickTestArchive;
@@ -81,7 +82,7 @@ public class QuickTestArchiveController {
       @ApiResponse(responseCode = "404", description = "Quicktest not found"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @RequestMapping(path = "/{hashedGuid}/pdf", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
-    @Secured(ROLE_LAB)
+    @Secured({ROLE_COUNTER, ROLE_LAB})
     public ResponseEntity<byte[]> getQuickTestPdf(
             @PathVariable String hashedGuid) {
         try {
@@ -115,7 +116,7 @@ public class QuickTestArchiveController {
       @ApiResponse(responseCode = "500", description = "Query failed because of an internal server error")
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured(ROLE_LAB)
+    @Secured({ROLE_COUNTER, ROLE_LAB})
     public ResponseEntity<QuickTestArchiveResponseList> findArchivesByTestResultAndUpdatedAtBetween(
             @RequestParam(required = false) @Min(5) @Max(8) Short testResult,
             @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateFrom,

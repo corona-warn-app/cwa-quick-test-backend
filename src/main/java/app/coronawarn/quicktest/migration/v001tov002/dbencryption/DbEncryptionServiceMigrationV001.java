@@ -18,22 +18,19 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.dbencryption;
+package app.coronawarn.quicktest.migration.v001tov002.dbencryption;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 import java.util.Base64;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.spec.GCMParameterSpec;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
@@ -42,32 +39,19 @@ import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 
 @Slf4j
 @Configuration
-public class DbEncryptionService {
+public class DbEncryptionServiceMigrationV001 {
 
     private static final Charset CHARSET = StandardCharsets.UTF_8;
-    private static DbEncryptionService instance;
+    private static DbEncryptionServiceMigrationV001 instance;
+    private final Cipher cipher;
     private final Key key;
-
-    private final Cipher encryptCipher;
-    private final Cipher decryptCipher;
-    private SecureRandom random;
-
 
     /**
      * Constructor for DbEncryptionService.
      * Initializes Cipher with ciphersuite configured in application properties.
      */
-    public DbEncryptionService(QuickTestConfig quickTestConfig) {
-        this.encryptCipher = AesBytesEncryptor.CipherAlgorithm.GCM.createCipher();
-        this.decryptCipher = AesBytesEncryptor.CipherAlgorithm.GCM.createCipher();
-        try {
-            this.random = SecureRandom.getInstance("SHA1PRNG");
-        } catch (NoSuchAlgorithmException e) {
-            throw new ValidationException(
-                "Randomstring generation not possible"
-            );
-        }
-
+    public DbEncryptionServiceMigrationV001(QuickTestConfig quickTestConfig) {
+        cipher = AesBytesEncryptor.CipherAlgorithm.CBC.createCipher();
         String dbEncryptionKey = quickTestConfig.getDbEncryptionKey();
 
         if (dbEncryptionKey != null) {
@@ -83,7 +67,7 @@ public class DbEncryptionService {
             throw new ValidationException("DB encryption key must be set!");
         }
 
-        DbEncryptionService.instance = this;
+        DbEncryptionServiceMigrationV001.instance = this;
     }
 
     /**
@@ -91,7 +75,7 @@ public class DbEncryptionService {
      *
      * @return The DbEncryptionService instance
      */
-    public static DbEncryptionService getInstance() {
+    public static DbEncryptionServiceMigrationV001 getInstance() {
         return instance;
     }
 
@@ -232,9 +216,9 @@ public class DbEncryptionService {
      *                                            requested, but the decrypted data is not bounded by the appropriate
      *                                            padding bytes
      * @throws IllegalBlockSizeException          if this cipher is a block cipher,
-     *                                            no padding has been requested (only in encryption mode), and the total
-     *                                            input length of the data processed by this cipher is not a multiple
-     *                                            of block size;
+     *                                            no padding has been requested (only in encryption mode), and the
+     *                                            total input length of the data processed by this cipher is not a
+     *                                            multiple of block size;
      * @throws InvalidAlgorithmParameterException if the given algorithm parameters are inappropriate for this cipher
      */
     public String encryptByteArray(byte[] plain) throws InvalidKeyException, BadPaddingException,
@@ -242,30 +226,24 @@ public class DbEncryptionService {
         return Base64.getEncoder().encodeToString(encrypt(plain));
     }
 
-    private byte[] decrypt(byte[] ciphertext)
+    private byte[] decrypt(byte[] encrypted)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        synchronized (decryptCipher) {
-            ByteBuffer byteBuffer = ByteBuffer.wrap(ciphertext);
-            byte[] iv = new byte[12];
-            byteBuffer.get(iv);
-            byte[] encrypted = new byte[byteBuffer.remaining()];
-            byteBuffer.get(encrypted);
-            decryptCipher.init(Cipher.DECRYPT_MODE, key, new GCMParameterSpec(128, iv));
-            return decryptCipher.doFinal(encrypted);
+        synchronized (cipher) {
+            cipher.init(Cipher.DECRYPT_MODE, key, getInitializationVector());
+            return cipher.doFinal(encrypted);
         }
     }
 
     private byte[] encrypt(byte[] plain)
         throws InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        synchronized (encryptCipher) {
-            byte[] iv = new byte[12]; // create new IV
-            random.nextBytes(iv);
-            encryptCipher.init(Cipher.ENCRYPT_MODE, key, new GCMParameterSpec(128, iv));
-            byte[] encrypted = encryptCipher.doFinal(plain);
-            ByteBuffer byteBuffer = ByteBuffer.allocate(iv.length + encrypted.length);
-            byteBuffer.put(iv);
-            byteBuffer.put(encrypted);
-            return byteBuffer.array();
+        synchronized (cipher) {
+            cipher.init(Cipher.ENCRYPT_MODE, key, getInitializationVector());
+            return cipher.doFinal(plain);
         }
+
+    }
+
+    private IvParameterSpec getInitializationVector() {
+        return new IvParameterSpec("WnU2IQhlAAN@bK~L".getBytes(CHARSET));
     }
 }

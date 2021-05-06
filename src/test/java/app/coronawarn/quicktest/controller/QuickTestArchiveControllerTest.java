@@ -72,9 +72,12 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             .isEqualTo(output);
 
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mvcResult = mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4/pdf"))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isOk()).andReturn();
+        responseBody = mvcResult.getResponse().getContentAsString();
+        Assertions.assertThat(responseBody)
+            .isEqualTo(output);
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4/pdf"))
@@ -147,7 +150,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             = new Gson().fromJson(responseBody, QuickTestArchiveResponseList.class);
         checkResponse(response.getQuickTestArchives().get(0), quickTestArchive);
 
-        mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+        mvcResult = mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
@@ -158,17 +161,21 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
 
         response
             = new Gson().fromJson(responseBody, QuickTestArchiveResponseList.class);
-        checkResponse(response.getQuickTestArchives().get(0), quickTestArchive);
+        assertEquals(response.getQuickTestArchives().size(), 0);
 
 
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+        mvcResult = mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/")
             .param("testResult", "6")
             .param("dateFrom",
                 ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
             .contentType(MediaType.APPLICATION_PDF_VALUE))
-            .andExpect(status().isForbidden());
+            .andExpect(status().isOk()).andReturn();
+        responseBody = mvcResult.getResponse().getContentAsString();
+
+        response = new Gson().fromJson(responseBody, QuickTestArchiveResponseList.class);
+        checkResponse(response.getQuickTestArchives().get(0), quickTestArchive);
 
         mockMvc().with(authentication()).perform(MockMvcRequestBuilders
             .get("/api/quicktestarchive/")

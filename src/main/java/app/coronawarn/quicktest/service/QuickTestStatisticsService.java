@@ -73,11 +73,11 @@ public class QuickTestStatisticsService {
                     start.plusSeconds(aggregation.getValue())) {
                     int totalTestCount =
                         countOfQuickTestsInTimewindow(quickTestLogs,
-                            start.minusSeconds(1), start.plusSeconds(aggregation.getValue()),
+                            start.minusNanos(1), start.plusSeconds(aggregation.getValue()),
                             false);
                     int positiveTestCount =
                         countOfQuickTestsInTimewindow(quickTestLogs,
-                            start.minusSeconds(1), start.plusSeconds(aggregation.getValue()),
+                            start.minusNanos(1), start.plusSeconds(aggregation.getValue()),
                             true);
 
                     createEntryForQuickTestTenantStatistics(

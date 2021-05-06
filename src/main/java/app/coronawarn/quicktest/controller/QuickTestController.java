@@ -180,6 +180,10 @@ public class QuickTestController {
     public ResponseEntity<Void> updateQuickTestWithPersonalData(
         @PathVariable String shortHash,
         @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
+        if (quickTestPersonalDataRequest.getConfirmationCwa()
+            && quickTestPersonalDataRequest.getTestResultServerHash() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
         try {
             quickTestService.updateQuickTestWithPersonalData(
                 utilities.getIdsFromToken(), shortHash,

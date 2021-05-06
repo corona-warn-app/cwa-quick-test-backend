@@ -13,7 +13,7 @@ public class GuidValidator implements ConstraintValidator<ValidGuid, String> {
     @Override
     public boolean isValid(String guid, ConstraintValidatorContext context) {
         if (StringUtils.isBlank(guid)) {
-            return false;
+            return true;
         } else {
             return validateGuid(guid);
         }

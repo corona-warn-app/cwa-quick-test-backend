@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
 
 import app.coronawarn.quicktest.model.Aggregation;
@@ -62,8 +63,6 @@ public class QuickTestStatisticsController {
     private final ModelMapper modelMapper;
     private final Utilities utilities;
 
-    //TODO check role
-
     /**
      * Endpoint for get statistic for QuickTest.
      *
@@ -77,7 +76,7 @@ public class QuickTestStatisticsController {
       @ApiResponse(responseCode = "200", description = "Get statistic data"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured(ROLE_COUNTER)
+    @Secured({ROLE_COUNTER, ROLE_LAB})
     public ResponseEntity<QuickTestStatisticsResponse> getQuicktestStatistics(
         @RequestParam(value = "dateFrom", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
             ZonedDateTime zonedDateFrom,

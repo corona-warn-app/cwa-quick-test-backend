@@ -139,7 +139,8 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     void catchAndConvertExceptionTests() {
         QuickTestCreationRequest quicktestCreationRequest = null;
         QuickTestUpdateRequest quickTestUpdateRequest = null;
-        QuickTestPersonalDataRequest quickTestPersonalDataRequest = null;
+        QuickTestPersonalDataRequest quickTestPersonalDataRequest = new QuickTestPersonalDataRequest();
+        quickTestPersonalDataRequest.setConfirmationCwa(false);
 
         try {
             quickTestController.createQuickTest(quicktestCreationRequest);

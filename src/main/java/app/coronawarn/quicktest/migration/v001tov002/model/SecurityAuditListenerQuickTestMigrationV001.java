@@ -1,10 +1,11 @@
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.migration.v001tov002.model;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.migration.v001tov002.domain.QuickTestMigrationV001;
 import app.coronawarn.quicktest.utils.Utilities;
 import javax.persistence.PostLoad;
 import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,24 +17,29 @@ import org.springframework.web.server.ResponseStatusException;
 @Component
 @RequiredArgsConstructor
 @ConfigurationProperties("auditlogs")
-public class SecurityAuditListenerQuickTestArchive {
+public class SecurityAuditListenerQuickTestMigrationV001 {
 
-    private final Utilities utilities;
     private final QuickTestConfig quickTestConfig;
+    private final Utilities utilities;
     private String pattern = "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}";
 
     @PostLoad
-    private void afterSelectQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
-        createAuditLog(quickTestArchive, "Select");
+    private void afterSelectQuickTest(QuickTestMigrationV001 quickTest) throws ResponseStatusException {
+        createAuditLog(quickTest, "Select");
     }
 
     @PostPersist
     @PostUpdate
-    private void afterSaveQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
-        createAuditLog(quickTestArchive, "Save");
+    private void afterSaveQuickTest(QuickTestMigrationV001 quickTest) throws ResponseStatusException {
+        createAuditLog(quickTest, "Save");
     }
 
-    private void createAuditLog(QuickTestArchive quickTestArchive, String action) {
+    @PostRemove
+    private void afterRemoveQuickTest(QuickTestMigrationV001 quickTest) throws ResponseStatusException {
+        createAuditLog(quickTest, "Remove");
+    }
+
+    private void createAuditLog(QuickTestMigrationV001 quickTest, String action) {
         String name;
         String tenantId;
         String pocId;
@@ -44,8 +50,8 @@ public class SecurityAuditListenerQuickTestArchive {
             pocId = utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey());
         } catch (ResponseStatusException e) {
             name = "called by Backend";
-            tenantId = quickTestArchive.getTenantId();
-            pocId = quickTestArchive.getPocId();
+            tenantId = quickTest.getTenantId();
+            pocId = quickTest.getPocId();
         }
 
         log.info(pattern,
@@ -53,7 +59,8 @@ public class SecurityAuditListenerQuickTestArchive {
             tenantId,
             pocId,
             action,
-            "QuickTestArchive",
-            quickTestArchive.getHashedGuid());
+            "QuickTest",
+            quickTest.getHashedGuid());
     }
+
 }

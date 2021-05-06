@@ -18,14 +18,14 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.domain;
+package app.coronawarn.quicktest.migration.v001tov002.domain;
 
-import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionByteArrayConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
-import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTestArchive;
+import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionBooleanConverterMigrationV001;
+import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionByteArrayConverterMigrationV001;
+import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionSexTypeConverterMigrationV001;
+import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionShortConverterMigrationV001;
+import app.coronawarn.quicktest.migration.v001tov002.dbencryption.DbEncryptionStringConverterMigrationV001;
+import app.coronawarn.quicktest.migration.v001tov002.model.SecurityAuditListenerQuickTestArchiveMigrationV001;
 import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
@@ -45,24 +45,27 @@ import lombok.Setter;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EntityListeners(SecurityAuditListenerQuickTestArchive.class)
+@EntityListeners(SecurityAuditListenerQuickTestArchiveMigrationV001.class)
 @Entity
-@Table(name = "quick_test_archive")
-public class QuickTestArchive {
+@Table(name = "quick_test_archive_v001")
+public class QuickTestArchiveMigrationV001 {
 
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
     @Column(name = "hashed_guid")
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String hashedGuid;
 
     @Column(name = "short_hashed_guid")
     private String shortHashedGuid;
 
     @Column(name = "tenant_id")
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String tenantId;
 
     @Column(name = "poc_id")
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String pocId;
 
     @Column(name = "created_at")
@@ -77,70 +80,71 @@ public class QuickTestArchive {
     private Integer version;
 
     @Column(name = "confirmation_cwa")
-    @Convert(converter = DbEncryptionBooleanConverter.class)
+    @Convert(converter = DbEncryptionBooleanConverterMigrationV001.class)
     private Boolean confirmationCwa;
 
     @Column(name = "test_result")
+    @Convert(converter = DbEncryptionShortConverterMigrationV001.class)
     private Short testResult;
 
     @Column(name = "privacy_agreement")
-    @Convert(converter = DbEncryptionBooleanConverter.class)
+    @Convert(converter = DbEncryptionBooleanConverterMigrationV001.class)
     private Boolean privacyAgreement;
 
     @Column(name = "last_name")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String lastName;
 
     @Column(name = "first_name")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String firstName;
 
     @Column(name = "email")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String email;
 
     @Column(name = "phone_number")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String phoneNumber;
 
     @Column(name = "sex")
-    @Convert(converter = DbEncryptionSexTypeConverter.class)
+    @Convert(converter = DbEncryptionSexTypeConverterMigrationV001.class)
     private Sex sex;
 
     @Column(name = "street")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String street;
 
     @Column(name = "house_number")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String houseNumber;
 
     @Column(name = "zip_code")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String zipCode;
 
     @Column(name = "city")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String city;
 
     @Column(name = "test_brand_id")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String testBrandId;
 
     @Column(name = "test_brand_name")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String testBrandName;
 
     @Column(name = "birthday")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String birthday;
 
     @Lob
     @Column(name = "pdf")
-    @Convert(converter = DbEncryptionByteArrayConverter.class)
+    @Convert(converter = DbEncryptionByteArrayConverterMigrationV001.class)
     private byte[] pdf;
 
     @Column(name = "test_result_server_hash")
-    @Convert(converter = DbEncryptionStringConverter.class)
+    @Convert(converter = DbEncryptionStringConverterMigrationV001.class)
     private String testResultServerHash;
 }

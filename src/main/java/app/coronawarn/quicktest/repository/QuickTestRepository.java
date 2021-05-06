@@ -40,6 +40,6 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
     List<QuickTest> findAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time, Integer version);
 
-    void deleteAllByCreatedAtBefore(LocalDateTime time);
+    void deleteByCreatedAtBefore(LocalDateTime time);
 
 }

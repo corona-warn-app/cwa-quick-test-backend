@@ -278,7 +278,7 @@ public class QuickTestServiceTest {
         quickTestService.removeAllBefore(now);
         verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(now, 0);
         verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
-        verify(quickTestRepository, times(1)).deleteAllByCreatedAtBefore(now);
+        verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 
     @Test

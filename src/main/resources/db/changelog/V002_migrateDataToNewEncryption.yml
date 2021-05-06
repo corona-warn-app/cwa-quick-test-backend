@@ -162,8 +162,6 @@ databaseChangeLog:
               - column:
                   name: privacy_agreement
                   type: varchar(50)
-                  constraints:
-                    nullable: false
               - column:
                   name: first_name
                   type: varchar(200)

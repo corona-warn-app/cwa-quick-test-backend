@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: create-statistics-table
-      author: mbaude
+      id: create-quick-test-log-table
+      author: bjarne1337
       changes:
         - createTable:
-            tableName: quick_test_statistics
+            tableName: quick_test_log
             columns:
               - column:
                   name: id
@@ -25,21 +25,11 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: created_at
-                  type: date
-                  constraints:
-                    nullable: false
-              - column:
-                  name: updated_at
                   type: datetime
                   constraints:
                     nullable: false
               - column:
-                  name: total_test_count
-                  type: int
-                  constraints:
-                    nullable: false
-              - column:
-                  name: positive_test_count
-                  type: int
+                  name: positive_test_result
+                  type: boolean
                   constraints:
                     nullable: false

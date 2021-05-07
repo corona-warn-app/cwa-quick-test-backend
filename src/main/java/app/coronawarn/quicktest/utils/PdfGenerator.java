@@ -133,7 +133,8 @@ public class PdfGenerator {
         cos.newLineAtOffset(offsetX, rect.getHeight() - 220);
         cos.showText(quicktest.getFirstName() + " " + quicktest.getLastName());
         cos.newLine();
-        cos.showText(quicktest.getStreet() + " " + quicktest.getHouseNumber());
+        cos.showText(quicktest.getStreet() + " "
+                + (quicktest.getHouseNumber() == null ? "" : quicktest.getHouseNumber()));
         cos.newLine();
         cos.showText(quicktest.getZipCode() + " " + quicktest.getCity());
         cos.newLine();

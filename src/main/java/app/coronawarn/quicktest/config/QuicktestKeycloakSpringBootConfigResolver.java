@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.adapters.KeycloakDeployment;
 import org.keycloak.adapters.KeycloakDeploymentBuilder;
@@ -14,6 +15,7 @@ import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.representations.adapters.config.AdapterConfig;
 import org.springframework.context.annotation.Configuration;
 
+@Slf4j
 @Configuration
 public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBootConfigResolver {
     private final AdapterConfig adapterConfig;
@@ -39,6 +41,10 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
             //Decode and convert in Json
             jwtBodyAsJson = objectMapper.readTree((new String(Base64.getDecoder().decode(jwtBody),
                 StandardCharsets.UTF_8)));
+        } else if (request.getHeader("Authorization") == null) {
+            log.error("Request without authorization header was sent!");
+        } else {
+            log.error("Request with authorization header but malformed bearer token was sent!");
         }
         if (
             jwtBodyAsJson != null
@@ -51,6 +57,9 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
         }
         if (realm != null) {
             tenantConfig.setRealm(realm);
+            log.debug("Using realm: {}", realm);
+        } else {
+            log.error("realm empty!");
         }
         return KeycloakDeploymentBuilder.build(tenantConfig);
     }

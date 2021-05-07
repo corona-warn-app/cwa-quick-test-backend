@@ -144,7 +144,7 @@ public class QuickTestServiceTest {
     }
 
     @Test
-    void sendMailInUpdateQuickTest() throws IOException {
+    void sendMailInUpdateQuickTest() throws IOException, EmailService.EmailServiceException {
         Map<String, String> ids = new HashMap<>();
         List<String> pocInfo = new ArrayList<>();
         QuickTest quickTest = new QuickTest();

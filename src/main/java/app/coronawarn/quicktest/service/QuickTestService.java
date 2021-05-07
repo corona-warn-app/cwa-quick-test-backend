@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.config.EmailConfig;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
@@ -57,6 +58,7 @@ public class QuickTestService {
     private final PdfGenerator pdf;
     private final EmailService emailService;
     private final HealthDepartmentService hds;
+    private final EmailConfig emailConfig;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -301,14 +303,29 @@ public class QuickTestService {
     private void sendEmail(QuickTest quickTest, byte[] rawPdf) {
         boolean emailConfirmation = quickTest.getEmailNotificationAgreement() != null
                 ? quickTest.getEmailNotificationAgreement() : false;
-        if (emailConfirmation) {
-            byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
-            emailService.sendMailToTestedPerson(quickTest.getEmail(), encryptedPdf);
+        if (emailConfig.getTestedPersonConfig().isEnabled() && emailConfirmation) {
+            try {
+                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
+                emailService.sendMailToTestedPerson(quickTest.getEmail(), encryptedPdf);
+            } catch (IOException e) {
+                log.error("Error encrypting existing pdf for tested person.");
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error encrypting existing pdf.");
+            }
         }
-        if (quickTest.getZipCode() != null && !StringUtils.isBlank(quickTest.getZipCode())) {
-            String emailAddress = hds.findHealthDepartmentEmailByZipCode(quickTest.getZipCode());
-            byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
-            emailService.sendMailToHealthDepartment(emailAddress, encryptedPdf);
+        if (emailConfig.getHealthDepartmentConfig().isEnabled()
+                && quickTest.getTestResult() == TestResult.POSITIVE.getValue()) {
+            try {
+                String emailAddress = hds.findHealthDepartmentEmailByZipCode(quickTest.getZipCode());
+                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
+                emailService.sendMailToHealthDepartment(emailAddress, encryptedPdf);
+                // update quicktestrepo true
+            } catch (EmailService.EmailServiceException e) {
+                log.error("Could not send mail to hd.");
+                // update quicktestrepo false
+            } catch (IOException e) {
+                log.error("Error encrypting existing pdf for health authority.");
+                // update quicktestrepo false
+            }
         }
     }
 

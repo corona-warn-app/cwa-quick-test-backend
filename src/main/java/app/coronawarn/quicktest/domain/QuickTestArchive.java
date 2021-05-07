@@ -147,4 +147,7 @@ public class QuickTestArchive {
     @Column(name = "email_notification_agreement")
     private Boolean emailNotificationAgreement;
 
+    @Column(name = "health_department_informed")
+    private Boolean healthDepartmentInformed;
+
 }

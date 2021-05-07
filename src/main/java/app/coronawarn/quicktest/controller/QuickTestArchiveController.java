@@ -147,4 +147,32 @@ public class QuickTestArchiveController {
         }
     }
 
+    // TODO: check role!, check log.debug above
+    @Operation(
+            summary = "",
+            description = ""
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful")
+    })
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured(ROLE_LAB)
+    public ResponseEntity<QuickTestArchiveResponseList> getUnsentPositiveTests() {
+        try {
+            List<QuickTestArchive> archives = quickTestArchiveService.findUnsentPositiveTests(
+                    utilities.getIdsFromToken());
+            TypeToken<List<QuickTestArchiveResponse>> typeToken = new TypeToken<>(){};
+            List<QuickTestArchiveResponse> quickTestArchiveResponses = modelMapper.map(
+                    archives,
+                    typeToken.getType()
+            );
+            QuickTestArchiveResponseList response = new QuickTestArchiveResponseList();
+            response.setQuickTestArchives(quickTestArchiveResponses);
+            log.info("");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "");
+        }
+    }
+
 }

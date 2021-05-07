@@ -58,7 +58,7 @@ quicktest:
   tenantPointOfCareIdKey: pocId
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
-  db-encryption-password: abcdefghjklmnopq
+  db-encryption-key: abcdefghjklmnopq
   health-department-download-url:
   health-department-download-cron: 0 */2 * * * *
   clean-up-settings:
@@ -112,3 +112,15 @@ pdf:
   birthDateDescriptionText: "Geburtstag: "
   furtherDataAboutTestDescriptionText: "Weitere Angaben zum Test: "
   executedFromDescriptionText: "Durchgeführt durch: "
+
+email:
+  tested-person:
+    enabled: false
+    subject:
+    text:
+    attachment-filename:
+  health-department:
+    enabled: false
+    subject:
+    text:
+    attachment-filename:

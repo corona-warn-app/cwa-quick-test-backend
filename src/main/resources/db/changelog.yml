@@ -36,5 +36,5 @@ databaseChangeLog:
       file: changelog/V002_migrateDataToNewEncryption.yml
       relativeToChangelogFile: true
   - include:
-      file: changelog/V001_add_emailNotificationColumn.yml
+      file: changelog/V002_add_emailNotificationColumn.yml
       relativeToChangelogFile: true

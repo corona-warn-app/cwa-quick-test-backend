@@ -77,10 +77,22 @@ testresultserver:
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
 quicktest:
-  db-encryption-password: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
+  db-encryption-key: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
   health-department-download-url: ${HEALTH_DEPARTMENT_DOWNLOAD_URL}
   health-department-download-cron: 0 0 0 */2 * *
   clean-up-settings:
     cron: 0 0 0 * * *
     max-age-in-minutes: 3600
     locklimit: 1800000
+
+email:
+  tested-person:
+    enabled: ${EMAIL_NOTIFICATION_TO_TP_ENABLED}
+    subject:
+    text:
+    attachment-filename:
+  health-department:
+    enabled: ${EMAIL_NOTIFICATION_TO_HD_ENABLED}
+    subject:
+    text:
+    attachment-filename:

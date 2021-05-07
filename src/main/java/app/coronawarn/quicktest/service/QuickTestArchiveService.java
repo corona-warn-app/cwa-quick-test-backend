@@ -2,6 +2,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -65,6 +66,19 @@ public class QuickTestArchiveService {
                 dateTo);
         }
         return archives;
+    }
+
+    /**
+     *
+     * @param ids
+     * @return
+     */
+    public List<QuickTestArchive> findUnsentPositiveTests(Map<String, String> ids) {
+        return quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndHealthDepartmentInformedIsFalse(
+                ids.get(quickTestConfig.getTenantIdKey()),
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                TestResult.POSITIVE.getValue()
+        );
     }
 
 }

@@ -13,3 +13,8 @@ databaseChangeLog:
             columns:
               name: email_notification_agreement
               type: boolean
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              name: health_department_informed
+              type: boolean

@@ -134,8 +134,10 @@ public class QuickTestService {
             log.error("generating PDF failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quicktest, pdf);
+        sendEmail(quickTestArchive, pdf);
         try {
-            quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
+            quickTestArchiveRepository.save(quickTestArchive);
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                 quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
@@ -152,7 +154,6 @@ public class QuickTestService {
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
             quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
-        sendEmail(quicktest, pdf);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
         log.info("Updated TestResult for hashedGuid with TestResult");
     }
@@ -299,7 +300,7 @@ public class QuickTestService {
         }
     }
 
-    private void sendEmail(QuickTest quickTest, byte[] rawPdf) {
+    private void sendEmail(QuickTestArchive quickTest, byte[] rawPdf) {
         boolean emailConfirmation = quickTest.getEmailNotificationAgreement() != null
                 ? quickTest.getEmailNotificationAgreement() : false;
         if (emailConfig.getTestedPerson().isEnabled() && emailConfirmation) {
@@ -317,13 +318,13 @@ public class QuickTestService {
                 String emailAddress = hds.findHealthDepartmentEmailByZipCode(quickTest.getZipCode());
                 byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
                 emailService.sendMailToHealthDepartment(emailAddress, encryptedPdf);
-                // update quicktestrepo true
+                quickTest.setHealthDepartmentInformed(true);
             } catch (EmailService.EmailServiceException e) {
                 log.error("Could not send mail to hd.");
-                // update quicktestrepo false
+                quickTest.setHealthDepartmentInformed(false);
             } catch (IOException e) {
                 log.error("Error encrypting existing pdf for health authority.");
-                // update quicktestrepo false
+                quickTest.setHealthDepartmentInformed(false);
             }
         }
     }

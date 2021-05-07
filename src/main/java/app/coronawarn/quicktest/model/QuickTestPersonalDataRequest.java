@@ -67,7 +67,6 @@ public class QuickTestPersonalDataRequest {
     @Size(min = 1, max = 255)
     private String street;
 
-    @NotNull
     @Size(min = 1, max = 15)
     private String houseNumber;
 

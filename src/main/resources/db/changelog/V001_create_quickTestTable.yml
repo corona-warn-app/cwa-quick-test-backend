@@ -1,10 +1,10 @@
 databaseChangeLog:
   - changeSet:
-      id: create-archive-table
-      author: agaricusbisporus
+      id: create-quick-test-table
+      author: bjarne1337
       changes:
         - createTable:
-            tableName: quick_test_archive
+            tableName: quick_test
             columns:
               - column:
                   name: short_hashed_guid
@@ -15,6 +15,7 @@ databaseChangeLog:
                   name: hashed_guid
                   type: varchar(108)
                   constraints:
+                    primaryKeyName: pk_quick_test
                     primaryKey: true
                     nullable: false
               - column:
@@ -46,67 +47,55 @@ databaseChangeLog:
                     nullable: false
               - column:
                   name: confirmation_cwa
-                  type: varchar(24)
-                  constraints:
-                    nullable: false
+                  type: varchar(50)
               - column:
                   name: test_result
-                  type: varchar(24)
-                  constraints:
-                    nullable: false
+                  type: smallint
               - column:
-                  name: insurance_bill_status
-                  type: varchar(24)
-                  constraints:
-                    nullable: false
+                  name: privacy_agreement
+                  type: varchar(50)
               - column:
                   name: first_name
-                  type: varchar(108)
-                  constraints:
-                    nullable: false
+                  type: varchar(200)
               - column:
                   name: last_name
-                  type: varchar(108)
-                  constraints:
-                    nullable: false
+                  type: varchar(200)
               - column:
                   name: email
-                  type: varchar(344)
+                  type: varchar(550)
               - column:
                   name: phone_number
-                  type: varchar(108)
+                  type: varchar(200)
               - column:
                   name: sex
-                  type: varchar(24)
-                  constraints:
-                    nullable: false
+                  type: varchar(60)
               - column:
                   name: street
-                  type: varchar(344)
-                  constraints:
-                    nullable: false
+                  type: varchar(550)
               - column:
                   name: house_number
-                  type: varchar(24)
-                  constraints:
-                    nullable: false
+                  type: varchar(70)
               - column:
                   name: zip_code
-                  type: varchar(24)
-                  constraints:
-                    nullable: false
+                  type: varchar(50)
               - column:
                   name: city
-                  type: varchar(344)
-                  constraints:
-                    nullable: false
+                  type: varchar(550)
               # table for antigen test types https://antigentest.bfarm.de/ords/f?p=101:100
               - column:
                   name: test_brand_id
-                  type: varchar(24)
+                  type: varchar(70)
               - column:
                   name: test_brand_name
-                  type: varchar(108)
+                  type: varchar(200)
               - column:
-                  name: pdf
-                  type: clob
+                  name: test_result_server_hash
+                  type: varchar(170)
+              - column:
+                  name: birthday
+                  type: varchar(550)
+
+        - addUniqueConstraint:
+            columnNames: short_hashed_guid, poc_id, tenant_id
+            constraintName: shorthashedAndPocAndTenant
+            tableName: quick_test

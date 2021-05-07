@@ -69,9 +69,11 @@ public class QuickTestArchiveService {
     }
 
     /**
+     * Finds all quicktests with positive test result by tenant id and poc id that were not send to health department
+     * automatically.
      *
-     * @param ids
-     * @return
+     * @param ids Map with tenantId and testscopeId
+     * @return quickTestArchives List of all found quickTestArchives
      */
     public List<QuickTestArchive> findUnsentPositiveTests(Map<String, String> ids) {
         return quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndHealthDepartmentInformedIsFalse(

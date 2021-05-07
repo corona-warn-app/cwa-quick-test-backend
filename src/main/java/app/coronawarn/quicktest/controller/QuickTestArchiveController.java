@@ -147,15 +147,20 @@ public class QuickTestArchiveController {
         }
     }
 
-    // TODO: check role!, check log.debug above
+    /**
+     * TODO: check role!, check log.debug above
+     * Endpoint for getting quicktest archives entries with positive test result where email to health authority
+     * was not sent.
+     * @return QuickTestArchiveListResponse with all found archives
+     */
     @Operation(
             summary = "",
             description = ""
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Successful")
+      @ApiResponse(responseCode = "200", description = "Successful")
     })
-    @GetMapping(value = "/unsent", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/unsentpositive", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestArchiveResponseList> getUnsentPositiveTests() {
         try {

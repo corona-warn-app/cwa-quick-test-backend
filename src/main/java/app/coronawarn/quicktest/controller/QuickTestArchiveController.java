@@ -155,7 +155,7 @@ public class QuickTestArchiveController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successful")
     })
-    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/unsent", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestArchiveResponseList> getUnsentPositiveTests() {
         try {

@@ -39,7 +39,6 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
@@ -303,7 +302,7 @@ public class QuickTestService {
     private void sendEmail(QuickTest quickTest, byte[] rawPdf) {
         boolean emailConfirmation = quickTest.getEmailNotificationAgreement() != null
                 ? quickTest.getEmailNotificationAgreement() : false;
-        if (emailConfig.getTestedPersonConfig().isEnabled() && emailConfirmation) {
+        if (emailConfig.getTestedPerson().isEnabled() && emailConfirmation) {
             try {
                 byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
                 emailService.sendMailToTestedPerson(quickTest.getEmail(), encryptedPdf);
@@ -312,7 +311,7 @@ public class QuickTestService {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error encrypting existing pdf.");
             }
         }
-        if (emailConfig.getHealthDepartmentConfig().isEnabled()
+        if (emailConfig.getHealthDepartment().isEnabled()
                 && quickTest.getTestResult() == TestResult.POSITIVE.getValue()) {
             try {
                 String emailAddress = hds.findHealthDepartmentEmailByZipCode(quickTest.getZipCode());

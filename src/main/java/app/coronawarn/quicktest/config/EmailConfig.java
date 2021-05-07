@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("email")
 public class EmailConfig {
 
-    private HealthDepartment healthDepartmentConfig;
-    private TestedPerson testedPersonConfig;
+    private HealthDepartment healthDepartment;
+    private TestedPerson testedPerson;
 
     @Getter
     @Setter

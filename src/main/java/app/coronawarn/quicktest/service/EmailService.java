@@ -61,7 +61,7 @@ public class EmailService {
         if (StringUtils.isBlank(email)) {
             return;
         }
-        EmailConfig.TestedPerson testedPersonConfig = emailConfig.getTestedPersonConfig();
+        EmailConfig.TestedPerson testedPersonConfig = emailConfig.getTestedPerson();
         EmailMessage message = new EmailMessage();
         message.setSubject(testedPersonConfig.getSubject());
         message.setText(testedPersonConfig.getText());
@@ -85,7 +85,7 @@ public class EmailService {
         if (StringUtils.isBlank(email)) {
             throw new EmailServiceException(EmailServiceException.Reason.INVALID_EMAIL_ADDRESS);
         }
-        EmailConfig.HealthDepartment healthDepartmentConfig = emailConfig.getHealthDepartmentConfig();
+        EmailConfig.HealthDepartment healthDepartmentConfig = emailConfig.getHealthDepartment();
         EmailMessage message = new EmailMessage();
         message.setSubject(healthDepartmentConfig.getSubject());
         message.setText(healthDepartmentConfig.getText());

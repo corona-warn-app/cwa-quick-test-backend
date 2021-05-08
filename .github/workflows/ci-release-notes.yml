@@ -4,6 +4,7 @@ on:
     types:
     - created
     - edited
+    - prereleased
 jobs:
   build:
     runs-on: ubuntu-latest

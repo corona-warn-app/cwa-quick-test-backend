@@ -1,39 +1,15 @@
 databaseChangeLog:
   - include:
-      file: changelog/create-tables.yml
+      file: changelog/V001_create_quickTestTable.yml
       relativeToChangelogFile: true
   - include:
-      file: changelog/V001_add_UniqueConstraints.yml
+      file: changelog/V002_create_quickTestArchiveTable.yml
       relativeToChangelogFile: true
   - include:
-      file: changelog/V001_add_archivTable.yml
+      file: changelog/V003_create_quickTestLogTable.yml
       relativeToChangelogFile: true
   - include:
-      file: changelog/V001_add_statisticsTable.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V001_add_birthdayColumn.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V001_add_privacyAgreeColumn.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V001_add_testResultServerHash.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V001_recreate_statistics.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V001_delete_UniqueConstraints_mysql.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V001_add_new_UniqueConstraints.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V001_create_shedlock_table.yml
-      relativeToChangelogFile: true
-  - include:
-      file: changelog/V002_migrateDataToNewEncryption.yml
+      file: changelog/V004_create_shedlock_table.yml
       relativeToChangelogFile: true
   - include:
       file: changelog/V002_add_emailNotificationColumn.yml

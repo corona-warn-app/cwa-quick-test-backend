@@ -68,7 +68,6 @@ public class QuickTestPersonalDataRequest {
     @Size(min = 1, max = 255)
     private String street;
 
-    @NotNull
     @Size(min = 1, max = 15)
     @Pattern(regexp = "^([1-9]{1}[0-9a-zA-Z-\\\\s/]{0,14})$")
     private String houseNumber;

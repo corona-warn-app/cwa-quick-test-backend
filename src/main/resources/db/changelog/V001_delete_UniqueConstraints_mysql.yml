@@ -1,9 +1,0 @@
-databaseChangeLog:
-  - changeSet:
-      dbms: mysql
-      id: delete-unique-constraint
-      author: mbaude
-      changes:
-        - dropUniqueConstraint:
-            constraintName: short_hashed_guid
-            tableName: quick_test

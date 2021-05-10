@@ -695,14 +695,6 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .content(gson.toJson(quickTestPersonalDataRequest)))
             .andExpect(status().isBadRequest());
 
-        quickTestPersonalDataRequest.setHouseNumber(null);
-        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
-            .put(API_BASE_PATH + "/6fa4dcec/personalData")
-            .accept(MediaType.APPLICATION_JSON_VALUE)
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .content(gson.toJson(quickTestPersonalDataRequest)))
-            .andExpect(status().isBadRequest());
-
         quickTestPersonalDataRequest.setHouseNumber(housenumber);
 
         //test zipcode

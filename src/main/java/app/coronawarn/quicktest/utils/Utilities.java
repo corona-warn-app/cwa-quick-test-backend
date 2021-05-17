@@ -76,7 +76,7 @@ public class Utilities {
                     String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
             }
 
-            if(customClaims.containsKey(quickTestConfig.getPointOfCareZipcodeKey())) {
+            if (customClaims.containsKey(quickTestConfig.getPointOfCareZipcodeKey())) {
                 ids.put(quickTestConfig.getPointOfCareZipcodeKey(),
                         String.valueOf(customClaims.get(quickTestConfig.getPointOfCareZipcodeKey())));
             }

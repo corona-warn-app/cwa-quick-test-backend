@@ -85,8 +85,7 @@ public class PdfGenerator {
         ap.setCanModifyAnnotations(false);
         ap.setCanExtractForAccessibility(false);
         ap.setCanPrintDegraded(false);
-        // TODO: change owner password
-        StandardProtectionPolicy spp = new StandardProtectionPolicy("changeit", password, ap);
+        StandardProtectionPolicy spp = new StandardProtectionPolicy(password, password, ap);
         spp.setEncryptionKeyLength(256);
         spp.setPreferAES(true);
         spp.setPermissions(ap);

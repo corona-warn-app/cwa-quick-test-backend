@@ -1,6 +1,7 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.EmailConfig;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Attachment;
 import app.coronawarn.quicktest.model.EmailMessage;
 import java.util.Collections;
@@ -43,28 +44,31 @@ public class EmailService {
                 mailSender.send(message);
             } catch (MailException e) {
                 log.error("Error while sending email: MailException");
-                throw new EmailServiceException(EmailServiceException.Reason.MAIL_EXCEPTION);
+                throw new EmailServiceException(EmailServiceException.Reason.SEND_MESSAGE_FAILED);
             }
         } catch (MessagingException e) {
             log.error("Error while preparing email: MessagingException");
-            throw new EmailServiceException(EmailServiceException.Reason.MESSAGING_EXCEPTION);
+            throw new EmailServiceException(EmailServiceException.Reason.CREATE_MESSAGE_FAILED);
         }
     }
 
     /**
      * Sends an email with result as pdf attachment to tested person.
      *
-     * @param email Email address of tested person
+     * @param quickTest Quicktest of tested person
      * @param pdf   Created pdf with test result
      */
-    public void sendMailToTestedPerson(String email, byte[] pdf) {
+    public void sendMailToTestedPerson(QuickTestArchive quickTest, byte[] pdf) {
+        String email = quickTest.getEmail();
         if (StringUtils.isBlank(email)) {
             return;
         }
         EmailConfig.TestedPerson testedPersonConfig = emailConfig.getTestedPerson();
         EmailMessage message = new EmailMessage();
         message.setSubject(testedPersonConfig.getSubject());
-        message.setText(testedPersonConfig.getText());
+        String text = testedPersonConfig.getTitleText() + quickTest.getFirstName() + " " + quickTest.getLastName() + ","
+                + testedPersonConfig.getText();
+        message.setText(text);
         message.setReceivers(Collections.singletonList(email));
         Attachment file = new Attachment();
         file.setData(pdf);
@@ -107,8 +111,8 @@ public class EmailService {
 
         public enum Reason {
             INVALID_EMAIL_ADDRESS,
-            MAIL_EXCEPTION,
-            MESSAGING_EXCEPTION
+            SEND_MESSAGE_FAILED,
+            CREATE_MESSAGE_FAILED
         }
     }
 

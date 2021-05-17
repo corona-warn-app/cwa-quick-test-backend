@@ -28,6 +28,7 @@ public class EmailConfig {
     public static class TestedPerson {
         private boolean enabled = false;
         private String subject;
+        private String titleText;
         private String text;
         private String attachmentFilename;
     }

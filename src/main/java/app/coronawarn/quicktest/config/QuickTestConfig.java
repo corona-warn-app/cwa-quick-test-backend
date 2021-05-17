@@ -17,6 +17,7 @@ public class QuickTestConfig {
     private String tenantPointOfCareIdKey;
     private String pointOfCareInformationName;
     private String pointOfCareInformationDelimiter;
+    private String pointOfCareZipcodeKey;
     private String dbEncryptionKey;
     private String healthDepartmentDownloadUrl;
     private String healthDepartmentDownloadCron;

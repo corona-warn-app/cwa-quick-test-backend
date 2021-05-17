@@ -113,14 +113,7 @@ public class PdfGeneratorTest {
         assertTrue(encPdfDoc.getEncryption().isEncryptMetaData());
         AccessPermission ap = encPdfDoc.getCurrentAccessPermission();
         assertTrue(ap.canPrint());
-        assertFalse(ap.canModify());
-        assertFalse(ap.canAssembleDocument());
-        assertFalse(ap.canFillInForm());
-        assertFalse(ap.canModify());
-        assertFalse(ap.canModifyAnnotations());
-        assertFalse(ap.canExtractForAccessibility());
-        assertFalse(ap.canPrintDegraded());
-        assertFalse(ap.isOwnerPermission());
+        assertTrue(ap.isOwnerPermission());
     }
 
     private QuickTest getQuickTest() {

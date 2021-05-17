@@ -135,7 +135,7 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quicktest, pdf);
-        sendEmail(quickTestArchive, pdf);
+        sendEmail(quickTestArchive, pdf, ids.get(quickTestConfig.getPointOfCareZipcodeKey()));
         try {
             quickTestArchiveRepository.save(quickTestArchive);
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
@@ -300,23 +300,24 @@ public class QuickTestService {
         }
     }
 
-    private void sendEmail(QuickTestArchive quickTest, byte[] rawPdf) {
+    private void sendEmail(QuickTestArchive quickTest, byte[] rawPdf, String pocZipCode) {
         boolean emailConfirmation = quickTest.getEmailNotificationAgreement() != null
                 ? quickTest.getEmailNotificationAgreement() : false;
-        if (emailConfig.getTestedPerson().isEnabled() && emailConfirmation) {
+        if (emailConfig.getTestedPerson() != null && emailConfig.getTestedPerson().isEnabled() && emailConfirmation) {
             try {
-                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
-                emailService.sendMailToTestedPerson(quickTest.getEmail(), encryptedPdf);
+                String pwd = quickTest.getStreet() + "-" + quickTest.getBirthday();
+                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, pwd).toByteArray();
+                emailService.sendMailToTestedPerson(quickTest, encryptedPdf);
             } catch (IOException e) {
                 log.error("Error encrypting existing pdf for tested person.");
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error encrypting existing pdf.");
             }
         }
-        if (emailConfig.getHealthDepartment().isEnabled()
+        if (emailConfig.getHealthDepartment() != null && emailConfig.getHealthDepartment().isEnabled()
                 && quickTest.getTestResult() == TestResult.POSITIVE.getValue()) {
             try {
-                String emailAddress = hds.findHealthDepartmentEmailByZipCode(quickTest.getZipCode());
-                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, quickTest.getZipCode()).toByteArray();
+                String emailAddress = hds.findHealthDepartmentEmailByZipCode(pocZipCode);
+                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, pocZipCode).toByteArray();
                 emailService.sendMailToHealthDepartment(emailAddress, encryptedPdf);
                 quickTest.setHealthDepartmentInformed(true);
             } catch (EmailService.EmailServiceException e) {

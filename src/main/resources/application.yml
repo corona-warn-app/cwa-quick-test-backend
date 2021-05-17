@@ -58,6 +58,7 @@ quicktest:
   tenantPointOfCareIdKey: pocId
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
+  point-of-care-zipcode-key: postal_code
   db-encryption-key: abcdefghjklmnopq
   health-department-download-url:
   health-department-download-cron: 0 */2 * * * *
@@ -116,11 +117,19 @@ pdf:
 email:
   tested-person:
     enabled: false
-    subject:
-    text:
-    attachment-filename:
+    subject: "Das Ergebnis Ihres Covid-19 Antigen-Schnelltests liegt vor."
+    title-text: "Guten Tag "
+    text: "</br></br>im Anhang erhalten Sie das Ergebnis Ihres Covid-19 Antigen-Schnelltests.</br>
+           Bitte lesen Sie die Hinweise im Dokument sorgfältig und halten Sie sich an die beschriebenen Regeln.</br>
+           Das gilt insbesondere, wenn Ihr Ergebnis positiv sein sollte. </br></br>
+           Mit freundlichen Grüßen </br>
+           Ihr Testzentrum"
+    attachment-filename: "Schnelltestergebnis.pdf"
   health-department:
     enabled: false
-    subject:
-    text:
-    attachment-filename:
+    subject: "Positives Ergebnis eines Covid-19 Antigen-Schnelltests"
+    text: "Sehr geehrte Damen und Herren, </br></br> im Anhang erhalten Sie die Daten zu einer Testperson,
+          deren Antigen-Schnelltest auf Covid-19 in unserer Teststelle positiv ausgefallen ist. </br></br>
+          Mit freundlichen Grüßen </br>
+          Ihr Testzentrum"
+    attachment-filename: ""

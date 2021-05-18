@@ -1,35 +1,20 @@
 package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
-import app.coronawarn.quicktest.domain.QuickTest;
-import app.coronawarn.quicktest.repository.QuickTestRepository;
-import app.coronawarn.quicktest.service.QuickTestService;
-import app.coronawarn.quicktest.service.TestResultService;
-import app.coronawarn.quicktest.utils.PdfGenerator;
+
 import app.coronawarn.quicktest.utils.Utilities;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+
 @SpringBootTest
 class QuickTestResultTest {
 

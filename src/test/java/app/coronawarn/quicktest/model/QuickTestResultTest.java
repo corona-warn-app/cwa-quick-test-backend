@@ -44,6 +44,40 @@ class QuickTestResultTest {
 
 
 
+//    @Test
+//    public void testCollection() throws Exception {
+//
+//        //pending
+//        Long time = System.currentTimeMillis();
+//        System.out.println();
+//      //
+//        String id = "b".repeat(64);
+//        Short resultShort = 5;
+//
+//        QuickTestResult quickTestResult = new QuickTestResult();
+//        quickTestResult.setId("id");
+//        quickTestResult.setResult((short) 5);
+//
+//        QuickTestResultList resultList = new QuickTestResultList();
+//        resultList.setTestResults(Collections.singletonList(
+//                new QuickTestResult().setId(id).setResult(resultShort).setSampleCollection(System.currentTimeMillis())
+//        ));
+//
+//        quickTestResult.setSampleCollection(System.currentTimeMillis());
+//
+//         mockMvc.perform(MockMvcRequestBuilders
+//                .post("/api/v1/quicktest/results")
+//                .accept(MediaType.APPLICATION_JSON_VALUE)
+//                .contentType(MediaType.APPLICATION_JSON_VALUE)
+//                .content(objectMapper.writeValueAsString(resultList)))
+//                .andDo(MockMvcResultHandlers.print())
+//                .andExpect(MockMvcResultMatchers.status().isNoContent());
+//            System.out.println();
+//
+//
+//
+//    }
+
     @Test
     public void testFeignUpdateQuickTestResultTest(){
 

@@ -24,7 +24,6 @@ package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.validation.ValidGuid;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalDateTime;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -66,8 +65,10 @@ public class QuickTestResult {
     @NotNull
     private Short result;
 
-    @NotNull
-    private LocalDateTime updatedAt;
+    /**
+     * Timestamp of the SampleCollection (sc).
+     */
+    private Long sc;
 
     public QuickTestResult setId(String id) {
         this.id = id;
@@ -79,8 +80,8 @@ public class QuickTestResult {
         return this;
     }
 
-    public QuickTestResult setLocalDateTime(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
+    public QuickTestResult setSampleCollection(Long sc) {
+        this.sc = sc;
         return this;
     }
 }

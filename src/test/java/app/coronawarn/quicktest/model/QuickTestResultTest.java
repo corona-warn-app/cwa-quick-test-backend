@@ -3,47 +3,57 @@ package app.coronawarn.quicktest.model;
 import app.coronawarn.quicktest.client.TestResultServerClient;
 
 import app.coronawarn.quicktest.utils.Utilities;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mysql.cj.util.TestUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+
 @SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("external")
 class QuickTestResultTest {
 
 
+    @Autowired
+    private MockMvc mockMvc;
+    @Autowired
+    private ObjectMapper objectMapper;
     @MockBean
     TestResultServerClient testResultServerClient;
 
 
 
     @Test
-    void setLocalDateTime() {
-
-        LocalDateTime localTime = Utilities.getCurrentLocalDateTimeUtc();
-        LocalDateTime localDateTime = LocalDateTime.now(ZoneOffset.UTC);
-        assertEquals(localTime,localDateTime);
-
-
-
-    }
-
-    @Test
     public void testFeignUpdateQuickTestResultTest(){
+
         ResponseEntity<Void> responseEntity =  ResponseEntity.noContent().build();
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
         QuickTestResult quickTestResult = new QuickTestResult();
         quickTestResult.setId("id");
         quickTestResult.setResult((short) 5);
-        quickTestResult.setLocalDateTime(Utilities.getCurrentLocalDateTimeUtc());
+        quickTestResult.setSampleCollection(System.currentTimeMillis());
         assertNotNull(quickTestResult);
         List<QuickTestResult> testResultList = new ArrayList<>();
         testResultList.add(quickTestResult);

@@ -40,7 +40,6 @@ class QuickTestResultTest {
         ResponseEntity<Void> responseEntity =  ResponseEntity.noContent().build();
         assertEquals(HttpStatus.NO_CONTENT, responseEntity.getStatusCode());
         assertNull(responseEntity.getBody());
-        System.out.println();
         QuickTestResult quickTestResult = new QuickTestResult();
         quickTestResult.setId("id");
         quickTestResult.setResult((short) 5);

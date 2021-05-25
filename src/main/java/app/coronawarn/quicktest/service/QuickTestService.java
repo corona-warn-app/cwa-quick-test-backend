@@ -148,7 +148,7 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
-                quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
+            quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
             quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
         log.info("Updated TestResult for hashedGuid with TestResult");
@@ -190,7 +190,7 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
-                quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
+            quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
             quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
@@ -206,7 +206,8 @@ public class QuickTestService {
     public void removeAllBefore(LocalDateTime deleteTimestamp) {
         quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(deleteTimestamp, 0).forEach(quickTest -> {
             this.sendResultToTestResultServer(quickTest.getTestResultServerHash(),
-                TestResult.FAILED.getValue(), deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
+                TestResult.FAILED.getValue(),
+                deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
                 quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false);
         });
 

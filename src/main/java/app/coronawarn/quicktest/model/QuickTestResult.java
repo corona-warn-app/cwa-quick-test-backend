@@ -20,8 +20,6 @@
 
 package app.coronawarn.quicktest.model;
 
-
-
 import app.coronawarn.quicktest.validation.ValidGuid;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Max;

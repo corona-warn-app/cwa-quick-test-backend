@@ -21,6 +21,7 @@ import app.coronawarn.quicktest.utils.Utilities;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -203,10 +204,12 @@ public class QuickTestServiceTest {
 
     @Test
     void callResultServerInUpdateQuickTestTest() throws IOException, ResponseStatusException {
+        LocalDateTime now = ZonedDateTime.now().withNano(0).toLocalDateTime();
         Map<String, String> ids = new HashMap<>();
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
+        quickTest.setUpdatedAt(now);
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(pdf.generatePdf(any(), any(), any()))
@@ -262,16 +265,19 @@ public class QuickTestServiceTest {
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("");
         quickTest.setTestResult((short) 8);
+        quickTest.setUpdatedAt(now);
 
         QuickTest quickTest1 = new QuickTest();
         quickTest1.setConfirmationCwa(false);
         quickTest1.setTestResultServerHash("");
         quickTest1.setTestResult((short) 8);
+        quickTest1.setUpdatedAt(now);
 
 
         QuickTestResult quickTestResult = new QuickTestResult();
         quickTestResult.setId(quickTest.getTestResultServerHash());
         quickTestResult.setResult(quickTest.getTestResult());
+        quickTestResult.setSampleCollection(quickTest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC));
 
         when(quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(now ,0))
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));

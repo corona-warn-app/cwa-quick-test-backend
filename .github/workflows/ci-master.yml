@@ -9,8 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+    - with:
+        fetch-depth: 0
     - name: environment
-      run: |
+      run: >-
         APP_SHA=$(git rev-parse --short ${GITHUB_SHA});
         echo "APP_SHA=${APP_SHA}" >> ${GITHUB_ENV};
         APP_REV=$(git rev-list --tags --max-count=1);

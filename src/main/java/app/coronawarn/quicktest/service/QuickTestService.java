@@ -123,6 +123,7 @@ public class QuickTestService {
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
+        quicktest.setUpdatedAt(LocalDateTime.now());
         if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
             // Result needs to be positive or negative
             if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
@@ -134,7 +135,6 @@ public class QuickTestService {
                 }
             }
         }
-
         addStatistics(quicktest);
         byte[] pdf;
         try {

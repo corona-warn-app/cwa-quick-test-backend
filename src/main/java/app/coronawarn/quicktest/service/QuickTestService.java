@@ -122,7 +122,7 @@ public class QuickTestService {
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
-
+        quicktest.setUpdatedAt(LocalDateTime.now());                                        
         addStatistics(quicktest);
         byte[] pdf;
         try {

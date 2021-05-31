@@ -119,11 +119,14 @@ class DccServiceTest {
         quickTest.setTenantId("4711");
         quickTest.setPocId("4711-A");
         quickTest.setTestBrandId("AT116/21");
+        quickTest.setBirthday("2001-02-01");
         quickTest.setTestBrandName("Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal)");
         quickTest.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 11));
         quickTest.setUpdatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
         quickTest.setFirstName("Joe");
         quickTest.setLastName("Miller");
+        quickTest.setStandardisedGivenName("JOE");
+        quickTest.setStandardisedFamilyName("MILLER");
         quickTest.setStreet("Boe");
         quickTest.setHouseNumber("11");
         quickTest.setPrivacyAgreement(Boolean.FALSE);

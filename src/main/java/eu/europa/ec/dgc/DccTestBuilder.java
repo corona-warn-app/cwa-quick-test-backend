@@ -53,7 +53,7 @@ public class DccTestBuilder {
     }
 
     public DccTestBuilder gnt(String gnt) {
-        nameObject.set("fnt",jsonNodeFactory.textNode(gnt));
+        nameObject.set("gnt",jsonNodeFactory.textNode(gnt));
         return this;
     }
 

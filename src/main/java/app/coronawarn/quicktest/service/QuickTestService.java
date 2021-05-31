@@ -182,7 +182,11 @@ public class QuickTestService {
         quicktest.setZipCode(quickTestPersonalData.getZipCode());
         quicktest.setCity(quickTestPersonalData.getCity());
         quicktest.setBirthday(quickTestPersonalData.getBirthday());
+        quicktest.setStandardisedFamilyName(quickTestPersonalData.getStandardisedFamilyName());
+        quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
+        quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
+        quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {

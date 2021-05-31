@@ -26,7 +26,7 @@ public interface DccServerClient {
     @PostMapping(value = "/api/v1/test/{testId}/dcc",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    DccSignatureData uploadDCC(@RequestBody @NotNull @Valid DccUploadData dccUploadData);
+    DccSignatureData uploadDcc(@RequestBody @NotNull @Valid DccUploadData dccUploadData);
 
 
 }

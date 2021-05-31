@@ -123,10 +123,11 @@ public class QuickTestService {
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
-        if (quicktest.getDccConsent()!=null && quicktest.getDccConsent()) {
+        if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
             // Result needs to be positive or negative
-            if ((quicktest.getTestResult()==6 || quicktest.getTestResult()==7) && quicktest.getDccStatus()==null) {
-                if (quicktest.getConfirmationCwa()!=null && quicktest.getConfirmationCwa()) {
+            if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
+                    && quicktest.getDccStatus() == null) {
+                if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
                     quicktest.setDccStatus(DccStatus.pendingPublicKey);
                 } else {
                     quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);

@@ -9,16 +9,17 @@ import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.jcajce.provider.digest.MD2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -81,7 +82,7 @@ class DccServiceTest {
         DccSignatureData dccSignatureData = new DccSignatureData();
         dccSignatureData.setSignature("qmC/fFnfBDPWmHN5+w9usV0G3HERoPiM4WyeMsoYGqBNHc3c" +
                 "DfUkpYvvcQ34IAsRDFTUw/3fhZtCs3epi9dAPw==");
-        given(dccServerClient.uploadDCC(any(DccUploadData.class))).willReturn(dccSignatureData);
+        given(dccServerClient.uploadDcc(any(DccUploadData.class))).willReturn(dccSignatureData);
 
         dccService.collectPublicKeys();
 
@@ -89,7 +90,7 @@ class DccServiceTest {
         assertNotNull(quickTest.getDccSignData());
         assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
 
-        dccService.uploadDCCData();
+        dccService.uploadDccData();
 
         quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
         assertEquals(DccStatus.complete, quickTest.getDccStatus());
@@ -106,14 +107,20 @@ class DccServiceTest {
         publicKeyBase64 = Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
     }
 
-    private QuickTest getData() {
+    private QuickTest getData() throws Exception {
         QuickTest quickTest = new QuickTest();
         quickTest.setZipCode("12345");
         quickTest.setTestResult((short) 6);
-        quickTest.setHashedGuid("mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht");
+        Random random = new Random();
+        byte[] rndBytes = new byte[32];
+        random.nextBytes(rndBytes);
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        String hash = Base64.getEncoder().encodeToString(digest.digest(rndBytes));
+
+        quickTest.setHashedGuid(hash);
         quickTest.setCity("oyvkpigcga");
         quickTest.setConfirmationCwa(Boolean.TRUE);
-        quickTest.setShortHashedGuid("cjfybkfn");
+        quickTest.setShortHashedGuid(hash.substring(0,8));
         quickTest.setPhoneNumber("00491777777777777");
         quickTest.setEmail("test@test.test");
         quickTest.setTenantId("4711");

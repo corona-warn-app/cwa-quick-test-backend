@@ -155,22 +155,22 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;
 
-    @Column(name= "dcc")
+    @Column(name = "dcc")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String dcc;
 
-    @Column(name="dcc_sign_data")
+    @Column(name = "dcc_sign_data")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String dccSignData;
 
-    @Column(name="dcc_unsigned")
+    @Column(name = "dcc_unsigned")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String dccUnsigned;
 
     @Column(name = "dcc_public_key")
     private String publicKey;
 
-    @Column(name="dcc_status")
+    @Column(name = "dcc_status")
     private DccStatus dccStatus;
 
     @PrePersist

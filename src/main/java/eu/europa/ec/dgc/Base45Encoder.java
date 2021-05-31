@@ -1,11 +1,19 @@
 package eu.europa.ec.dgc;
 
+/**
+ * encoder for base45.
+ */
 public class Base45Encoder {
     private static final String ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ $%*+-./:";
 
+    /**
+     * encode to string.
+     * @param bytes bytes
+     * @return encoded string
+     */
     public static String encodeToString(byte[] bytes) {
         StringBuilder result = new StringBuilder();
-        for (int i = 0;i<bytes.length;i+=2) {
+        for (int i = 0;i < bytes.length;i += 2) {
             if (bytes.length - i > 1) {
                 int x = ((bytes[i] & 0xFF) << 8) + (bytes[i + 1] & 0xFF);
                 int e = x / (45 * 45);
@@ -13,8 +21,7 @@ public class Base45Encoder {
                 int d = y / 45;
                 int c = y % 45;
                 result.append(ALPHABET.charAt(c)).append(ALPHABET.charAt(d)).append(ALPHABET.charAt(e));
-            }
-            else {
+            } else {
                 int x = bytes[i] & 0xFF;
                 int d = x / 45;
                 int c = x % 45;

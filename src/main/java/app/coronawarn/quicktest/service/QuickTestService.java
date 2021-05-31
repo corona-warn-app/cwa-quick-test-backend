@@ -148,7 +148,7 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
-            LocalDateTime.now().toEpochSecond(ZoneOffset.UTC),
+            quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
             quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
         log.info("Updated TestResult for hashedGuid with TestResult");

@@ -1,14 +1,18 @@
 package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.service.QuickTestService;
+import app.coronawarn.quicktest.utils.Utilities;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,7 +21,8 @@ import static org.mockito.Mockito.*;
 @SpringBootTest
 public class QuickTestResultTest{
 
-
+    @Autowired
+    QuickTestConfig quickTestConfig;
     @MockBean
     private QuickTestService quickTestService;
     @MockBean
@@ -74,6 +79,14 @@ public class QuickTestResultTest{
         assertEquals(responseEntity, testResultServerClient.results(quickTestResultList));
         verify(testResultServerClient, times(1)).results(quickTestResultList);
 
+    }
+
+    @Test
+    public void testGetPocInformationFromToken(){
+        Stream<String> stringStream = Stream.of("", "b", "c", "d","e");
+        String[] stringArray = stringStream.toArray(size -> new String[size]);
+           String firstValue = stringArray[0];
+        System.out.println("FirstValue_____:"+firstValue);
     }
 
 

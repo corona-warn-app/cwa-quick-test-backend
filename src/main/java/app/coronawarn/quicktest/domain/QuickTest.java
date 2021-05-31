@@ -135,6 +135,22 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String birthday;
 
+    @Column(name = "standardised_family_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String standardisedFamilyName;
+
+    @Column(name = "standardised_given_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String standardisedGivenName;
+
+    @Column(name = "disease_agent_targeted")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String diseaseAgentTargeted;
+
+    @Column(name = "dcc_consent")
+    @Convert(converter = DbEncryptionBooleanConverter.class)
+    private Boolean dccConsent;
+
     @Column(name = "test_result_server_hash")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;

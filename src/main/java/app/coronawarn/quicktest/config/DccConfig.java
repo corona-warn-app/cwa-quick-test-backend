@@ -20,4 +20,5 @@ public class DccConfig {
     @DurationUnit(ChronoUnit.DAYS)
     @NotNull
     private Duration expired;
+    private String dgciPrefix;
 }

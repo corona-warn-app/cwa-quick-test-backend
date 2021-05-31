@@ -1,5 +1,6 @@
 package app.coronawarn.quicktest.client;
 
+import app.coronawarn.quicktest.model.DccSignatureData;
 import app.coronawarn.quicktest.model.DccUploadData;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ public interface DccServerClient {
     @PostMapping(value = "/api/v1/test/{testId}/dcc",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    void uploadDCC(@RequestBody @NotNull @Valid DccUploadData dccUploadData);
+    DccSignatureData uploadDCC(@RequestBody @NotNull @Valid DccUploadData dccUploadData);
 
 
 }

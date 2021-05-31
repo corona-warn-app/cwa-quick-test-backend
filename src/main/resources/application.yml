@@ -110,3 +110,8 @@ pdf:
   birthDateDescriptionText: "Geburtstag: "
   furtherDataAboutTestDescriptionText: "Weitere Angaben zum Test: "
   executedFromDescriptionText: "Durchgeführt durch: "
+
+dcc:
+  algId: -7
+  keyId: jd4FUVxAJjY=
+  dgciPrefix: URN:UVCI:V1:DE

@@ -38,7 +38,7 @@ public class DccService {
     private final QuickTestRepository quickTestRepository;
     private final DgcCryptedPublisher dgcCryptedPublisher = new DgcCryptedPublisher();
     // TODO take dgci prefix this from config
-    private final DgciGenerator dgciGenerator = new DgciGenerator("URN:UVCI:V1:DE");
+    private final DgciGenerator dgciGenerator;
 
     // TODO to be scheduled look up for keys, then generate dcc and prepare for upload
     // should open transaction pro quick test

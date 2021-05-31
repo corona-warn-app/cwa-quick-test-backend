@@ -7,11 +7,23 @@ databaseChangeLog:
             tableName: quick_test
             columns:
               - column:
+                  name: standardised_family_name
+                  type: varchar(550)
+              - column:
+                  name: standardised_given_name
+                  type: varchar(550)
+              - column:
+                  name: disease_agent_targeted
+                  type: varchar(550)
+              - column:
+                  name: dcc_consent
+                  type: varchar(50)
+              - column:
                   name: dcc
-                  type: varchar(1024)
+                  type: varchar(2024)
               - column:
                   name: dcc_unsigned
-                  type: varchar(1024)
+                  type: varchar(2024)
               - column:
                   name: dcc_status
                   type: int
@@ -21,3 +33,11 @@ databaseChangeLog:
               - column:
                   name: dcc_sign_data
                   type: varchar(4000)
+        - createIndex:
+            tableName: quick_test
+            indexName: idx_dcc_status
+            columns:
+              - column:
+                  name: dcc_status
+
+

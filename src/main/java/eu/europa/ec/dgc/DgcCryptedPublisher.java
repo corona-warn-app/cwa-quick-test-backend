@@ -28,6 +28,7 @@ public class DgcCryptedPublisher {
 
         DgcData dgcData = new DgcData();
         dgcData.setHash(edgcHash);
+        dgcData.setDccData(edgcCoseUnsigned);
 
         try {
             encryptData(dgcData, edgcCoseUnsigned, publicKey);
@@ -54,7 +55,7 @@ public class DgcCryptedPublisher {
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
         byte[] edgcDataEncrpyted = cipher.doFinal(edgcCoseUnsigned);
 
-        dgcData.setData(edgcDataEncrpyted);
+        dgcData.setDataEncrypted(edgcDataEncrpyted);
 
         // encrypt RSA key
         Cipher keyCipher = Cipher.getInstance(KEY_CIPHER);

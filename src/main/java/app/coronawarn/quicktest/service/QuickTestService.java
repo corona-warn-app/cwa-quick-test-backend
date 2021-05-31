@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.domain.QuickTestLog;
@@ -187,6 +188,12 @@ public class QuickTestService {
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
         quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
+        if (quickTestPersonalData.getDccConsent()!=null && quickTestPersonalData.getDccConsent()) {
+            // Result needs to be positive or negative
+            if ((quicktest.getTestResult()==6 || quicktest.getTestResult()==7) && quicktest.getDccStatus()==null) {
+                quicktest.setDccStatus(DccStatus.pendingPublicKey);
+            }
+        }
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {

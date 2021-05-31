@@ -2,8 +2,9 @@ package eu.europa.ec.dgc.dto;
 
 public class DgcData {
     private byte[] dek;
-    private byte[] data;
+    private byte[] dataEncrypted;
     private byte[] hash;
+    private byte[] dccData;
 
     public byte[] getDek() {
         return dek;
@@ -13,12 +14,12 @@ public class DgcData {
         this.dek = dek;
     }
 
-    public byte[] getData() {
-        return data;
+    public byte[] getDataEncrypted() {
+        return dataEncrypted;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public void setDataEncrypted(byte[] dataEncrypted) {
+        this.dataEncrypted = dataEncrypted;
     }
 
     public byte[] getHash() {
@@ -27,5 +28,13 @@ public class DgcData {
 
     public void setHash(byte[] hash) {
         this.hash = hash;
+    }
+
+    public byte[] getDccData() {
+        return dccData;
+    }
+
+    public void setDccData(byte[] dccData) {
+        this.dccData = dccData;
     }
 }

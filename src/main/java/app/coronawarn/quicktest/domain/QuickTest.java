@@ -155,6 +155,24 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;
 
+    @Column(name= "dcc")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String dcc;
+
+    @Column(name="dcc_sign_data")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String dccSignData;
+
+    @Column(name="dcc_unsigned")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String dccUnsigned;
+
+    @Column(name = "dcc_public_key")
+    private String publicKey;
+
+    @Column(name="dcc_status")
+    private DccStatus dccStatus;
+
     @PrePersist
     private void onCreate() {
         LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();

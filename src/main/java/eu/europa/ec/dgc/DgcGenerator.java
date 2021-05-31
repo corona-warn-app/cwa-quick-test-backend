@@ -29,6 +29,9 @@ public class DgcGenerator {
      */
     public byte[] genDGCCbor(String edgcJson, String countryCode, long issuedAt, long expirationSec) {
         CBORObject map = CBORObject.NewMap();
+        if (countryCode==null || countryCode.length()==0) {
+            throw new IllegalArgumentException("dcc issuer is null or empty");
+        }
         map.set(CBORObject.FromObject(1),CBORObject.FromObject(countryCode));
         map.set(CBORObject.FromObject(6),CBORObject.FromObject(issuedAt));
         map.set(CBORObject.FromObject(4),CBORObject.FromObject(expirationSec));

@@ -67,6 +67,9 @@ public class QuickTestResult {
      * Timestamp of the SampleCollection (sc).
      */
     private Long sc;
+    private String testCenter;
+    private String countryOfTest;
+    private String certificateIssuer;
 
     public QuickTestResult setId(String id) {
         this.id = id;
@@ -82,4 +85,20 @@ public class QuickTestResult {
         this.sc = sc;
         return this;
     }
+
+    public QuickTestResult setTestCenter(String testCenter) {
+        this.testCenter = testCenter;
+        return this;
+    }
+
+    public QuickTestResult setCountryOfTest(String countryOfTest) {
+        this.countryOfTest = countryOfTest;
+        return this;
+    }
+
+    public QuickTestResult setCertificateIssuer(String certificateIssuer) {
+        this.certificateIssuer = certificateIssuer;
+        return this;
+    }
+
 }

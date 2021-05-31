@@ -11,3 +11,6 @@ databaseChangeLog:
   - include:
       file: changelog/V004_create_shedlock_table.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V005_add_quick_test_table.yml
+      relativeToChangelogFile: true

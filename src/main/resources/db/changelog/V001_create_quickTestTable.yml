@@ -94,18 +94,6 @@ databaseChangeLog:
               - column:
                   name: birthday
                   type: varchar(550)
-              - column:
-                  name: standardised_family_name
-                  type: varchar(550)
-              - column:
-                  name: standardised_given_name
-                  type: varchar(550)
-              - column:
-                  name: disease_agent_targeted
-                  type: varchar(550)
-              - column:
-                  name: dcc_consent
-                  type: varchar(50)
 
         - addUniqueConstraint:
             columnNames: short_hashed_guid, poc_id, tenant_id

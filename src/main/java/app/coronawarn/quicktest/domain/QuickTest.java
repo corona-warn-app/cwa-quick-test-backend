@@ -52,6 +52,9 @@ public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
+    /**
+     * alias TestId in another systems.
+     */
     @Id
     @Column(name = "hashed_guid")
     private String hashedGuid;

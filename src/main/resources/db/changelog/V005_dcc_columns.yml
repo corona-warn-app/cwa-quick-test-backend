@@ -1,0 +1,43 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-dcc-columns
+      author: a-trzewik
+      changes:
+        - addColumn:
+            tableName: quick_test
+            columns:
+              - column:
+                  name: standardised_family_name
+                  type: varchar(550)
+              - column:
+                  name: standardised_given_name
+                  type: varchar(550)
+              - column:
+                  name: disease_agent_targeted
+                  type: varchar(550)
+              - column:
+                  name: dcc_consent
+                  type: varchar(50)
+              - column:
+                  name: dcc
+                  type: varchar(2024)
+              - column:
+                  name: dcc_unsigned
+                  type: varchar(2024)
+              - column:
+                  name: dcc_status
+                  type: int
+              - column:
+                  name: dcc_public_key
+                  type: varchar(1024)
+              - column:
+                  name: dcc_sign_data
+                  type: varchar(4000)
+        - createIndex:
+            tableName: quick_test
+            indexName: idx_dcc_status
+            columns:
+              - column:
+                  name: dcc_status
+
+

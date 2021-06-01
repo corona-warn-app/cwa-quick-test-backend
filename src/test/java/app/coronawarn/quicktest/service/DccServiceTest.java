@@ -3,21 +3,23 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.client.DccServerClient;
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
-import app.coronawarn.quicktest.model.DccSignatureData;
+import app.coronawarn.quicktest.model.DccPublicKey;
+import app.coronawarn.quicktest.model.DccPublicKeyList;
+import app.coronawarn.quicktest.model.DccUploadResult;
 import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import eu.europa.ec.dgc.DgciGenerator;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
-import org.bouncycastle.jcajce.provider.digest.MD2;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -36,6 +38,8 @@ class DccServiceTest {
     @Autowired
     QuickTestRepository quickTestRepository;
 
+    private DgciGenerator dgciGenerator = new DgciGenerator("URN:UVCI:V1:DE");
+
     @MockBean
     DccServerClient dccServerClient;
     private String publicKeyBase64;
@@ -50,10 +54,7 @@ class DccServiceTest {
         quickTest.setTestResult((short)6);
         quickTestRepository.saveAndFlush(quickTest);
 
-        Map<String,String> testPublicKey = new HashMap<>();
-        testPublicKey.put(quickTest.getHashedGuid(),publicKeyBase64);
-
-        given(dccServerClient.searchPublicKeys(anyList())).willReturn(testPublicKey);
+        initDccMockPublicKey(quickTest);
 
         dccService.collectPublicKeys();
 
@@ -62,6 +63,19 @@ class DccServiceTest {
         assertNotNull(quickTest.getDccUnsigned());
         assertNotNull(quickTest.getDccSignData());
         assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
+    }
+
+    private void initDccMockPublicKey(QuickTest quickTest) {
+        DccPublicKeyList dccPublicKeyList = new DccPublicKeyList();
+        List<DccPublicKey> publicKeys = new ArrayList<>();
+        DccPublicKey dccPublicKey = new DccPublicKey();
+        dccPublicKey.setPublicKey(publicKeyBase64);
+        dccPublicKey.setTestId(quickTest.getHashedGuid());
+        dccPublicKey.setDcci(dgciGenerator.newDgci());
+        publicKeys.add(dccPublicKey);
+        dccPublicKeyList.setPublicKeys(publicKeys);
+
+        given(dccServerClient.searchPublicKeys(any())).willReturn(dccPublicKeyList);
     }
 
     @Test
@@ -74,15 +88,12 @@ class DccServiceTest {
         quickTest.setTestResult((short)6);
         quickTestRepository.saveAndFlush(quickTest);
 
-        Map<String,String> testPublicKey = new HashMap<>();
-        testPublicKey.put(quickTest.getHashedGuid(),publicKeyBase64);
+        initDccMockPublicKey(quickTest);
 
-        given(dccServerClient.searchPublicKeys(anyList())).willReturn(testPublicKey);
-
-        DccSignatureData dccSignatureData = new DccSignatureData();
-        dccSignatureData.setSignature("qmC/fFnfBDPWmHN5+w9usV0G3HERoPiM4WyeMsoYGqBNHc3c" +
-                "DfUkpYvvcQ34IAsRDFTUw/3fhZtCs3epi9dAPw==");
-        given(dccServerClient.uploadDcc(any(DccUploadData.class))).willReturn(dccSignatureData);
+        DccUploadResult dccUploadResult = new DccUploadResult();
+        dccUploadResult.setPartialDcc("0oRDoQEmoQRIDEsVUSvpFAFYLE5DaW8rN3NPRWdVb3UyQktabmh4QWlnT0cxNG0yM1pqUE9OOGlrV" +
+                "W01RVU9WEBp4Y4j9Nfh3wCYga4Fc7FnFWyabFJFv7kBASW/yltT9rk98q95SyB3OLKa1p8Y+w+BzgPLE5+6VLL/LHVsMRA6");
+        given(dccServerClient.uploadDcc(any(),any(DccUploadData.class))).willReturn(dccUploadResult);
 
         dccService.collectPublicKeys();
 

@@ -21,4 +21,22 @@ public class DccConfig {
     @NotNull
     private Duration expired;
     private String dgciPrefix;
+
+    private SearchPublicKeysJob searchPublicKeysJob;
+    private UploadDccJob uploadDccJob;
+
+    @Getter
+    @Setter
+    public static class SearchPublicKeysJob {
+        private String fixedDelayString;
+        private int lockLimit;
+    }
+
+    @Getter
+    @Setter
+    public static class UploadDccJob {
+        private String fixedDelayString;
+        private int lockLimit;
+    }
+
 }

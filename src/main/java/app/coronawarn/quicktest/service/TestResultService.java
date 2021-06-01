@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.model.QuickTestResult;
 import app.coronawarn.quicktest.model.QuickTestResultList;
 import feign.FeignException;
@@ -38,6 +39,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class TestResultService {
 
     private final TestResultServerClient testResultServerClient;
+    private final QuickTestConfig quickTestConfig;
 
     /**
      * Creates or updates a QuickTest in TestResult Server.
@@ -47,6 +49,7 @@ public class TestResultService {
     public void createOrUpdateTestResult(QuickTestResult quickTestResult) throws ResponseStatusException {
         try {
             QuickTestResultList resultList = new QuickTestResultList();
+            resultList.setLabId(quickTestConfig.getLabId());
             resultList.setTestResults(Collections.singletonList(quickTestResult));
             if (testResultServerClient.results(resultList).getStatusCode() != HttpStatus.NO_CONTENT) {
                 log.error("Failed to update testresult");

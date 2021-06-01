@@ -18,6 +18,7 @@ public class QuickTestConfig {
     private String pointOfCareInformationName;
     private String pointOfCareInformationDelimiter;
     private String dbEncryptionKey;
+    private String labId;
 
     @Getter
     @Setter

@@ -53,6 +53,7 @@ server:
     include-exception: true
     include-binding-errors: always
     include-message: always
+
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
@@ -60,6 +61,7 @@ quicktest:
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
   db-encryption-key: abcdefghjklmnopq
+  labId: labId4711
   clean-up-settings:
     cron: 0 * * * * *
     max-age-in-minutes: 2
@@ -112,11 +114,26 @@ pdf:
   furtherDataAboutTestDescriptionText: "Weitere Angaben zum Test: "
   executedFromDescriptionText: "Durchgeführt durch: "
 
+dccserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePath: classpath:keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: classpath:truststore.jks
+  trustStorePassword: changeit
+
 cwa-dcc-server:
   url: http://localhost:8080
 
 dcc:
   algId: -7
-  keyId: jd4FUVxAJjY=
   issuer: DE
-  dgciPrefix: URN:UVCI:V1:DE
+  expired: 354
+  searchPublicKeysJob:
+    fixedDelayString: 30000
+    lockLimit: 1800000
+  uploadDccJob:
+    fixedDelayString: 30000
+    lockLimit: 1800000

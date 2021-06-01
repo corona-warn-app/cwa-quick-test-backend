@@ -1,5 +1,7 @@
 package app.coronawarn.quicktest.config;
 
+import eu.europa.ec.dgc.DgcCryptedPublisher;
+import eu.europa.ec.dgc.DgcGenerator;
 import eu.europa.ec.dgc.DgciGenerator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -11,7 +13,12 @@ public class DccBeanConfig {
     private final DccConfig dccConfig;
 
     @Bean
-    DgciGenerator createDgciGenerator() {
-        return new DgciGenerator(dccConfig.getDgciPrefix());
+    DgcGenerator dgcGenerator() {
+        return new DgcGenerator();
+    }
+
+    @Bean
+    DgcCryptedPublisher dgcCryptedPublisher() {
+        return new DgcCryptedPublisher();
     }
 }

@@ -181,6 +181,12 @@
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>${jackson.version}</version>
         </dependency>
+        <!-- dgc -->
+        <dependency>
+            <groupId>com.upokecenter</groupId>
+            <artifactId>cbor</artifactId>
+            <version>4.0.1</version>
+        </dependency>
 
         <!-- DB drivers -->
         <dependency>

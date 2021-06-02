@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.EmailConfig;
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.domain.QuickTestLog;
@@ -33,6 +34,7 @@ import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -125,7 +127,18 @@ public class QuickTestService {
         quicktest.setTestResult(result);
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
-
+        quicktest.setUpdatedAt(LocalDateTime.now());
+        if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
+            // Result needs to be positive or negative
+            if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
+                    && quicktest.getDccStatus() == null) {
+                if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
+                    quicktest.setDccStatus(DccStatus.pendingPublicKey);
+                } else {
+                    quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
+                }
+            }
+        }
         addStatistics(quicktest);
         byte[] pdf;
         try {
@@ -153,6 +166,7 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
+            quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
             quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
         log.info("Updated TestResult for hashedGuid with TestResult");
@@ -192,7 +206,11 @@ public class QuickTestService {
         quicktest.setZipCode(quickTestPersonalData.getZipCode());
         quicktest.setCity(quickTestPersonalData.getCity());
         quicktest.setBirthday(quickTestPersonalData.getBirthday());
+        quicktest.setStandardisedFamilyName(quickTestPersonalData.getStandardisedFamilyName());
+        quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
+        quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
+        quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
         quicktest.setEmailNotificationAgreement(quickTestPersonalData.getEmailNotificationAgreement());
         try {
             quickTestRepository.saveAndFlush(quicktest);
@@ -201,6 +219,7 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
+            quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
             quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
@@ -217,6 +236,7 @@ public class QuickTestService {
         quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(deleteTimestamp, 0).forEach(quickTest -> {
             this.sendResultToTestResultServer(quickTest.getTestResultServerHash(),
                 TestResult.FAILED.getValue(),
+                deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
                 quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false);
         });
 
@@ -288,13 +308,14 @@ public class QuickTestService {
         return quickTests;
     }
 
-    private void sendResultToTestResultServer(String testResultServerHash, short result, boolean confirmationCwa)
-        throws ResponseStatusException {
+    private void sendResultToTestResultServer(String testResultServerHash, short result, Long sc,
+                                              boolean confirmationCwa)throws ResponseStatusException {
         if (confirmationCwa && testResultServerHash != null) {
             log.info("Sending TestResult to TestResult-Server");
             QuickTestResult quickTestResult = new QuickTestResult();
             quickTestResult.setId(testResultServerHash);
             quickTestResult.setResult(result);
+            quickTestResult.setSampleCollection(sc);
             testResultService.createOrUpdateTestResult(quickTestResult);
             log.info("Update TestResult on TestResult-Server successfully.");
         }

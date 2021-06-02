@@ -60,6 +60,7 @@ quicktest:
   pointOfCareInformationDelimiter: \,
   point-of-care-zipcode-key: postal_code
   db-encryption-key: abcdefghjklmnopq
+  labId: labId4711
   health-department-download-url:
   health-department-download-cron: 0 */2 * * * *
   clean-up-settings:
@@ -113,6 +114,30 @@ pdf:
   birthDateDescriptionText: "Geburtstag: "
   furtherDataAboutTestDescriptionText: "Weitere Angaben zum Test: "
   executedFromDescriptionText: "Durchgeführt durch: "
+
+dccserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePath: classpath:keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: classpath:truststore.jks
+  trustStorePassword: changeit
+
+cwa-dcc-server:
+  url: http://localhost:8080
+
+dcc:
+  algId: -7
+  issuer: DE
+  expired: 354
+  searchPublicKeysJob:
+    fixedDelayString: 30000
+    lockLimit: 1800000
+  uploadDccJob:
+    fixedDelayString: 30000
+    lockLimit: 1800000
 
 email:
   tested-person:

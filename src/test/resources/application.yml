@@ -51,6 +51,22 @@ quicktest:
     max-age-in-minutes: 2
     locklimit: 1800000
 
+cwa-dcc-server:
+  url: http://localhost:8080
+
+dcc:
+  algId: -7
+  # keyId: jd4FUVxAJjY=
+  dgciPrefix: URN:UVCI:V1:DE
+  issuer: DE
+  expired: 354
+  searchPublicKeysJob:
+    cron: "*/2 * * * * *"
+    lockLimit: 1800000
+  uploadDccJob:
+    cron: "*/2 * * * * *"
+    lockLimit: 1800000
+
 email:
   tested-person:
     enabled: true

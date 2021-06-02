@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.repository;
 
+import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +40,8 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
 
     List<QuickTest> findAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time, Integer version);
+
+    List<QuickTest> findAllByDccStatus(DccStatus dccStatus);
 
     void deleteByCreatedAtBefore(LocalDateTime time);
 

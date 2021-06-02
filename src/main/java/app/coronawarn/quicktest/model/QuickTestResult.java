@@ -30,6 +30,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
+
+
 /**
  * Model of the test result.
  */
@@ -61,6 +63,14 @@ public class QuickTestResult {
     @NotNull
     private Short result;
 
+    /**
+     * Timestamp of the SampleCollection (sc).
+     */
+    private Long sc;
+    private String testCenter;
+    private String countryOfTest;
+    private String certificateIssuer;
+
     public QuickTestResult setId(String id) {
         this.id = id;
         return this;
@@ -70,4 +80,25 @@ public class QuickTestResult {
         this.result = result;
         return this;
     }
+
+    public QuickTestResult setSampleCollection(Long sc) {
+        this.sc = sc;
+        return this;
+    }
+
+    public QuickTestResult setTestCenter(String testCenter) {
+        this.testCenter = testCenter;
+        return this;
+    }
+
+    public QuickTestResult setCountryOfTest(String countryOfTest) {
+        this.countryOfTest = countryOfTest;
+        return this;
+    }
+
+    public QuickTestResult setCertificateIssuer(String certificateIssuer) {
+        this.certificateIssuer = certificateIssuer;
+        return this;
+    }
+
 }

@@ -12,5 +12,8 @@ databaseChangeLog:
       file: changelog/V004_create_shedlock_table.yml
       relativeToChangelogFile: true
   - include:
+      file: changelog/V005_dcc_columns.yml
+      relativeToChangelogFile: true
+  - include:
       file: changelog/V002_add_emailNotificationColumn.yml
       relativeToChangelogFile: true

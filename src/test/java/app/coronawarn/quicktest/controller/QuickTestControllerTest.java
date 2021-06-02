@@ -313,7 +313,9 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setConfirmationCwa(true);
         quickTestPersonalDataRequest.setPrivacyAgreement(true);
         quickTestPersonalDataRequest.setLastName("1");
+        quickTestPersonalDataRequest.setStandardisedFamilyName("TR");
         quickTestPersonalDataRequest.setFirstName("1");
+        quickTestPersonalDataRequest.setStandardisedGivenName("ARTUR");
         quickTestPersonalDataRequest.setEmail("v@e.o");
         quickTestPersonalDataRequest.setPhoneNumber("+490000");
         quickTestPersonalDataRequest.setSex(Sex.DIVERSE);
@@ -321,7 +323,13 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setHouseNumber("1a");
         quickTestPersonalDataRequest.setZipCode("11111");
         quickTestPersonalDataRequest.setCity("f");
+        quickTestPersonalDataRequest.setDccConsent(true);
+        quickTestPersonalDataRequest.setDiseaseAgentTargeted("t");
         quickTestPersonalDataRequest.setBirthday(LocalDate.now());
+        quickTestPersonalDataRequest.setStandardisedFamilyName("standardisedFamilyName");
+        quickTestPersonalDataRequest.setStandardisedGivenName("standardisedGivenName");
+        quickTestPersonalDataRequest.setDiseaseAgentTargeted("diseaseAgentTargeted");
+        quickTestPersonalDataRequest.setDccConsent(true);
         quickTestPersonalDataRequest.setTestResultServerHash(
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         quickTestPersonalDataRequest.setEmailNotificationAgreement(false);

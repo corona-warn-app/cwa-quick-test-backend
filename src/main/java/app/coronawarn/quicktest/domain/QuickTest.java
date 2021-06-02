@@ -53,6 +53,9 @@ public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
+    /**
+     * alias TestId in another systems.
+     */
     @Id
     @Column(name = "hashed_guid")
     private String hashedGuid;
@@ -136,9 +139,43 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String birthday;
 
+    @Column(name = "standardised_family_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String standardisedFamilyName;
+
+    @Column(name = "standardised_given_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String standardisedGivenName;
+
+    @Column(name = "disease_agent_targeted")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String diseaseAgentTargeted;
+
+    @Column(name = "dcc_consent")
+    @Convert(converter = DbEncryptionBooleanConverter.class)
+    private Boolean dccConsent;
+
     @Column(name = "test_result_server_hash")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;
+
+    @Column(name = "dcc")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String dcc;
+
+    @Column(name = "dcc_sign_data")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String dccSignData;
+
+    @Column(name = "dcc_unsigned")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String dccUnsigned;
+
+    @Column(name = "dcc_public_key")
+    private String publicKey;
+
+    @Column(name = "dcc_status")
+    private DccStatus dccStatus;
 
     @Column(name = "email_notification_agreement")
     private Boolean emailNotificationAgreement;

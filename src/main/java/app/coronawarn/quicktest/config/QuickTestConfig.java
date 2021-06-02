@@ -19,6 +19,7 @@ public class QuickTestConfig {
     private String pointOfCareInformationDelimiter;
     private String pointOfCareZipcodeKey;
     private String dbEncryptionKey;
+    private String labId;
     private String healthDepartmentDownloadUrl;
     private String healthDepartmentDownloadCron;
 

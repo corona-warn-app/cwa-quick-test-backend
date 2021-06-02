@@ -26,4 +26,9 @@ public class QuickTestResultList {
         return this;
     }
 
+    private String labId;
+
+    public void setLabId(String labId) {
+        this.labId = labId;
+    }
 }

@@ -84,6 +84,20 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     private LocalDate birthday;
 
+    @NotNull
+    @Size(min = 1, max = 50)
+    private String standardisedFamilyName;
+
+    @NotNull
+    @Size(min = 1, max = 50)
+    private String standardisedGivenName;
+
+    @NotNull
+    private String diseaseAgentTargeted;
+
+    @NotNull
+    private Boolean dccConsent;
+
     @ValidGuid
     private String testResultServerHash;
 

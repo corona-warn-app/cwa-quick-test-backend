@@ -323,13 +323,11 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setHouseNumber("a");
         quickTestPersonalDataRequest.setZipCode("11111");
         quickTestPersonalDataRequest.setCity("f");
-        quickTestPersonalDataRequest.setDccConsent(true);
         quickTestPersonalDataRequest.setDiseaseAgentTargeted("t");
         quickTestPersonalDataRequest.setBirthday(LocalDate.now());
         quickTestPersonalDataRequest.setStandardisedFamilyName("standardisedFamilyName");
         quickTestPersonalDataRequest.setStandardisedGivenName("standardisedGivenName");
         quickTestPersonalDataRequest.setDiseaseAgentTargeted("diseaseAgentTargeted");
-        quickTestPersonalDataRequest.setDccConsent(true);
         quickTestPersonalDataRequest.setTestResultServerHash(
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
 
@@ -512,7 +510,8 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
-            .andExpect(status().isBadRequest());
+        //    .andExpect(status().isBadRequest());
+            .andExpect(status().isNoContent());
         quickTestPersonalDataRequest.setEmail(email);
 
 

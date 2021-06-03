@@ -124,17 +124,6 @@ public class QuickTestService {
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
         quicktest.setUpdatedAt(LocalDateTime.now());
-        if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
-            // Result needs to be positive or negative
-            if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
-                    && quicktest.getDccStatus() == null) {
-                if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
-                    quicktest.setDccStatus(DccStatus.pendingPublicKey);
-                } else {
-                    quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
-                }
-            }
-        }
         addStatistics(quicktest);
         byte[] pdf;
         try {
@@ -198,7 +187,6 @@ public class QuickTestService {
         quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
-        quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {

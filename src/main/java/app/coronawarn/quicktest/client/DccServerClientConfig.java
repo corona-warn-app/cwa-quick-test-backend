@@ -20,31 +20,24 @@
 
 package app.coronawarn.quicktest.client;
 
-import app.coronawarn.quicktest.config.DccApplicationConfig;
-import app.coronawarn.quicktest.exception.DccException;
+import app.coronawarn.quicktest.config.DccServerValuesConfig;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Collections;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpHost;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.message.BasicHeader;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
-
-
-
+import org.springframework.web.server.ResponseStatusException;
 
 
 @Configuration
@@ -52,64 +45,49 @@ import org.springframework.util.ResourceUtils;
 @Slf4j
 public class DccServerClientConfig {
 
-    private final DccApplicationConfig config;
+    private final DccServerValuesConfig config;
 
     /**
-     * Configure the client depending on the ssl properties.
+     * HttpClient for connection to Test-Result-Server.
      *
-     * @return an Apache Http Client with or without SSL features
+     * @return Instance of HttpClient
      */
     @Bean
-    public Client signingApiClient() {
-        HttpClientBuilder httpClientBuilder = HttpClientBuilder.create();
-
-        if (config.getSigningApiServer().isEnableMtls()) {
-            httpClientBuilder.setSSLContext(getSslContext());
-            httpClientBuilder.setSSLHostnameVerifier(getSslHostnameVerifier());
+    public Client dccClient() {
+        if (config.isEnabled()) {
+            return new ApacheHttpClient(
+                    HttpClientBuilder
+                            .create()
+                            .setSSLContext(getSslContext())
+                            .setSSLHostnameVerifier(getSslHostnameVerifier())
+                            .build()
+            );
         }
-
-        if (config.getSigningApiServer().getProxy().isEnabled()) {
-            httpClientBuilder.setProxy(new HttpHost(
-                    config.getSigningApiServer().getProxy().getHost(),
-                    config.getSigningApiServer().getProxy().getPort()
-            ));
-        }
-
-        if (config.getSigningApiServer().getApiKey() != null) {
-            httpClientBuilder.setDefaultHeaders(Collections.singletonList(
-                    new BasicHeader(HttpHeaders.AUTHORIZATION, "Bearer " + config.getSigningApiServer().getApiKey())
-            ));
-        }
-
-        return new ApacheHttpClient(httpClientBuilder.build());
+        return new ApacheHttpClient(HttpClientBuilder.create()
+                .setSSLHostnameVerifier(getSslHostnameVerifier())
+                .build());
     }
 
     private SSLContext getSslContext() {
         try {
             SSLContextBuilder builder = SSLContextBuilder
                     .create();
-
-            builder.loadTrustMaterial(ResourceUtils.getFile(config.getSigningApiServer().getTrustStorePath()),
-                    config.getSigningApiServer().getTrustStorePassword());
-
-
-            builder.loadKeyMaterial(ResourceUtils.getFile(config.getSigningApiServer().getKeyStorePath()),
-                    config.getSigningApiServer().getKeyStorePassword(),
-                    config.getSigningApiServer().getKeyStorePassword());
-
+            if (config.isOneWay()) {
+                builder.loadTrustMaterial(ResourceUtils.getFile(config.getTrustStorePath()),
+                        config.getTrustStorePassword());
+            }
+            if (config.isTwoWay()) {
+                builder.loadKeyMaterial(ResourceUtils.getFile(config.getKeyStorePath()),
+                        config.getKeyStorePassword(),
+                        config.getKeyStorePassword());
+            }
             return builder.build();
         } catch (IOException | GeneralSecurityException e) {
-            log.error("The SSL context for Signing Server could not be loaded. Exception: {} {}",
-                    e.getClass().getSimpleName(), e.getMessage());
-
-            throw new DccException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "The SSL context for Signing Server could not be loaded.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "The SSL context could not be loaded.");
         }
     }
 
     private HostnameVerifier getSslHostnameVerifier() {
-        return config.getSigningApiServer().isVerifyHostnames()
-                ? new DefaultHostnameVerifier() : new NoopHostnameVerifier();
+        return config.isHostnameVerify() ? new DefaultHostnameVerifier() : new NoopHostnameVerifier();
     }
-
 }

@@ -86,6 +86,8 @@ public class DccService {
                             + " which in not in state pendingPublicKey");
                 }
             }
+        } else {
+            log.info("No new Quicktests with DCC available");
         }
     }
 
@@ -109,8 +111,11 @@ public class DccService {
                 quickTest.setDccStatus(DccStatus.complete);
                 quickTestRepository.saveAndFlush(quickTest);
             } catch (JsonProcessingException e) {
-                log.warn("error during signing {}", quickTest.getHashedGuid(), e);
+                log.warn("Error during signing {}", quickTest.getHashedGuid(), e);
+            } catch (IllegalArgumentException e) {
+                log.warn("Argument error during signing {}", quickTest.getHashedGuid(), e);
             }
+
         }
     }
 

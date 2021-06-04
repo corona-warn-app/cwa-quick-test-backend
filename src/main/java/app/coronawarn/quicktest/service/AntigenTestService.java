@@ -101,8 +101,6 @@ public class AntigenTestService {
                     .withSeparator(';')
                     .withIgnoreQuotations(true)
                     .build();
-            // CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(inputStreamCsv,
-            // Charset.defaultCharset()))
             CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(inputStreamCsv, "UTF-8"))
                     .withSkipLines(1)
                     .withCSVParser(parser)

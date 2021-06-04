@@ -51,7 +51,6 @@ public class QuickTestPersonalDataRequest {
     private String firstName;
 
     @Email
-    @NotNull
     @Size(min = 5, max = 255)
     private String email;
 
@@ -92,9 +91,6 @@ public class QuickTestPersonalDataRequest {
 
     @NotNull
     private String diseaseAgentTargeted;
-
-    @NotNull
-    private Boolean dccConsent;
 
     @ValidGuid
     private String testResultServerHash;

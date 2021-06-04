@@ -150,10 +150,6 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String diseaseAgentTargeted;
 
-    @Column(name = "dcc_consent")
-    @Convert(converter = DbEncryptionBooleanConverter.class)
-    private Boolean dccConsent;
-
     @Column(name = "test_result_server_hash")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;

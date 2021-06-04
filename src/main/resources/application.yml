@@ -128,7 +128,8 @@ cwa-dcc-server:
 
 dcc:
   algId: -7
-  issuer: DE
+  country: DE
+  issuer: RKI
   expired: 354
   searchPublicKeysJob:
     fixedDelayString: 30000

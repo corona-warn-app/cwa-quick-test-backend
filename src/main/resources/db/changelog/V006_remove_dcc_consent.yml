@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: remove-dcc-consent-column
+      author: f11h
+      changes:
+        - dropColumn:
+            tableName: quick_test
+            columnName: dcc_consent
+

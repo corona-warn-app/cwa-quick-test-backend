@@ -5,5 +5,5 @@ databaseChangeLog:
       changes:
         - dropColumn:
             tableName: quick_test
-            columName: dcc_consent
+            columnName: dcc_consent
 

@@ -16,9 +16,6 @@ databaseChangeLog:
                   name: disease_agent_targeted
                   type: varchar(550)
               - column:
-                  name: dcc_consent
-                  type: varchar(50)
-              - column:
                   name: dcc
                   type: varchar(2024)
               - column:

@@ -150,15 +150,10 @@ public class DccService {
         dccTestBuilder.detected(covidDetected)
                 .testTypeRapid(true)
                 .dgci(dgci)
-                .countryOfTest(dccConfig.getIssuer())
-                // TODO is pocid the testing centre
+                .countryOfTest(dccConfig.getCountry())
                 .testingCentre(quickTest.getPocId())
-                // TODO what is dcc sample collection date - we assume the db time is utc already
                 .sampleCollection(quickTest.getUpdatedAt())
-                // TODO is certificate issuer the tenant id
-                .certificateIssuer(quickTest.getTenantId());
-
-
+                .certificateIssuer(dccConfig.getIssuer());
         return dccTestBuilder.toJsonString();
     }
 

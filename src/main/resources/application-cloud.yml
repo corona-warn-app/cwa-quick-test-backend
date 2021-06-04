@@ -76,6 +76,14 @@ testresultserver:
   keyStorePassword: ${QUICK_TEST_KEYSTORE_TRS_PASSWORD}
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
+dccserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePassword: ${DCC_KEYSTORE_PASSWORD}
+  trustStorePassword: ${DCC_TRUSTSTORE_PASSWORD}
+
 quicktest:
   db-encryption-key: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
   clean-up-settings:
@@ -83,28 +91,3 @@ quicktest:
     max-age-in-minutes: 3600
     locklimit: 1800000
 
-cwa:
-  dcc:
-    verification-server:
-      enable-mtls: true
-      base-url: ${CWA_DCC_VERIFICATIONSERVER_BASEURL}
-      key-store-path: ${CWA_DCC_VERIFICATIONSERVER_KEYSTOREPATH}
-      key-store-password: ${CWA_DCC_VERIFICATIONSERVER_KEYSTOREPASSWORD}
-      trust-store-path: ${CWA_DCC_VERIFICATIONSERVER_TRUSTSTOREPATH}
-      trust-store-password: ${CWA_DCC_VERIFICATIONSERVER_TRUSTSTOREPASSWORD}
-      verify-hostnames: false
-    signing-api-server:
-      enable-mtls: true
-      base-url: ${CWA_DCC_SIGNINGAPISERVER_BASEURL}
-      key-store-path: ${CWA_DCC_SIGNINGAPISERVER_KEYSTOREPATH}
-      key-store-password: ${CWA_DCC_SIGNINGAPISERVER_KEYSTOREPASSWORD}
-      trust-store-password: ${CWA_DCC_SIGNINGAPISERVER_TRUSTSTOREPASSWORD}
-      trust-store-path: ${CWA_DCC_SIGNINGAPISERVER_TRUSTSTOREPATH}
-      api-key: ${CWA_DCC_SIGNINGAPISERVER_APIKEY}
-      verify-hostnames: true
-    request:
-      sizelimit: 10000
-    entities:
-      cleanup:
-        days: 21
-        rate: 1800000

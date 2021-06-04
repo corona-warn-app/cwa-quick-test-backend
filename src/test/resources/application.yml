@@ -86,3 +86,10 @@ email:
           Mit freundlichen Grüßen </br>
           Ihr Testzentrum"
     attachment-filename: ""
+
+otc-sms-server:
+  url:
+sms:
+  enabled: true
+  passwordLength: 6
+  messageTemplate: "Das Passwort für Ihr Testergebnis lautet: %s"

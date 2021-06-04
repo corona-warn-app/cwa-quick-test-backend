@@ -3,18 +3,15 @@ package app.coronawarn.quicktest.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import app.coronawarn.quicktest.config.EmailConfig;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
@@ -56,11 +53,7 @@ public class QuickTestServiceTest {
     @Mock
     private TestResultService testResultService;
     @Mock
-    private EmailConfig emailConfig;
-    @Mock
-    private EmailService emailService;
-    @Mock
-    private HealthDepartmentService healthDepartmentService;
+    private NotificationService notificationService;
 
     @Mock
     private PdfGenerator pdf;
@@ -148,76 +141,7 @@ public class QuickTestServiceTest {
     }
 
     @Test
-    void sendMailInUpdateQuickTest() throws IOException, EmailService.EmailServiceException {
-        Map<String, String> ids = new HashMap<>();
-        ids.put("postal_code", "12345");
-        List<String> pocInfo = new ArrayList<>();
-        QuickTest quickTest = new QuickTest();
-        quickTest.setConfirmationCwa(false);
-        quickTest.setShortHashedGuid("0");
-        quickTest.setHashedGuid("0");
-        quickTest.setPrivacyAgreement(true);
-        quickTest.setEmailNotificationAgreement(true);
-        quickTest.setEmail("mail@example.tld");
-        quickTest.setZipCode("12345");
-        EmailConfig.TestedPerson tp = new EmailConfig.TestedPerson();
-        tp.setEnabled(true);
-        EmailConfig.HealthDepartment hd = new EmailConfig.HealthDepartment();
-        hd.setEnabled(true);
-
-        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any())).thenReturn(quickTest);
-        when(quickTestRepository.save(any())).thenReturn(null);
-        when(pdf.generatePdf(any(), any(), any())).thenReturn(new ByteArrayOutputStream());
-        when(pdf.encryptPdf(any(), any())).thenReturn(new ByteArrayOutputStream());
-        when(healthDepartmentService.findHealthDepartmentEmailByZipCode("12345")).thenReturn("covid@example.tld");
-        when(emailConfig.getTestedPerson()).thenReturn(tp);
-        when(emailConfig.getHealthDepartment()).thenReturn(hd);
-        when(quickTestConfig.getPointOfCareZipcodeKey()).thenReturn("postal_code");
-
-        quickTestService.updateQuickTest(ids, "0", (short) 6, "testBrandId", "testBrandName", pocInfo, "user");
-        verify(pdf, times(1)).encryptPdf(any(), any());
-        verify(emailService, times(1)).sendMailToTestedPerson(any(), any());
-        verify(emailService, times(0)).sendMailToHealthDepartment(any(), any());
-
-        quickTestService.updateQuickTest(ids, "0", (short) 7, "testBrandId", "testBrandName", pocInfo, "user");
-        verify(emailService, times(2)).sendMailToTestedPerson(any(), any());
-        verify(emailService, times(1)).sendMailToHealthDepartment(any(), any());
-    }
-
-    @Test
-    void sendMailInUpdateQuickDisabledTest() throws IOException, EmailService.EmailServiceException {
-        Map<String, String> ids = new HashMap<>();
-        ids.put("postal_code", "12345");
-        List<String> pocInfo = new ArrayList<>();
-        QuickTest quickTest = new QuickTest();
-        quickTest.setConfirmationCwa(false);
-        quickTest.setShortHashedGuid("0");
-        quickTest.setHashedGuid("0");
-        quickTest.setPrivacyAgreement(true);
-        quickTest.setEmailNotificationAgreement(true);
-        quickTest.setEmail("mail@example.tld");
-        quickTest.setZipCode("12345");
-        EmailConfig.TestedPerson tp = new EmailConfig.TestedPerson();
-        tp.setEnabled(false);
-        EmailConfig.HealthDepartment hd = new EmailConfig.HealthDepartment();
-        hd.setEnabled(false);
-
-        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any())).thenReturn(quickTest);
-        when(quickTestRepository.save(any())).thenReturn(null);
-        when(pdf.generatePdf(any(), any(), any())).thenReturn(new ByteArrayOutputStream());
-        when(pdf.encryptPdf(any(), any())).thenReturn(new ByteArrayOutputStream());
-        when(healthDepartmentService.findHealthDepartmentEmailByZipCode("12345")).thenReturn("covid@example.tld");
-        when(emailConfig.getTestedPerson()).thenReturn(tp);
-        when(emailConfig.getHealthDepartment()).thenReturn(hd);
-        when(quickTestConfig.getPointOfCareZipcodeKey()).thenReturn("postal_code");
-
-        quickTestService.updateQuickTest(ids, "0", (short) 7, "testBrandId", "testBrandName", pocInfo, "user");
-        verify(emailService, times(0)).sendMailToTestedPerson(any(), any());
-        verify(emailService, times(0)).sendMailToHealthDepartment(any(), any());
-    }
-
-    @Test
-    void UpdateNotFoundTest() throws IOException {
+    void UpdateNotFoundTest() {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(null);

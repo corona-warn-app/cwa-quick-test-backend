@@ -58,7 +58,7 @@ public class EmailService {
      * @param quickTest Quicktest of tested person
      * @param pdf   Created pdf with test result
      */
-    public void sendMailToTestedPerson(QuickTestArchive quickTest, byte[] pdf) {
+    public void sendMailToTestedPerson(QuickTestArchive quickTest, byte[] pdf) throws EmailServiceException {
         String email = quickTest.getEmail();
         if (StringUtils.isBlank(email)) {
             return;
@@ -73,11 +73,7 @@ public class EmailService {
         Attachment file = new Attachment();
         file.setData(pdf);
         file.setName(testedPersonConfig.getAttachmentFilename());
-        try {
-            sendMail(message, file);
-        } catch (EmailServiceException e) {
-            log.error("Sending mail to tested person failed.");
-        }
+        sendMail(message, file);
     }
 
     /**

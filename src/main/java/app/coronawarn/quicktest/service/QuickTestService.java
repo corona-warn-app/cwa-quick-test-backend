@@ -20,7 +20,6 @@
 
 package app.coronawarn.quicktest.service;
 
-import app.coronawarn.quicktest.config.EmailConfig;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
@@ -57,9 +56,7 @@ public class QuickTestService {
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
-    private final EmailService emailService;
-    private final HealthDepartmentService hds;
-    private final EmailConfig emailConfig;
+    private final NotificationService notificationService;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -148,7 +145,8 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quicktest, pdf);
-        sendEmail(quickTestArchive, pdf, ids.get(quickTestConfig.getPointOfCareZipcodeKey()));
+        notificationService.handleMailNotification(quickTestArchive, pdf,
+          ids.get(quickTestConfig.getPointOfCareZipcodeKey()));
         try {
             quickTestArchiveRepository.save(quickTestArchive);
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
@@ -318,36 +316,6 @@ public class QuickTestService {
             quickTestResult.setSampleCollection(sc);
             testResultService.createOrUpdateTestResult(quickTestResult);
             log.info("Update TestResult on TestResult-Server successfully.");
-        }
-    }
-
-    private void sendEmail(QuickTestArchive quickTest, byte[] rawPdf, String pocZipCode) {
-        boolean emailConfirmation = quickTest.getEmailNotificationAgreement() != null
-                ? quickTest.getEmailNotificationAgreement() : false;
-        if (emailConfig.getTestedPerson() != null && emailConfig.getTestedPerson().isEnabled() && emailConfirmation) {
-            try {
-                String pwd = quickTest.getStreet() + "-" + quickTest.getBirthday();
-                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, pwd).toByteArray();
-                emailService.sendMailToTestedPerson(quickTest, encryptedPdf);
-            } catch (IOException e) {
-                log.error("Error encrypting existing pdf for tested person.");
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error encrypting existing pdf.");
-            }
-        }
-        if (emailConfig.getHealthDepartment() != null && emailConfig.getHealthDepartment().isEnabled()
-                && quickTest.getTestResult() == TestResult.POSITIVE.getValue()) {
-            try {
-                String emailAddress = hds.findHealthDepartmentEmailByZipCode(pocZipCode);
-                byte[] encryptedPdf = pdf.encryptPdf(rawPdf, pocZipCode).toByteArray();
-                emailService.sendMailToHealthDepartment(emailAddress, encryptedPdf);
-                quickTest.setHealthDepartmentInformed(true);
-            } catch (EmailService.EmailServiceException e) {
-                log.error("Could not send mail to hd.");
-                quickTest.setHealthDepartmentInformed(false);
-            } catch (IOException e) {
-                log.error("Error encrypting existing pdf for health authority.");
-                quickTest.setHealthDepartmentInformed(false);
-            }
         }
     }
 

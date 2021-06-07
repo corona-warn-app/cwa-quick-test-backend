@@ -262,7 +262,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
-            .andExpect(status().isBadRequest());
+            .andExpect(status().isNoContent());
 
         quickTestUpdateRequest.setTestBrandId(null);
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders

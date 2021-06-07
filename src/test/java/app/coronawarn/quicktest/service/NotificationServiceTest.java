@@ -42,18 +42,22 @@ class NotificationServiceTest {
         EmailConfig.HealthDepartment hd = new EmailConfig.HealthDepartment();
         hd.setEnabled(true);
 
+        String phonenumber = "+491761234567";
+        String password = "012345";
 
         when(emailConfig.getTestedPerson()).thenReturn(tp);
         when(emailConfig.getHealthDepartment()).thenReturn(hd);
         when(pdfGenerator.encryptPdf(any(), any())).thenReturn(new ByteArrayOutputStream());
+        when(smsService.createPassword()).thenReturn(password);
 
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setEmailNotificationAgreement(true);
         quickTestArchive.setTestResult((short) 6);
+        quickTestArchive.setPhoneNumber("+491761234567");
         underTest.handleMailNotification(quickTestArchive, new byte[5], "12345");
         verify(emailService, times(1)).sendMailToTestedPerson(any(), any());
         verify(emailService, never()).sendMailToHealthDepartment(any(), any());
-
+        verify(smsService, times(1)).sendPasswordSms(phonenumber, password);
     }
 
     @Test
@@ -96,5 +100,6 @@ class NotificationServiceTest {
         underTest.handleMailNotification(quickTestArchive, new byte[5], "12345");
         verify(emailService, never()).sendMailToTestedPerson(any(), any());
         verify(emailService, never()).sendMailToHealthDepartment(any(), any());
+        verify(smsService, never()).sendPasswordSms(any(), any());
     }
 }

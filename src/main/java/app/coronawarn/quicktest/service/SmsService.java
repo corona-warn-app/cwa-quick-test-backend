@@ -26,10 +26,12 @@ public class SmsService {
     public void sendPasswordSms(String receiver, String password) {
         if (smsConfig.isEnabled()) {
             String messageText = String.format(smsConfig.getMessageTemplate(), password);
-            SmsMessage message = new SmsMessage(receiver, messageText);
+            SmsMessage message = SmsMessage.builder()
+              .endpoint(receiver)
+              .message(messageText)
+              .build();
             log.debug("Sending sms: {}", message);
             SmsResponse response = smsClient.publishSms(message);
-            log.debug("SMS Client response: {}", response);
         }
         //TODO Error handling when OTC Api is defined
     }

@@ -58,7 +58,7 @@ class SmsServiceTest {
     }
 
     @Test
-    void sendMessageWithassword() {
+    void sendMessageWithPassword() {
         when(smsConfig.getPasswordLength()).thenReturn(PASSWORD_LENGTH);
         when(smsConfig.isEnabled()).thenReturn(true);
         when(smsConfig.getMessageTemplate()).thenReturn("Nachricht: %s");
@@ -71,5 +71,18 @@ class SmsServiceTest {
         SmsMessage sentMessage = smsMessageCaptor.getValue();
         assertThat(sentMessage.getEndpoint()).isEqualTo(receiver);
         assertThat(sentMessage.getMessage()).endsWith(password);
+    }
+
+    @Test
+    void sendMessageWithPasswordToNonE164Phonenumber() {
+        when(smsConfig.getPasswordLength()).thenReturn(PASSWORD_LENGTH);
+        when(smsConfig.isEnabled()).thenReturn(true);
+        when(smsConfig.getMessageTemplate()).thenReturn("Nachricht: %s");
+
+        underTest.sendPasswordSms("01761234567", underTest.createPassword());
+
+        verify(smsClient).publishSms(smsMessageCaptor.capture());
+        SmsMessage sentMessage = smsMessageCaptor.getValue();
+        assertThat(sentMessage.getEndpoint()).isEqualTo("+491761234567");
     }
 }

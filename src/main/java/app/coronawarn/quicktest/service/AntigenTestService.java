@@ -101,7 +101,7 @@ public class AntigenTestService {
                     .withSeparator(';')
                     .withIgnoreQuotations(true)
                     .build();
-            CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(inputStreamCsv, "UTF-8"))
+            CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(inputStreamCsv, "windows-1252"))
                     .withSkipLines(1)
                     .withCSVParser(parser)
                     .build();

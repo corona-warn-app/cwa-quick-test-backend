@@ -17,6 +17,7 @@ public class DccConfig {
     private int algId;
     private String keyId;
     private String issuer;
+    private String cwtIssuer;
     private String country;
     @DurationUnit(ChronoUnit.DAYS)
     @NotNull

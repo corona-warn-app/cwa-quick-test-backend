@@ -149,9 +149,11 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
-            quickTestRepository.deleteById(quicktest.getHashedGuid());
-            log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
-                quicktest.getPocId(), quicktest.getShortHashedGuid());
+            if (quicktest.getDccStatus() == null) {
+                quickTestRepository.deleteById(quicktest.getHashedGuid());
+                log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
+                        quicktest.getPocId(), quicktest.getShortHashedGuid());
+            }
         } catch (Exception e) {
             log.error("Could not delete QuickTest. updateQuickTest failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

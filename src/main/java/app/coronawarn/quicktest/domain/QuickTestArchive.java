@@ -143,4 +143,8 @@ public class QuickTestArchive {
     @Column(name = "test_result_server_hash")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String testResultServerHash;
+
+    @Column(name = "dcc")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String dcc;
 }

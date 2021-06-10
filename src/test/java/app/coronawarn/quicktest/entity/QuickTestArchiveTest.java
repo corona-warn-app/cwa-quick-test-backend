@@ -47,7 +47,8 @@ public class QuickTestArchiveTest {
                         + "privacyAgreement=false, lastName=Miller, firstName=Joe, email=test@test.test, "
                         + "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, "
                         + "city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid Test "
-                        + "Device (Nasal), birthday=01.01.1954, pdf=[72, 101, 108, 108, 111], testResultServerHash=null)",
+                        + "Device (Nasal), birthday=01.01.1954, pdf=[72, 101, 108, 108, 111], testResultServerHash=null," +
+                        " dcc=null)",
                 quickTestArchive.toString());
     }
 

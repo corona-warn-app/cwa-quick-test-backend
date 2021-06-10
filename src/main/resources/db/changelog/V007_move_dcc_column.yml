@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: remove-dcc-column
+      author: a-trzewik
+      changes:
+        - dropColumn:
+            tableName: quick_test
+            columnName: dcc
+  - changeSet:
+      id: add-dcc-column
+      author: a-trzewik
+      changes:
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              - column:
+                  name: dcc
+                  type: varchar(2024)

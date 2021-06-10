@@ -63,7 +63,7 @@ quicktest:
   labId: labId4711
   clean-up-settings:
     cron: 0 * * * * *
-    max-age-in-minutes: 2
+    max-age-in-minutes: 1440
     locklimit: 1800000
 
 testresultserver:
@@ -130,6 +130,7 @@ dcc:
   algId: -7
   country: DE
   issuer: RKI
+  cwtIssuer: DE
   expired: 354
   searchPublicKeysJob:
     fixedDelayString: 30000

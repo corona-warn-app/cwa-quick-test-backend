@@ -18,6 +18,7 @@ import eu.europa.ec.dgc.DgcCryptedPublisher;
 import eu.europa.ec.dgc.DgcGenerator;
 import eu.europa.ec.dgc.dto.DgcData;
 import eu.europa.ec.dgc.dto.DgcInitData;
+import feign.FeignException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -142,6 +143,8 @@ public class DccService {
                     log.warn("can not find quick test archive {}",quickTest.getHashedGuid());
                 }
                 quickTestRepository.delete(quickTest);
+            } catch (FeignException e) {
+                log.warn("Error during uploading dcc data {}", quickTest.getHashedGuid(), e);
             } catch (JsonProcessingException e) {
                 log.warn("Error during signing {}", quickTest.getHashedGuid(), e);
             } catch (IllegalArgumentException e) {

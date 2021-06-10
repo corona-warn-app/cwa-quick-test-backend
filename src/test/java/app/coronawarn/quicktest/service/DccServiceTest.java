@@ -5,7 +5,6 @@ import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.DccPublicKey;
-import app.coronawarn.quicktest.model.DccPublicKeyList;
 import app.coronawarn.quicktest.model.DccUploadResult;
 import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.Sex;
@@ -25,6 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.util.Asserts;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -74,16 +75,17 @@ class DccServiceTest {
     }
 
     private void initDccMockPublicKey(QuickTest quickTest) {
-        DccPublicKeyList dccPublicKeyList = new DccPublicKeyList();
+        String testIdHashHex = Hex.toHexString(dccService.createSha256Digest()
+                .digest(quickTest.getTestResultServerHash().getBytes(StandardCharsets.UTF_8)));
+
         List<DccPublicKey> publicKeys = new ArrayList<>();
         DccPublicKey dccPublicKey = new DccPublicKey();
         dccPublicKey.setPublicKey(publicKeyBase64);
-        dccPublicKey.setTestId(quickTest.getHashedGuid());
+        dccPublicKey.setTestId(testIdHashHex);
         dccPublicKey.setDcci(dgciGenerator.newDgci());
         publicKeys.add(dccPublicKey);
-        dccPublicKeyList.setPublicKeys(publicKeys);
 
-        given(dccServerClient.searchPublicKeys(any())).willReturn(dccPublicKeyList);
+        given(dccServerClient.searchPublicKeys(any())).willReturn(publicKeys);
     }
 
     @Test
@@ -170,7 +172,10 @@ class DccServiceTest {
         random.nextBytes(rndBytes);
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String hash = Base64.getEncoder().encodeToString(digest.digest(rndBytes));
+        random.nextBytes(rndBytes);
+        digest.reset();
 
+        quickTest.setTestResultServerHash(Hex.toHexString(digest.digest(rndBytes)));
         quickTest.setHashedGuid(hash);
         quickTest.setCity("oyvkpigcga");
         quickTest.setConfirmationCwa(Boolean.TRUE);
@@ -193,5 +198,15 @@ class DccServiceTest {
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         return quickTest;
+    }
+
+    @Test
+    void createTestIdHash() throws Exception {
+        MessageDigest digest = dccService.createSha256Digest();
+        String testId = "bf7dfeeb7cbe4dab33b79dd04ab39b276fb2b1b405d944e93db9e95c835530e4";
+        String testIdHash = "1dff2f115fc7821c2c526103ea92c16870c53fffbe510364d23405fd4872e3aa";
+        assertEquals(testIdHash, Hex.toHexString(digest.digest(testId.getBytes(StandardCharsets.UTF_8))));
+        digest.reset();
+        assertEquals(testIdHash, Hex.toHexString(digest.digest(testId.getBytes(StandardCharsets.UTF_8))));
     }
 }

@@ -17,3 +17,6 @@ databaseChangeLog:
   - include:
       file: changelog/V006_remove_dcc_consent.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V007_move_dcc_column.yml
+      relativeToChangelogFile: true

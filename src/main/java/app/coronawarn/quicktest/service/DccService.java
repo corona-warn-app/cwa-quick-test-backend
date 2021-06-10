@@ -5,10 +5,12 @@ import app.coronawarn.quicktest.config.DccConfig;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.DccPublicKey;
 import app.coronawarn.quicktest.model.DccPublicKeyList;
 import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.DccUploadResult;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -27,6 +29,7 @@ import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -40,6 +43,7 @@ public class DccService {
     private final DccServerClient dccServerClient;
     private final DccConfig dccConfig;
     private final QuickTestRepository quickTestRepository;
+    private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final DgcCryptedPublisher dgcCryptedPublisher;
     private final DgcGenerator dgcGenerator;
     private final QuickTestConfig quickTestConfig;
@@ -107,9 +111,15 @@ public class DccService {
                 byte[] coseSigned = dgcGenerator.dgcSetCosePartial(
                         Base64.getDecoder().decode(quickTest.getDccUnsigned()),
                         Base64.getDecoder().decode(dccUploadResult.getPartialDcc()));
-                quickTest.setDcc(dgcGenerator.coseToQrCode(coseSigned));
-                quickTest.setDccStatus(DccStatus.complete);
-                quickTestRepository.saveAndFlush(quickTest);
+                Optional<QuickTestArchive> quickTestArchive =
+                        quickTestArchiveRepository.findByHashedGuid(quickTest.getHashedGuid());
+                if (quickTestArchive.isPresent()) {
+                    quickTestArchive.get().setDcc(dgcGenerator.coseToQrCode(coseSigned));
+                    quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
+                } else {
+                    log.warn("can not find quick test archive {}",quickTest.getHashedGuid());
+                }
+                quickTestRepository.delete(quickTest);
             } catch (JsonProcessingException e) {
                 log.warn("Error during signing {}", quickTest.getHashedGuid(), e);
             } catch (IllegalArgumentException e) {
@@ -126,7 +136,7 @@ public class DccService {
         long expiredAt = created.plus(dccConfig.getExpired()).toEpochSecond();
         dgcInitData.setIssuedAt(issuetAt);
         dgcInitData.setExpriation(expiredAt);
-        dgcInitData.setIssuerCode(dccConfig.getIssuer());
+        dgcInitData.setIssuerCode(dccConfig.getCwtIssuer());
         dgcInitData.setAlgId(dccConfig.getAlgId());
         if (dccConfig.getKeyId() != null && dccConfig.getKeyId().length() > 0) {
             dgcInitData.setKeyId(Base64.getDecoder().decode(dccConfig.getKeyId()));

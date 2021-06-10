@@ -3,13 +3,16 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.client.DccServerClient;
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.DccPublicKey;
 import app.coronawarn.quicktest.model.DccPublicKeyList;
 import app.coronawarn.quicktest.model.DccUploadResult;
 import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import eu.europa.ec.dgc.DgciGenerator;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -17,7 +20,9 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -37,6 +42,9 @@ class DccServiceTest {
 
     @Autowired
     QuickTestRepository quickTestRepository;
+
+    @Autowired
+    QuickTestArchiveRepository quickTestArchiveRepository;
 
     private DgciGenerator dgciGenerator = new DgciGenerator("URN:UVCI:V1:DE");
 
@@ -88,6 +96,9 @@ class DccServiceTest {
         quickTest.setTestResult((short)6);
         quickTestRepository.saveAndFlush(quickTest);
 
+        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quickTest,"dummy".getBytes(StandardCharsets.UTF_8));
+        quickTestArchiveRepository.saveAndFlush(quickTestArchive);
+
         initDccMockPublicKey(quickTest);
 
         DccUploadResult dccUploadResult = new DccUploadResult();
@@ -103,11 +114,43 @@ class DccServiceTest {
 
         dccService.uploadDccData();
 
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
-        assertEquals(DccStatus.complete, quickTest.getDccStatus());
-        assertNotNull(quickTest.getDcc());
-        System.out.println(quickTest.getDcc());
+        List<QuickTest> list = quickTestRepository.findAllById(Collections.singletonList(quickTest.getHashedGuid()));
+        assertEquals(0,list.size());
 
+        Optional<QuickTestArchive> quickTestArchiveDb = quickTestArchiveRepository.findById(quickTest.getHashedGuid());
+        assertTrue(quickTestArchiveDb.isPresent());
+        assertNotNull(quickTestArchiveDb.get().getDcc());
+        System.out.println(quickTestArchiveDb.get().getDcc());
+
+    }
+
+    private QuickTestArchive mappingQuickTestToQuickTestArchive(
+            QuickTest quickTest, byte[] pdf) {
+        QuickTestArchive quickTestArchive = new QuickTestArchive();
+        quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
+        quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
+        quickTestArchive.setConfirmationCwa(quickTest.getConfirmationCwa());
+        quickTestArchive.setCreatedAt(quickTest.getCreatedAt());
+        quickTestArchive.setUpdatedAt(quickTest.getUpdatedAt());
+        quickTestArchive.setTenantId(quickTest.getTenantId());
+        quickTestArchive.setPocId(quickTest.getPocId());
+        quickTestArchive.setTestResult(quickTest.getTestResult());
+        quickTestArchive.setPrivacyAgreement(quickTest.getPrivacyAgreement());
+        quickTestArchive.setFirstName(quickTest.getFirstName());
+        quickTestArchive.setLastName(quickTest.getLastName());
+        quickTestArchive.setBirthday(quickTest.getBirthday());
+        quickTestArchive.setEmail(quickTest.getEmail());
+        quickTestArchive.setPhoneNumber(quickTest.getPhoneNumber());
+        quickTestArchive.setSex(quickTest.getSex());
+        quickTestArchive.setStreet(quickTest.getStreet());
+        quickTestArchive.setHouseNumber(quickTest.getHouseNumber());
+        quickTestArchive.setZipCode(quickTest.getZipCode());
+        quickTestArchive.setCity(quickTest.getCity());
+        quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
+        quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
+        quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setPdf(pdf);
+        return quickTestArchive;
     }
 
     private void genKeys() throws NoSuchAlgorithmException {

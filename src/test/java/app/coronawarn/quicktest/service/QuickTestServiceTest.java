@@ -191,7 +191,8 @@ public class QuickTestServiceTest {
         try {
             quickTestService.updateQuickTest(ids,
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                (short) 6,
+                // 6 and 7 are still there because needed for dcc processing
+                (short) 8,
                 "testBrandId",
                 "TestBrandName",
                 new ArrayList<>(),

@@ -79,7 +79,7 @@ public class DccService {
                     log.debug("got public key for {} testid", dccPublicKey.getTestId());
                     DgcData dgcData = genDcc(quickTest, dccPublicKey.getPublicKey(), dccPublicKey.getDcci());
                     DccUploadData dccUploadData = new DccUploadData();
-                    dccUploadData.setDccHash(Base64.getEncoder().encodeToString(dgcData.getHash()));
+                    dccUploadData.setDccHash(Hex.toHexString(dgcData.getHash()));
                     dccUploadData.setDataEncryptionKey(Base64.getEncoder().encodeToString(dgcData.getDek()));
                     dccUploadData.setEncryptedDcc(Base64.getEncoder().encodeToString(dgcData.getDataEncrypted()));
                     try {

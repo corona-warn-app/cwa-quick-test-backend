@@ -10,6 +10,7 @@ import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DgciGenerator;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
@@ -113,6 +114,9 @@ class DccServiceTest {
         quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
         assertNotNull(quickTest.getDccSignData());
         assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("\n### upload data ###\n"+quickTest.getDccSignData());
+
 
         dccService.uploadDccData();
 

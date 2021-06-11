@@ -9,6 +9,7 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.Security;
+import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
@@ -20,6 +21,8 @@ import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 import javax.crypto.spec.SecretKeySpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Hex;
@@ -87,12 +90,7 @@ class DgcCryptedPublisherTest {
 
         byte[] dek = Hex.decode("7427A22B0A0673B9F293935643DD4209ACEFA1CF944D2B9D9F97DD27474F12A7");
 
-        byte[] encryptedDek = Base64.getDecoder().decode("+o5TT1onTB3M7mw2CxdAVTWYn961WWRyB4XvAtLotmbmUe1hkPY230" +
-                "z90/L+q5BC6DQtIpyZ4oURDKwuC477JrCjws3j6J7g48q1QLxU96oJvjQAAo4rXb0liAVHW8x3Cv72gkbZS9cbzwZXsdb2VbNnHX" +
-                "4tGt1TOPtDZMRUbwezwrOJv3K1ZH5lzkUEWcJVa5j5Ev/jkGhBf8b4stKrzxoyp/Ec4jRm48T+Dhiz2WjqUYU0Kh5/oR4mDhJS+" +
-                "f8Unc/JBELGeKvBM+qVJEeHYiMvyl2aTkAwlPFYquattlgkKoVsAlWSrRs32XwagAog/Kjze+na0BJqqoYLysf9cpjqYmAA8bqK" +
-                "1k58WT6aviNjMXjdrwjjdloMvChszjszpgFV78XpfL8SEW+JDdQg7lj5yO/rxyC8Q7MLX/45nsxpahoCvqLMoEj99P3ZU8ykKbFA" +
-                "6Caac/ccHMVGTyYjMeyKUK2iFa4HercdT/8rjaEj99v81YDRkVICMPlNG");
+        byte[] encryptedDek = Base64.getDecoder().decode("B++o5TT1onTB3M7mw2CxdAVTWYn961WWRyB4XvAtLotmbmUe1hkPY230z90/L+q5BC6DQtIpyZ4oURDKwuC477JrCjws3j6J7g48q1QLxU96oJvjQAAo4rXb0liAVHW8x3Cv72gkbZS9cbzwZXsdb2VbNnHX4tGt1TOPtDZMRUbwezwrOJv3K1ZH5lzkUEWcJVa5j5Ev/jkGhBf8b4stKrzxoyp/Ec4jRm48T+Dhiz2WjqUYU0Kh5/oR4mDhJS+f8Unc/JBELGeKvBM+qVJEeHYiMvyl2aTkAwlPFYquattlgkKoVsAlWSrRs32XwagAog/Kjze+na0BJqqoYLysf9cpjqYmAA8bqKT1k58WT6aviNjMXjdrwjjdloMvChszjszpgFV78XpfL8SEW+JDdQg7lj5yO/rxyC8Q7MLX/45nsxpahoCvqLMoEj99P3ZU8ykKbFA6Caac/ccHMVGTyYjMeyKUK2iFa4HercdT/8rjaEj99v81YDRkVICMPlNG");
 
         byte[] privateKey = Base64.getDecoder().decode("MIIG5QIBAAKCAYEAzrTf6abtRow4Z3zW/9glzOTZpbpanhU5QONkXSDPfi" +
                 "dd9HpYtZUAkTYcMz0Z2tOAhS0O+mKjQdg48PxajR5FuheUpCBoJQOhcNJFwNt/FsYvxVLEg/WUE7oujOaRuk4gn6vzabU1pY7fj0C" +
@@ -161,36 +159,22 @@ class DgcCryptedPublisherTest {
         PrivateKey privateKeyInst = keyFactory.generatePrivate(specPrivate);
 
         Cipher keyCipher = Cipher.getInstance(DgcCryptedPublisher.KEY_CIPHER);
-        keyCipher.init(Cipher.DECRYPT_MODE, privateKeyInst);
+        OAEPParameterSpec oaepParameterSpec = new OAEPParameterSpec(
+          "SHA-256","MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT
+        );
+        keyCipher.init(Cipher.DECRYPT_MODE, privateKeyInst,oaepParameterSpec);
         assertArrayEquals(dek,keyCipher.doFinal(encryptedDek));
 
-    }
-
-    @Test
-    void testExampleData2() throws Exception {
-        byte[] dek = Hex.decode("C392819D519DA6A615251E120D230F73D07DC96FC4FD881D781CC4089326AF29");
-        byte[] privateKey = Base64.getDecoder().decode("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");
-        byte[] encryptedDek = Base64.getDecoder().decode("fVz6ksmoW3DNExEl6HHXCnYVPKhH29OAvTF6UsmUaHcDnsj2XfQE3cnxSFU7rew9bmiGiIRWnxJv+ieckgcBww" +
-                "uvZ51YCTRT3MILYHZ7jAfCltLes8o+yNFFL3sue4oHuEwTOFgFyZEnBcUiBK7Q9x12LYwAHqPsoKFK485cUzfTXkNesJaWQFC3qMW" +
-                "H0A3xGxxfduVStzdkYXqaOw0ZL/qCZwG9ysi7+EqJ4HhecQ9/xuGxIyOpx5cOTOUN4FpMjt45yY1BT9xSCdn8akNIeEjIFuCS7C5S3x0kW71jzpLRxJCNA9b6iNFxdvIZYFMjVrvKIfs7q0M8K3fLfBqlksshzdRZ4vh0ysBHoqpJZnOhTvxo+v4xsFBA1n9NHX85aE+Vclk34WJ05T/tYQD/WAhvGvh6PrL5zTfkAxpinIvskviUNeOzkL0dKJyd2y6J+t//hp1ZKM6CUL8xW0vOTBT8mzNEbkPHorwPbbaO42fOjkQVkfaRWMt5kzH/mP0n");
-
-        assertEquals(384,encryptedDek.length);
-
-        KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-
-        PKCS8EncodedKeySpec  specPrivate = new PKCS8EncodedKeySpec(privateKey);
-        PrivateKey privateKeyInst = keyFactory.generatePrivate(specPrivate);
-
-        Cipher keyCipher = Cipher.getInstance(DgcCryptedPublisher.KEY_CIPHER);
-        keyCipher.init(Cipher.DECRYPT_MODE, privateKeyInst);
-        assertArrayEquals(dek,keyCipher.doFinal(encryptedDek));
     }
 
     private byte[] decryptDccData(byte[] encodedDccData, byte[] dek, PrivateKey privateKey)
             throws Exception {
         // decrypt RSA key
         Cipher keyCipher = Cipher.getInstance(DgcCryptedPublisher.KEY_CIPHER);
-        keyCipher.init(Cipher.DECRYPT_MODE, privateKey);
+        OAEPParameterSpec oaepParameterSpec = new OAEPParameterSpec(
+                "SHA-256","MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT
+        );
+        keyCipher.init(Cipher.DECRYPT_MODE, privateKey, oaepParameterSpec);
         byte[] rsaKey = keyCipher.doFinal(dek);
 
         byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};

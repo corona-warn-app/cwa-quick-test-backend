@@ -15,7 +15,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 
 public class DgcCryptedPublisher {
-    public static final String KEY_CIPHER = "RSA/None/OAEPWithSHA-256AndMGF1Padding";
+    public static final String KEY_CIPHER = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
     public static final String DATA_CIPHER = "AES/CBC/PKCS5Padding";
     
 

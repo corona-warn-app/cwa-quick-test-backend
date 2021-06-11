@@ -6,6 +6,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.MGF1ParameterSpec;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -13,6 +14,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.OAEPParameterSpec;
+import javax.crypto.spec.PSource;
 
 public class DgcCryptedPublisher {
     public static final String KEY_CIPHER = "RSA/ECB/OAEPWithSHA-256AndMGF1Padding";
@@ -67,8 +70,12 @@ public class DgcCryptedPublisher {
 
         // encrypt RSA key
         Cipher keyCipher = Cipher.getInstance(KEY_CIPHER);
-        keyCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        OAEPParameterSpec oaepParameterSpec = new OAEPParameterSpec(
+                "SHA-256","MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT
+        );
+        keyCipher.init(Cipher.ENCRYPT_MODE, publicKey, oaepParameterSpec);
         byte[] secretKeyBytes = secretKey.getEncoded();
         dgcData.setDek(keyCipher.doFinal(secretKeyBytes));
+
     }
 }

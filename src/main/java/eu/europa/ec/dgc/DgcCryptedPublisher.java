@@ -70,5 +70,6 @@ public class DgcCryptedPublisher {
         keyCipher.init(Cipher.ENCRYPT_MODE, publicKey);
         byte[] secretKeyBytes = secretKey.getEncoded();
         dgcData.setDek(keyCipher.doFinal(secretKeyBytes));
+
     }
 }

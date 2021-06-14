@@ -2,8 +2,10 @@ package eu.europa.ec.dgc.dto;
 
 public class DgcData {
     private byte[] dek;
+    // contains encrypted cwt data
     private byte[] dataEncrypted;
     private byte[] hash;
+    // contains whole cbor object
     private byte[] dccData;
 
     public byte[] getDek() {

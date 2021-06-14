@@ -1,5 +1,6 @@
 package eu.europa.ec.dgc;
 
+import com.upokecenter.cbor.CBORObject;
 import eu.europa.ec.dgc.dto.DgcData;
 import eu.europa.ec.dgc.dto.DgcInitData;
 import java.security.InvalidAlgorithmParameterException;
@@ -42,7 +43,7 @@ public class DgcCryptedPublisher {
         dgcData.setDccData(edgcCoseUnsigned);
 
         try {
-            encryptData(dgcData, edgcCoseUnsigned, publicKey);
+            encryptData(dgcData, edgcCbor, publicKey);
         } catch (NoSuchAlgorithmException | NoSuchPaddingException
                 | InvalidKeyException | InvalidAlgorithmParameterException
                 | IllegalBlockSizeException | BadPaddingException e) {
@@ -52,7 +53,7 @@ public class DgcCryptedPublisher {
         return dgcData;
     }
 
-    private void encryptData(DgcData dgcData, byte[] edgcCoseUnsigned, PublicKey publicKey) throws
+    private void encryptData(DgcData dgcData, byte[] cwtDccData, PublicKey publicKey) throws
             NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
             InvalidAlgorithmParameterException, IllegalBlockSizeException, BadPaddingException {
         KeyGenerator keyGen = KeyGenerator.getInstance("AES");
@@ -63,7 +64,7 @@ public class DgcCryptedPublisher {
         IvParameterSpec ivspec = new IvParameterSpec(iv);
         Cipher cipher = Cipher.getInstance(DATA_CIPHER);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
-        byte[] edgcDataEncrpyted = cipher.doFinal(dgcData.getDccData());
+        byte[] edgcDataEncrpyted = cipher.doFinal(cwtDccData);
 
         dgcData.setDataEncrypted(edgcDataEncrpyted);
 

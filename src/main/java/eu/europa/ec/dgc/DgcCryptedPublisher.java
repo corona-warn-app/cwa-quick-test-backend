@@ -59,12 +59,11 @@ public class DgcCryptedPublisher {
         keyGen.init(256); // for example
         SecretKey secretKey = keyGen.generateKey();
 
-        // TODO set iv to something special
         byte[] iv = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
         IvParameterSpec ivspec = new IvParameterSpec(iv);
         Cipher cipher = Cipher.getInstance(DATA_CIPHER);
         cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
-        byte[] edgcDataEncrpyted = cipher.doFinal(edgcCoseUnsigned);
+        byte[] edgcDataEncrpyted = cipher.doFinal(dgcData.getDccData());
 
         dgcData.setDataEncrypted(edgcDataEncrpyted);
 

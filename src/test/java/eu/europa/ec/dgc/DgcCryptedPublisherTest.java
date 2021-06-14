@@ -1,5 +1,6 @@
 package eu.europa.ec.dgc;
 
+import com.upokecenter.cbor.CBORObject;
 import eu.europa.ec.dgc.dto.DgcData;
 import eu.europa.ec.dgc.dto.DgcInitData;
 import java.nio.charset.StandardCharsets;
@@ -72,7 +73,9 @@ class DgcCryptedPublisherTest {
         assertEquals(512,dekBase64.length());
 
         byte[] dccDecrypted = decryptDccData(dgcData.getDataEncrypted(), dgcData.getDek(), keyPair.getPrivate());
-        assertArrayEquals(dgcData.getDccData(),dccDecrypted);
+        CBORObject cborObject = CBORObject.DecodeFromBytes(dgcData.getDccData());
+        byte[] cwtDCC = cborObject.get(2).GetByteString();
+        assertArrayEquals(cwtDCC,dccDecrypted);
     }
 
     @Test
@@ -90,7 +93,12 @@ class DgcCryptedPublisherTest {
 
         byte[] dek = Hex.decode("7427A22B0A0673B9F293935643DD4209ACEFA1CF944D2B9D9F97DD27474F12A7");
 
-        byte[] encryptedDek = Base64.getDecoder().decode("B++o5TT1onTB3M7mw2CxdAVTWYn961WWRyB4XvAtLotmbmUe1hkPY230z90/L+q5BC6DQtIpyZ4oURDKwuC477JrCjws3j6J7g48q1QLxU96oJvjQAAo4rXb0liAVHW8x3Cv72gkbZS9cbzwZXsdb2VbNnHX4tGt1TOPtDZMRUbwezwrOJv3K1ZH5lzkUEWcJVa5j5Ev/jkGhBf8b4stKrzxoyp/Ec4jRm48T+Dhiz2WjqUYU0Kh5/oR4mDhJS+f8Unc/JBELGeKvBM+qVJEeHYiMvyl2aTkAwlPFYquattlgkKoVsAlWSrRs32XwagAog/Kjze+na0BJqqoYLysf9cpjqYmAA8bqKT1k58WT6aviNjMXjdrwjjdloMvChszjszpgFV78XpfL8SEW+JDdQg7lj5yO/rxyC8Q7MLX/45nsxpahoCvqLMoEj99P3ZU8ykKbFA6Caac/ccHMVGTyYjMeyKUK2iFa4HercdT/8rjaEj99v81YDRkVICMPlNG");
+        byte[] encryptedDek = Base64.getDecoder().decode("B++o5TT1onTB3M7mw2CxdAVTWYn961WWRyB4XvAtLotmbmUe1hkPY230" +
+                "z90/L+q5BC6DQtIpyZ4oURDKwuC477JrCjws3j6J7g48q1QLxU96oJvjQAAo4rXb0liAVHW8x3Cv72gkbZS9cbzwZXsdb2VbNnHX4" +
+                "tGt1TOPtDZMRUbwezwrOJv3K1ZH5lzkUEWcJVa5j5Ev/jkGhBf8b4stKrzxoyp/Ec4jRm48T+Dhiz2WjqUYU0Kh5/oR4mDhJS+f8U" +
+                "nc/JBELGeKvBM+qVJEeHYiMvyl2aTkAwlPFYquattlgkKoVsAlWSrRs32XwagAog/Kjze+na0BJqqoYLysf9cpjqYmAA8bqKT1k58" +
+                "WT6aviNjMXjdrwjjdloMvChszjszpgFV78XpfL8SEW+JDdQg7lj5yO/rxyC8Q7MLX/45nsxpahoCvqLMoEj99P3ZU8ykKbFA6Caac" +
+                "/ccHMVGTyYjMeyKUK2iFa4HercdT/8rjaEj99v81YDRkVICMPlNG");
 
         byte[] privateKey = Base64.getDecoder().decode("MIIG5QIBAAKCAYEAzrTf6abtRow4Z3zW/9glzOTZpbpanhU5QONkXSDPfi" +
                 "dd9HpYtZUAkTYcMz0Z2tOAhS0O+mKjQdg48PxajR5FuheUpCBoJQOhcNJFwNt/FsYvxVLEg/WUE7oujOaRuk4gn6vzabU1pY7fj0C" +

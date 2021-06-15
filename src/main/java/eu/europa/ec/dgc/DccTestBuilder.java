@@ -37,7 +37,7 @@ public class DccTestBuilder {
         dccObject = jsonNodeFactory.objectNode();
         nameObject = jsonNodeFactory.objectNode();
         testObject = jsonNodeFactory.objectNode();
-        dccObject.set("version", jsonNodeFactory.textNode("1.0.0"));
+        dccObject.set("ver", jsonNodeFactory.textNode("1.0.0"));
         dccObject.set("nam", nameObject);
         ArrayNode testArray = jsonNodeFactory.arrayNode();
         testArray.add(testObject);

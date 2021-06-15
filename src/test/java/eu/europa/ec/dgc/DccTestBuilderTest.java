@@ -25,4 +25,9 @@ class DccTestBuilderTest {
         });
     }
 
+    @Test
+    void genTest() throws Exception {
+        System.out.println(DgcCryptedPublisherTest.genSampleJson());
+    }
+
 }

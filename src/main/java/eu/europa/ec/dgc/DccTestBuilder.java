@@ -31,7 +31,7 @@ public class DccTestBuilder {
      * the constructor.
      */
     public DccTestBuilder() {
-        dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssZ");
+        dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 
         jsonNodeFactory = JsonNodeFactory.instance;
         dccObject = jsonNodeFactory.objectNode();

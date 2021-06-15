@@ -21,6 +21,8 @@
 package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.validation.ValidGuid;
+import app.coronawarn.quicktest.validation.ValidCommonChar;
+import app.coronawarn.quicktest.validation.ValidCommonCharAndNumber;
 import app.coronawarn.quicktest.validation.ValidPhoneNumber;
 import app.coronawarn.quicktest.validation.ValidZipCode;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -43,10 +45,12 @@ public class QuickTestPersonalDataRequest {
     private Boolean privacyAgreement;
 
     @NotNull
+    @ValidCommonChar
     @Size(min = 1, max = 79)
     private String lastName;
 
     @NotNull
+    @ValidCommonChar
     @Size(min = 1, max = 79)
     private String firstName;
 
@@ -63,10 +67,12 @@ public class QuickTestPersonalDataRequest {
     private Sex sex;
 
     @NotNull
+    @ValidCommonCharAndNumber
     @Size(min = 1, max = 255)
     private String street;
 
     @Size(min = 1, max = 15)
+    @ValidCommonCharAndNumber
     private String houseNumber;
 
     @ValidZipCode
@@ -75,6 +81,7 @@ public class QuickTestPersonalDataRequest {
     private String zipCode;
 
     @NotNull
+    @ValidCommonCharAndNumber
     @Size(min = 1, max = 255)
     private String city;
 
@@ -82,14 +89,17 @@ public class QuickTestPersonalDataRequest {
     private LocalDate birthday;
 
     @NotNull
+    @ValidCommonChar
     @Size(min = 1, max = 50)
     private String standardisedFamilyName;
 
     @NotNull
+    @ValidCommonChar
     @Size(min = 1, max = 50)
     private String standardisedGivenName;
 
     @NotNull
+    @ValidCommonCharAndNumber
     private String diseaseAgentTargeted;
 
     @ValidGuid

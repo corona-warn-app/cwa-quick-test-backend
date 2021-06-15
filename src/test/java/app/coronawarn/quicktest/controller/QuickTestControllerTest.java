@@ -1,3 +1,23 @@
+/*-
+ * ---license-start
+ * Corona-Warn-App / cwa-quick-test-backend
+ * ---
+ * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * ---
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ---license-end
+ */
+
 package app.coronawarn.quicktest.controller;
 
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
@@ -230,7 +250,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isNoContent());
 
-        quickTestUpdateRequest.setTestBrandName("1");
+        quickTestUpdateRequest.setTestBrandName("a1");
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -312,21 +332,21 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         QuickTestPersonalDataRequest quickTestPersonalDataRequest = new QuickTestPersonalDataRequest();
         quickTestPersonalDataRequest.setConfirmationCwa(true);
         quickTestPersonalDataRequest.setPrivacyAgreement(true);
-        quickTestPersonalDataRequest.setLastName("1");
+        quickTestPersonalDataRequest.setLastName("Lastnäme");
         quickTestPersonalDataRequest.setStandardisedFamilyName("TR");
-        quickTestPersonalDataRequest.setFirstName("1");
+        quickTestPersonalDataRequest.setFirstName("FirstNamè");
         quickTestPersonalDataRequest.setStandardisedGivenName("ARTUR");
         quickTestPersonalDataRequest.setEmail("v@e.o");
         quickTestPersonalDataRequest.setPhoneNumber("+490000");
         quickTestPersonalDataRequest.setSex(Sex.DIVERSE);
-        quickTestPersonalDataRequest.setStreet("f");
-        quickTestPersonalDataRequest.setHouseNumber("a");
+        quickTestPersonalDataRequest.setStreet("Street test");
+        quickTestPersonalDataRequest.setHouseNumber("12 b");
         quickTestPersonalDataRequest.setZipCode("11111");
-        quickTestPersonalDataRequest.setCity("f");
+        quickTestPersonalDataRequest.setCity("Testcity");
         quickTestPersonalDataRequest.setDiseaseAgentTargeted("t");
         quickTestPersonalDataRequest.setBirthday(LocalDate.now());
-        quickTestPersonalDataRequest.setStandardisedFamilyName("standardisedFamilyName");
-        quickTestPersonalDataRequest.setStandardisedGivenName("standardisedGivenName");
+        quickTestPersonalDataRequest.setStandardisedFamilyName("standardisedFamily");
+        quickTestPersonalDataRequest.setStandardisedGivenName("standaärdisedGivenName");
         quickTestPersonalDataRequest.setDiseaseAgentTargeted("diseaseAgentTargeted");
         quickTestPersonalDataRequest.setTestResultServerHash(
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");

@@ -15,6 +15,7 @@ import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
@@ -205,7 +206,7 @@ class DgcCryptedPublisherTest {
                 .testTypeRapid(true)
                 .testingCentre("Hochdahl")
                 .certificateIssuer("Dr Who")
-                .sampleCollection(LocalDateTime.now());
+                .sampleCollection(LocalDateTime.now(ZoneId.of("UTC")));
         return dccTestBuilder.toJsonString();
     }
 }

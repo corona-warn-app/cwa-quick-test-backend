@@ -93,3 +93,10 @@ sms:
   enabled: true
   passwordLength: 6
   messageTemplate: "Das Passwort für Ihr Testergebnis lautet: %s"
+  otcAuth:
+    authUrl:
+    notificationEndpoint:
+    user:
+    password:
+    domainId:
+    projectId:

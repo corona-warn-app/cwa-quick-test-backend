@@ -165,3 +165,10 @@ sms:
   enabled: false
   passwordLength: 6
   messageTemplate: "Das Passwort für Ihr Testergebnis lautet: %s"
+  otcAuth:
+    authUrl: "https://iam.eu-de.otc.t-systems.com/v3"
+    notificationEndpoint: "https://smn.eu-de.otc.t-systems.com/v2/%(project_id)s"
+    user:
+    password:
+    domainId:
+    projectId:

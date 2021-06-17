@@ -54,7 +54,7 @@ class SmsServiceTest {
     void sendMessageDisabled() {
         when(smsConfig.isEnabled()).thenReturn(false);
         underTest.sendPasswordSms("+491761234567", "123456");
-        verify(smsClient, never()).publishSms(any());
+        verify(smsClient, never()).send(any());
     }
 
     @Test
@@ -67,7 +67,7 @@ class SmsServiceTest {
 
         underTest.sendPasswordSms(receiver, password);
 
-        verify(smsClient).publishSms(smsMessageCaptor.capture());
+        verify(smsClient).send(smsMessageCaptor.capture());
         SmsMessage sentMessage = smsMessageCaptor.getValue();
         assertThat(sentMessage.getEndpoint()).isEqualTo(receiver);
         assertThat(sentMessage.getMessage()).endsWith(password);
@@ -81,7 +81,7 @@ class SmsServiceTest {
 
         underTest.sendPasswordSms("01761234567", underTest.createPassword());
 
-        verify(smsClient).publishSms(smsMessageCaptor.capture());
+        verify(smsClient).send(smsMessageCaptor.capture());
         SmsMessage sentMessage = smsMessageCaptor.getValue();
         assertThat(sentMessage.getEndpoint()).isEqualTo("+491761234567");
     }

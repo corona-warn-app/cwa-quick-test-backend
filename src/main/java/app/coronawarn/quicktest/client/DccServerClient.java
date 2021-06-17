@@ -1,8 +1,9 @@
 package app.coronawarn.quicktest.client;
 
-import app.coronawarn.quicktest.model.DccPublicKeyList;
+import app.coronawarn.quicktest.model.DccPublicKey;
 import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.DccUploadResult;
+import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -21,7 +22,7 @@ public interface DccServerClient {
     @GetMapping(value = "/version/v1/publicKey/search/{labId}",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    DccPublicKeyList searchPublicKeys(@PathVariable("labId") String labId);
+    List<DccPublicKey> searchPublicKeys(@PathVariable("labId") String labId);
 
     @PostMapping(value = "/version/v1/test/{testId}/dcc",
             consumes = MediaType.APPLICATION_JSON_VALUE

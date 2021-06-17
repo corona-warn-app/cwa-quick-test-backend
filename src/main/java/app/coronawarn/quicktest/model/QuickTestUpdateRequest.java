@@ -52,7 +52,7 @@ public class QuickTestUpdateRequest {
     @Size(min = 1, max = 15)
     private String testBrandId;
 
-    @Size(max = 79)
+    @Size(max = 200)
     private String testBrandName;
 
 }

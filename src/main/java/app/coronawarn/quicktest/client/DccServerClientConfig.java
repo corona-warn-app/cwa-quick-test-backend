@@ -21,7 +21,6 @@
 package app.coronawarn.quicktest.client;
 
 import app.coronawarn.quicktest.config.DccServerValuesConfig;
-import app.coronawarn.quicktest.config.TestResultServerValuesConfig;
 import feign.Client;
 import feign.httpclient.ApacheHttpClient;
 import java.io.IOException;
@@ -29,6 +28,7 @@ import java.security.GeneralSecurityException;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -39,8 +39,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.server.ResponseStatusException;
 
+
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class DccServerClientConfig {
 
     private final DccServerValuesConfig config;
@@ -50,34 +52,34 @@ public class DccServerClientConfig {
      *
      * @return Instance of HttpClient
      */
-    // @Bean
-    public Client client() {
+    @Bean
+    public Client dccClient() {
         if (config.isEnabled()) {
             return new ApacheHttpClient(
-                HttpClientBuilder
-                    .create()
-                    .setSSLContext(getSslContext())
-                    .setSSLHostnameVerifier(getSslHostnameVerifier())
-                    .build()
+                    HttpClientBuilder
+                            .create()
+                            .setSSLContext(getSslContext())
+                            .setSSLHostnameVerifier(getSslHostnameVerifier())
+                            .build()
             );
         }
         return new ApacheHttpClient(HttpClientBuilder.create()
-            .setSSLHostnameVerifier(getSslHostnameVerifier())
-            .build());
+                .setSSLHostnameVerifier(getSslHostnameVerifier())
+                .build());
     }
 
     private SSLContext getSslContext() {
         try {
             SSLContextBuilder builder = SSLContextBuilder
-                .create();
+                    .create();
             if (config.isOneWay()) {
                 builder.loadTrustMaterial(ResourceUtils.getFile(config.getTrustStorePath()),
-                    config.getTrustStorePassword());
+                        config.getTrustStorePassword());
             }
             if (config.isTwoWay()) {
                 builder.loadKeyMaterial(ResourceUtils.getFile(config.getKeyStorePath()),
-                    config.getKeyStorePassword(),
-                    config.getKeyStorePassword());
+                        config.getKeyStorePassword(),
+                        config.getKeyStorePassword());
             }
             return builder.build();
         } catch (IOException | GeneralSecurityException e) {
@@ -88,5 +90,4 @@ public class DccServerClientConfig {
     private HostnameVerifier getSslHostnameVerifier() {
         return config.isHostnameVerify() ? new DefaultHostnameVerifier() : new NoopHostnameVerifier();
     }
-
 }

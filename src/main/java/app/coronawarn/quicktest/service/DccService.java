@@ -5,10 +5,11 @@ import app.coronawarn.quicktest.config.DccConfig;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.DccPublicKey;
-import app.coronawarn.quicktest.model.DccPublicKeyList;
 import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.DccUploadResult;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,10 @@ import eu.europa.ec.dgc.DgcCryptedPublisher;
 import eu.europa.ec.dgc.DgcGenerator;
 import eu.europa.ec.dgc.dto.DgcData;
 import eu.europa.ec.dgc.dto.DgcInitData;
+import feign.FeignException;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
@@ -26,10 +30,13 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -40,6 +47,7 @@ public class DccService {
     private final DccServerClient dccServerClient;
     private final DccConfig dccConfig;
     private final QuickTestRepository quickTestRepository;
+    private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final DgcCryptedPublisher dgcCryptedPublisher;
     private final DgcGenerator dgcGenerator;
     private final QuickTestConfig quickTestConfig;
@@ -54,23 +62,26 @@ public class DccService {
             lockAtMostFor = "${dcc.searchPublicKeysJob.lockLimit}")
     public void collectPublicKeys() {
         Map<String, QuickTest> quickTestMap = new HashMap<>();
+        MessageDigest digest = createSha256Digest();
         // preload all tests in expecting state
         for (QuickTest quickTest : quickTestRepository.findAllByDccStatus(DccStatus.pendingPublicKey)) {
-            quickTestMap.put(quickTest.getHashedGuid(), quickTest);
+            byte[] testIdHashed = digest.digest(quickTest.getTestResultServerHash().getBytes(StandardCharsets.UTF_8));
+            digest.reset();
+            quickTestMap.put(Hex.toHexString(testIdHashed), quickTest);
         }
         if (!quickTestMap.isEmpty()) {
             log.info("search publick keys for {} keys", quickTestMap.size());
-            DccPublicKeyList publicKeys = dccServerClient.searchPublicKeys(quickTestConfig.getLabId());
+            List<DccPublicKey> publicKeys = dccServerClient.searchPublicKeys(quickTestConfig.getLabId());
             ObjectMapper objectMapper = new ObjectMapper();
-            for (DccPublicKey dccPublicKey : publicKeys.getPublicKeys()) {
+            for (DccPublicKey dccPublicKey : publicKeys) {
                 QuickTest quickTest = quickTestMap.get(dccPublicKey.getTestId());
                 if (quickTest != null) {
-                    log.info("got public key for {} testid", dccPublicKey.getTestId());
+                    log.debug("got public key for {} testid", dccPublicKey.getTestId());
                     DgcData dgcData = genDcc(quickTest, dccPublicKey.getPublicKey(), dccPublicKey.getDcci());
                     DccUploadData dccUploadData = new DccUploadData();
-                    dccUploadData.setDccHash(Base64.getEncoder().encodeToString(dgcData.getHash()));
+                    dccUploadData.setDccHash(Hex.toHexString(dgcData.getHash()));
                     dccUploadData.setDataEncryptionKey(Base64.getEncoder().encodeToString(dgcData.getDek()));
-                    dccUploadData.setDccEnrypted(Base64.getEncoder().encodeToString(dgcData.getDataEncrypted()));
+                    dccUploadData.setEncryptedDcc(Base64.getEncoder().encodeToString(dgcData.getDataEncrypted()));
                     try {
                         String dccUploadDataJson = objectMapper.writeValueAsString(dccUploadData);
                         quickTest.setDccStatus(DccStatus.pendingSignature);
@@ -86,6 +97,20 @@ public class DccService {
                             + " which in not in state pendingPublicKey");
                 }
             }
+        } else {
+            log.info("No new Quicktests with DCC available");
+        }
+    }
+
+    /**
+     * create sha256 digest.
+     * @return the digest.
+     */
+    public MessageDigest createSha256Digest() {
+        try {
+            return MessageDigest.getInstance("SHA-256");
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalArgumentException("have no SHA-256 digest",e);
         }
     }
 
@@ -97,20 +122,35 @@ public class DccService {
             lockAtMostFor = "${dcc.uploadDccJob.lockLimit}")
     public void uploadDccData() {
         ObjectMapper objectMapper = new ObjectMapper();
+        MessageDigest digest = createSha256Digest();
         for (QuickTest quickTest : quickTestRepository.findAllByDccStatus(DccStatus.pendingSignature)) {
-            log.info("dcc sign {}", quickTest.getHashedGuid());
+            log.debug("dcc sign {}", quickTest.getHashedGuid());
             try {
                 DccUploadData dccUploadData = objectMapper.readValue(quickTest.getDccSignData(), DccUploadData.class);
-                DccUploadResult dccUploadResult = dccServerClient.uploadDcc(quickTest.getHashedGuid(), dccUploadData);
+                String testIdHashHex = Hex.toHexString(digest.digest(
+                        quickTest.getTestResultServerHash().getBytes(StandardCharsets.UTF_8)));
+                digest.reset();
+                DccUploadResult dccUploadResult = dccServerClient.uploadDcc(testIdHashHex, dccUploadData);
                 byte[] coseSigned = dgcGenerator.dgcSetCosePartial(
                         Base64.getDecoder().decode(quickTest.getDccUnsigned()),
                         Base64.getDecoder().decode(dccUploadResult.getPartialDcc()));
-                quickTest.setDcc(dgcGenerator.coseToQrCode(coseSigned));
-                quickTest.setDccStatus(DccStatus.complete);
-                quickTestRepository.saveAndFlush(quickTest);
+                Optional<QuickTestArchive> quickTestArchive =
+                        quickTestArchiveRepository.findByHashedGuid(quickTest.getHashedGuid());
+                if (quickTestArchive.isPresent()) {
+                    quickTestArchive.get().setDcc(dgcGenerator.coseToQrCode(coseSigned));
+                    quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
+                } else {
+                    log.warn("can not find quick test archive {}",quickTest.getHashedGuid());
+                }
+                quickTestRepository.delete(quickTest);
+            } catch (FeignException e) {
+                log.warn("Error during uploading dcc data {}", quickTest.getHashedGuid(), e);
             } catch (JsonProcessingException e) {
-                log.warn("error during signing {}", quickTest.getHashedGuid(), e);
+                log.warn("Error during signing {}", quickTest.getHashedGuid(), e);
+            } catch (IllegalArgumentException e) {
+                log.warn("Argument error during signing {}", quickTest.getHashedGuid(), e);
             }
+
         }
     }
 
@@ -121,7 +161,7 @@ public class DccService {
         long expiredAt = created.plus(dccConfig.getExpired()).toEpochSecond();
         dgcInitData.setIssuedAt(issuetAt);
         dgcInitData.setExpriation(expiredAt);
-        dgcInitData.setIssuerCode(dccConfig.getIssuer());
+        dgcInitData.setIssuerCode(dccConfig.getCwtIssuer());
         dgcInitData.setAlgId(dccConfig.getAlgId());
         if (dccConfig.getKeyId() != null && dccConfig.getKeyId().length() > 0) {
             dgcInitData.setKeyId(Base64.getDecoder().decode(dccConfig.getKeyId()));
@@ -150,15 +190,10 @@ public class DccService {
         dccTestBuilder.detected(covidDetected)
                 .testTypeRapid(true)
                 .dgci(dgci)
-                .countryOfTest(dccConfig.getIssuer())
-                // TODO is pocid the testing centre
+                .countryOfTest(dccConfig.getCountry())
                 .testingCentre(quickTest.getPocId())
-                // TODO what is dcc sample collection date - we assume the db time is utc already
                 .sampleCollection(quickTest.getUpdatedAt())
-                // TODO is certificate issuer the tenant id
-                .certificateIssuer(quickTest.getTenantId());
-
-
+                .certificateIssuer(dccConfig.getIssuer());
         return dccTestBuilder.toJsonString();
     }
 

@@ -76,6 +76,14 @@ testresultserver:
   keyStorePassword: ${QUICK_TEST_KEYSTORE_TRS_PASSWORD}
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
+dccserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePassword: ${DCC_KEYSTORE_PASSWORD}
+  trustStorePassword: ${DCC_TRUSTSTORE_PASSWORD}
+
 quicktest:
   db-encryption-key: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
   health-department-download-url: ${HEALTH_DEPARTMENT_DOWNLOAD_URL}
@@ -104,3 +112,4 @@ email:
           Mit freundlichen Grüßen </br>
           Ihr Testzentrum"
     attachment-filename: ""
+

@@ -10,6 +10,7 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -69,13 +70,13 @@ public class AntigenTestService {
         lastUpdate = Utilities.getCurrentLocalDateTimeUtc();
     }
 
-    private void init() {
+    private void init()  {
         InputStream inputStreamCsv = loadAntigenTestsFromBfArM();
         if (inputStreamCsv == null) {
             final ClassPathResource classPathResource = new ClassPathResource("antigentests.csv");
-            inputStreamCsv = Objects.requireNonNull(
+            inputStreamCsv = (Objects.requireNonNull(
                     Objects.requireNonNull(classPathResource.getClassLoader())
-                            .getResourceAsStream("antigentests.csv"));
+                            .getResourceAsStream("antigentests.csv")));
         }
         setAntigenTests(inputStreamCsv);
     }
@@ -100,7 +101,7 @@ public class AntigenTestService {
                     .withSeparator(';')
                     .withIgnoreQuotations(true)
                     .build();
-            CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(inputStreamCsv, Charset.defaultCharset()))
+            CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(inputStreamCsv, "windows-1252"))
                     .withSkipLines(1)
                     .withCSVParser(parser)
                     .build();

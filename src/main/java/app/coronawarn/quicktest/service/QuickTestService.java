@@ -125,15 +125,12 @@ public class QuickTestService {
         quicktest.setTestBrandId(testBrandId);
         quicktest.setTestBrandName(testBrandName);
         quicktest.setUpdatedAt(LocalDateTime.now());
-        if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
-            // Result needs to be positive or negative
-            if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
-                    && quicktest.getDccStatus() == null) {
-                if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
-                    quicktest.setDccStatus(DccStatus.pendingPublicKey);
-                } else {
-                    quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
-                }
+        if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
+                && quicktest.getDccStatus() == null) {
+            if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
+                quicktest.setDccStatus(DccStatus.pendingPublicKey);
+            } else {
+                quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
             }
         }
         addStatistics(quicktest);
@@ -156,9 +153,11 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
-            quickTestRepository.deleteById(quicktest.getHashedGuid());
-            log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
-                quicktest.getPocId(), quicktest.getShortHashedGuid());
+            if (quicktest.getDccStatus() == null) {
+                quickTestRepository.deleteById(quicktest.getHashedGuid());
+                log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
+                        quicktest.getPocId(), quicktest.getShortHashedGuid());
+            }
         } catch (Exception e) {
             log.error("Could not delete QuickTest. updateQuickTest failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -208,7 +207,6 @@ public class QuickTestService {
         quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
-        quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
         quicktest.setEmailNotificationAgreement(quickTestPersonalData.getEmailNotificationAgreement());
         try {
             quickTestRepository.saveAndFlush(quicktest);

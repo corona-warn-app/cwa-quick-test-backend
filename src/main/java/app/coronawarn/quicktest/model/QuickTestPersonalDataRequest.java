@@ -27,7 +27,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDate;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
@@ -52,8 +51,8 @@ public class QuickTestPersonalDataRequest {
     private String firstName;
 
     @Email
+    @Size(min = 5, max = 255)
     @NotNull
-    @Size(max = 255)
     private String email;
 
     @ValidPhoneNumber
@@ -69,7 +68,6 @@ public class QuickTestPersonalDataRequest {
     private String street;
 
     @Size(min = 1, max = 15)
-    @Pattern(regexp = "^([1-9]{1}[0-9a-zA-Z-\\\\s/]{0,14})$")
     private String houseNumber;
 
     @ValidZipCode
@@ -94,9 +92,6 @@ public class QuickTestPersonalDataRequest {
 
     @NotNull
     private String diseaseAgentTargeted;
-
-    @NotNull
-    private Boolean dccConsent;
 
     @ValidGuid
     private String testResultServerHash;

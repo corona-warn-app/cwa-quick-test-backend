@@ -3,13 +3,16 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.client.DccServerClient;
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.DccPublicKey;
-import app.coronawarn.quicktest.model.DccPublicKeyList;
 import app.coronawarn.quicktest.model.DccUploadResult;
 import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DgciGenerator;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.MessageDigest;
@@ -17,9 +20,13 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.util.Asserts;
+import org.bouncycastle.util.encoders.Hex;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +44,9 @@ class DccServiceTest {
 
     @Autowired
     QuickTestRepository quickTestRepository;
+
+    @Autowired
+    QuickTestArchiveRepository quickTestArchiveRepository;
 
     private DgciGenerator dgciGenerator = new DgciGenerator("URN:UVCI:V1:DE");
 
@@ -66,16 +76,17 @@ class DccServiceTest {
     }
 
     private void initDccMockPublicKey(QuickTest quickTest) {
-        DccPublicKeyList dccPublicKeyList = new DccPublicKeyList();
+        String testIdHashHex = Hex.toHexString(dccService.createSha256Digest()
+                .digest(quickTest.getTestResultServerHash().getBytes(StandardCharsets.UTF_8)));
+
         List<DccPublicKey> publicKeys = new ArrayList<>();
         DccPublicKey dccPublicKey = new DccPublicKey();
         dccPublicKey.setPublicKey(publicKeyBase64);
-        dccPublicKey.setTestId(quickTest.getHashedGuid());
+        dccPublicKey.setTestId(testIdHashHex);
         dccPublicKey.setDcci(dgciGenerator.newDgci());
         publicKeys.add(dccPublicKey);
-        dccPublicKeyList.setPublicKeys(publicKeys);
 
-        given(dccServerClient.searchPublicKeys(any())).willReturn(dccPublicKeyList);
+        given(dccServerClient.searchPublicKeys(any())).willReturn(publicKeys);
     }
 
     @Test
@@ -87,6 +98,9 @@ class DccServiceTest {
         quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
         quickTest.setTestResult((short)6);
         quickTestRepository.saveAndFlush(quickTest);
+
+        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quickTest,"dummy".getBytes(StandardCharsets.UTF_8));
+        quickTestArchiveRepository.saveAndFlush(quickTestArchive);
 
         initDccMockPublicKey(quickTest);
 
@@ -100,14 +114,49 @@ class DccServiceTest {
         quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
         assertNotNull(quickTest.getDccSignData());
         assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
+        ObjectMapper objectMapper = new ObjectMapper();
+        System.out.println("\n### upload data ###\n"+quickTest.getDccSignData());
+
 
         dccService.uploadDccData();
 
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
-        assertEquals(DccStatus.complete, quickTest.getDccStatus());
-        assertNotNull(quickTest.getDcc());
-        System.out.println(quickTest.getDcc());
+        List<QuickTest> list = quickTestRepository.findAllById(Collections.singletonList(quickTest.getHashedGuid()));
+        assertEquals(0,list.size());
 
+        Optional<QuickTestArchive> quickTestArchiveDb = quickTestArchiveRepository.findById(quickTest.getHashedGuid());
+        assertTrue(quickTestArchiveDb.isPresent());
+        assertNotNull(quickTestArchiveDb.get().getDcc());
+        System.out.println(quickTestArchiveDb.get().getDcc());
+
+    }
+
+    private QuickTestArchive mappingQuickTestToQuickTestArchive(
+            QuickTest quickTest, byte[] pdf) {
+        QuickTestArchive quickTestArchive = new QuickTestArchive();
+        quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
+        quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
+        quickTestArchive.setConfirmationCwa(quickTest.getConfirmationCwa());
+        quickTestArchive.setCreatedAt(quickTest.getCreatedAt());
+        quickTestArchive.setUpdatedAt(quickTest.getUpdatedAt());
+        quickTestArchive.setTenantId(quickTest.getTenantId());
+        quickTestArchive.setPocId(quickTest.getPocId());
+        quickTestArchive.setTestResult(quickTest.getTestResult());
+        quickTestArchive.setPrivacyAgreement(quickTest.getPrivacyAgreement());
+        quickTestArchive.setFirstName(quickTest.getFirstName());
+        quickTestArchive.setLastName(quickTest.getLastName());
+        quickTestArchive.setBirthday(quickTest.getBirthday());
+        quickTestArchive.setEmail(quickTest.getEmail());
+        quickTestArchive.setPhoneNumber(quickTest.getPhoneNumber());
+        quickTestArchive.setSex(quickTest.getSex());
+        quickTestArchive.setStreet(quickTest.getStreet());
+        quickTestArchive.setHouseNumber(quickTest.getHouseNumber());
+        quickTestArchive.setZipCode(quickTest.getZipCode());
+        quickTestArchive.setCity(quickTest.getCity());
+        quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
+        quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
+        quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setPdf(pdf);
+        return quickTestArchive;
     }
 
     private void genKeys() throws NoSuchAlgorithmException {
@@ -127,7 +176,10 @@ class DccServiceTest {
         random.nextBytes(rndBytes);
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         String hash = Base64.getEncoder().encodeToString(digest.digest(rndBytes));
+        random.nextBytes(rndBytes);
+        digest.reset();
 
+        quickTest.setTestResultServerHash(Hex.toHexString(digest.digest(rndBytes)));
         quickTest.setHashedGuid(hash);
         quickTest.setCity("oyvkpigcga");
         quickTest.setConfirmationCwa(Boolean.TRUE);
@@ -150,5 +202,15 @@ class DccServiceTest {
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         return quickTest;
+    }
+
+    @Test
+    void createTestIdHash() throws Exception {
+        MessageDigest digest = dccService.createSha256Digest();
+        String testId = "bf7dfeeb7cbe4dab33b79dd04ab39b276fb2b1b405d944e93db9e95c835530e4";
+        String testIdHash = "1dff2f115fc7821c2c526103ea92c16870c53fffbe510364d23405fd4872e3aa";
+        assertEquals(testIdHash, Hex.toHexString(digest.digest(testId.getBytes(StandardCharsets.UTF_8))));
+        digest.reset();
+        assertEquals(testIdHash, Hex.toHexString(digest.digest(testId.getBytes(StandardCharsets.UTF_8))));
     }
 }

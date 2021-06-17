@@ -55,10 +55,9 @@ cwa-dcc-server:
   url: http://localhost:8080
 
 dcc:
-  algId: -7
-  # keyId: jd4FUVxAJjY=
-  dgciPrefix: URN:UVCI:V1:DE
-  issuer: DE
+  country: DE
+  issuer: RKI
+  cwtIssuer: DE
   expired: 354
   searchPublicKeysJob:
     cron: "*/2 * * * * *"

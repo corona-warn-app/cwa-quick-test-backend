@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.anyShort;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
@@ -511,8 +512,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .accept(MediaType.APPLICATION_JSON_VALUE)
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(gson.toJson(quickTestPersonalDataRequest)))
-        //    .andExpect(status().isBadRequest());
-            .andExpect(status().isNoContent());
+            .andExpect(status().isBadRequest());
         quickTestPersonalDataRequest.setEmail(email);
 
 

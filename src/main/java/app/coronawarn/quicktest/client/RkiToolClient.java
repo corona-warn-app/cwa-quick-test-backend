@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @FeignClient(
         name = "rkiToolClient",
-        url = "${quicktest.health-department-download-url}"
+        url = "${quicktest.health-department-download-url}",
+        configuration = RkiToolClientConfig.class
 )
 public interface RkiToolClient {
 

@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.SmsClient;
 import app.coronawarn.quicktest.config.SmsConfig;
+import app.coronawarn.quicktest.exception.SmsException;
 import app.coronawarn.quicktest.model.SmsMessage;
 import app.coronawarn.quicktest.model.SmsResponse;
 import java.util.Random;
@@ -43,7 +44,7 @@ public class SmsService {
      * Sends a SMS containing the PDF password to the tested person.
      * @param receiver Phonenumber in E.164 format
      */
-    public void sendPasswordSms(String receiver, String password) {
+    public void sendPasswordSms(String receiver, String password) throws SmsException {
         if (smsConfig.isEnabled()) {
             String messageText = String.format(smsConfig.getMessageTemplate(), password);
             SmsMessage message = SmsMessage.builder()

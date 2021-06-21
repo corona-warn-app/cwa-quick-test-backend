@@ -1,8 +1,8 @@
 /*-
  * ---license-start
- * Corona-Warn-App / cwa-quick-test-backend
+ * Corona-Warn-App / cwa-dcc
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2020 - 2021 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,14 +18,25 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.client;
+package app.coronawarn.quicktest.exception;
 
-import app.coronawarn.quicktest.exception.SmsException;
-import app.coronawarn.quicktest.model.SmsMessage;
-import app.coronawarn.quicktest.model.SmsResponse;
+import lombok.Getter;
 
-public interface SmsClient {
+@Getter
+public class SmsException extends Exception {
 
-    SmsResponse send(SmsMessage sms) throws SmsException;
+    private final Reason reason;
+
+    public SmsException(Reason reason) {
+        super();
+        this.reason = reason;
+    }
+
+    public enum Reason {
+        COULD_NOT_REACH_HOST,
+        WRONG_INPUT,
+        SERVER_FAILURE,
+        SEND_SMS_FAILED;
+    }
 
 }

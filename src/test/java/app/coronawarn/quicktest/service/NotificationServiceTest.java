@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.EmailConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.exception.SmsException;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -35,7 +36,7 @@ class NotificationServiceTest {
     private HealthDepartmentService healthDepartmentService;
 
     @Test
-    void sendMailInUpdateQuickTestNegative() throws EmailService.EmailServiceException, IOException {
+    void sendMailInUpdateQuickTestNegative() throws EmailService.EmailServiceException, IOException, SmsException {
 
         EmailConfig.TestedPerson tp = new EmailConfig.TestedPerson();
         tp.setEnabled(true);
@@ -83,7 +84,7 @@ class NotificationServiceTest {
     }
 
     @Test
-    void sendMailInUpdateQuickDisabledTest() throws EmailService.EmailServiceException {
+    void sendMailInUpdateQuickDisabledTest() throws EmailService.EmailServiceException, SmsException {
 
         EmailConfig.TestedPerson tp = new EmailConfig.TestedPerson();
         tp.setEnabled(false);

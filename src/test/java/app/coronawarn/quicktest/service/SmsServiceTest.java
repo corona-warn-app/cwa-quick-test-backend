@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.client.SmsClient;
 import app.coronawarn.quicktest.config.SmsConfig;
+import app.coronawarn.quicktest.exception.SmsException;
 import app.coronawarn.quicktest.model.SmsMessage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,14 +52,14 @@ class SmsServiceTest {
     }
 
     @Test
-    void sendMessageDisabled() {
+    void sendMessageDisabled() throws SmsException {
         when(smsConfig.isEnabled()).thenReturn(false);
         underTest.sendPasswordSms("+491761234567", "123456");
         verify(smsClient, never()).send(any());
     }
 
     @Test
-    void sendMessageWithPassword() {
+    void sendMessageWithPassword() throws SmsException {
         when(smsConfig.getPasswordLength()).thenReturn(PASSWORD_LENGTH);
         when(smsConfig.isEnabled()).thenReturn(true);
         when(smsConfig.getMessageTemplate()).thenReturn("Nachricht: %s");
@@ -74,7 +75,7 @@ class SmsServiceTest {
     }
 
     @Test
-    void sendMessageWithPasswordToNonE164Phonenumber() {
+    void sendMessageWithPasswordToNonE164Phonenumber() throws SmsException {
         when(smsConfig.getPasswordLength()).thenReturn(PASSWORD_LENGTH);
         when(smsConfig.isEnabled()).thenReturn(true);
         when(smsConfig.getMessageTemplate()).thenReturn("Nachricht: %s");

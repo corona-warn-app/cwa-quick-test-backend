@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.EmailConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.exception.SmsException;
 import app.coronawarn.quicktest.model.TestResult;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import java.io.IOException;
@@ -65,6 +66,8 @@ public class NotificationService {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error encrypting existing pdf.");
             } catch (EmailService.EmailServiceException emailServiceException) {
                 log.error("Could not send mail to tested person.");
+            } catch (SmsException smsException) {
+                log.error("Could not send SMS to tested person. ");
             }
         }
         if (emailConfig.getHealthDepartment() != null && emailConfig.getHealthDepartment().isEnabled()

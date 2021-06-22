@@ -4,6 +4,8 @@ import static app.coronawarn.quicktest.model.Sex.DIVERSE;
 
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
+
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -11,10 +13,15 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
@@ -24,6 +31,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -292,6 +300,28 @@ public class PdfGenerator {
         cos.newLine();
         cos.endText();
 
+    }
+
+    private void generateQRCode(PDDocument document, PDPage page, String text, float x, float y) {
+        try {
+            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
+
+            Map<EncodeHintType, Object> hintMap = new HashMap<>();
+            hintMap.put(EncodeHintType.MARGIN, 0);
+            hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+
+            BitMatrix matrix = new MultiFormatWriter().encode(
+                    new String(text.getBytes("UTF-8"), "UTF-8"),
+                    BarcodeFormat.QR_CODE, 150, 150, hintMap);
+
+            MatrixToImageConfig config = new MatrixToImageConfig(0xFF000001, 0xFFFFFFFF);
+            BufferedImage bImage = MatrixToImageWriter.toBufferedImage(matrix, config);
+            PDImageXObject image = JPEGFactory.createFromImage(document, bImage);
+            contentStream.drawImage(image, x, y, 175, 175);
+            contentStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void generateEnd(PDPageContentStream cos, PDRectangle rect) throws IOException {

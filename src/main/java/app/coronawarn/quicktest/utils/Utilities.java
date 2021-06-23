@@ -54,7 +54,7 @@ public class Utilities {
     }
 
     /**
-     * Get tenantID and pocID from Token.
+     * Get tenantID, pocID and poc zipcode from token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
      * @throws ResponseStatusException 500 if Ids not found in User-Token
@@ -74,6 +74,11 @@ public class Utilities {
             if (customClaims.containsKey(quickTestConfig.getPointOfCareIdName())) {
                 ids.put(quickTestConfig.getTenantPointOfCareIdKey(),
                     String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
+            }
+
+            if (customClaims.containsKey(quickTestConfig.getPointOfCareZipcodeKey())) {
+                ids.put(quickTestConfig.getPointOfCareZipcodeKey(),
+                        String.valueOf(customClaims.get(quickTestConfig.getPointOfCareZipcodeKey())));
             }
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())

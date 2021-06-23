@@ -52,6 +52,7 @@ public class QuickTestPersonalDataRequest {
 
     @Email
     @Size(min = 5, max = 255)
+    @NotNull
     private String email;
 
     @ValidPhoneNumber
@@ -94,5 +95,8 @@ public class QuickTestPersonalDataRequest {
 
     @ValidGuid
     private String testResultServerHash;
+
+    @NotNull
+    private Boolean emailNotificationAgreement;
 
 }

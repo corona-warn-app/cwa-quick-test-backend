@@ -52,6 +52,8 @@ public class QuickTestServiceTest {
     private QuickTestLogRepository quickTestLogRepository;
     @Mock
     private TestResultService testResultService;
+    @Mock
+    private NotificationService notificationService;
 
     @Mock
     private PdfGenerator pdf;
@@ -139,7 +141,7 @@ public class QuickTestServiceTest {
     }
 
     @Test
-    void UpdateNotFoundTest() throws IOException {
+    void UpdateNotFoundTest() {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(null);
@@ -229,6 +231,7 @@ public class QuickTestServiceTest {
     void updateQuickTestSaveFailedTest() {
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
+        quickTest.setPrivacyAgreement(true);
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(quickTestRepository.saveAndFlush(any())).thenThrow(new RuntimeException());

@@ -26,6 +26,9 @@
         <opencsv.version>5.3</opencsv.version>
         <springTestAddons.version>2.5.2</springTestAddons.version>
         <shedlock.version>4.23.0</shedlock.version>
+        <gson.version>2.8.6</gson.version>
+        <jackson.version>2.11.1</jackson.version>
+        <openstack4j.version>1.0.26</openstack4j.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
         <license.projectName>Corona-Warn-App / cwa-quick-test-backend</license.projectName>
@@ -171,14 +174,25 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-            <version>2.8.6</version>
+            <version>${gson.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <!-- dgc -->
         <dependency>
             <groupId>com.upokecenter</groupId>
             <artifactId>cbor</artifactId>
             <version>4.0.1</version>
+        </dependency>
+        <!-- OTC -->
+        <dependency>
+            <groupId>com.huawei</groupId>
+            <artifactId>openstack4j</artifactId>
+            <version>${openstack4j.version}</version>
         </dependency>
 
         <!-- DB drivers -->

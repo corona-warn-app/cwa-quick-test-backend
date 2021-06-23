@@ -25,4 +25,10 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
             LocalDateTime dateTo
     );
 
+    List<QuickTestArchive> findAllByTenantIdAndPocIdAndTestResultAndHealthDepartmentInformedIsFalse(
+            String tenantId,
+            String pocId,
+            Short testResult
+    );
+
 }

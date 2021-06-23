@@ -276,6 +276,43 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
 
     }
 
+    @Test
+    void getUnsentPositiveTestsTest() throws Exception {
+        QuickTestArchive qTA = new QuickTestArchive();
+        qTA.setHashedGuid("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
+        qTA.setShortHashedGuid("6fa4dcec");
+        qTA.setTenantId("tenant");
+        qTA.setCreatedAt(LocalDateTime.now());
+        qTA.setUpdatedAt(LocalDateTime.now());
+        qTA.setConfirmationCwa(true);
+        qTA.setTestResult((short) 6);
+        qTA.setPrivacyAgreement(true);
+        qTA.setLastName("1");
+        qTA.setFirstName("1");
+        qTA.setEmail("v@e.o");
+        qTA.setPhoneNumber("+490000");
+        qTA.setSex(Sex.DIVERSE);
+        qTA.setStreet("f");
+        qTA.setHouseNumber("a");
+        qTA.setZipCode("11111");
+        qTA.setCity("f");
+        qTA.setTestBrandId("testbrand");
+        qTA.setTestBrandName("brandname");
+        qTA.setBirthday(LocalDate.now().toString());
+        qTA.setPdf("test output".getBytes());
+
+        when(quickTestArchiveService.findUnsentPositiveTests(any())).thenReturn(Collections.singletonList(qTA));
+
+        MvcResult mvcResult = mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
+                .get("/api/quicktestarchive/unsentpositive")).andExpect(status().isOk()).andReturn();
+        String responseBody = mvcResult.getResponse().getContentAsString();
+        QuickTestArchiveResponseList response = new Gson().fromJson(responseBody, QuickTestArchiveResponseList.class);
+        checkResponse(response.getQuickTestArchives().get(0), qTA);
+
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+                .get("/api/quicktestarchive/unsentpositive")).andExpect(status().isForbidden()).andReturn();
+    }
+
     private void checkResponse(QuickTestArchiveResponse response, QuickTestArchive quickTestArchive) {
         assertEquals(quickTestArchive.getHashedGuid(), response.getHashedGuid());
         assertEquals(quickTestArchive.getLastName(), response.getLastName());

@@ -56,6 +56,7 @@ public class QuickTestService {
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
+    private final NotificationService notificationService;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -140,8 +141,11 @@ public class QuickTestService {
             log.error("generating PDF failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quicktest, pdf);
+        notificationService.handleMailNotification(quickTestArchive, pdf,
+          ids.get(quickTestConfig.getPointOfCareZipcodeKey()));
         try {
-            quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
+            quickTestArchiveRepository.save(quickTestArchive);
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                 quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
@@ -175,6 +179,12 @@ public class QuickTestService {
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
         throws ResponseStatusException {
+
+        if (!quickTestPersonalData.getPrivacyAgreement()) {
+            log.error("Privacy agreement is false");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         QuickTest quicktest = getQuickTest(
             ids.get(quickTestConfig.getTenantIdKey()),
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
@@ -197,6 +207,7 @@ public class QuickTestService {
         quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
+        quicktest.setEmailNotificationAgreement(quickTestPersonalData.getEmailNotificationAgreement());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
@@ -263,6 +274,7 @@ public class QuickTestService {
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setPdf(pdf);
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setEmailNotificationAgreement(quickTest.getEmailNotificationAgreement());
         return quickTestArchive;
     }
 

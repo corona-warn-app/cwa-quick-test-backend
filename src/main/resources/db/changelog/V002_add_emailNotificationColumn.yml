@@ -1,0 +1,20 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-email-notification-column
+      author: bjarne1337
+      changes:
+        - addColumn:
+            tableName: quick_test
+            columns:
+              name: email_notification_agreement
+              type: boolean
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              name: email_notification_agreement
+              type: boolean
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              name: health_department_informed
+              type: boolean

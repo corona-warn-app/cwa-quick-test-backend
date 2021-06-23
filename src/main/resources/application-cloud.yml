@@ -86,8 +86,30 @@ dccserver:
 
 quicktest:
   db-encryption-key: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
+  health-department-download-url: ${HEALTH_DEPARTMENT_DOWNLOAD_URL}
+  health-department-download-cron: 0 0 0 */2 * *
   clean-up-settings:
     cron: 0 0 0 * * *
     max-age-in-minutes: 3600
     locklimit: 1800000
+
+email:
+  tested-person:
+    enabled: ${EMAIL_NOTIFICATION_TO_TP_ENABLED}
+    subject: "Das Ergebnis Ihres Covid-19 Antigen-Schnelltests liegt vor."
+    title-text: "Guten Tag "
+    text: "</br></br>im Anhang erhalten Sie das Ergebnis Ihres Covid-19 Antigen-Schnelltests.</br>
+           Bitte lesen Sie die Hinweise im Dokument sorgfältig und halten Sie sich an die beschriebenen Regeln.</br>
+           Das gilt insbesondere, wenn Ihr Ergebnis positiv sein sollte. </br></br>
+           Mit freundlichen Grüßen </br>
+           Ihr Testzentrum"
+    attachment-filename: "Schnelltestergebnis.pdf"
+  health-department:
+    enabled: ${EMAIL_NOTIFICATION_TO_HD_ENABLED}
+    subject: "Positives Ergebnis eines Covid-19 Antigen-Schnelltests"
+    text: "Sehr geehrte Damen und Herren, </br></br> im Anhang erhalten Sie die Daten zu einer Testperson,
+          deren Antigen-Schnelltest auf Covid-19 in unserer Teststelle positiv ausgefallen ist. </br></br>
+          Mit freundlichen Grüßen </br>
+          Ihr Testzentrum"
+    attachment-filename: ""
 

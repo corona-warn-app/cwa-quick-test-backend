@@ -41,6 +41,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 @Data
 @NoArgsConstructor
@@ -168,6 +169,9 @@ public class QuickTest {
     @Column(name = "dcc_status")
     private DccStatus dccStatus;
 
+    @Column(name = "email_notification_agreement")
+    private Boolean emailNotificationAgreement;
+
     @PrePersist
     private void onCreate() {
         LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();
@@ -183,6 +187,9 @@ public class QuickTest {
     @PreUpdate
     private void onUpdate() {
         updatedAt = Utilities.getCurrentLocalDateTimeUtc();
+        if (StringUtils.isBlank(email)) {
+            emailNotificationAgreement = false;
+        }
     }
 
 }

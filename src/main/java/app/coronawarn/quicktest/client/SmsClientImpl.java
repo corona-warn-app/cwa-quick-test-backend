@@ -24,7 +24,6 @@ import app.coronawarn.quicktest.config.SmsConfig;
 import app.coronawarn.quicktest.exception.SmsException;
 import app.coronawarn.quicktest.model.SmsMessage;
 import app.coronawarn.quicktest.model.SmsResponse;
-import com.huawei.openstack4j.api.OSClient;
 import com.huawei.openstack4j.api.exceptions.AuthenticationException;
 import com.huawei.openstack4j.api.exceptions.ClientResponseException;
 import com.huawei.openstack4j.api.exceptions.ConnectionException;
@@ -32,9 +31,7 @@ import com.huawei.openstack4j.api.exceptions.OS4JException;
 import com.huawei.openstack4j.api.exceptions.ServerResponseException;
 import com.huawei.openstack4j.api.types.ServiceType;
 import com.huawei.openstack4j.core.transport.Config;
-import com.huawei.openstack4j.model.common.Identifier;
 import com.huawei.openstack4j.model.identity.v3.Token;
-import com.huawei.openstack4j.openstack.OSFactory;
 import com.huawei.openstack4j.openstack.identity.internal.OverridableEndpointURLResolver;
 import com.huawei.openstack4j.openstack.message.notification.domain.MessageIdResponse;
 import javax.annotation.PostConstruct;
@@ -48,6 +45,7 @@ import org.springframework.stereotype.Component;
 public class SmsClientImpl implements SmsClient {
 
     private final SmsConfig smsConfig;
+    private final OsFactoryWrapper osFactoryWrapper;
 
     private Token token;
     private Config openstackConfig;
@@ -57,21 +55,23 @@ public class SmsClientImpl implements SmsClient {
         if (smsConfig.isEnabled()) {
             SmsConfig.OtcAuth otcAuth = smsConfig.getOtcAuth();
 
+            // Set Service Endpoints to eu-de values from https://docs.otc.t-systems.com/en-us/endpoint/index.html
             OverridableEndpointURLResolver endpointResolver = new OverridableEndpointURLResolver();
             endpointResolver.addOverrideEndpoint(ServiceType.Notification, otcAuth.getNotificationEndpoint());
             this.openstackConfig = Config.newConfig().withEndpointURLResolver(endpointResolver);
 
-            authenticate(otcAuth);
+            try {
+                this.token = osFactoryWrapper.authenticate(this.openstackConfig, otcAuth);
+            } catch (AuthenticationException e) {
+                log.error("Could not authenticate at OTC IAM: {} ", e.getLocalizedMessage());
+            }
         }
     }
 
     @Override
     public SmsResponse send(SmsMessage sms) throws SmsException {
         try {
-            MessageIdResponse messageIdResponse = OSFactory.clientFromToken(this.token).withConfig(this.openstackConfig)
-              .notification().sms()
-              .send(sms.getEndpoint(), sms.getMessage(), null);
-
+            MessageIdResponse messageIdResponse = osFactoryWrapper.sendSms(this.token, this.openstackConfig, sms);
             return new SmsResponse(messageIdResponse.getRequestId(), messageIdResponse.getId());
         } catch (AuthenticationException authException) {
             log.warn("Client is not authenticated, retrying authentication: {}",
@@ -94,22 +94,9 @@ public class SmsClientImpl implements SmsClient {
         }
     }
 
-    private void authenticate(SmsConfig.OtcAuth otcAuth) {
-        try {
-            OSClient.OSClientV3 openstackClient = OSFactory.builderV3().withConfig(openstackConfig)
-              .endpoint(otcAuth.getAuthUrl())
-              .credentials(otcAuth.getUser(), otcAuth.getPassword(), Identifier.byId(otcAuth.getDomainId()))
-              .scopeToProject(Identifier.byId(otcAuth.getProjectId()))
-              .authenticate();
-            this.token = openstackClient.getToken();
-        } catch (AuthenticationException e) {
-            log.error("Could not authenticate at OTC IAM: {} ", e.getLocalizedMessage());
-        }
-    }
-
     private void reAuthenticate() {
         try {
-            OSFactory.refreshToken();
+            osFactoryWrapper.refreshToken();
         } catch (AuthenticationException e) {
             log.error("Could not authenticate at OTC IAM: {} ", e.getLocalizedMessage());
         }

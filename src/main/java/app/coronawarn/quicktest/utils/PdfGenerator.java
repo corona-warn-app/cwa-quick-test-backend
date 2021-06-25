@@ -4,7 +4,13 @@ import static app.coronawarn.quicktest.model.Sex.DIVERSE;
 
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
-
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,15 +19,12 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.client.j2se.MatrixToImageConfig;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
@@ -68,10 +71,13 @@ public class PdfGenerator {
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
         page1.setMediaBox(PDRectangle.A4);
-        PDRectangle rect = page1.getMediaBox();
+        PDPage page2 = new PDPage(PDRectangle.A6);
+        document.addPage(page2);
+        page2.setMediaBox(PDRectangle.A6);
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
-        write(document, cos, rect, pocInformation, quicktest, user);
+        PDRectangle rect1 = page1.getMediaBox();
+        write(document, cos, rect1, page2, pocInformation, quicktest, user);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -87,7 +93,8 @@ public class PdfGenerator {
         pdd.setCreationDate(gcal);
     }
 
-    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, List<String> pocInformation,
+    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, PDPage page2,
+                       List<String> pocInformation,
                        QuickTest quicktest,
                        String user) throws IOException {
         generatePoCAddress(cos, rect, pocInformation);
@@ -95,7 +102,9 @@ public class PdfGenerator {
         generatePersonAddress(cos, rect, quicktest);
         generateSubject(cos, rect, quicktest);
         generateText(cos, rect, quicktest, user);
+        //generateQrCode(document, page2, "Qr code cose text", 50f, 50f);
         generateEnd(cos, rect);
+        generateCertTextPage1(document, new PDPageContentStream(document, page2), page2.getMediaBox(), quicktest);
         cos.close();
     }
 
@@ -302,9 +311,10 @@ public class PdfGenerator {
 
     }
 
-    private void generateQRCode(PDDocument document, PDPage page, String text, float x, float y) {
+    private void generateQrCode(PDDocument document, PDPage page, String text, float x, float y) {
         try {
-            PDPageContentStream contentStream = new PDPageContentStream(document, page, PDPageContentStream.AppendMode.APPEND, true);
+            PDPageContentStream contentStream = new PDPageContentStream(
+              document, page, PDPageContentStream.AppendMode.APPEND, true);
 
             Map<EncodeHintType, Object> hintMap = new HashMap<>();
             hintMap.put(EncodeHintType.MARGIN, 0);
@@ -315,13 +325,69 @@ public class PdfGenerator {
                     BarcodeFormat.QR_CODE, 150, 150, hintMap);
 
             MatrixToImageConfig config = new MatrixToImageConfig(0xFF000001, 0xFFFFFFFF);
-            BufferedImage bImage = MatrixToImageWriter.toBufferedImage(matrix, config);
-            PDImageXObject image = JPEGFactory.createFromImage(document, bImage);
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix, config);
+            PDImageXObject image = JPEGFactory.createFromImage(document, bufferedImage);
             contentStream.drawImage(image, x, y, 175, 175);
             contentStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    private void generateCertTextPage1(PDDocument document,
+                                       PDPageContentStream cos, PDRectangle rect, QuickTest quicktest)
+      throws IOException {
+        try {
+            String cert = "Certificate.png";
+            final ClassPathResource classPathResource = new ClassPathResource(cert);
+            final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
+              Objects.requireNonNull(classPathResource.getClassLoader())
+                .getResourceAsStream(cert)));
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "logo");
+            cos.drawImage(pdImage, rect.getWidth() / 2 - 30, rect.getHeight() / 2, 60, 60);
+        } catch (IOException | NullPointerException e) {
+            log.error("Logo not found!");
+        }
+        cos.beginText();
+        cos.setFont(PDType1Font.HELVETICA_BOLD, 11);
+        cos.setLeading(leading);
+        cos.newLineAtOffset(20, rect.getHeight() / 2 - 30);
+        cos.showText("Surname(s) and forename(s)");
+        cos.newLineAtOffset(0, -.9f * 10);
+        cos.setFont(PDType1Font.TIMES_ITALIC, 10);
+        cos.showText("Nom(s) de familie et prénom(s)");
+        cos.newLineAtOffset(0, -.9f * 10);
+        cos.setFont(fontType, 11);
+        cos.setNonStrokingColor(0,51,153);
+        cos.showText(quicktest.getLastName() + ", " + quicktest.getFirstName());
+        cos.setNonStrokingColor(0,0,0);
+        cos.newLine();
+        cos.newLine();
+        cos.setFont(PDType1Font.HELVETICA_BOLD, 11);
+        cos.showText("Date of birth");
+        cos.newLineAtOffset(0, -.9f * 10);
+        cos.setFont(PDType1Font.TIMES_ITALIC, 10);
+        cos.showText("Date de naissance");
+        cos.newLineAtOffset(0, -.9f * 10);
+        cos.setFont(fontType, 11);
+        cos.setNonStrokingColor(0,51,153);
+        cos.showText(quicktest.getBirthday());
+        cos.setNonStrokingColor(0,0,0);
+        cos.newLine();
+        cos.newLine();
+        cos.setFont(PDType1Font.HELVETICA_BOLD, 11);
+        cos.showText("Unique certificate identifier");
+        cos.newLineAtOffset(0, -.9f * 10);
+        cos.setFont(PDType1Font.TIMES_ITALIC, 10);
+        cos.showText("Identifiant unique du certificat");
+        cos.newLineAtOffset(0, -.9f * 10);
+        cos.setFont(fontType, 11);
+        cos.setNonStrokingColor(0,51,153);
+        cos.showText("XXXXXXXXXXXXXXXXXXX");
+        cos.setNonStrokingColor(0,0,0);
+        cos.newLine();
+        cos.endText();
+        cos.close();
     }
 
     private void generateEnd(PDPageContentStream cos, PDRectangle rect) throws IOException {

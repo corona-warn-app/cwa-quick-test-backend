@@ -1,9 +1,19 @@
 package app.coronawarn.quicktest.utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.Sex;
-
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.client.j2se.MatrixToImageConfig;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,14 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.client.j2se.MatrixToImageConfig;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -28,16 +30,13 @@ import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @Slf4j
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class PdfGeneratorTest {
 
     @InjectMocks
@@ -103,15 +102,15 @@ public class PdfGeneratorTest {
             assertTrue(pdfText.contains("MFG"));
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());
             assertEquals("Rapid Test", pdfDocument.getDocumentInformation().getCreator());
-
-            generateQRCode(pdfDocument, pdfDocument.getPage(0),
+            PDPage page = pdfDocument.getPage(1);
+            generateQRCode(pdfDocument, page,
                     "HC1:6BF-606A0T9WTWGSLKC 4X7923S%CA.48Y+6TAB3XK2F310RT012F3LMQ1001JC X8Y50.FK8ZKO/EZKEZ967L6C56." +
                             ".DU%DLPCG/DS2DHIA5Y8GY8JPCT3E5JDOA73467463W5207ZWERIL9WEQDD+Q6TW6FA7C464KCCWE6T9OF6:/6NA76W5." +
                             "JC2EC+96-Q63KCZPCNF6OF63W59%6PF6.SA*479L61G73564KC*KETF6A46.96646B565WET.D6$CBWE3/DO341$CKWEY " +
                             "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
                             "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
                             "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D",
-                    10, 650);
+                    page.getCropBox().getWidth() / 2 - (150 / 2), page.getCropBox().getHeight() - 160);
         } finally {
             pdfDocument.save("C:/tmp/pdf/test.pdf");
             pdfDocument.close();
@@ -161,7 +160,7 @@ public class PdfGeneratorTest {
             MatrixToImageConfig config = new MatrixToImageConfig(0xFF000001, 0xFFFFFFFF);
             BufferedImage bImage = MatrixToImageWriter.toBufferedImage(matrix, config);
             PDImageXObject image = JPEGFactory.createFromImage(document, bImage);
-            contentStream.drawImage(image, x, y, 175, 175);
+            contentStream.drawImage(image, x, y, 150, 150);
             contentStream.close();
         } catch (Exception e) {
             e.printStackTrace();

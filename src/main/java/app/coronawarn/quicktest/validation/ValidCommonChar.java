@@ -20,7 +20,7 @@
 
 package app.coronawarn.quicktest.validation;
 
-import app.coronawarn.quicktest.validation.validators.GuidValidator;
+import app.coronawarn.quicktest.validation.validators.CommonCharValidator;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -29,19 +29,19 @@ import javax.validation.Constraint;
 import javax.validation.Payload;
 
 /**
- * Validation annotation for guid.
+ * Validation annotation for String containing Chars from the Latin Charset.
  */
 @Target({ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = GuidValidator.class)
-public @interface ValidGuid {
+@Constraint(validatedBy = CommonCharValidator.class)
+public @interface ValidCommonChar {
 
     /**
-     * Get the error message for invalid GUID.
+     * Get the error message for invalid String.
      *
      * @return clear text error message
      */
-    String message() default "Invalid guid";
+    String message() default "Input contains special chars or Numbers";
 
     /**
      * Default groups() method.
@@ -52,5 +52,6 @@ public @interface ValidGuid {
      * Default payload() method.
      */
     Class<? extends Payload>[] payload() default {};
+
 
 }

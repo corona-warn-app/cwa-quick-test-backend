@@ -20,27 +20,23 @@
 
 package app.coronawarn.quicktest.validation.validators;
 
-import app.coronawarn.quicktest.validation.ValidGuid;
-import java.util.regex.Matcher;
+import app.coronawarn.quicktest.validation.ValidCommonCharAndNumber;
 import java.util.regex.Pattern;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
-public class GuidValidator implements ConstraintValidator<ValidGuid, String> {
-    private static final Pattern GUID_PATTERN = Pattern.compile("^([A-Fa-f0-9]{64})$");
+public class CommonCharAndNumberValidator implements ConstraintValidator<ValidCommonCharAndNumber, String> {
+    private static final Pattern CONTAINS_SPECIAL_CHARACTERS_EXCEPT_WHITESPACE =
+            Pattern.compile("[\\^[\\p{IsCommon}|\\p{N}|\\ ]]");
 
     @Override
-    public boolean isValid(String guid, ConstraintValidatorContext context) {
-        if (StringUtils.isBlank(guid)) {
+    public boolean isValid(String string, ConstraintValidatorContext constraintValidatorContext) {
+        if (StringUtils.isBlank(string)) {
             return true;
         } else {
-            return validateGuid(guid);
+            return !CONTAINS_SPECIAL_CHARACTERS_EXCEPT_WHITESPACE.matcher(string).matches();
         }
     }
 
-    private boolean validateGuid(String guid) {
-        Matcher matcher = GUID_PATTERN.matcher(guid);
-        return matcher.matches();
-    }
 }

@@ -11,6 +11,7 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,7 +34,9 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.core.io.ClassPathResource;
@@ -57,6 +60,13 @@ public class PdfGenerator {
     private int fontSize = 12;
     private PDType1Font fontType = PDType1Font.HELVETICA;
 
+    private PDTrueTypeFont fontArial;
+    private PDTrueTypeFont fontArialBold;
+    private PDTrueTypeFont fontArialItalic;
+
+    private final Color pantoneReflexBlue = Color.decode("#003399");
+    private final Color pantoneYellow = Color.decode("#FFCC00");
+
     /**
      * Generates a PDF file for rapid test result to print.
      *
@@ -71,13 +81,10 @@ public class PdfGenerator {
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
         page1.setMediaBox(PDRectangle.A4);
-        PDPage page2 = new PDPage(PDRectangle.A6);
-        document.addPage(page2);
-        page2.setMediaBox(PDRectangle.A6);
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
         PDRectangle rect1 = page1.getMediaBox();
-        write(document, cos, rect1, page2, pocInformation, quicktest, user);
+        write(document, cos, rect1, pocInformation, quicktest, user);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -91,9 +98,20 @@ public class PdfGenerator {
         LocalDate date = LocalDate.now();
         GregorianCalendar gcal = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()));
         pdd.setCreationDate(gcal);
+        final ClassPathResource cs = new ClassPathResource("pdf/fonts/arial.ttf");
+        try {
+            this.fontArial = PDTrueTypeFont.load(document,
+              Objects.requireNonNull(cs.getClassLoader()).getResourceAsStream("pdf/fonts/arial.ttf"), WinAnsiEncoding.INSTANCE);
+            this.fontArialBold = PDTrueTypeFont.load(document,
+              Objects.requireNonNull(cs.getClassLoader()).getResourceAsStream("pdf/fonts/arialbd.ttf"), WinAnsiEncoding.INSTANCE);
+            this.fontArialItalic = PDTrueTypeFont.load(document,
+              Objects.requireNonNull(cs.getClassLoader()).getResourceAsStream("pdf/fonts/ariali.ttf"), WinAnsiEncoding.INSTANCE);
+        } catch (IOException e) {
+            log.error("Could not load font");
+        }
     }
 
-    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, PDPage page2,
+    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect,
                        List<String> pocInformation,
                        QuickTest quicktest,
                        String user) throws IOException {
@@ -104,7 +122,7 @@ public class PdfGenerator {
         generateText(cos, rect, quicktest, user);
         //generateQrCode(document, page2, "Qr code cose text", 50f, 50f);
         generateEnd(cos, rect);
-        generateCertTextPage1(document, new PDPageContentStream(document, page2), page2.getMediaBox(), quicktest);
+        generateCertPage(document,  quicktest);
         cos.close();
     }
 
@@ -334,59 +352,264 @@ public class PdfGenerator {
         }
     }
 
-    private void generateCertTextPage1(PDDocument document,
-                                       PDPageContentStream cos, PDRectangle rect, QuickTest quicktest)
+    private void generateCertPage(PDDocument document, QuickTest quicktest)
       throws IOException {
+
+        PDPage page = new PDPage(PDRectangle.A4);
+        document.addPage(page);
+        page.setMediaBox(PDRectangle.A4);
+        PDPageContentStream cos = new PDPageContentStream(document, page);
+        PDRectangle rect = page.getMediaBox();
+
+        cos.drawLine(rect.getWidth() / 2, 0, rect.getWidth() / 2, rect.getHeight());
+        cos.drawLine(0, rect.getHeight() / 2, rect.getWidth(), rect.getHeight() / 2);
+
+        generateCertTextPage1(document, cos, rect);
+        generateCertTextPage2(document, cos, rect, quicktest);
+        generateCertTextPage3(document, cos, rect);
+        generateCertTextPage4(document, cos, rect, quicktest);
+        cos.close();
+    }
+
+    private void generateCertTextPage1(PDDocument document, PDPageContentStream cos, PDRectangle rect)
+      throws IOException {
+
+        cos.beginText();
+        cos.setLeading(leading);
+        cos.newLineAtOffset(rect.getWidth() / 2 / 3, rect.getHeight() - 100);
+        cos.setFont(fontArialBold, 21);
+        cos.setNonStrokingColor(pantoneReflexBlue);
+        cos.showText("EU Digital");
+        cos.newLineAtOffset(-35f, -25f);
+        cos.showText("COVID Certificate");
+        cos.endText();
+
+        cos.setNonStrokingColor(Color.yellow);
+        cos.addRect(14.5f, rect.getHeight() - 160, rect.getWidth() / 2 - 29f, 10);
+        cos.fillAndStroke();
+
+        cos.beginText();
+        cos.newLineAtOffset(50f, rect.getHeight() - 200);
+        cos.setFont(fontArialBold, 21);
+        cos.setNonStrokingColor(pantoneReflexBlue);
+        cos.showText("Certificat numérique");
+        cos.newLineAtOffset(15f, -25f);
+        cos.showText("européen COVID");
+        cos.endText();
+
         try {
-            String cert = "Certificate.png";
+            String flag = "pdf/eu_flag.png";
+            final ClassPathResource classPathResource = new ClassPathResource(flag);
+            final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
+              Objects.requireNonNull(classPathResource.getClassLoader())
+                .getResourceAsStream(flag)));
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "flag");
+            cos.drawImage(pdImage, rect.getWidth() / 4 - 58, (rect.getHeight() / 2) + 80 , 113, 75);
+        } catch (IOException | NullPointerException e) {
+            log.error("Flag image not found!");
+        }
+    }
+
+    private void generateCertTextPage2(PDDocument document, PDPageContentStream cos,
+                                       PDRectangle rect, QuickTest quicktest)
+      throws IOException {
+
+        try {
+            String cert = "pdf/certificate.png";
             final ClassPathResource classPathResource = new ClassPathResource(cert);
             final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(cert)));
-            PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "logo");
-            cos.drawImage(pdImage, rect.getWidth() / 2 - 30, rect.getHeight() / 2, 60, 60);
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "cert");
+            cos.drawImage(pdImage, rect.getWidth() / 2 + 14.5f,
+              rect.getHeight() - (rect.getHeight() / 4) - 75, 295 - 29.5f, 70 - 7f);
         } catch (IOException | NullPointerException e) {
-            log.error("Logo not found!");
+            log.error("Certificate image not found!");
         }
+
         cos.beginText();
-        cos.setFont(PDType1Font.HELVETICA_BOLD, 11);
+        cos.setFont(fontArialBold, 11);
+        cos.setNonStrokingColor(Color.BLACK);
         cos.setLeading(leading);
-        cos.newLineAtOffset(20, rect.getHeight() / 2 - 30);
+        cos.newLineAtOffset(rect.getWidth() / 2 + 20, rect.getHeight() / 2 + 120);
         cos.showText("Surname(s) and forename(s)");
         cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(PDType1Font.TIMES_ITALIC, 10);
+        cos.setFont(fontArialItalic, 10);
         cos.showText("Nom(s) de familie et prénom(s)");
         cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontType, 11);
-        cos.setNonStrokingColor(0,51,153);
+        cos.setFont(fontArial, 11);
+        cos.setNonStrokingColor(pantoneReflexBlue);
         cos.showText(quicktest.getLastName() + ", " + quicktest.getFirstName());
-        cos.setNonStrokingColor(0,0,0);
+        cos.setNonStrokingColor(Color.BLACK);
         cos.newLine();
-        cos.newLine();
-        cos.setFont(PDType1Font.HELVETICA_BOLD, 11);
+        cos.setFont(fontArialBold, 11);
         cos.showText("Date of birth");
         cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(PDType1Font.TIMES_ITALIC, 10);
+        cos.setFont(fontArialItalic, 10);
         cos.showText("Date de naissance");
         cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontType, 11);
-        cos.setNonStrokingColor(0,51,153);
+        cos.setFont(fontArial, 11);
+        cos.setNonStrokingColor(pantoneReflexBlue);
         cos.showText(quicktest.getBirthday());
-        cos.setNonStrokingColor(0,0,0);
+        cos.setNonStrokingColor(Color.BLACK);
         cos.newLine();
-        cos.newLine();
-        cos.setFont(PDType1Font.HELVETICA_BOLD, 11);
+        cos.setFont(fontArialBold, 11);
         cos.showText("Unique certificate identifier");
         cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(PDType1Font.TIMES_ITALIC, 10);
+        cos.setFont(fontArialItalic, 10);
         cos.showText("Identifiant unique du certificat");
         cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontType, 11);
-        cos.setNonStrokingColor(0,51,153);
+        cos.setFont(fontArial, 11);
+        cos.setNonStrokingColor(pantoneReflexBlue);
         cos.showText("XXXXXXXXXXXXXXXXXXX");
-        cos.setNonStrokingColor(0,0,0);
+        cos.setNonStrokingColor(Color.BLACK);
         cos.newLine();
         cos.endText();
+    }
+
+    private void generateCertTextPage3(PDDocument document, PDPageContentStream cos,
+                                       PDRectangle rect) throws IOException {
+
+        try {
+            String flagSep = "pdf/flag_seperator.png";
+            final ClassPathResource classPathResource = new ClassPathResource(flagSep);
+            final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
+              Objects.requireNonNull(classPathResource.getClassLoader())
+                .getResourceAsStream(flagSep)));
+            PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "flagSep");
+            cos.drawImage(pdImage, 14.5f,rect.getHeight() / 2 - 100, 295 -29.5f, 70 - 7f);
+        } catch (IOException | NullPointerException e) {
+            log.error("Flag seperator image not found!");
+        }
+
+        cos.beginText();
+        cos.setLeading(leading);
+        cos.setFont(fontArial, 8);
+        cos.newLineAtOffset(30, rect.getHeight() / 4 - 50);
+        cos.showText("This certificate is not a travel document.  The scientific evidence");
+        cos.newLineAtOffset(5, -10f);
+        cos.showText("on COVID-19 vaccination, testing and recovering continues to");
+        cos.newLineAtOffset(2, -10f);
+        cos.showText("evolve, also in view of new variants of concern of the virus.");
+        cos.newLineAtOffset(0, -10f);
+        cos.showText("Before travelling, please check the applicable public health");
+        cos.newLineAtOffset(2, -10f);
+        cos.showText("measures and related restrictions applied at the point of");
+        cos.newLineAtOffset(75, -10f);
+        cos.showText("destination.");
+        cos.newLineAtOffset(-50f, -10f);
+        cos.showText("Relevant information can be found here:");
+        cos.endText();
+    }
+
+    private void generateCertTextPage4(PDDocument document, PDPageContentStream cos,
+                                       PDRectangle rect, QuickTest quickTest) throws IOException {
+
+        float spacing = -15f;
+
+        cos.beginText();
+        cos.setLeading(leading);
+        cos.setFont(fontArialBold, 15);
+        cos.setNonStrokingColor(pantoneReflexBlue);
+        cos.newLineAtOffset(rect.getWidth() / 2 + 100, rect.getHeight() / 2 - 60);
+        cos.showText("Test Certificate");
+        cos.newLineAtOffset(0, -15f);
+        cos.setFont(fontArialBold, 14);
+        cos.showText("Certificat de Test");
+        cos.newLineAtOffset(-80f, -30f);
+
+        cos.setNonStrokingColor(Color.BLACK);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Disease or agent targeted");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Maladie ou agent cible");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Test name (optional for NAAT)");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Nom du test");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Test manufacturer (optional for NAAT)");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Fabricant du test");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Date and time of the test sample");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Date et heure");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Date and time of the test result");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Date et heure");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Result of the test");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Resultat du test");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Testing centre or facility");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Centre ou installation de test");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Member state of test");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("État membre du test");
+
+        cos.newLineAtOffset(0, spacing);
+        cos.setFont(fontArialBold, 8);
+        cos.showText("Certificate issuer");
+        cos.newLineAtOffset(0, -9f);
+        cos.setFont(fontArialItalic, 8);
+        cos.showText("Émetteur du certificat");
+        cos.endText();
+
+        cos.beginText();
+        cos.setLeading(leading);
+        cos.setFont(fontArialBold, 8);
+        cos.setNonStrokingColor(pantoneReflexBlue);
+        cos.newLineAtOffset(rect.getWidth() / 2 + 200, rect.getHeight() / 2 - 105);
+        cos.showText("COVID-19");
+        cos.newLineAtOffset(0, -24f);
+        //TODO
+        cos.showText(quickTest.getTestBrandName());
+        cos.newLineAtOffset(0, -24f);
+        cos.showText(quickTest.getTestBrandName());
+        cos.newLineAtOffset(0, -24f);
+        cos.showText(quickTest.getCreatedAt().format(formatter));
+        cos.newLineAtOffset(0, -24f);
+        cos.showText(quickTest.getUpdatedAt().format(formatter));
+        cos.newLineAtOffset(0, -24f);
+        //TODO
+        cos.showText(quickTest.getTestResult() == 7 ? "Positive" : "Negative");
+        cos.newLineAtOffset(0, -24f);
+        cos.showText(quickTest.getPocId());
+        cos.newLineAtOffset(0, -24f);
+        //TODO
+        cos.showText("DE");
+        cos.newLineAtOffset(0, -24f);
+        cos.showText("DE");
+
+        cos.endText();
+
         cos.close();
     }
 

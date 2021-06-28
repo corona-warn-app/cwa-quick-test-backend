@@ -110,7 +110,7 @@ public class PdfGeneratorTest {
                             "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
                             "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
                             "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D",
-                    page.getCropBox().getWidth() / 2 - (150 / 2), page.getCropBox().getHeight() - 160);
+                    page.getCropBox().getWidth() / 4 * 3 - (150 / 2), page.getCropBox().getHeight() - 200);
         } finally {
             pdfDocument.save("C:/tmp/pdf/test.pdf");
             pdfDocument.close();

@@ -121,11 +121,14 @@ public class PdfGenerator {
         final ClassPathResource cs = new ClassPathResource("pdf/fonts/arial.ttf");
         try {
             this.fontArial = PDTrueTypeFont.load(document,
-              Objects.requireNonNull(cs.getClassLoader()).getResourceAsStream("pdf/fonts/arial.ttf"), WinAnsiEncoding.INSTANCE);
+              Objects.requireNonNull(cs.getClassLoader())
+                .getResourceAsStream("pdf/fonts/arial.ttf"), WinAnsiEncoding.INSTANCE);
             this.fontArialBold = PDTrueTypeFont.load(document,
-              Objects.requireNonNull(cs.getClassLoader()).getResourceAsStream("pdf/fonts/arialbd.ttf"), WinAnsiEncoding.INSTANCE);
+              Objects.requireNonNull(cs.getClassLoader())
+                .getResourceAsStream("pdf/fonts/arialbd.ttf"), WinAnsiEncoding.INSTANCE);
             this.fontArialItalic = PDTrueTypeFont.load(document,
-              Objects.requireNonNull(cs.getClassLoader()).getResourceAsStream("pdf/fonts/ariali.ttf"), WinAnsiEncoding.INSTANCE);
+              Objects.requireNonNull(cs.getClassLoader())
+                .getResourceAsStream("pdf/fonts/ariali.ttf"), WinAnsiEncoding.INSTANCE);
         } catch (IOException e) {
             log.error("Could not load font");
         }
@@ -424,7 +427,7 @@ public class PdfGenerator {
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(flag)));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "flag");
-            cos.drawImage(pdImage, rect.getWidth() / 4 - 58, (rect.getHeight() / 2) + 80 , 113, 75);
+            cos.drawImage(pdImage, rect.getWidth() / 4 - 58, (rect.getHeight() / 2) + 80, 113, 75);
         } catch (IOException | NullPointerException e) {
             log.error("Flag image not found!");
         }
@@ -497,7 +500,7 @@ public class PdfGenerator {
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(flagSep)));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "flagSep");
-            cos.drawImage(pdImage, 14.5f,rect.getHeight() / 2 - 100, 295 -29.5f, 70 - 7f);
+            cos.drawImage(pdImage, 14.5f,rect.getHeight() / 2 - 100, 295 - 29.5f, 70 - 7f);
         } catch (IOException | NullPointerException e) {
             log.error("Flag seperator image not found!");
         }

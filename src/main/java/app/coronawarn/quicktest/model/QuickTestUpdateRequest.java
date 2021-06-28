@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.model;
 
+import app.coronawarn.quicktest.validation.ValidCommonCharAndNumber;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -49,10 +50,12 @@ public class QuickTestUpdateRequest {
     private short result;
 
     @NotNull
+    @ValidCommonCharAndNumber
     @Size(min = 1, max = 15)
     private String testBrandId;
 
     @Size(max = 200)
+    @ValidCommonCharAndNumber
     private String testBrandName;
 
 }

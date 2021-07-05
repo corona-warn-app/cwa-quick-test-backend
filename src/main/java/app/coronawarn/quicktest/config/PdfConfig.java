@@ -63,4 +63,33 @@ public class PdfConfig {
     private String birthDateDescriptionText = "Geburtstag: ";
     private String furtherDataAboutTestDescriptionText = "Weitere Angaben zum Test: ";
     private String executedFromDescriptionText = "Durchgeführt durch: ";
+
+    private String certLineSeparator = " <br> ";
+    private String certHeaderTestEn = "Test Certificate";
+    private String certHeaderTestDe = "Testzertifikat";
+    private String certHeaderTestFr = "Certificat de Test";
+    private String certTestNameEn = "Test name (optional for NAAT)";
+    private String certTestNameDe = "Testname (optional für NAAT)";
+    private String certTestNameFr = "Nom du test";
+    private String certTestManufacturerEn = "Test manufacturer <br> (optional for NAAT)";
+    private String certTestManufacturerDe = "Hersteller des Tests (optional für NAAT)";
+    private String certTestManufacturerFr = "Fabricant du test <br> (facultatif pour un test TAAN)";
+    private String certDateSampleCollectionEn = "Date and time of the test sample <br> collection";
+    private String certDateSampleCollectionDe = "Datum und Uhreit der Probenentnahme";
+    private String certDateSampleCollectionFr = "Date et heure du prélèvement de <br> l’échantillon";
+    private String certDateTestResultEn = "Date and time of the test result <br> production (optional for RAT)";
+    private String certDateTestResultDe = "Datum und Uhrzeit des Ergebnisbestimmung";
+    private String certDateTestResultFr = "Date et heure de la production <br> des résultats du test";
+    private String certTestResultEn = "Result of the test";
+    private String certTestResultDe = "Testergebnis";
+    private String certTestResultFr = "Resultat du test";
+    private String certTestingCentreEn = "Testing centre or facility";
+    private String certTestingCentreDe = "Testzentrum oder -ort";
+    private String certTestingCentreFr = "Centre ou installation de test";
+    private String certStateOfTestEn = "Member State of test";
+    private String certStateOfTestDe = "Mitgliedstaat des Tests";
+    private String certStateOfTestFr = "État membre du test";
+    private String certIssuerEn = "Certificate issuer";
+    private String certIssuerDe = "Zertifikataussteller";
+    private String certIssuerFr = "Émetteur du certificat";
 }

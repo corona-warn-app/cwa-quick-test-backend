@@ -31,12 +31,15 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import eu.europa.ec.dgc.DccDecodeResult;
+import eu.europa.ec.dgc.DccDecoder;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -48,6 +51,7 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -68,6 +72,7 @@ import org.springframework.stereotype.Service;
 public class PdfGenerator {
 
     private final PdfConfig pdfConfig;
+    private final DccDecoder dccDecoder = new DccDecoder();
 
     private final int pending = 5;
     private final int negative = 6;
@@ -75,6 +80,7 @@ public class PdfGenerator {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private final DateTimeFormatter utcParserFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     private int offsetX = 70;
     private float leading = 14.5f;
     private int fontSize = 12;
@@ -97,6 +103,20 @@ public class PdfGenerator {
      */
     public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTest quicktest,
                                              String user) throws IOException {
+        return generatePdf(pocInformation, quicktest, user, null);
+    }
+
+    /**
+     * Generates a PDF file for rapid test result with QR code to print.
+     *
+     * @param pocInformation point of care data used in pdf
+     * @param quicktest      Quicktest
+     * @param user           carried out y user
+     * @param dcc            certificate data
+     * @throws IOException   when creating pdf went wrong
+     */
+    public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTest quicktest,
+                                             String user, String dcc) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
@@ -104,7 +124,7 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
         PDRectangle rect1 = page1.getMediaBox();
-        write(document, cos, rect1, pocInformation, quicktest, user);
+        write(document, cos, rect1, pocInformation, quicktest, user, dcc);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -137,15 +157,16 @@ public class PdfGenerator {
     private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect,
                        List<String> pocInformation,
                        QuickTest quicktest,
-                       String user) throws IOException {
+                       String user, String dcc) throws IOException {
         generatePoCAddress(cos, rect, pocInformation);
         addCoronaAppIcon(document, cos, rect);
         generatePersonAddress(cos, rect, quicktest);
         generateSubject(cos, rect, quicktest);
         generateText(cos, rect, quicktest, user);
-        //generateQrCode(document, page2, "Qr code cose text", 50f, 50f);
         generateEnd(cos, rect);
-        generateCertPage(document,  quicktest);
+        if (StringUtils.isNotEmpty(dcc)) {
+            generateCertPage(document, quicktest, dcc, pocInformation);
+        }
         cos.close();
     }
 
@@ -352,30 +373,8 @@ public class PdfGenerator {
 
     }
 
-    private void generateQrCode(PDDocument document, PDPage page, String text, float x, float y) {
-        try {
-            PDPageContentStream contentStream = new PDPageContentStream(
-              document, page, PDPageContentStream.AppendMode.APPEND, true);
-
-            Map<EncodeHintType, Object> hintMap = new HashMap<>();
-            hintMap.put(EncodeHintType.MARGIN, 0);
-            hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
-
-            BitMatrix matrix = new MultiFormatWriter().encode(
-                    new String(text.getBytes("UTF-8"), "UTF-8"),
-                    BarcodeFormat.QR_CODE, 150, 150, hintMap);
-
-            MatrixToImageConfig config = new MatrixToImageConfig(0xFF000001, 0xFFFFFFFF);
-            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix, config);
-            PDImageXObject image = JPEGFactory.createFromImage(document, bufferedImage);
-            contentStream.drawImage(image, x, y, 175, 175);
-            contentStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void generateCertPage(PDDocument document, QuickTest quicktest)
+    private void generateCertPage(PDDocument document, QuickTest quicktest, String dcc,
+                                  List<String> pocInfo)
       throws IOException {
 
         PDPage page = new PDPage(PDRectangle.A4);
@@ -384,14 +383,42 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page);
         PDRectangle rect = page.getMediaBox();
 
-        cos.drawLine(rect.getWidth() / 2, 0, rect.getWidth() / 2, rect.getHeight());
-        cos.drawLine(0, rect.getHeight() / 2, rect.getWidth(), rect.getHeight() / 2);
+        //cos.drawLine(rect.getWidth() / 2, 0, rect.getWidth() / 2, rect.getHeight());
+        //cos.drawLine(0, rect.getHeight() / 2, rect.getWidth(), rect.getHeight() / 2);
 
+        DccDecodeResult dccDecodeResult = dccDecoder.decodeDcc(dcc);
         generateCertTextPage1(document, cos, rect);
-        generateCertTextPage2(document, cos, rect, quicktest);
+        generateCertTextPage2(document, cos, rect, quicktest, dccDecodeResult);
+        generateQrCode(document, cos, rect, dcc);
         generateCertTextPage3(document, cos, rect);
-        generateCertTextPage4(document, cos, rect, quicktest);
+        generateCertTextPage4(document, cos, rect, quicktest, dccDecodeResult, pocInfo);
         cos.close();
+    }
+
+    private void generateQrCode(PDDocument document, PDPageContentStream cos, PDRectangle rect, String text) {
+        try {
+            int qrCodeSize = 150;
+            float qrCodeImageSize = 175f;
+
+            Map<EncodeHintType, Object> hintMap = new HashMap<>();
+            hintMap.put(EncodeHintType.MARGIN, 0);
+            hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+
+            BitMatrix matrix = new MultiFormatWriter().encode(
+              new String(text.getBytes("UTF-8"), "UTF-8"),
+              BarcodeFormat.QR_CODE, qrCodeSize, qrCodeSize, hintMap);
+
+            MatrixToImageConfig config = new MatrixToImageConfig(0xFF000001, 0xFFFFFFFF);
+            BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix, config);
+            PDImageXObject image = JPEGFactory.createFromImage(document, bufferedImage);
+            cos.drawImage(image,
+                rect.getWidth() / 4 * 3 - (qrCodeImageSize / 2),
+                rect.getHeight() - 200,
+                qrCodeImageSize,
+                qrCodeImageSize);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     private void generateCertTextPage1(PDDocument document, PDPageContentStream cos, PDRectangle rect)
@@ -408,7 +435,7 @@ public class PdfGenerator {
         cos.endText();
 
         cos.setNonStrokingColor(Color.yellow);
-        cos.addRect(14.5f, rect.getHeight() - 160, rect.getWidth() / 2 - 29f, 10);
+        cos.addRect(leading, rect.getHeight() - 160, rect.getWidth() / 2 - leading * 2, 10);
         cos.fillAndStroke();
 
         cos.beginText();
@@ -434,7 +461,8 @@ public class PdfGenerator {
     }
 
     private void generateCertTextPage2(PDDocument document, PDPageContentStream cos,
-                                       PDRectangle rect, QuickTest quicktest)
+                                       PDRectangle rect, QuickTest quicktest,
+                                       DccDecodeResult dccDecodeResult)
       throws IOException {
 
         try {
@@ -450,44 +478,43 @@ public class PdfGenerator {
             log.error("Certificate image not found!");
         }
 
+        LocalDate birthday = LocalDate.parse(quicktest.getBirthday(), dtf);
         cos.beginText();
-        cos.setFont(fontArialBold, 11);
-        cos.setNonStrokingColor(Color.BLACK);
         cos.setLeading(leading);
         cos.newLineAtOffset(rect.getWidth() / 2 + 20, rect.getHeight() / 2 + 120);
-        cos.showText("Surname(s) and forename(s)");
-        cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontArialItalic, 10);
-        cos.showText("Nom(s) de familie et prénom(s)");
-        cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontArial, 11);
-        cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText(quicktest.getLastName() + ", " + quicktest.getFirstName());
-        cos.setNonStrokingColor(Color.BLACK);
-        cos.newLine();
-        cos.setFont(fontArialBold, 11);
-        cos.showText("Date of birth");
-        cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontArialItalic, 10);
-        cos.showText("Date de naissance");
-        cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontArial, 11);
-        cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText(quicktest.getBirthday());
-        cos.setNonStrokingColor(Color.BLACK);
-        cos.newLine();
-        cos.setFont(fontArialBold, 11);
-        cos.showText("Unique certificate identifier");
-        cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontArialItalic, 10);
-        cos.showText("Identifiant unique du certificat");
-        cos.newLineAtOffset(0, -.9f * 10);
-        cos.setFont(fontArial, 11);
-        cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText("XXXXXXXXXXXXXXXXXXX");
-        cos.setNonStrokingColor(Color.BLACK);
-        cos.newLine();
+
+        List<List<String>> data = List.of(
+          List.of("Surname(s) and forename(s)", "Nom(s) de familie et prénom(s)",
+            quicktest.getLastName().concat(", ".concat(quicktest.getFirstName()))),
+          List.of("Date of birth", "Date de naissance", formatterDate.format(birthday)),
+          List.of("Unique certificate identifier", "Identifiant unique du certificat",dccDecodeResult.getCi())
+        );
+
+        data.forEach(entry -> printQrPagePersonalInfo(cos, entry));
         cos.endText();
+    }
+
+    private void printQrPagePersonalInfo(PDPageContentStream cos, List<String> data) {
+        int boldSize = 11;
+        int italicSize = 10;
+        int normalSize = 10;
+
+        try {
+            cos.setFont(fontArialBold, boldSize);
+            cos.setNonStrokingColor(Color.BLACK);
+            cos.showText(data.get(0));
+            cos.newLineAtOffset(0, -italicSize);
+            cos.setFont(fontArialItalic, italicSize);
+            cos.showText(data.get(1));
+            cos.newLineAtOffset(0, -italicSize);
+            cos.setFont(fontArial, normalSize);
+            cos.setNonStrokingColor(pantoneReflexBlue);
+            cos.showText(data.get(2));
+            cos.setNonStrokingColor(Color.BLACK);
+            cos.newLine();
+        } catch (IOException ex) {
+            log.warn("Could not create QR personal data page.");
+        }
     }
 
     private void generateCertTextPage3(PDDocument document, PDPageContentStream cos,
@@ -507,7 +534,16 @@ public class PdfGenerator {
 
         cos.beginText();
         cos.setLeading(leading);
+        cos.setFont(fontArialBold, 14);
+        cos.newLineAtOffset(rect.getWidth() / 4 - 85, rect.getHeight() / 2 - 125);
+        cos.setNonStrokingColor(pantoneReflexBlue);
+        cos.showText("Member State Placeholder");
+        cos.endText();
+
+        cos.beginText();
+        cos.setLeading(leading);
         cos.setFont(fontArial, 8);
+        cos.setNonStrokingColor(Color.BLACK);
         cos.newLineAtOffset(30, rect.getHeight() / 4 - 50);
         cos.showText("This certificate is not a travel document.  The scientific evidence");
         cos.newLineAtOffset(5, -10f);
@@ -526,114 +562,103 @@ public class PdfGenerator {
     }
 
     private void generateCertTextPage4(PDDocument document, PDPageContentStream cos,
-                                       PDRectangle rect, QuickTest quickTest) throws IOException {
-
-        float spacing = -15f;
+                                       PDRectangle rect, QuickTest quickTest,
+                                       DccDecodeResult dccDecodeResult, List<String> pocInfo) throws IOException {
 
         cos.beginText();
         cos.setLeading(leading);
         cos.setFont(fontArialBold, 15);
         cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.newLineAtOffset(rect.getWidth() / 2 + 100, rect.getHeight() / 2 - 60);
-        cos.showText("Test Certificate");
+        cos.newLineAtOffset(rect.getWidth() / 2 + 100, rect.getHeight() / 2 - 30);
+        cos.showText(pdfConfig.getCertHeaderTestEn());
         cos.newLineAtOffset(0, -15f);
         cos.setFont(fontArialBold, 14);
-        cos.showText("Certificat de Test");
+        cos.showText(pdfConfig.getCertHeaderTestFr());
         cos.newLineAtOffset(-80f, -30f);
 
         cos.setNonStrokingColor(Color.BLACK);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Disease or agent targeted");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Maladie ou agent cible");
+        LocalDateTime dt = LocalDateTime.parse(dccDecodeResult.getDccJsonNode().get("t").get(0).get("sc").asText(),
+          utcParserFormatter);
 
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Test name (optional for NAAT)");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Nom du test");
 
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Test manufacturer (optional for NAAT)");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Fabricant du test");
+        //String testResult = "";
+        //switch (quickTest.getTestResult() != null ? quickTest.getTestResult() : -1) {
+        //    case pending:
+        //        testResult = "Pending"
+        //}
 
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Date and time of the test sample");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Date et heure");
+        List<List<String>> data = List.of(
+          List.of("Disease or agent targeted", "Maladie ou agent cible", "COVID-19"),
+          List.of(pdfConfig.getCertTestNameEn(), pdfConfig.getCertTestNameFr(), quickTest.getTestBrandName()),
+          List.of(pdfConfig.getCertTestManufacturerEn(), pdfConfig.getCertTestManufacturerFr(),
+            dccDecodeResult.getDccJsonNode().get("t").get(0).get("ma").asText()),
+          List.of(pdfConfig.getCertDateSampleCollectionEn(), pdfConfig.getCertDateSampleCollectionFr(),
+            dt.format(formatter)),
+          List.of(pdfConfig.getCertDateTestResultEn(), pdfConfig.getCertDateTestResultFr(),
+            quickTest.getUpdatedAt().format(formatter)),
+          List.of(pdfConfig.getCertTestResultEn(), pdfConfig.getCertTestResultFr(),
+            quickTest.getTestResult() == 7 ? "Positive" : "Negative"),
+          List.of(pdfConfig.getCertTestingCentreEn(), pdfConfig.getCertTestingCentreFr(), pocInfo.get(0)),
+          List.of(pdfConfig.getCertStateOfTestEn(), pdfConfig.getCertStateOfTestFr(), "DE"),
+          List.of(pdfConfig.getCertIssuerEn(), pdfConfig.getCertIssuerFr(),
+            dccDecodeResult.getDccJsonNode().get("t").get(0).get("is").asText())
+        );
 
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Date and time of the test result");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Date et heure");
+        float spacingParagraph = -13f;
+        float spacingText = -9f;
 
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Result of the test");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Resultat du test");
-
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Testing centre or facility");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Centre ou installation de test");
-
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Member state of test");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("État membre du test");
-
-        cos.newLineAtOffset(0, spacing);
-        cos.setFont(fontArialBold, 8);
-        cos.showText("Certificate issuer");
-        cos.newLineAtOffset(0, -9f);
-        cos.setFont(fontArialItalic, 8);
-        cos.showText("Émetteur du certificat");
+        data.forEach(entry ->
+          printCertData(cos, spacingParagraph, spacingText, entry.get(0), entry.get(1), entry.get(2)));
         cos.endText();
+    }
 
-        cos.beginText();
-        cos.setLeading(leading);
-        cos.setFont(fontArialBold, 8);
-        cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.newLineAtOffset(rect.getWidth() / 2 + 200, rect.getHeight() / 2 - 105);
-        cos.showText("COVID-19");
-        cos.newLineAtOffset(0, -24f);
-        //TODO
-        cos.showText(quickTest.getTestBrandName());
-        cos.newLineAtOffset(0, -24f);
-        cos.showText(quickTest.getTestBrandName());
-        cos.newLineAtOffset(0, -24f);
-        cos.showText(quickTest.getCreatedAt().format(formatter));
-        cos.newLineAtOffset(0, -24f);
-        cos.showText(quickTest.getUpdatedAt().format(formatter));
-        cos.newLineAtOffset(0, -24f);
-        //TODO
-        cos.showText(quickTest.getTestResult() == 7 ? "Positive" : "Negative");
-        cos.newLineAtOffset(0, -24f);
-        cos.showText(quickTest.getPocId());
-        cos.newLineAtOffset(0, -24f);
-        //TODO
-        cos.showText("DE");
-        cos.newLineAtOffset(0, -24f);
-        cos.showText("DE");
+    private void printCertData(PDPageContentStream cos, float spacingParagraph, float spacingText, String textOriginal,
+                               String translation, String value) {
+        try {
+            cos.setNonStrokingColor(Color.BLACK);
+            cos.setFont(fontArialBold, 8);
+            int leftLines = 0;
+            for (String line : textOriginal.split(pdfConfig.getCertLineSeparator())) {
+                cos.showText(line);
+                cos.newLineAtOffset(0, spacingText);
+                leftLines++;
+            }
+            cos.setFont(fontArialItalic, 8);
+            for (String lineItalic : translation.split(pdfConfig.getCertLineSeparator())) {
+                cos.showText(lineItalic);
+                cos.newLineAtOffset(0, spacingText);
+                leftLines++;
+            }
+            cos.setFont(fontArialBold, 8);
+            cos.setNonStrokingColor(pantoneReflexBlue);
 
-        cos.endText();
+            float paragraphIndent = 150f;
+            cos.newLineAtOffset(paragraphIndent, leftLines * -spacingText);
 
-        cos.close();
+            int limit = 25;
+            List<String> textParagraph = new ArrayList<>();
+            StringBuilder lineBuilder = new StringBuilder();
+            String[] split = value.split(" ");
+            for (int i = 0, splitLength = split.length; i < splitLength; i++) {
+                String word = split[i];
+                lineBuilder.append(word).append(" ");
+                if (lineBuilder.length() + word.length() > limit || i == splitLength - 1) {
+                    textParagraph.add(lineBuilder.toString());
+                    lineBuilder = new StringBuilder();
+                }
+            }
+            int rightLines = 0;
+            for (String n : textParagraph) {
+                cos.showText(n);
+                cos.newLineAtOffset(0, spacingText);
+                rightLines++;
+            }
+
+            cos.newLineAtOffset(-paragraphIndent,
+                (rightLines * -spacingText) + (leftLines * spacingText + spacingParagraph));
+        } catch (IOException exception) {
+            log.warn("Could not create certificate data page.");
+        }
     }
 
     private void generateEnd(PDPageContentStream cos, PDRectangle rect) throws IOException {

@@ -66,6 +66,7 @@ public class PdfGeneratorTest {
 
     @Test
     void generatePdfTest() throws IOException {
+        PdfConfig pdc = new PdfConfig();
         when(pdfConfig.getLogoPath()).thenReturn("/logo");
         when(pdfConfig.getAuthorPdfPropertiesText()).thenReturn("Unittest");
         when(pdfConfig.getQuickTestHeadlineText()).thenReturn("Unittest");
@@ -87,6 +88,27 @@ public class PdfGeneratorTest {
         when(pdfConfig.getTestResultNegativeText()).thenReturn("NEGATIV");
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
 
+        when(pdfConfig.getCertLineSeparator()).thenReturn(pdc.getCertLineSeparator());
+        when(pdfConfig.getCertHeaderTestEn()).thenReturn(pdc.getCertHeaderTestEn());
+        when(pdfConfig.getCertHeaderTestFr()).thenReturn(pdc.getCertHeaderTestFr());
+        when(pdfConfig.getCertTestNameEn()).thenReturn(pdc.getCertTestNameEn());
+        when(pdfConfig.getCertTestNameFr()).thenReturn(pdc.getCertTestNameFr());
+        when(pdfConfig.getCertTestManufacturerEn()).thenReturn(pdc.getCertTestManufacturerEn());
+        when(pdfConfig.getCertTestManufacturerFr()).thenReturn(pdc.getCertTestManufacturerFr());
+        when(pdfConfig.getCertDateSampleCollectionEn()).thenReturn(pdc.getCertDateSampleCollectionEn());
+        when(pdfConfig.getCertDateSampleCollectionFr()).thenReturn(pdc.getCertDateSampleCollectionFr());
+        when(pdfConfig.getCertDateTestResultEn()).thenReturn(pdc.getCertDateTestResultEn());
+        when(pdfConfig.getCertDateTestResultFr()).thenReturn(pdc.getCertDateTestResultFr());
+        when(pdfConfig.getCertTestResultEn()).thenReturn(pdc.getCertTestResultEn());
+        when(pdfConfig.getCertTestResultFr()).thenReturn(pdc.getCertTestResultFr());
+        when(pdfConfig.getCertTestingCentreEn()).thenReturn(pdc.getCertTestingCentreEn());
+        when(pdfConfig.getCertTestingCentreFr()).thenReturn(pdc.getCertTestingCentreFr());
+        when(pdfConfig.getCertStateOfTestEn()).thenReturn(pdc.getCertStateOfTestEn());
+        when(pdfConfig.getCertStateOfTestFr()).thenReturn(pdc.getCertStateOfTestFr());
+        when(pdfConfig.getCertIssuerEn()).thenReturn(pdc.getCertIssuerEn());
+        when(pdfConfig.getCertIssuerFr()).thenReturn(pdc.getCertIssuerFr());
+
+
         List<String> pocInformation = new ArrayList();
         pocInformation.add("PoC Unittest");
         pocInformation.add("Unittest Way 15");
@@ -94,7 +116,13 @@ public class PdfGeneratorTest {
         pocInformation.add("Call: 0123-7890-0");
         QuickTest quicktest = getQuickTest();
         String user = "Mr. Unittest";
-        ByteArrayOutputStream file = pdfGenerator.generatePdf(pocInformation, quicktest, user);
+        String dcc = "HC1:6BF-606A0T9WTWGSLKC 4X7923S%CA.48Y+6TAB3XK2F310RT012F3LMQ1001JC X8Y50.FK8ZKO/EZKEZ967L6C56." +
+          ".DU%DLPCG/DS2DHIA5Y8GY8JPCT3E5JDOA73467463W5207ZWERIL9WEQDD+Q6TW6FA7C464KCCWE6T9OF6:/6NA76W5." +
+          "JC2EC+96-Q63KCZPCNF6OF63W59%6PF6.SA*479L61G73564KC*KETF6A46.96646B565WET.D6$CBWE3/DO341$CKWEY " +
+          "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
+          "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
+          "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D";
+        ByteArrayOutputStream file = pdfGenerator.generatePdf(pocInformation, quicktest, user, dcc);
         PDDocument pdfDocument = PDDocument.load(file.toByteArray());
         try {
             String pdfText = new PDFTextStripper().getText(pdfDocument);
@@ -123,14 +151,6 @@ public class PdfGeneratorTest {
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());
             assertEquals("Rapid Test", pdfDocument.getDocumentInformation().getCreator());
             PDPage page = pdfDocument.getPage(1);
-            generateQRCode(pdfDocument, page,
-                    "HC1:6BF-606A0T9WTWGSLKC 4X7923S%CA.48Y+6TAB3XK2F310RT012F3LMQ1001JC X8Y50.FK8ZKO/EZKEZ967L6C56." +
-                            ".DU%DLPCG/DS2DHIA5Y8GY8JPCT3E5JDOA73467463W5207ZWERIL9WEQDD+Q6TW6FA7C464KCCWE6T9OF6:/6NA76W5." +
-                            "JC2EC+96-Q63KCZPCNF6OF63W59%6PF6.SA*479L61G73564KC*KETF6A46.96646B565WET.D6$CBWE3/DO341$CKWEY " +
-                            "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
-                            "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
-                            "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D",
-                    page.getCropBox().getWidth() / 4 * 3 - (150 / 2), page.getCropBox().getHeight() - 200);
         } finally {
             pdfDocument.save("C:/tmp/pdf/test.pdf");
             pdfDocument.close();

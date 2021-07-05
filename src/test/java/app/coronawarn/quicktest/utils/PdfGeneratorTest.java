@@ -88,7 +88,11 @@ public class PdfGeneratorTest {
         when(pdfConfig.getTestResultNegativeText()).thenReturn("NEGATIV");
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
 
+
         when(pdfConfig.getCertLineSeparator()).thenReturn(pdc.getCertLineSeparator());
+        when(pdfConfig.getCertCertlogoPath()).thenReturn(pdc.getCertCertlogoPath());
+        when(pdfConfig.getCertFlagPath()).thenReturn(pdc.getCertFlagPath());
+        when(pdfConfig.getCertFlagSeparatorPath()).thenReturn(pdc.getCertFlagSeparatorPath());
         when(pdfConfig.getCertHeaderTestEn()).thenReturn(pdc.getCertHeaderTestEn());
         when(pdfConfig.getCertHeaderTestFr()).thenReturn(pdc.getCertHeaderTestFr());
         when(pdfConfig.getCertTestNameEn()).thenReturn(pdc.getCertTestNameEn());
@@ -122,7 +126,9 @@ public class PdfGeneratorTest {
           "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
           "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
           "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D";
-        ByteArrayOutputStream file = pdfGenerator.generatePdf(pocInformation, quicktest, user, dcc);
+        ByteArrayOutputStream file1 = pdfGenerator.generatePdf(pocInformation, quicktest, user);
+        ByteArrayOutputStream file = pdfGenerator.appendCertificatePage(file1.toByteArray(), quicktest, dcc);
+
         PDDocument pdfDocument = PDDocument.load(file.toByteArray());
         try {
             String pdfText = new PDFTextStripper().getText(pdfDocument);
@@ -150,7 +156,6 @@ public class PdfGeneratorTest {
             assertTrue(pdfText.contains("MFG"));
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());
             assertEquals("Rapid Test", pdfDocument.getDocumentInformation().getCreator());
-            PDPage page = pdfDocument.getPage(1);
         } finally {
             pdfDocument.save("C:/tmp/pdf/test.pdf");
             pdfDocument.close();

@@ -31,6 +31,7 @@ import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.DccUploadResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.utils.PdfGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DccTestBuilder;
@@ -39,6 +40,8 @@ import eu.europa.ec.dgc.DgcGenerator;
 import eu.europa.ec.dgc.dto.DgcData;
 import eu.europa.ec.dgc.dto.DgcInitData;
 import feign.FeignException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -71,6 +74,7 @@ public class DccService {
     private final DgcCryptedPublisher dgcCryptedPublisher;
     private final DgcGenerator dgcGenerator;
     private final QuickTestConfig quickTestConfig;
+    private final PdfGenerator pdfGenerator;
 
     // TODO to be scheduled look up for keys, then generate dcc and prepare for upload
     // should open transaction pro quick test
@@ -157,7 +161,15 @@ public class DccService {
                 Optional<QuickTestArchive> quickTestArchive =
                         quickTestArchiveRepository.findByHashedGuid(quickTest.getHashedGuid());
                 if (quickTestArchive.isPresent()) {
-                    quickTestArchive.get().setDcc(dgcGenerator.coseToQrCode(coseSigned));
+                    String dcc = dgcGenerator.coseToQrCode(coseSigned);
+                    quickTestArchive.get().setDcc(dcc);
+                    try {
+                        ByteArrayOutputStream pdf =
+                          pdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(), quickTest, dcc);
+                        quickTestArchive.get().setPdf(pdf.toByteArray());
+                    } catch (IOException exception) {
+                        log.error("Appending Certificate to PDF failed.");
+                    }
                     quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
                 } else {
                     log.warn("can not find quick test archive {}",quickTest.getHashedGuid());

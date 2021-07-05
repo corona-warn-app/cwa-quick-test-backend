@@ -51,7 +51,6 @@ import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.pdfbox.io.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
@@ -103,20 +102,6 @@ public class PdfGenerator {
      */
     public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTest quicktest,
                                              String user) throws IOException {
-        return generatePdf(pocInformation, quicktest, user, null);
-    }
-
-    /**
-     * Generates a PDF file for rapid test result with QR code to print.
-     *
-     * @param pocInformation point of care data used in pdf
-     * @param quicktest      Quicktest
-     * @param user           carried out y user
-     * @param dcc            certificate data
-     * @throws IOException   when creating pdf went wrong
-     */
-    public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTest quicktest,
-                                             String user, String dcc) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
@@ -124,10 +109,26 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
         PDRectangle rect1 = page1.getMediaBox();
-        write(document, cos, rect1, pocInformation, quicktest, user, dcc);
+        write(document, cos, rect1, pocInformation, quicktest, user);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
+    }
+
+    /**
+     * GAppends the QR code to the pdf.
+     *
+     * @param quicktest      Quicktest
+     * @param dcc            certificate data
+     * @throws IOException   when creating pdf went wrong
+     */
+    public ByteArrayOutputStream appendCertificatePage(byte[] pdf, QuickTest quicktest, String dcc) throws IOException {
+        PDDocument document = PDDocument.load(pdf);
+        configCertPage(document);
+        generateCertPage(document, quicktest, dcc);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        close(document, out);
+        return out;
     }
 
     private void config(PDDocument document) {
@@ -138,6 +139,9 @@ public class PdfGenerator {
         LocalDate date = LocalDate.now();
         GregorianCalendar gcal = GregorianCalendar.from(date.atStartOfDay(ZoneId.systemDefault()));
         pdd.setCreationDate(gcal);
+    }
+
+    private void configCertPage(PDDocument document) {
         final ClassPathResource cs = new ClassPathResource("pdf/fonts/arial.ttf");
         try {
             this.fontArial = PDTrueTypeFont.load(document,
@@ -157,16 +161,13 @@ public class PdfGenerator {
     private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect,
                        List<String> pocInformation,
                        QuickTest quicktest,
-                       String user, String dcc) throws IOException {
+                       String user) throws IOException {
         generatePoCAddress(cos, rect, pocInformation);
         addCoronaAppIcon(document, cos, rect);
         generatePersonAddress(cos, rect, quicktest);
         generateSubject(cos, rect, quicktest);
         generateText(cos, rect, quicktest, user);
         generateEnd(cos, rect);
-        if (StringUtils.isNotEmpty(dcc)) {
-            generateCertPage(document, quicktest, dcc, pocInformation);
-        }
         cos.close();
     }
 
@@ -373,8 +374,7 @@ public class PdfGenerator {
 
     }
 
-    private void generateCertPage(PDDocument document, QuickTest quicktest, String dcc,
-                                  List<String> pocInfo)
+    private void generateCertPage(PDDocument document, QuickTest quicktest, String dcc)
       throws IOException {
 
         PDPage page = new PDPage(PDRectangle.A4);
@@ -391,7 +391,7 @@ public class PdfGenerator {
         generateCertTextPage2(document, cos, rect, quicktest, dccDecodeResult);
         generateQrCode(document, cos, rect, dcc);
         generateCertTextPage3(document, cos, rect);
-        generateCertTextPage4(document, cos, rect, quicktest, dccDecodeResult, pocInfo);
+        generateCertTextPage4(document, cos, rect, quicktest, dccDecodeResult);
         cos.close();
     }
 
@@ -448,13 +448,28 @@ public class PdfGenerator {
         cos.endText();
 
         try {
-            String flag = "pdf/eu_flag.png";
+            String flag = pdfConfig.getCertFlagPath();
             final ClassPathResource classPathResource = new ClassPathResource(flag);
             final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(flag)));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "flag");
-            cos.drawImage(pdImage, rect.getWidth() / 4 - 58, (rect.getHeight() / 2) + 80, 113, 75);
+
+            float flagWidth = 113f;
+            float flagHeight = 75f;
+            float flagX = rect.getWidth() / 4 - flagWidth / 2;
+            float flagY = rect.getHeight() / 2 + 80;
+            cos.drawImage(pdImage, flagX, flagY, flagWidth, flagHeight);
+
+            cos.beginText();
+            String country = "DE";
+            float coutryFontSize = 16f;
+            float textWidth = fontArial.getStringWidth(country) / 1000 * coutryFontSize;
+            cos.newLineAtOffset(flagX + flagWidth / 2 - textWidth / 2, flagY + flagHeight / 2 - coutryFontSize / 2);
+            cos.setNonStrokingColor(Color.WHITE);
+            cos.setFont(fontArial, coutryFontSize);
+            cos.showText(country);
+            cos.endText();
         } catch (IOException | NullPointerException e) {
             log.error("Flag image not found!");
         }
@@ -466,14 +481,14 @@ public class PdfGenerator {
       throws IOException {
 
         try {
-            String cert = "pdf/certificate.png";
+            String cert = pdfConfig.getCertCertlogoPath();
             final ClassPathResource classPathResource = new ClassPathResource(cert);
             final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(cert)));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "cert");
-            cos.drawImage(pdImage, rect.getWidth() / 2 + 14.5f,
-              rect.getHeight() - (rect.getHeight() / 4) - 75, 295 - 29.5f, 70 - 7f);
+            cos.drawImage(pdImage, rect.getWidth() / 2 + leading,
+              rect.getHeight() - (rect.getHeight() / 4) - 75, 295 - leading * 2, 70f - 7f);
         } catch (IOException | NullPointerException e) {
             log.error("Certificate image not found!");
         }
@@ -521,7 +536,7 @@ public class PdfGenerator {
                                        PDRectangle rect) throws IOException {
 
         try {
-            String flagSep = "pdf/flag_seperator.png";
+            String flagSep = pdfConfig.getCertFlagSeparatorPath();
             final ClassPathResource classPathResource = new ClassPathResource(flagSep);
             final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
               Objects.requireNonNull(classPathResource.getClassLoader())
@@ -545,25 +560,31 @@ public class PdfGenerator {
         cos.setFont(fontArial, 8);
         cos.setNonStrokingColor(Color.BLACK);
         cos.newLineAtOffset(30, rect.getHeight() / 4 - 50);
+
+        float spacing = -10f;
         cos.showText("This certificate is not a travel document.  The scientific evidence");
-        cos.newLineAtOffset(5, -10f);
+        cos.newLineAtOffset(5, spacing);
         cos.showText("on COVID-19 vaccination, testing and recovering continues to");
-        cos.newLineAtOffset(2, -10f);
+        cos.newLineAtOffset(2, spacing);
         cos.showText("evolve, also in view of new variants of concern of the virus.");
-        cos.newLineAtOffset(0, -10f);
+        cos.newLineAtOffset(0, spacing);
         cos.showText("Before travelling, please check the applicable public health");
-        cos.newLineAtOffset(2, -10f);
+        cos.newLineAtOffset(2, spacing);
         cos.showText("measures and related restrictions applied at the point of");
-        cos.newLineAtOffset(75, -10f);
+        cos.newLineAtOffset(75, spacing);
         cos.showText("destination.");
-        cos.newLineAtOffset(-50f, -10f);
+        cos.newLineAtOffset(-50f, spacing);
         cos.showText("Relevant information can be found here:");
+        cos.newLineAtOffset(20f, spacing);
+        cos.setNonStrokingColor(pantoneReflexBlue);
+        cos.showText("https://reopen.europa.eu/en");
+        cos.setNonStrokingColor(Color.BLACK);
         cos.endText();
     }
 
     private void generateCertTextPage4(PDDocument document, PDPageContentStream cos,
                                        PDRectangle rect, QuickTest quickTest,
-                                       DccDecodeResult dccDecodeResult, List<String> pocInfo) throws IOException {
+                                       DccDecodeResult dccDecodeResult) throws IOException {
 
         cos.beginText();
         cos.setLeading(leading);
@@ -598,7 +619,7 @@ public class PdfGenerator {
             quickTest.getUpdatedAt().format(formatter)),
           List.of(pdfConfig.getCertTestResultEn(), pdfConfig.getCertTestResultFr(),
             quickTest.getTestResult() == 7 ? "Positive" : "Negative"),
-          List.of(pdfConfig.getCertTestingCentreEn(), pdfConfig.getCertTestingCentreFr(), pocInfo.get(0)),
+          List.of(pdfConfig.getCertTestingCentreEn(), pdfConfig.getCertTestingCentreFr(), quickTest.getPocId()),
           List.of(pdfConfig.getCertStateOfTestEn(), pdfConfig.getCertStateOfTestFr(), "DE"),
           List.of(pdfConfig.getCertIssuerEn(), pdfConfig.getCertIssuerFr(),
             dccDecodeResult.getDccJsonNode().get("t").get(0).get("is").asText())

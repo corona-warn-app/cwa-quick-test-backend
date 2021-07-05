@@ -64,6 +64,9 @@ public class PdfConfig {
     private String furtherDataAboutTestDescriptionText = "Weitere Angaben zum Test: ";
     private String executedFromDescriptionText = "Durchgeführt durch: ";
 
+    private String certFlagPath = "pdf/eu_flag.png";
+    private String certCertlogoPath = "pdf/certificate.png";
+    private String certFlagSeparatorPath = "pdf/flag_seperator.png";
     private String certLineSeparator = " <br> ";
     private String certHeaderTestEn = "Test Certificate";
     private String certHeaderTestDe = "Testzertifikat";

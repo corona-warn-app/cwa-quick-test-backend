@@ -383,9 +383,6 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page);
         PDRectangle rect = page.getMediaBox();
 
-        //cos.drawLine(rect.getWidth() / 2, 0, rect.getWidth() / 2, rect.getHeight());
-        //cos.drawLine(0, rect.getHeight() / 2, rect.getWidth(), rect.getHeight() / 2);
-
         DccDecodeResult dccDecodeResult = dccDecoder.decodeDcc(dcc);
         generateCertTextPage1(document, cos, rect);
         generateCertTextPage2(document, cos, rect, quicktest, dccDecodeResult);
@@ -542,7 +539,7 @@ public class PdfGenerator {
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(flagSep)));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "flagSep");
-            cos.drawImage(pdImage, 14.5f,rect.getHeight() / 2 - 100, 295 - 29.5f, 70 - 7f);
+            cos.drawImage(pdImage, leading,rect.getHeight() / 2 - 100, 295 - 2 * leading, 63f);
         } catch (IOException | NullPointerException e) {
             log.error("Flag seperator image not found!");
         }
@@ -601,28 +598,19 @@ public class PdfGenerator {
         LocalDateTime dt = LocalDateTime.parse(dccDecodeResult.getDccJsonNode().get("t").get(0).get("sc").asText(),
           utcParserFormatter);
 
-
-        //String testResult = "";
-        //switch (quickTest.getTestResult() != null ? quickTest.getTestResult() : -1) {
-        //    case pending:
-        //        testResult = "Pending"
-        //}
-
         List<List<String>> data = List.of(
           List.of("Disease or agent targeted", "Maladie ou agent cible", "COVID-19"),
+          List.of(pdfConfig.getCertTestTypeEn(), pdfConfig.getCertTestTypeFr(), "RAT"),
           List.of(pdfConfig.getCertTestNameEn(), pdfConfig.getCertTestNameFr(), quickTest.getTestBrandName()),
-          List.of(pdfConfig.getCertTestManufacturerEn(), pdfConfig.getCertTestManufacturerFr(),
-            dccDecodeResult.getDccJsonNode().get("t").get(0).get("ma").asText()),
           List.of(pdfConfig.getCertDateSampleCollectionEn(), pdfConfig.getCertDateSampleCollectionFr(),
             dt.format(formatter)),
           List.of(pdfConfig.getCertDateTestResultEn(), pdfConfig.getCertDateTestResultFr(),
             quickTest.getUpdatedAt().format(formatter)),
           List.of(pdfConfig.getCertTestResultEn(), pdfConfig.getCertTestResultFr(),
-            quickTest.getTestResult() == 7 ? "Positive" : "Negative"),
+            getTestResultText(quickTest.getTestResult())),
           List.of(pdfConfig.getCertTestingCentreEn(), pdfConfig.getCertTestingCentreFr(), quickTest.getPocId()),
           List.of(pdfConfig.getCertStateOfTestEn(), pdfConfig.getCertStateOfTestFr(), "DE"),
-          List.of(pdfConfig.getCertIssuerEn(), pdfConfig.getCertIssuerFr(),
-            dccDecodeResult.getDccJsonNode().get("t").get(0).get("is").asText())
+          List.of(pdfConfig.getCertIssuerEn(), pdfConfig.getCertIssuerFr(), dccDecodeResult.getIssuer())
         );
 
         float spacingParagraph = -13f;
@@ -633,11 +621,30 @@ public class PdfGenerator {
         cos.endText();
     }
 
+    private String getTestResultText(Short testResultValue) {
+        String testResult = "";
+        switch (testResultValue != null ? testResultValue : -1) {
+          case positive:
+              testResult = "Positiv";
+              break;
+          case negative:
+              testResult = "Negativ";
+              break;
+          default:
+              testResult = "Fehler";
+              break;
+        }
+
+        return testResult;
+    }
+
     private void printCertData(PDPageContentStream cos, float spacingParagraph, float spacingText, String textOriginal,
                                String translation, String value) {
         try {
             cos.setNonStrokingColor(Color.BLACK);
             cos.setFont(fontArialBold, 8);
+            // split text at a configured line break and count lines on the left side of the row to be able to
+            // reset the offset of the next row correctly
             int leftLines = 0;
             for (String line : textOriginal.split(pdfConfig.getCertLineSeparator())) {
                 cos.showText(line);

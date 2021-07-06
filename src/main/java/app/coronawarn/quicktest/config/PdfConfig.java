@@ -71,6 +71,8 @@ public class PdfConfig {
     private String certHeaderTestEn = "Test Certificate";
     private String certHeaderTestDe = "Testzertifikat";
     private String certHeaderTestFr = "Certificat de Test";
+    private String certTestTypeEn = "Type of test";
+    private String certTestTypeFr = "Type de test";
     private String certTestNameEn = "Test name (optional for NAAT)";
     private String certTestNameDe = "Testname (optional für NAAT)";
     private String certTestNameFr = "Nom du test";

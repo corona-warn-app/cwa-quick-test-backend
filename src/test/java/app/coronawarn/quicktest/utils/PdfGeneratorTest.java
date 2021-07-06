@@ -97,8 +97,6 @@ public class PdfGeneratorTest {
         when(pdfConfig.getCertHeaderTestFr()).thenReturn(pdc.getCertHeaderTestFr());
         when(pdfConfig.getCertTestNameEn()).thenReturn(pdc.getCertTestNameEn());
         when(pdfConfig.getCertTestNameFr()).thenReturn(pdc.getCertTestNameFr());
-        when(pdfConfig.getCertTestManufacturerEn()).thenReturn(pdc.getCertTestManufacturerEn());
-        when(pdfConfig.getCertTestManufacturerFr()).thenReturn(pdc.getCertTestManufacturerFr());
         when(pdfConfig.getCertDateSampleCollectionEn()).thenReturn(pdc.getCertDateSampleCollectionEn());
         when(pdfConfig.getCertDateSampleCollectionFr()).thenReturn(pdc.getCertDateSampleCollectionFr());
         when(pdfConfig.getCertDateTestResultEn()).thenReturn(pdc.getCertDateTestResultEn());
@@ -111,6 +109,8 @@ public class PdfGeneratorTest {
         when(pdfConfig.getCertStateOfTestFr()).thenReturn(pdc.getCertStateOfTestFr());
         when(pdfConfig.getCertIssuerEn()).thenReturn(pdc.getCertIssuerEn());
         when(pdfConfig.getCertIssuerFr()).thenReturn(pdc.getCertIssuerFr());
+        when(pdfConfig.getCertTestTypeEn()).thenReturn(pdc.getCertTestTypeEn());
+        when(pdfConfig.getCertTestTypeFr()).thenReturn(pdc.getCertTestTypeFr());
 
 
         List<String> pocInformation = new ArrayList();

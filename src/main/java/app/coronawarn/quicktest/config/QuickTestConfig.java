@@ -39,6 +39,7 @@ public class QuickTestConfig {
     private String pointOfCareInformationDelimiter;
     private String dbEncryptionKey;
     private String labId;
+    private String dccRulesUrl;
 
     @Getter
     @Setter

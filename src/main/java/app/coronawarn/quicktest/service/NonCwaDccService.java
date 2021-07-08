@@ -157,8 +157,7 @@ public class NonCwaDccService extends DccServiceBase {
             throw new IllegalArgumentException("No PublicKey from DCC Server");
         }
 
-        DccPublicKey pub = keys.get(0);
-        return pub;
+        return keys.get(0);
     }
 
     private void updateQuicktestArchive(QuickTest quickTest, DccUploadResult dccUploadResult) throws IOException {

@@ -10,9 +10,9 @@ public class PersonalDataValidator implements ConstraintValidator<ValidPersonalD
     @Override
     public boolean isValid(QuickTestPersonalDataRequest person, ConstraintValidatorContext context) {
         boolean valid;
-        if (person.getDccConsent()!=null) {
+        if (person.getDccConsent() != null) {
             valid = !person.getDccConsent()
-                    || (person.getStandardisedFamilyName()!=null || person.getStandardisedGivenName()!=null);
+                    || (person.getStandardisedFamilyName() != null || person.getStandardisedGivenName() != null);
         } else {
             valid = true;
         }

@@ -128,7 +128,7 @@ public class QuickTestService {
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
         log.info("Updating TestResult on TestResult-Server for hash");
         quicktest.setTestResult(quickTestUpdateRequest.getResult());
-        if (quicktest.getDccConsent()!=null && quicktest.getDccConsent().booleanValue()) {
+        if (quicktest.getDccConsent() != null && quicktest.getDccConsent().booleanValue()) {
             quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
             quicktest.setTestBrandName(quickTestUpdateRequest.getDccTestManufacturerDescription());
         } else {

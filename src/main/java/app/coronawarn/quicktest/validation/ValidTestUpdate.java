@@ -9,11 +9,26 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
+/**
+ * Valid Test Update.
+ */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = TestUpdateValidator.class)
 public @interface ValidTestUpdate {
+    /**
+     * the message.
+     * @return message
+     */
     String message () default "Provide either testBrandId or dccTestManufacturerId";
+    /**
+     * group.
+     * @return groups.
+     */
     Class<?>[] groups () default {};
+    /**
+     * payload.
+     * @return payload.
+     */
     Class<? extends Payload>[] payload () default {};
 }

@@ -162,6 +162,10 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String dccUnsigned;
 
+    @Column(name = "dcc_consent")
+    @Convert(converter = DbEncryptionBooleanConverter.class)
+    private Boolean dccConsent;
+
     @Column(name = "dcc_public_key")
     private String publicKey;
 

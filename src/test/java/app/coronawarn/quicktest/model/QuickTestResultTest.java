@@ -65,11 +65,13 @@ public class QuickTestResultTest{
         QuickTestResultList resultList = new QuickTestResultList();
         resultList.setTestResults(Collections.singletonList(
                 new QuickTestResult().setId(id).setResult(resultShort).setSampleCollection(System.currentTimeMillis())));
+        QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
+        quickTestUpdateRequest.setTestBrandId("testBrandId");
+        quickTestUpdateRequest.setResult((short)6);
+        quickTestUpdateRequest.setTestBrandName("TestBrandName");
         quickTestService.updateQuickTest(ids,
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                (short) 6,
-                "testBrandId",
-                "TestBrandName",
+                quickTestUpdateRequest,
                 new ArrayList<>(),
                 "User");
         when(testResultServerClient.results(resultList)).thenReturn(responseEntity);

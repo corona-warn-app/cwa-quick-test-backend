@@ -284,6 +284,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isNoContent());
 
+        /* TODO validation changed due to dcc
         quickTestUpdateRequest.setTestBrandId(null);
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/testResult")
@@ -291,13 +292,13 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isBadRequest());
-
+        */
 
         quickTestUpdateRequest.setResult((short) 6);
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName(null);
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-            .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
+            .when(quickTestService).updateQuickTest(any(), any(), any(QuickTestUpdateRequest.class), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -309,7 +310,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 result.getResolvedException().getMessage()));
 
         doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
-            .when(quickTestService).updateQuickTest(any(), any(), anyShort(), any(), any(), any(), any());
+            .when(quickTestService).updateQuickTest(any(), any(), any(QuickTestUpdateRequest.class), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)

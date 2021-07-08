@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-dcc-consent-column
+      author: a-trzewik
+      changes:
+        - addColumn:
+            tableName: quick_test
+            columns:
+              - column:
+                  name: dcc_consent
+                  type: varchar(50)

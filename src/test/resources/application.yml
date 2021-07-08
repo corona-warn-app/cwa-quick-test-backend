@@ -62,3 +62,9 @@ dcc:
   uploadDccJob:
     cron: "*/2 * * * * *"
     lockLimit: 1800000
+
+cwa-external-dcc-server:
+  url: http://localhost:8084
+
+cwa-verification-server:
+  url: http://localhost:8083

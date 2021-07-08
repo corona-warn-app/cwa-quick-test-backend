@@ -304,7 +304,8 @@ public class QuickTestServiceTest {
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
         quickTestService.removeAllBefore(now);
         verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(now, 0);
-        verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
+        // expected 3 invocations after change for noncwa dcc change
+        verify(testResultService, times(3)).createOrUpdateTestResult(quickTestResult);
         verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 

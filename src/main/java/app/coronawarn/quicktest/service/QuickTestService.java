@@ -56,6 +56,7 @@ public class QuickTestService {
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
+    private final NonCwaDccService nonCwaDccService;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -161,6 +162,11 @@ public class QuickTestService {
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), result,
             quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
             quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
+
+        if (DccStatus.pendingSignatureNoCWA.equals(quicktest.getDccStatus())) {
+            nonCwaDccService.createCertificate(quicktest);
+        }
+
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
         log.info("Updated TestResult for hashedGuid with TestResult");
     }
@@ -294,7 +300,7 @@ public class QuickTestService {
 
     private void sendResultToTestResultServer(String testResultServerHash, short result, Long sc,
                                               boolean confirmationCwa)throws ResponseStatusException {
-        if (confirmationCwa && testResultServerHash != null) {
+        if (testResultServerHash != null) {
             log.info("Sending TestResult to TestResult-Server");
             QuickTestResult quickTestResult = new QuickTestResult();
             quickTestResult.setId(testResultServerHash);

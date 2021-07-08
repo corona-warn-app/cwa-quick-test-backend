@@ -157,7 +157,6 @@ public class PdfGeneratorTest {
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());
             assertEquals("Rapid Test", pdfDocument.getDocumentInformation().getCreator());
         } finally {
-            pdfDocument.save("C:/tmp/pdf/test.pdf");
             pdfDocument.close();
         }
 

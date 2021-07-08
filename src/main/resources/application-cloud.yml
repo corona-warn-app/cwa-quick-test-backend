@@ -86,6 +86,7 @@ dccserver:
 
 quicktest:
   db-encryption-key: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
+  dccRulesUrl: ${QUICK_TEST_DCC_RULES_URL}
   clean-up-settings:
     cron: 0 0 0 * * *
     max-age-in-minutes: 3600

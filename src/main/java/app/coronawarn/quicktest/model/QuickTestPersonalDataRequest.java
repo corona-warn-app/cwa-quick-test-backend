@@ -88,12 +88,10 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     private LocalDate birthday;
 
-    @NotNull
     @ValidCommonChar
     @Size(min = 1, max = 50)
     private String standardisedFamilyName;
 
-    @NotNull
     @ValidCommonChar
     @Size(min = 1, max = 50)
     private String standardisedGivenName;
@@ -105,4 +103,5 @@ public class QuickTestPersonalDataRequest {
     @ValidGuid
     private String testResultServerHash;
 
+    private Boolean dccConsent;
 }

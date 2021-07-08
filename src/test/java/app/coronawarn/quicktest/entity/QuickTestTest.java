@@ -70,7 +70,7 @@ public class QuickTestTest {
                     "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal), " +
                     "birthday=null, standardisedFamilyName=null, standardisedGivenName=null, " +
                     "diseaseAgentTargeted=null, testResultServerHash=null, " +
-                    "dccSignData=null, dccUnsigned=null, publicKey=null, dccStatus=null)",
+                    "dccSignData=null, dccUnsigned=null, dccConsent=null, publicKey=null, dccStatus=null)",
             quickTest.toString());
     }
 

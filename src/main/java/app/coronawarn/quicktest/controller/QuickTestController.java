@@ -25,6 +25,7 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.QuickTestCreationRequest;
+import app.coronawarn.quicktest.model.QuickTestDccConsent;
 import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.QuickTestResponse;
 import app.coronawarn.quicktest.model.QuickTestResponseList;
@@ -146,9 +147,7 @@ public class QuickTestController {
             quickTestService.updateQuickTest(
                 utilities.getIdsFromToken(),
                 shortHash,
-                quickTestUpdateRequest.getResult(),
-                quickTestUpdateRequest.getTestBrandId(),
-                quickTestUpdateRequest.getTestBrandName(),
+                quickTestUpdateRequest,
                 utilities.getPocInformationFromToken(),
                 utilities.getUserNameFromToken()
             );
@@ -159,6 +158,34 @@ public class QuickTestController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    /**
+     * Endpoint for quering the dcc consent for pending tests.
+     *
+     * @param shortHash also called processId in front end.
+     * @return ResponseEntity with dcc status.
+     */
+    @Operation(
+            summary = "Updates the test result of a quicktest",
+            description = "Updates the test result of a quicktest"
+    )
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "test found"),
+      @ApiResponse(responseCode = "404", description = "test not found"),
+      @ApiResponse(responseCode = "500", description = "internal error.")})
+    @GetMapping(value = "/{shortHash}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured(ROLE_LAB)
+    public ResponseEntity<QuickTestDccConsent> getDccConsent(
+            @PathVariable String shortHash) {
+        try {
+            return ResponseEntity.ok(quickTestService.getDccConsent(utilities.getIdsFromToken(),shortHash));
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            log.error("Couldn't execute updateQuickTestStatus.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**

@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.validation.ValidCommonCharAndNumber;
+import app.coronawarn.quicktest.validation.ValidTestUpdate;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -36,6 +37,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ValidTestUpdate
 public class QuickTestUpdateRequest {
     /**
      * The test result.

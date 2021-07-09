@@ -61,7 +61,6 @@ quicktest:
   pointOfCareInformationDelimiter: \,
   db-encryption-key: abcdefghjklmnopq
   labId: labId4711
-  dccRulesUrl: "http://localhost:8989"
   clean-up-settings:
     cron: 0 * * * * *
     max-age-in-minutes: 1440

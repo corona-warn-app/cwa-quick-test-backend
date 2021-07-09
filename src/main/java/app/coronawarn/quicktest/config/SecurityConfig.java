@@ -39,9 +39,6 @@ import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -66,15 +63,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         return new QuicktestKeycloakSpringBootConfigResolver(properties);
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource(QuickTestConfig quickTestConfig) {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration corsConfiguration = new CorsConfiguration().applyPermitDefaultValues();
-        corsConfiguration.addAllowedOrigin(quickTestConfig.getDccRulesUrl());
-        source.registerCorsConfiguration("/**",corsConfiguration);
-        return source;
-    }
-
     /**
      * Global Keycloak Configuration for CWA-Quick-Test-Backend.
      *
@@ -92,7 +80,6 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
         super.configure(http);
         http
             .headers().addHeaderWriter(this::addSameSiteToOAuthCookie).and()
-            .cors().and()
             .csrf().disable()
             .authorizeRequests()
             .mvcMatchers(HttpMethod.GET, KEYCLOAK_CONFIG_ROUTE).permitAll()

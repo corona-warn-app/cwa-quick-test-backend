@@ -99,8 +99,8 @@ public class PdfGeneratorTest {
         when(pdfConfig.getCertTestNameFr()).thenReturn(pdc.getCertTestNameFr());
         when(pdfConfig.getCertDateSampleCollectionEn()).thenReturn(pdc.getCertDateSampleCollectionEn());
         when(pdfConfig.getCertDateSampleCollectionFr()).thenReturn(pdc.getCertDateSampleCollectionFr());
-        when(pdfConfig.getCertDateTestResultEn()).thenReturn(pdc.getCertDateTestResultEn());
-        when(pdfConfig.getCertDateTestResultFr()).thenReturn(pdc.getCertDateTestResultFr());
+        when(pdfConfig.getCertTestManufacturerEn()).thenReturn(pdc.getCertTestManufacturerEn());
+        when(pdfConfig.getCertTestManufacturerFr()).thenReturn(pdc.getCertTestManufacturerFr());
         when(pdfConfig.getCertTestResultEn()).thenReturn(pdc.getCertTestResultEn());
         when(pdfConfig.getCertTestResultFr()).thenReturn(pdc.getCertTestResultFr());
         when(pdfConfig.getCertTestingCentreEn()).thenReturn(pdc.getCertTestingCentreEn());

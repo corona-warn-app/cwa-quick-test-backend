@@ -39,7 +39,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -595,16 +594,14 @@ public class PdfGenerator {
         cos.newLineAtOffset(-80f, -30f);
 
         cos.setNonStrokingColor(Color.BLACK);
-        LocalDateTime dt = LocalDateTime.parse(dccDecodeResult.getDccJsonNode().get("t").get(0).get("sc").asText(),
-          utcParserFormatter);
 
         List<List<String>> data = List.of(
           List.of("Disease or agent targeted", "Maladie ou agent cible", "COVID-19"),
           List.of(pdfConfig.getCertTestTypeEn(), pdfConfig.getCertTestTypeFr(), "RAT"),
           List.of(pdfConfig.getCertTestNameEn(), pdfConfig.getCertTestNameFr(), quickTest.getTestBrandName()),
+          List.of(pdfConfig.getCertTestManufacturerEn(), pdfConfig.getCertTestManufacturerFr(),
+            quickTest.getTestBrandId()),
           List.of(pdfConfig.getCertDateSampleCollectionEn(), pdfConfig.getCertDateSampleCollectionFr(),
-            dt.format(formatter)),
-          List.of(pdfConfig.getCertDateTestResultEn(), pdfConfig.getCertDateTestResultFr(),
             quickTest.getUpdatedAt().format(formatter)),
           List.of(pdfConfig.getCertTestResultEn(), pdfConfig.getCertTestResultFr(),
             getTestResultText(quickTest.getTestResult())),

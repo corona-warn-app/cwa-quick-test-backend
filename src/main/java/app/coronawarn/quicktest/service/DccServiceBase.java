@@ -101,6 +101,7 @@ public abstract class DccServiceBase {
           .dgci(dgci)
           .countryOfTest(dccConfig.getCountry())
           .testingCentre(quickTest.getPocId())
+          .testIdentifier(quickTest.getTestBrandId())
           .sampleCollection(quickTest.getUpdatedAt())
           .certificateIssuer(dccConfig.getIssuer());
         return dccTestBuilder.toJsonString();

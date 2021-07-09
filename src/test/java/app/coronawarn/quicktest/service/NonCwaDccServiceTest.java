@@ -190,6 +190,7 @@ class NonCwaDccServiceTest {
         quickTest.setStandardisedGivenName("JOE");
         quickTest.setStandardisedFamilyName("MILLER");
         quickTest.setTestResult((short) 6);
+        quickTest.setTestBrandId("ma id");
         return quickTest;
     }
 

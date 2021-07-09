@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.client.DccExternalServerClient;
@@ -25,17 +26,20 @@ import app.coronawarn.quicktest.utils.PdfGenerator;
 import eu.europa.ec.dgc.DgcCryptedPublisher;
 import eu.europa.ec.dgc.DgcGenerator;
 import eu.europa.ec.dgc.dto.DgcData;
+import feign.FeignException;
+import feign.Request;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -74,13 +78,10 @@ class NonCwaDccServiceTest {
     private final String hashedGuid = "aac49042c2fc534d6064f732a271e2483e0057685eec196f778ca7d4178918ec";
     private final String sha256 = "6302d6cb7a3a6228ac728242bc7cf4806686d1394cfae98d84506eda4365995c";
 
-    @BeforeEach
-    void setUp() {
-        when(quickTestConfig.getLabId()).thenReturn("labId4711");
-    }
 
     @Test
     void useHashedId() throws NoSuchAlgorithmException, IOException {
+        when(quickTestConfig.getLabId()).thenReturn("labId4711");
         QuickTest quickTest = createQuickTest();
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setHashedGuid(hashedGuid);
@@ -116,6 +117,7 @@ class NonCwaDccServiceTest {
 
     @Test
     void noPublicKeyOnDcc() {
+        when(quickTestConfig.getLabId()).thenReturn("labId4711");
         QuickTest quickTest = createQuickTest();
 
         QuickTestArchive quickTestArchive = new QuickTestArchive();
@@ -134,6 +136,7 @@ class NonCwaDccServiceTest {
 
     @Test
     void noQuicktestArchive() throws NoSuchAlgorithmException, IOException {
+        when(quickTestConfig.getLabId()).thenReturn("labId4711");
         QuickTest quickTest = createQuickTest();
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setHashedGuid(hashedGuid);
@@ -160,6 +163,36 @@ class NonCwaDccServiceTest {
         verify(dgcGenerator, never()).coseToQrCode(any());
         verify(pdfGenerator, never()).appendCertificatePage(any(), any(), anyString());
         verify(quickTestArchiveRepository, never()).saveAndFlush(any());
+    }
+
+    @Test
+    void noRegistrationToken() {
+        QuickTest quickTest = createQuickTest();
+
+        when(verificationServerClient.getRegistrationToken(any())).thenThrow(createFeignException());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            underTest.createCertificate(quickTest);
+        });
+        verifyNoInteractions(dccServerClient, dccExternalServerClient);
+        verifyNoInteractions(quickTestRepository, quickTestArchiveRepository);
+    }
+
+    @Test
+    void couldNotUploadPublicKey() {
+        QuickTest quickTest = createQuickTest();
+
+        RegistrationToken regToken = new RegistrationToken();
+        regToken.setRegistrationToken("reg");
+        when(verificationServerClient.getRegistrationToken(any())).thenReturn(regToken);
+
+        when(dccExternalServerClient.uploadPublicKey(any())).thenThrow(createFeignException());
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            underTest.createCertificate(quickTest);
+        });
+        verifyNoInteractions(dccServerClient);
+        verifyNoInteractions(quickTestRepository, quickTestArchiveRepository);
     }
 
     private DccPublicKey createDccPublicKey(String sha256) throws NoSuchAlgorithmException {
@@ -202,5 +235,9 @@ class NonCwaDccServiceTest {
         return Base64.getEncoder().encodeToString(keyPair.getPublic().getEncoded());
     }
 
-
+    private FeignException.InternalServerError createFeignException() {
+        Request request = Request.create(Request.HttpMethod.POST, "url", Map.of(), "body".getBytes(),
+          Charset.defaultCharset(), null);
+        return new FeignException.InternalServerError("Internal Server Error", request, "body".getBytes());
+    }
 }

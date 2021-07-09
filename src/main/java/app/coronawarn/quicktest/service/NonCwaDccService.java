@@ -41,6 +41,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DgcCryptedPublisher;
 import eu.europa.ec.dgc.DgcGenerator;
 import eu.europa.ec.dgc.dto.DgcData;
+import feign.FeignException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.KeyPairGenerator;
@@ -120,12 +121,20 @@ public class NonCwaDccService extends DccServiceBase {
             log.error("can not create json data", e);
         } catch (IOException exception) {
             log.error("Appending Certificate to PDF failed.");
+        } catch (FeignException feignException) {
+            log.warn("Error during uploading dcc data {}", quickTest.getHashedGuid(), feignException);
         }
     }
 
     private RegistrationToken getRegistrationToken(String testIdHashed) {
-        RegistrationTokenRequest tokenRequest = RegistrationTokenRequest.builder().key(testIdHashed).build();
-        return verificationServerClient.getRegistrationToken(tokenRequest);
+        try {
+            RegistrationTokenRequest tokenRequest = RegistrationTokenRequest.builder().key(testIdHashed).build();
+            return verificationServerClient.getRegistrationToken(tokenRequest);
+        } catch (FeignException feignException) {
+            log.warn("Error while getting registration token for quicktest with testIdHashed=[{}]", testIdHashed,
+                feignException);
+            throw new IllegalArgumentException("No RegistrationToken from server");
+        }
     }
 
     private void uploadPublicKey(String testIdHashed, RegistrationToken registrationToken) {
@@ -141,6 +150,9 @@ public class NonCwaDccService extends DccServiceBase {
             // No further token can be issued if anything fails beyond this point
         } catch (NoSuchAlgorithmException noSuchAlgorithmException) {
             log.error("No Such Algorithm");
+        } catch (FeignException feignException) {
+            log.warn("Error while uploading public key for testIdHashed=[{}]", testIdHashed, feignException);
+            throw new IllegalArgumentException("Could not upload Public Key");
         }
     }
 

@@ -57,7 +57,7 @@ public class DccTestBuilder {
         dccObject = jsonNodeFactory.objectNode();
         nameObject = jsonNodeFactory.objectNode();
         testObject = jsonNodeFactory.objectNode();
-        dccObject.set("ver", jsonNodeFactory.textNode("1.0.0"));
+        dccObject.set("ver", jsonNodeFactory.textNode("1.3.0"));
         dccObject.set("nam", nameObject);
         ArrayNode testArray = jsonNodeFactory.arrayNode();
         testArray.add(testObject);
@@ -193,6 +193,20 @@ public class DccTestBuilder {
      */
     public DccTestBuilder testingCentre(String tc) {
         testObject.set("tc", jsonNodeFactory.textNode(tc));
+        return this;
+    }
+
+    /**
+     * test identifier.
+     * Is required if test type is rapid.
+     * There is value list for it but is not checked during setting
+     * see https://github.com/ehn-dcc-development/ehn-dcc-schema/blob/main/valuesets/test-manf.json
+     * @param ma test identifier
+     * @return builder
+     */
+    public DccTestBuilder testIdentifier(String ma) {
+        testObject.set("ma", jsonNodeFactory.textNode(ma));
+        assertNotNullMax("ma",ma,0);
         return this;
     }
 

@@ -49,7 +49,6 @@ public class QuickTestUpdateRequest {
     @Max(8)
     private short result;
 
-    @NotNull
     @ValidCommonCharAndNumber
     @Size(min = 1, max = 15)
     private String testBrandId;
@@ -57,5 +56,13 @@ public class QuickTestUpdateRequest {
     @Size(max = 200)
     @ValidCommonCharAndNumber
     private String testBrandName;
+
+    @ValidCommonCharAndNumber
+    @Size(min = 1, max = 15)
+    private String dccTestManufacturerId;
+
+    @ValidCommonCharAndNumber
+    @Size(min = 1, max = 128)
+    private String dccTestManufacturerDescription;
 
 }

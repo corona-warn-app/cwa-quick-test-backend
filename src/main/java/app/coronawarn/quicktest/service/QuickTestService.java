@@ -132,11 +132,12 @@ public class QuickTestService {
         quicktest.setUpdatedAt(LocalDateTime.now());
         if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
                 && quicktest.getDccStatus() == null) {
-            if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()
-                    && quicktest.getDccConsent() != null && quicktest.getDccConsent().booleanValue()) {
-                quicktest.setDccStatus(DccStatus.pendingPublicKey);
-            } else {
-                quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
+            if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
+                if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
+                    quicktest.setDccStatus(DccStatus.pendingPublicKey);
+                } else {
+                    quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
+                }
             }
         }
         addStatistics(quicktest);
@@ -175,7 +176,8 @@ public class QuickTestService {
             nonCwaDccService.createCertificate(quicktest);
         }
 
-        log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(), result);
+        log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
+          quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
     }
 
@@ -211,7 +213,7 @@ public class QuickTestService {
         quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
-        quicktest.setDccConsent(quicktest.getDccConsent());
+        quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {

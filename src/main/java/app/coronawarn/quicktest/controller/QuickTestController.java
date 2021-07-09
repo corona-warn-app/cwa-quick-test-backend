@@ -155,13 +155,14 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
+            log.error("UpdateQuickTestStatus exception message: {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     /**
-     * Endpoint for quering the dcc consent for pending tests.
+     * Endpoint for querying the dcc consent for pending tests.
      *
      * @param shortHash also called processId in front end.
      * @return ResponseEntity with dcc status.

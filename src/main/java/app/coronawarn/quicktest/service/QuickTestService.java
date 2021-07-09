@@ -177,7 +177,7 @@ public class QuickTestService {
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
                 quickTestUpdateRequest.getResult());
 
-        if (DccStatus.pendingSignatureNoCWA.equals(quicktest.getDccStatus())) {
+        if (DccStatus.pendingSignatureNoCWA == quicktest.getDccStatus()) {
             nonCwaDccService.createCertificate(quicktest);
         }
 

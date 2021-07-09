@@ -65,6 +65,8 @@ quicktest:
     cron: 0 * * * * *
     max-age-in-minutes: 1440
     locklimit: 1800000
+  frontend-context-config:
+    rules-server-url: /
 
 testresultserver:
   enabled: false

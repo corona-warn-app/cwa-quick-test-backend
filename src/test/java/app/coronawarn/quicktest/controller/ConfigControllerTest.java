@@ -22,15 +22,19 @@ package app.coronawarn.quicktest.controller;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.model.KeyCloakConfigFile;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.google.gson.Gson;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
@@ -39,9 +43,13 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(KeyCloakConfigController.class)
-@ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
-class KeyCloakConfigControllerTest extends ServletKeycloakAuthUnitTestingSupport {
+@WebMvcTest(ConfigController.class)
+@ComponentScan(basePackageClasses = {QuickTestConfig.class, KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
+@RequiredArgsConstructor
+class ConfigControllerTest extends ServletKeycloakAuthUnitTestingSupport {
+
+    @Autowired
+    private QuickTestConfig quickTestConfig;
 
     @Test
     void getKeyCloakConfig() throws Exception {
@@ -59,5 +67,18 @@ class KeyCloakConfigControllerTest extends ServletKeycloakAuthUnitTestingSupport
         assertNotNull(response.getResource());
         assertNotNull(response.getSslRequired());
         assertTrue(response.isPublicClient());
+    }
+
+    @Test
+    void getContextConfig() throws Exception {
+
+        final String dummyUrl = "https://example.org";
+
+        quickTestConfig.getFrontendContextConfig().setRulesServerUrl(dummyUrl);
+
+        mockMvc().perform(MockMvcRequestBuilders
+            .get("/api/config/context.json"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.rules-server-url").value(dummyUrl));
     }
 }

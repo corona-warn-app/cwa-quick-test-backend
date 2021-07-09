@@ -46,6 +46,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import com.sun.xml.bind.v2.TODO;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.time.LocalDate;
@@ -284,7 +285,6 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isNoContent());
 
-        /* TODO validation changed due to dcc
         quickTestUpdateRequest.setTestBrandId(null);
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/testResult")
@@ -292,7 +292,6 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quickTestUpdateRequest)))
             .andExpect(status().isBadRequest());
-        */
 
         quickTestUpdateRequest.setResult((short) 6);
         quickTestUpdateRequest.setTestBrandId("brandId");
@@ -349,6 +348,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestPersonalDataRequest.setStandardisedFamilyName("standardisedFamily");
         quickTestPersonalDataRequest.setStandardisedGivenName("standaärdisedGivenName");
         quickTestPersonalDataRequest.setDiseaseAgentTargeted("diseaseAgentTargeted");
+        quickTestPersonalDataRequest.setDccConsent(true);
         quickTestPersonalDataRequest.setTestResultServerHash(
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
 

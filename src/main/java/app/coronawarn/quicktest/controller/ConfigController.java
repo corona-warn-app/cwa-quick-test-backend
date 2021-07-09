@@ -20,7 +20,9 @@
 
 package app.coronawarn.quicktest.controller;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.model.KeyCloakConfigFile;
+import app.coronawarn.quicktest.model.QuickTestContextFile;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.springframework.http.MediaType;
@@ -32,13 +34,21 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/config")
 @RequiredArgsConstructor
-public class KeyCloakConfigController {
+public class ConfigController {
 
     private final KeycloakSpringBootProperties keycloakConfig;
+
+    private final QuickTestConfig quickTestConfig;
 
     @GetMapping(value = "keycloak.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<KeyCloakConfigFile> getKeyCloakConfig() {
         return ResponseEntity.ok(
             new KeyCloakConfigFile(keycloakConfig.getAuthServerUrl()));
+    }
+
+    @GetMapping(value = "context.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<QuickTestContextFile> getQuickTestContextFile() {
+        return ResponseEntity.ok(
+            new QuickTestContextFile(quickTestConfig.getFrontendContextConfig().getRulesServerUrl()));
     }
 }

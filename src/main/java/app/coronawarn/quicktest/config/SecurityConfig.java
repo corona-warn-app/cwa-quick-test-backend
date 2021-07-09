@@ -49,7 +49,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     public static final String ROLE_TENANT_COUNTER = "ROLE_c19_quick_tenant_test_counter";
 
     private static final String API_ROUTE = "/api/**";
-    private static final String KEYCLOAK_CONFIG_ROUTE = "/api/config/keycloak.json";
+    private static final String CONFIG_ROUTE = "/api/config/*.json";
     private static final String SAMESITE_LAX = "Lax";
     private static final String OAUTH_TOKEN_REQUEST_STATE_COOKIE = "OAuth_Token_Request_State";
 
@@ -82,7 +82,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             .headers().addHeaderWriter(this::addSameSiteToOAuthCookie).and()
             .csrf().disable()
             .authorizeRequests()
-            .mvcMatchers(HttpMethod.GET, KEYCLOAK_CONFIG_ROUTE).permitAll()
+            .mvcMatchers(HttpMethod.GET, CONFIG_ROUTE).permitAll()
             .mvcMatchers(HttpMethod.GET, API_ROUTE).authenticated()
             .mvcMatchers(HttpMethod.POST, API_ROUTE).authenticated()
             .mvcMatchers(HttpMethod.PUT, API_ROUTE).authenticated();

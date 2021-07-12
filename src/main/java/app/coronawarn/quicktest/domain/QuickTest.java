@@ -52,6 +52,12 @@ public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
+    public static final short TEST_RESULT_PENDING = 5;
+    public static final short TEST_RESULT_NEGATIVE = 6;
+    public static final short TEST_RESULT_POSITIVE = 7;
+    public static final short TEST_RESULT_INVALID = 8;
+    public static final short TEST_RESULT_REDEEMED = 9;
+
     /**
      * alias TestId in another systems.
      */
@@ -83,6 +89,14 @@ public class QuickTest {
     @Convert(converter = DbEncryptionBooleanConverter.class)
     private Boolean confirmationCwa;
 
+    /**
+     * The test result.
+     * 5: Pending
+     * 6: Negative
+     * 7: Positive
+     * 8: Invalid
+     * 9: Redeemed
+     */
     @Column(name = "test_result")
     private Short testResult;
 
@@ -181,7 +195,7 @@ public class QuickTest {
         if (updatedAt == null) {
             updatedAt = now;
         }
-        testResult = 5;
+        testResult = TEST_RESULT_PENDING;
     }
 
     @PreUpdate

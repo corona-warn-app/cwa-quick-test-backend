@@ -105,6 +105,5 @@ public class QuickTestPersonalDataRequest {
     @ValidGuid
     private String testResultServerHash;
 
-    @NotNull
     private Boolean dccConsent;
 }

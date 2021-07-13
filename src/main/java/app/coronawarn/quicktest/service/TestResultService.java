@@ -30,6 +30,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -51,12 +52,13 @@ public class TestResultService {
             QuickTestResultList resultList = new QuickTestResultList();
             resultList.setLabId(quickTestConfig.getLabId());
             resultList.setTestResults(Collections.singletonList(quickTestResult));
-            if (testResultServerClient.results(resultList).getStatusCode() != HttpStatus.NO_CONTENT) {
-                log.error("Failed to update testresult");
+            ResponseEntity<Void> response = testResultServerClient.results(resultList);
+            if (response.getStatusCode() != HttpStatus.NO_CONTENT) {
+                log.error("Failed to update testresult response: " + response.getStatusCode());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         } catch (FeignException e) {
-            log.error("Failed to update testresult");
+            log.error("Failed to update testresult", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

@@ -215,7 +215,7 @@ public class QuickTestService {
         quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
-        quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
+        quicktest.setDccConsent(quickTestPersonalData.getDccConsent() != null && quickTestPersonalData.getDccConsent());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {

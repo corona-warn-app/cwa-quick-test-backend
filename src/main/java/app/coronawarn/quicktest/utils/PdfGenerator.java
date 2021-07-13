@@ -43,11 +43,13 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
@@ -387,14 +389,14 @@ public class PdfGenerator {
         generateCertTextPage2(document, cos, rect, quicktest, dccDecodeResult);
         generateQrCode(document, cos, rect, dcc);
         generateCertTextPage3(document, cos, rect);
-        generateCertTextPage4(document, cos, rect, quicktest, dccDecodeResult);
+        generateCertTextPage4(cos, rect, quicktest, dccDecodeResult);
         cos.close();
     }
 
     private void generateQrCode(PDDocument document, PDPageContentStream cos, PDRectangle rect, String text) {
         try {
             int qrCodeSize = 150;
-            float qrCodeImageSize = 175f;
+            float qrCodeImageSize = 155f;
 
             Map<EncodeHintType, Object> hintMap = new HashMap<>();
             hintMap.put(EncodeHintType.MARGIN, 0);
@@ -408,8 +410,8 @@ public class PdfGenerator {
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix, config);
             PDImageXObject image = JPEGFactory.createFromImage(document, bufferedImage);
             cos.drawImage(image,
-                rect.getWidth() / 4 * 3 - (qrCodeImageSize / 2),
-                rect.getHeight() - 200,
+                rect.getWidth() - (qrCodeImageSize + 15),
+                rect.getHeight() - 180,
                 qrCodeImageSize,
                 qrCodeImageSize);
         } catch (Exception e) {
@@ -422,25 +424,25 @@ public class PdfGenerator {
 
         cos.beginText();
         cos.setLeading(leading);
-        cos.newLineAtOffset(rect.getWidth() / 2 / 3, rect.getHeight() - 100);
+        cos.newLineAtOffset(40f, rect.getHeight() - 200);
         cos.setFont(fontArialBold, 21);
         cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText("EU Digital");
-        cos.newLineAtOffset(-35f, -25f);
-        cos.showText("COVID Certificate");
+        cos.showText("EU DIGITALES COVID-");
+        cos.newLineAtOffset(15f, -25f);
+        cos.showText("TESTZERTIFIKAT");
         cos.endText();
 
         cos.setNonStrokingColor(Color.yellow);
-        cos.addRect(leading, rect.getHeight() - 160, rect.getWidth() / 2 - leading * 2, 10);
+        cos.addRect(leading, rect.getHeight() - 270, rect.getWidth() / 2 - leading * 2, 8);
         cos.fillAndStroke();
 
         cos.beginText();
-        cos.newLineAtOffset(50f, rect.getHeight() - 200);
+        cos.newLineAtOffset(55f, rect.getHeight() - 300);
         cos.setFont(fontArialBold, 21);
         cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText("Certificat numérique");
-        cos.newLineAtOffset(15f, -25f);
-        cos.showText("européen COVID");
+        cos.showText("EU DIGITAL COVID");
+        cos.newLineAtOffset(2f, -25f);
+        cos.showText("TEST CERTIFICATE");
         cos.endText();
 
         try {
@@ -454,7 +456,7 @@ public class PdfGenerator {
             float flagWidth = 113f;
             float flagHeight = 75f;
             float flagX = rect.getWidth() / 4 - flagWidth / 2;
-            float flagY = rect.getHeight() / 2 + 80;
+            float flagY = rect.getHeight() / 2 + 10;
             cos.drawImage(pdImage, flagX, flagY, flagWidth, flagHeight);
 
             cos.beginText();
@@ -476,6 +478,28 @@ public class PdfGenerator {
                                        DccDecodeResult dccDecodeResult)
       throws IOException {
 
+        cos.beginText();
+        cos.setLeading(leading);
+        cos.newLineAtOffset(rect.getWidth() / 2 + 20, rect.getHeight() - 50f);
+
+        float textsize = 9f;
+        cos.setFont(fontArial, textsize);
+        cos.setNonStrokingColor(Color.BLACK);
+        for (String qrLine : pdfConfig.getCertQrDescription().split(pdfConfig.getCertLineSeparator())) {
+            cos.showText(qrLine);
+            cos.newLineAtOffset(0f, -textsize);
+        }
+
+        cos.newLine();
+        cos.newLine();
+        cos.showText("Mehr Informationen");
+        cos.newLineAtOffset(0f, -textsize);
+        cos.showText("unter:");
+        cos.newLine();
+        cos.setNonStrokingColor(pantoneReflexBlue);
+        cos.showText("https://www.digitaler-impfnachweis-app.de/");
+        cos.endText();
+
         try {
             String cert = pdfConfig.getCertCertlogoPath();
             final ClassPathResource classPathResource = new ClassPathResource(cert);
@@ -495,10 +519,10 @@ public class PdfGenerator {
         cos.newLineAtOffset(rect.getWidth() / 2 + 20, rect.getHeight() / 2 + 120);
 
         List<List<String>> data = List.of(
-          List.of("Surname(s) and forename(s)", "Nom(s) de familie et prénom(s)",
+          List.of(pdfConfig.getCertNameDe(), pdfConfig.getCertNameEn(),
             quicktest.getLastName().concat(", ".concat(quicktest.getFirstName()))),
-          List.of("Date of birth", "Date de naissance", formatterDate.format(birthday)),
-          List.of("Unique certificate identifier", "Identifiant unique du certificat",dccDecodeResult.getCi())
+          List.of(pdfConfig.getCertBirthdayDe(), pdfConfig.getCertBirthdayEn(), formatterDate.format(birthday)),
+          List.of(pdfConfig.getCertCertIdDe(), pdfConfig.getCertCertIdEn(),dccDecodeResult.getCi())
         );
 
         data.forEach(entry -> printQrPagePersonalInfo(cos, entry));
@@ -512,17 +536,18 @@ public class PdfGenerator {
 
         try {
             cos.setFont(fontArialBold, boldSize);
-            cos.setNonStrokingColor(Color.BLACK);
+            cos.setNonStrokingColor(pantoneReflexBlue);
             cos.showText(data.get(0));
+            cos.setNonStrokingColor(Color.BLACK);
             cos.newLineAtOffset(0, -italicSize);
             cos.setFont(fontArialItalic, italicSize);
             cos.showText(data.get(1));
-            cos.newLineAtOffset(0, -italicSize);
+            cos.newLine();
             cos.setFont(fontArial, normalSize);
             cos.setNonStrokingColor(pantoneReflexBlue);
             cos.showText(data.get(2));
             cos.setNonStrokingColor(Color.BLACK);
-            cos.newLine();
+            cos.newLineAtOffset(0, 2f * -normalSize);
         } catch (IOException ex) {
             log.warn("Could not create QR personal data page.");
         }
@@ -545,69 +570,84 @@ public class PdfGenerator {
 
         cos.beginText();
         cos.setLeading(leading);
-        cos.setFont(fontArialBold, 14);
-        cos.newLineAtOffset(rect.getWidth() / 4 - 85, rect.getHeight() / 2 - 125);
-        cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText("Member State Placeholder");
-        cos.endText();
+        cos.newLineAtOffset(15f, rect.getHeight() / 2 - 125);
+        float textsize = 9f;
 
-        cos.beginText();
-        cos.setLeading(leading);
-        cos.setFont(fontArial, 8);
-        cos.setNonStrokingColor(Color.BLACK);
-        cos.newLineAtOffset(30, rect.getHeight() / 4 - 50);
+        printDescriptionBlock(cos, textsize, pdfConfig.getCertMemberStateDescriptionDe());
 
-        float spacing = -10f;
-        cos.showText("This certificate is not a travel document.  The scientific evidence");
-        cos.newLineAtOffset(5, spacing);
-        cos.showText("on COVID-19 vaccination, testing and recovering continues to");
-        cos.newLineAtOffset(2, spacing);
-        cos.showText("evolve, also in view of new variants of concern of the virus.");
-        cos.newLineAtOffset(0, spacing);
-        cos.showText("Before travelling, please check the applicable public health");
-        cos.newLineAtOffset(2, spacing);
-        cos.showText("measures and related restrictions applied at the point of");
-        cos.newLineAtOffset(75, spacing);
-        cos.showText("destination.");
-        cos.newLineAtOffset(-50f, spacing);
-        cos.showText("Relevant information can be found here:");
-        cos.newLineAtOffset(20f, spacing);
-        cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText("https://reopen.europa.eu/en");
-        cos.setNonStrokingColor(Color.BLACK);
+        cos.newLine();
+        cos.newLine();
+
+        printDescriptionBlock(cos, textsize, pdfConfig.getCertMemberStateDescriptionEn());
+
+        cos.newLine();
+        cos.newLine();
+
+        printDescriptionBlock(cos, textsize, pdfConfig.getCertMemberStateFurtherDescription());
+
         cos.endText();
     }
 
-    private void generateCertTextPage4(PDDocument document, PDPageContentStream cos,
-                                       PDRectangle rect, QuickTest quickTest,
+    /**
+     * Print a block consisting of multiple lines. Split at <br> and color the first 2 words in the first line in blue.
+     * @param cos pdfbox page content stream
+     * @param textsize fontsize
+     * @param text the text to print
+     * @throws IOException thrown from content stream
+     */
+    private void printDescriptionBlock(PDPageContentStream cos, float textsize, String text) throws IOException {
+        String[] splittedText = text.split(pdfConfig.getCertLineSeparator());
+        for (int i = 0, deTextLength = splittedText.length; i < deTextLength; i++) {
+            String currentText = splittedText[i];
+            if (i == 0) {
+                cos.setFont(fontArialBold, textsize);
+                cos.setNonStrokingColor(pantoneReflexBlue);
+                String[] words = currentText.split(" ");
+                cos.showText(words[0] + " " + words[1] + " ");
+                cos.setNonStrokingColor(Color.BLACK);
+                cos.setFont(fontArial, textsize);
+                cos.showText(Arrays.stream(words).skip(2).collect(Collectors.joining(" ")));
+            } else {
+                if (currentText.contains("https://")) {
+                    cos.setNonStrokingColor(pantoneReflexBlue);
+                }
+                cos.showText(currentText);
+                cos.setNonStrokingColor(Color.BLACK);
+            }
+            cos.newLineAtOffset(0f, -textsize);
+        }
+    }
+
+    private void generateCertTextPage4(PDPageContentStream cos, PDRectangle rect, QuickTest quickTest,
                                        DccDecodeResult dccDecodeResult) throws IOException {
 
         cos.beginText();
         cos.setLeading(leading);
-        cos.setFont(fontArialBold, 15);
+        cos.setFont(fontArialBold, 13f);
         cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.newLineAtOffset(rect.getWidth() / 2 + 100, rect.getHeight() / 2 - 30);
-        cos.showText(pdfConfig.getCertHeaderTestEn());
+        cos.newLineAtOffset(rect.getWidth() / 2 + 20f, rect.getHeight() / 2 - 40);
+        cos.showText(pdfConfig.getCertHeaderTestDe());
         cos.newLineAtOffset(0, -15f);
-        cos.setFont(fontArialBold, 14);
-        cos.showText(pdfConfig.getCertHeaderTestFr());
-        cos.newLineAtOffset(-80f, -30f);
+        cos.setFont(fontArialBold, 13f);
+        cos.showText(pdfConfig.getCertHeaderTestEn());
+        cos.newLineAtOffset(0f, -30f);
 
         cos.setNonStrokingColor(Color.BLACK);
 
         List<List<String>> data = List.of(
-          List.of("Disease or agent targeted", "Maladie ou agent cible", "COVID-19"),
-          List.of(pdfConfig.getCertTestTypeEn(), pdfConfig.getCertTestTypeFr(), "RAT"),
-          List.of(pdfConfig.getCertTestNameEn(), pdfConfig.getCertTestNameFr(), quickTest.getTestBrandName()),
-          List.of(pdfConfig.getCertTestManufacturerEn(), pdfConfig.getCertTestManufacturerFr(),
-            quickTest.getTestBrandId()),
-          List.of(pdfConfig.getCertDateSampleCollectionEn(), pdfConfig.getCertDateSampleCollectionFr(),
+          List.of(pdfConfig.getCertDiseaseAgentDe(), pdfConfig.getCertDiseaseAgentEn(),
+            quickTest.getDiseaseAgentTargeted()),
+          List.of(pdfConfig.getCertTestTypeDe(), pdfConfig.getCertTestTypeEn(), "Rapid immunoassay"),
+          List.of(pdfConfig.getCertTestNameDe(), pdfConfig.getCertTestNameEn(), quickTest.getTestBrandId()),
+          List.of(pdfConfig.getCertTestManufacturerDe(), pdfConfig.getCertTestManufacturerEn(),
+            quickTest.getTestBrandName()),
+          List.of(pdfConfig.getCertDateSampleCollectionDe(), pdfConfig.getCertDateSampleCollectionEn(),
             quickTest.getUpdatedAt().format(formatter)),
-          List.of(pdfConfig.getCertTestResultEn(), pdfConfig.getCertTestResultFr(),
+          List.of(pdfConfig.getCertTestResultDe(), pdfConfig.getCertTestResultEn(),
             getTestResultText(quickTest.getTestResult())),
-          List.of(pdfConfig.getCertTestingCentreEn(), pdfConfig.getCertTestingCentreFr(), quickTest.getPocId()),
-          List.of(pdfConfig.getCertStateOfTestEn(), pdfConfig.getCertStateOfTestFr(), "DE"),
-          List.of(pdfConfig.getCertIssuerEn(), pdfConfig.getCertIssuerFr(), dccDecodeResult.getIssuer())
+          List.of(pdfConfig.getCertTestingCentreDe(), pdfConfig.getCertTestingCentreEn(), quickTest.getPocId()),
+          List.of(pdfConfig.getCertStateOfTestDe(), pdfConfig.getCertStateOfTestEn(), "DE"),
+          List.of(pdfConfig.getCertIssuerDe(), pdfConfig.getCertIssuerEn(), dccDecodeResult.getIssuer())
         );
 
         float spacingParagraph = -13f;
@@ -622,10 +662,10 @@ public class PdfGenerator {
         String testResult = "";
         switch (testResultValue != null ? testResultValue : -1) {
           case positive:
-              testResult = "Positiv";
+              testResult = "Detected";
               break;
           case negative:
-              testResult = "Negativ";
+              testResult = "Not detected";
               break;
           default:
               testResult = "Fehler";
@@ -654,7 +694,7 @@ public class PdfGenerator {
                 cos.newLineAtOffset(0, spacingText);
                 leftLines++;
             }
-            cos.setFont(fontArialBold, 8);
+            cos.setFont(fontArial, 8);
             cos.setNonStrokingColor(pantoneReflexBlue);
 
             float paragraphIndent = 150f;

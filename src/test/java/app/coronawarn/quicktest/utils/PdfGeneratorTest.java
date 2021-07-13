@@ -88,29 +88,40 @@ public class PdfGeneratorTest {
         when(pdfConfig.getTestResultNegativeText()).thenReturn("NEGATIV");
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
 
-
+        when(pdfConfig.getCertQrDescription()).thenReturn(pdc.getCertQrDescription());
+        when(pdfConfig.getCertMemberStateDescriptionDe()).thenReturn(pdc.getCertMemberStateDescriptionDe());
+        when(pdfConfig.getCertMemberStateDescriptionEn()).thenReturn(pdc.getCertMemberStateDescriptionEn());
+        when(pdfConfig.getCertMemberStateFurtherDescription()).thenReturn(pdc.getCertMemberStateFurtherDescription());
+        when(pdfConfig.getCertDiseaseAgentDe()).thenReturn(pdc.getCertDiseaseAgentDe());
+        when(pdfConfig.getCertDiseaseAgentEn()).thenReturn(pdc.getCertDiseaseAgentEn());
         when(pdfConfig.getCertLineSeparator()).thenReturn(pdc.getCertLineSeparator());
         when(pdfConfig.getCertCertlogoPath()).thenReturn(pdc.getCertCertlogoPath());
         when(pdfConfig.getCertFlagPath()).thenReturn(pdc.getCertFlagPath());
         when(pdfConfig.getCertFlagSeparatorPath()).thenReturn(pdc.getCertFlagSeparatorPath());
         when(pdfConfig.getCertHeaderTestEn()).thenReturn(pdc.getCertHeaderTestEn());
-        when(pdfConfig.getCertHeaderTestFr()).thenReturn(pdc.getCertHeaderTestFr());
+        when(pdfConfig.getCertHeaderTestDe()).thenReturn(pdc.getCertHeaderTestDe());
         when(pdfConfig.getCertTestNameEn()).thenReturn(pdc.getCertTestNameEn());
-        when(pdfConfig.getCertTestNameFr()).thenReturn(pdc.getCertTestNameFr());
+        when(pdfConfig.getCertTestNameDe()).thenReturn(pdc.getCertTestNameDe());
         when(pdfConfig.getCertDateSampleCollectionEn()).thenReturn(pdc.getCertDateSampleCollectionEn());
-        when(pdfConfig.getCertDateSampleCollectionFr()).thenReturn(pdc.getCertDateSampleCollectionFr());
+        when(pdfConfig.getCertDateSampleCollectionDe()).thenReturn(pdc.getCertDateSampleCollectionDe());
         when(pdfConfig.getCertTestManufacturerEn()).thenReturn(pdc.getCertTestManufacturerEn());
-        when(pdfConfig.getCertTestManufacturerFr()).thenReturn(pdc.getCertTestManufacturerFr());
+        when(pdfConfig.getCertTestManufacturerDe()).thenReturn(pdc.getCertTestManufacturerDe());
         when(pdfConfig.getCertTestResultEn()).thenReturn(pdc.getCertTestResultEn());
-        when(pdfConfig.getCertTestResultFr()).thenReturn(pdc.getCertTestResultFr());
+        when(pdfConfig.getCertTestResultDe()).thenReturn(pdc.getCertTestResultDe());
         when(pdfConfig.getCertTestingCentreEn()).thenReturn(pdc.getCertTestingCentreEn());
-        when(pdfConfig.getCertTestingCentreFr()).thenReturn(pdc.getCertTestingCentreFr());
+        when(pdfConfig.getCertTestingCentreDe()).thenReturn(pdc.getCertTestingCentreDe());
         when(pdfConfig.getCertStateOfTestEn()).thenReturn(pdc.getCertStateOfTestEn());
-        when(pdfConfig.getCertStateOfTestFr()).thenReturn(pdc.getCertStateOfTestFr());
+        when(pdfConfig.getCertStateOfTestDe()).thenReturn(pdc.getCertStateOfTestDe());
         when(pdfConfig.getCertIssuerEn()).thenReturn(pdc.getCertIssuerEn());
-        when(pdfConfig.getCertIssuerFr()).thenReturn(pdc.getCertIssuerFr());
+        when(pdfConfig.getCertIssuerDe()).thenReturn(pdc.getCertIssuerDe());
         when(pdfConfig.getCertTestTypeEn()).thenReturn(pdc.getCertTestTypeEn());
-        when(pdfConfig.getCertTestTypeFr()).thenReturn(pdc.getCertTestTypeFr());
+        when(pdfConfig.getCertTestTypeDe()).thenReturn(pdc.getCertTestTypeDe());
+        when(pdfConfig.getCertCertIdDe()).thenReturn(pdc.getCertCertIdDe());
+        when(pdfConfig.getCertCertIdEn()).thenReturn(pdc.getCertCertIdEn());
+        when(pdfConfig.getCertNameDe()).thenReturn(pdc.getCertNameDe());
+        when(pdfConfig.getCertNameEn()).thenReturn(pdc.getCertNameEn());
+        when(pdfConfig.getCertBirthdayDe()).thenReturn(pdc.getCertBirthdayDe());
+        when(pdfConfig.getCertBirthdayEn()).thenReturn(pdc.getCertBirthdayEn());
 
 
         List<String> pocInformation = new ArrayList();
@@ -186,6 +197,7 @@ public class PdfGeneratorTest {
         quicktest.setPrivacyAgreement(Boolean.FALSE);
         quicktest.setSex(Sex.DIVERSE);
         quicktest.setBirthday("1911-11-11");
+        quicktest.setDiseaseAgentTargeted("COVID-19");
         return quicktest;
     }
 

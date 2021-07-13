@@ -678,7 +678,7 @@ public class PdfGenerator {
     private void printCertData(PDPageContentStream cos, float spacingParagraph, float spacingText, String textOriginal,
                                String translation, String value) {
         try {
-            cos.setNonStrokingColor(Color.BLACK);
+            cos.setNonStrokingColor(pantoneReflexBlue);
             cos.setFont(fontArialBold, 8);
             // split text at a configured line break and count lines on the left side of the row to be able to
             // reset the offset of the next row correctly
@@ -688,7 +688,8 @@ public class PdfGenerator {
                 cos.newLineAtOffset(0, spacingText);
                 leftLines++;
             }
-            cos.setFont(fontArialItalic, 8);
+            cos.setNonStrokingColor(Color.BLACK);
+            cos.setFont(fontArial, 8);
             for (String lineItalic : translation.split(pdfConfig.getCertLineSeparator())) {
                 cos.showText(lineItalic);
                 cos.newLineAtOffset(0, spacingText);

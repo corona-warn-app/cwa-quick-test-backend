@@ -32,11 +32,15 @@ public class CommonCharValidator implements ConstraintValidator<ValidCommonChar,
 
     @Override
     public boolean isValid(String string, ConstraintValidatorContext constraintValidatorContext) {
-        if (StringUtils.isBlank(string)) {
-            return false;
+        boolean isValid;
+        if (string == null) {
+            isValid = true;
+        } else if (StringUtils.isBlank(string)) {
+            isValid = false;
         } else {
-            return !CONTAINS_SPECIAL_CHARACTERS_EXCEPT_WHITESPACE.matcher(string).matches();
+            isValid = !CONTAINS_SPECIAL_CHARACTERS_EXCEPT_WHITESPACE.matcher(string).matches();
         }
+        return isValid;
     }
 
 }

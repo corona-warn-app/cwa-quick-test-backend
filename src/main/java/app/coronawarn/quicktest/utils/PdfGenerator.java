@@ -395,25 +395,26 @@ public class PdfGenerator {
 
     private void generateQrCode(PDDocument document, PDPageContentStream cos, PDRectangle rect, String text) {
         try {
-            int qrCodeSize = 150;
-            float qrCodeImageSize = 155f;
+            // Set QR Code size to 6 cm in px
+            int qrCodeSizePx = 227;
+            float qrCodeImageSizePt = qrCodeSizePx * 0.75f;
 
             Map<EncodeHintType, Object> hintMap = new HashMap<>();
-            hintMap.put(EncodeHintType.MARGIN, 0);
-            hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
+            hintMap.put(EncodeHintType.MARGIN, 10);
+            hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
 
             BitMatrix matrix = new MultiFormatWriter().encode(
               new String(text.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8),
-              BarcodeFormat.QR_CODE, qrCodeSize, qrCodeSize, hintMap);
+              BarcodeFormat.QR_CODE, qrCodeSizePx, qrCodeSizePx, hintMap);
 
             MatrixToImageConfig config = new MatrixToImageConfig(0xFF000001, 0xFFFFFFFF);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix, config);
             PDImageXObject image = JPEGFactory.createFromImage(document, bufferedImage);
             cos.drawImage(image,
-              rect.getWidth() - (qrCodeImageSize + 15),
+              rect.getWidth() / 2,
               rect.getHeight() - 180,
-                qrCodeImageSize,
-                qrCodeImageSize);
+                qrCodeImageSizePt,
+                qrCodeImageSizePt);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -480,7 +481,7 @@ public class PdfGenerator {
 
         cos.beginText();
         cos.setLeading(leading);
-        cos.newLineAtOffset(rect.getWidth() / 2 + 20, rect.getHeight() - 50f);
+        cos.newLineAtOffset(rect.getWidth() - mm2Point(42f), rect.getHeight() - 35f);
 
         float textsize = 9f;
         cos.setFont(fontArial, textsize);
@@ -495,9 +496,11 @@ public class PdfGenerator {
         cos.showText("Mehr Informationen");
         cos.newLineAtOffset(0f, -textsize);
         cos.showText("unter:");
-        cos.newLine();
+        cos.newLineAtOffset(0f, -textsize);
         cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.showText("https://www.digitaler-impfnachweis-app.de/");
+        cos.showText("https://www.digitaler-");
+        cos.newLineAtOffset(0f, -textsize);
+        cos.showText("impfnachweis-app.de");
         cos.endText();
 
         try {
@@ -743,4 +746,8 @@ public class PdfGenerator {
         document.close();
     }
 
+
+    private float mm2Point(float mm) {
+        return mm * 2.83465f;
+    }
 }

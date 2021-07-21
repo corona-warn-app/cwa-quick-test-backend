@@ -20,16 +20,15 @@
 
 package app.coronawarn.quicktest.utils;
 
+import static app.coronawarn.quicktest.utils.QuicktestUtils.getQuickTest;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
-import app.coronawarn.quicktest.model.Sex;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -74,44 +73,6 @@ public class PdfGeneratorTest {
         when(pdfConfig.getTestResultNegativeText()).thenReturn("NEGATIV");
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
 
-        when(pdfConfig.getCertQrDescription()).thenReturn(pdc.getCertQrDescription());
-        when(pdfConfig.getCertMemberStateDescriptionDe()).thenReturn(pdc.getCertMemberStateDescriptionDe());
-        when(pdfConfig.getCertMemberStateDescriptionEn()).thenReturn(pdc.getCertMemberStateDescriptionEn());
-        when(pdfConfig.getCertMemberStateFurtherDescription()).thenReturn(pdc.getCertMemberStateFurtherDescription());
-        when(pdfConfig.getCertDiseaseAgentDe()).thenReturn(pdc.getCertDiseaseAgentDe());
-        when(pdfConfig.getCertDiseaseAgentEn()).thenReturn(pdc.getCertDiseaseAgentEn());
-        when(pdfConfig.getCertLineSeparator()).thenReturn(pdc.getCertLineSeparator());
-        when(pdfConfig.getCertCertlogoPath()).thenReturn(pdc.getCertCertlogoPath());
-        when(pdfConfig.getCertFlagPath()).thenReturn(pdc.getCertFlagPath());
-        when(pdfConfig.getCertFlagSeparatorPath()).thenReturn(pdc.getCertFlagSeparatorPath());
-        when(pdfConfig.getCertHeaderTestEn()).thenReturn(pdc.getCertHeaderTestEn());
-        when(pdfConfig.getCertHeaderTestDe()).thenReturn(pdc.getCertHeaderTestDe());
-        when(pdfConfig.getCertTestNameEn()).thenReturn(pdc.getCertTestNameEn());
-        when(pdfConfig.getCertTestNameDe()).thenReturn(pdc.getCertTestNameDe());
-        when(pdfConfig.getCertDateSampleCollectionEn()).thenReturn(pdc.getCertDateSampleCollectionEn());
-        when(pdfConfig.getCertDateSampleCollectionDe()).thenReturn(pdc.getCertDateSampleCollectionDe());
-        when(pdfConfig.getCertTestManufacturerEn()).thenReturn(pdc.getCertTestManufacturerEn());
-        when(pdfConfig.getCertTestManufacturerDe()).thenReturn(pdc.getCertTestManufacturerDe());
-        when(pdfConfig.getCertTestResultEn()).thenReturn(pdc.getCertTestResultEn());
-        when(pdfConfig.getCertTestResultDe()).thenReturn(pdc.getCertTestResultDe());
-        when(pdfConfig.getCertTestingCentreEn()).thenReturn(pdc.getCertTestingCentreEn());
-        when(pdfConfig.getCertTestingCentreDe()).thenReturn(pdc.getCertTestingCentreDe());
-        when(pdfConfig.getCertStateOfTestEn()).thenReturn(pdc.getCertStateOfTestEn());
-        when(pdfConfig.getCertStateOfTestDe()).thenReturn(pdc.getCertStateOfTestDe());
-        when(pdfConfig.getCertIssuerEn()).thenReturn(pdc.getCertIssuerEn());
-        when(pdfConfig.getCertIssuerDe()).thenReturn(pdc.getCertIssuerDe());
-        when(pdfConfig.getCertTestTypeEn()).thenReturn(pdc.getCertTestTypeEn());
-        when(pdfConfig.getCertTestTypeDe()).thenReturn(pdc.getCertTestTypeDe());
-        when(pdfConfig.getCertCertIdDe()).thenReturn(pdc.getCertCertIdDe());
-        when(pdfConfig.getCertCertIdEn()).thenReturn(pdc.getCertCertIdEn());
-        when(pdfConfig.getCertNameDe()).thenReturn(pdc.getCertNameDe());
-        when(pdfConfig.getCertNameEn()).thenReturn(pdc.getCertNameEn());
-        when(pdfConfig.getCertBirthdayDe()).thenReturn(pdc.getCertBirthdayDe());
-        when(pdfConfig.getCertBirthdayEn()).thenReturn(pdc.getCertBirthdayEn());
-        when(pdfConfig.getCertTestType()).thenReturn(pdc.getCertTestType());
-        when(pdfConfig.getCertIssuerState()).thenReturn(pdc.getCertIssuerState());
-
-
         List<String> pocInformation = new ArrayList();
         pocInformation.add("PoC Unittest");
         pocInformation.add("Unittest Way 15");
@@ -119,16 +80,9 @@ public class PdfGeneratorTest {
         pocInformation.add("Call: 0123-7890-0");
         QuickTest quicktest = getQuickTest();
         String user = "Mr. Unittest";
-        String dcc = "HC1:6BF-606A0T9WTWGSLKC 4X7923S%CA.48Y+6TAB3XK2F310RT012F3LMQ1001JC X8Y50.FK8ZKO/EZKEZ967L6C56." +
-          ".DU%DLPCG/DS2DHIA5Y8GY8JPCT3E5JDOA73467463W5207ZWERIL9WEQDD+Q6TW6FA7C464KCCWE6T9OF6:/6NA76W5." +
-          "JC2EC+96-Q63KCZPCNF6OF63W59%6PF6.SA*479L61G73564KC*KETF6A46.96646B565WET.D6$CBWE3/DO341$CKWEY " +
-          "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
-          "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
-          "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D";
         ByteArrayOutputStream file1 = pdfGenerator.generatePdf(pocInformation, quicktest, user);
-        ByteArrayOutputStream file = pdfGenerator.appendCertificatePage(file1.toByteArray(), quicktest, dcc);
 
-        PDDocument pdfDocument = PDDocument.load(file.toByteArray());
+        PDDocument pdfDocument = PDDocument.load(file1.toByteArray());
         try {
             String pdfText = new PDFTextStripper().getText(pdfDocument);
             assertTrue(pdfText.contains("Unittest"));
@@ -158,34 +112,5 @@ public class PdfGeneratorTest {
         } finally {
             pdfDocument.close();
         }
-
-
-    }
-
-    private QuickTest getQuickTest() {
-        QuickTest quicktest = new QuickTest();
-        quicktest.setZipCode("12345");
-        quicktest.setTestResult(Short.parseShort("6"));
-        quicktest.setHashedGuid("mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht");
-        quicktest.setCity("oyvkpigcga");
-        quicktest.setConfirmationCwa(Boolean.TRUE);
-        quicktest.setShortHashedGuid("cjfybkfn");
-        quicktest.setPhoneNumber("00491777777777777");
-        quicktest.setEmail("test@test.test");
-        quicktest.setTenantId("4711");
-        quicktest.setPocId("4711-A");
-        quicktest.setTestBrandId("AT116/21");
-        quicktest.setTestBrandName("Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal)");
-        quicktest.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 11));
-        quicktest.setUpdatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
-        quicktest.setFirstName("Joe");
-        quicktest.setLastName("Miller");
-        quicktest.setStreet("Boe");
-        quicktest.setHouseNumber("11");
-        quicktest.setPrivacyAgreement(Boolean.FALSE);
-        quicktest.setSex(Sex.DIVERSE);
-        quicktest.setBirthday("1911-11-11");
-        quicktest.setDiseaseAgentTargeted("COVID-19");
-        return quicktest;
     }
 }

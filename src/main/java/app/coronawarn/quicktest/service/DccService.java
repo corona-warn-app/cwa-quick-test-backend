@@ -31,7 +31,7 @@ import app.coronawarn.quicktest.model.DccUploadData;
 import app.coronawarn.quicktest.model.DccUploadResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
-import app.coronawarn.quicktest.utils.PdfGenerator;
+import app.coronawarn.quicktest.utils.DccPdfGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DccTestBuilder;
@@ -74,7 +74,7 @@ public class DccService {
     private final DgcCryptedPublisher dgcCryptedPublisher;
     private final DgcGenerator dgcGenerator;
     private final QuickTestConfig quickTestConfig;
-    private final PdfGenerator pdfGenerator;
+    private final DccPdfGenerator dccPdfGenerator;
 
     // TODO to be scheduled look up for keys, then generate dcc and prepare for upload
     // should open transaction pro quick test
@@ -165,7 +165,7 @@ public class DccService {
                     quickTestArchive.get().setDcc(dcc);
                     try {
                         ByteArrayOutputStream pdf =
-                          pdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(), quickTest, dcc);
+                          dccPdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(), quickTest, dcc);
                         quickTestArchive.get().setPdf(pdf.toByteArray());
                     } catch (IOException exception) {
                         log.warn("Appending Certificate to PDF failed for quicktest hashedGuid=[{}]",

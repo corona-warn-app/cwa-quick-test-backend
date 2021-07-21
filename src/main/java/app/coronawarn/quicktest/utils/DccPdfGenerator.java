@@ -95,6 +95,7 @@ public class DccPdfGenerator {
         PDDocument document = PDDocument.load(pdf);
         configCertPage(document);
         generateCertPage(document, quicktest, dcc);
+        generateCertPageFoldable(document, quicktest, dcc);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         close(document, out);
         return out;
@@ -128,12 +129,76 @@ public class DccPdfGenerator {
         PDRectangle rect = page.getMediaBox();
 
         DccDecodeResult dccDecodeResult = dccDecoder.decodeDcc(dcc);
-        generateCertTextPage1(document, cos, rect);
-        generateCertTextPage2(document, cos, rect, quicktest, dccDecodeResult);
-        generateQrCode(document, cos, rect, dcc);
-        generateCertTextPage3(document, cos, rect);
-        generateCertTextPage4(cos, rect, quicktest, dccDecodeResult);
+        generateHeadlinePage(document, cos, rect, false);
+        generatePersonalInfoPage(document, cos, rect, quicktest, dccDecodeResult, false);
+        generateQrCode(document, cos, rect, dcc, false);
+        generateMemberStateInfoPage(document, cos, rect, false);
+        generateCertificateInfoPage(cos, rect, quicktest, dccDecodeResult, false);
         cos.close();
+    }
+
+    private void generateCertPageFoldable(PDDocument document, QuickTest quicktest, String dcc)
+      throws IOException {
+
+        PDPage page = new PDPage(PDRectangle.A4);
+        document.addPage(page);
+        page.setMediaBox(PDRectangle.A4);
+        PDPageContentStream cos = new PDPageContentStream(document, page);
+        PDRectangle rect = page.getMediaBox();
+
+        DccDecodeResult dccDecodeResult = dccDecoder.decodeDcc(dcc);
+        generateFoldings(document, cos, rect);
+        generateHeadlinePage(document, cos, rect, true);
+        generatePersonalInfoPage(document, cos, rect, quicktest, dccDecodeResult, true);
+        generateQrCode(document, cos, rect, dcc, true);
+
+        // Rotate upcoming pages by 180 degrees
+        cos.transform(Matrix.getRotateInstance(Math.toRadians(180), rect.getWidth(), rect.getHeight() + 420));
+
+        generateMemberStateInfoPage(document, cos, rect, true);
+        generateCertificateInfoPage(cos, rect, quicktest, dccDecodeResult, true);
+        cos.close();
+    }
+
+    private void generateFoldings(PDDocument document, PDPageContentStream cos, PDRectangle rect) {
+        try {
+            cos.setLineDashPattern(new float[]{3, 1}, 0);
+            float length = 15f;
+            float middleX = rect.getWidth() / 2;
+            float middleY = rect.getHeight() / 2;
+            float left = 5f;
+            float right = rect.getWidth() - 5f;
+            float top = rect.getHeight() - 5f;
+            float bottom = 5f;
+
+            cos.moveTo(left, middleY);
+            cos.lineTo(left + length, middleY);
+            cos.stroke();
+
+            cos.moveTo(right, middleY);
+            cos.lineTo(right - length, middleY);
+            cos.stroke();
+
+            cos.moveTo(middleX, top);
+            cos.lineTo(middleX, top - length);
+            cos.stroke();
+
+            cos.moveTo(middleX, bottom);
+            cos.lineTo(middleX, bottom + length);
+            cos.stroke();
+
+            cos.moveTo(middleX - length / 2, middleY);
+            cos.lineTo(middleX + length / 2, middleY);
+            cos.stroke();
+
+            cos.moveTo(middleX, middleY + length / 2);
+            cos.lineTo(middleX, middleY - length / 2);
+            cos.stroke();
+
+            cos.setLineDashPattern(new float[]{}, 0);
+        } catch (IOException exception) {
+            log.warn("Could not draw dotted folding lines");
+        }
     }
 
     private void generateQrCode(PDDocument document, PDPageContentStream cos, PDRectangle rect, String text,
@@ -163,12 +228,15 @@ public class DccPdfGenerator {
         }
     }
 
-    private void generateCertTextPage1(PDDocument document, PDPageContentStream cos, PDRectangle rect)
+    private void generateHeadlinePage(PDDocument document, PDPageContentStream cos, PDRectangle rect, boolean foldable)
       throws IOException {
+        // Top left on single page, bottom right on folding page
+        float offsetX = foldable ? rect.getWidth() / 2 : 0;
+        float offsetY = foldable ? 0 : rect.getHeight() / 2;
 
         cos.beginText();
         cos.setLeading(leading);
-        cos.newLineAtOffset(40f, rect.getHeight() - 200);
+        cos.newLineAtOffset(offsetX + 40f, offsetY + mm2Point(85f));
         cos.setFont(fontArialBold, 21);
         cos.setNonStrokingColor(pantoneReflexBlue);
         cos.showText("EU DIGITALES COVID-");
@@ -177,11 +245,11 @@ public class DccPdfGenerator {
         cos.endText();
 
         cos.setNonStrokingColor(Color.yellow);
-        cos.addRect(leading, rect.getHeight() - 270, rect.getWidth() / 2 - leading * 2, 8);
+        cos.addRect(offsetX + leading, offsetY + mm2Point(65f), rect.getWidth() / 2 - leading * 2, 8);
         cos.fillAndStroke();
 
         cos.beginText();
-        cos.newLineAtOffset(55f, rect.getHeight() - 300);
+        cos.newLineAtOffset(offsetX + 55f, offsetY + mm2Point(52f));
         cos.setFont(fontArialBold, 21);
         cos.setNonStrokingColor(pantoneReflexBlue);
         cos.showText("EU DIGITAL COVID");
@@ -201,8 +269,8 @@ public class DccPdfGenerator {
 
             float flagWidth = 113f;
             float flagHeight = 75f;
-            float flagX = rect.getWidth() / 4 - flagWidth / 2;
-            float flagY = rect.getHeight() / 2 + 10;
+            float flagX = offsetX + rect.getWidth() / 4 - flagWidth / 2;
+            float flagY = offsetY + mm2Point(10f);
             cos.drawImage(pdImage, flagX, flagY, flagWidth, flagHeight);
 
             cos.beginText();

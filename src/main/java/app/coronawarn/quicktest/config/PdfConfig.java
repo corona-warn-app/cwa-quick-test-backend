@@ -76,6 +76,7 @@ public class PdfConfig {
     private String certCertIdEn = "Unique certificate identifier";
     private String certDiseaseAgentDe = "Erreger";
     private String certDiseaseAgentEn = "Disease or agent targeted";
+    private String certDiseaseAgentTargeted = "COVID-19";
     private String certHeaderTestEn = "TEST CERTIFICATE";
     private String certHeaderTestDe = "TESTZERTIFIKAT";
     private String certTestTypeEn = "Type of test";

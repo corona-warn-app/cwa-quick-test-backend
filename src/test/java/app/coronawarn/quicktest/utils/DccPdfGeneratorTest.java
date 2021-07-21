@@ -90,6 +90,7 @@ class DccPdfGeneratorTest {
         when(pdfConfig.getCertBirthdayEn()).thenReturn(pdc.getCertBirthdayEn());
         when(pdfConfig.getCertTestType()).thenReturn(pdc.getCertTestType());
         when(pdfConfig.getCertIssuerState()).thenReturn(pdc.getCertIssuerState());
+        when(pdfConfig.getCertDiseaseAgentTargeted()).thenReturn(pdc.getCertDiseaseAgentTargeted());
 
 
         QuickTest quicktest = getQuickTest();
@@ -115,7 +116,7 @@ class DccPdfGeneratorTest {
             assertTrue(pdfText.contains(pdc.getCertIssuerDe()));
             assertTrue(pdfText.contains(quicktest.getFirstName()));
             assertTrue(pdfText.contains(quicktest.getLastName()));
-            assertTrue(pdfText.contains(quicktest.getDiseaseAgentTargeted()));
+            assertTrue(pdfText.contains(pdc.getCertDiseaseAgentTargeted()));
         } finally {
             pdfDocument.close();
         }

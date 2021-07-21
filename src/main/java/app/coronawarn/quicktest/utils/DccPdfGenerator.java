@@ -380,7 +380,7 @@ public class DccPdfGenerator {
 
         List<List<String>> data = List.of(
           List.of(pdfConfig.getCertDiseaseAgentDe(), pdfConfig.getCertDiseaseAgentEn(),
-            quickTest.getDiseaseAgentTargeted()),
+            pdfConfig.getCertDiseaseAgentTargeted()),
           List.of(pdfConfig.getCertTestTypeDe(), pdfConfig.getCertTestTypeEn(), pdfConfig.getCertTestType()),
           List.of(pdfConfig.getCertTestNameDe(), pdfConfig.getCertTestNameEn(), quickTest.getTestBrandId()),
           List.of(pdfConfig.getCertTestManufacturerDe(), pdfConfig.getCertTestManufacturerEn(),

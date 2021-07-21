@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.List;
@@ -29,19 +29,19 @@ import lombok.Getter;
 import lombok.ToString;
 
 @Schema(
-        description = ""
+    description = "The quick test tenant statistics model list."
 )
+
 @Getter
 @ToString
 @EqualsAndHashCode
-public class QuickTestArchiveResponseList {
-
+public class QuickTestTenantStatisticsResponseList {
     @NotNull
-    private List<@Valid QuickTestArchiveResponse> quickTestArchives;
+    private List<@Valid QuickTestTenantStatisticsResponse> quickTestTenantStatistics;
 
-    public QuickTestArchiveResponseList setQuickTestArchives(List<QuickTestArchiveResponse> quickTestArchives) {
-        this.quickTestArchives = quickTestArchives;
+    public QuickTestTenantStatisticsResponseList setQuickTestTenantStatistics(
+        List<QuickTestTenantStatisticsResponse> quickTestTenantStatistics) {
+        this.quickTestTenantStatistics = quickTestTenantStatistics;
         return this;
     }
-
 }

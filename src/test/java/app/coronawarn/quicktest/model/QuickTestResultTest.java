@@ -22,8 +22,10 @@ package app.coronawarn.quicktest.model;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
+import app.coronawarn.quicktest.model.quicktest.QuickTestResultList;
+import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
-import app.coronawarn.quicktest.utils.Utilities;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;

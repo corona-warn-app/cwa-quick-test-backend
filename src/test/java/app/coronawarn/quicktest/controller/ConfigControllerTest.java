@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
-import app.coronawarn.quicktest.model.KeyCloakConfigFile;
+import app.coronawarn.quicktest.model.keycloak.KeyCloakConfigFile;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.google.gson.Gson;
 import lombok.RequiredArgsConstructor;

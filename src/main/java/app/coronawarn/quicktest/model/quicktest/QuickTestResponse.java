@@ -18,19 +18,17 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.ZonedDateTime;
 import lombok.Data;
 
 @Schema(
-    description = "The quick test tenant statistics model."
+        description = "Model for quicktest response."
 )
 @Data
-public class QuickTestTenantStatisticsResponse {
-    Aggregation aggregation;
-    QuickTestStatisticsResponse quickTestStatistics;
-    String pocId;
-    ZonedDateTime timestamp;
+public class QuickTestResponse {
+
+    private String shortHashedGuid;
+
 }

@@ -1,6 +1,6 @@
 package app.coronawarn.quicktest.validation.validators;
 
-import app.coronawarn.quicktest.model.QuickTestPersonalDataRequest;
+import app.coronawarn.quicktest.model.quicktest.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.validation.ValidPersonalData;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

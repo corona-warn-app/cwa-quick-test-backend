@@ -21,8 +21,8 @@
 package app.coronawarn.quicktest.controller;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.model.KeyCloakConfigFile;
-import app.coronawarn.quicktest.model.QuickTestContextFile;
+import app.coronawarn.quicktest.model.keycloak.KeyCloakConfigFile;
+import app.coronawarn.quicktest.model.quicktest.QuickTestContextFile;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.springframework.http.MediaType;

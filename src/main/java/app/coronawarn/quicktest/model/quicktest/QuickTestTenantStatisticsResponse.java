@@ -18,14 +18,20 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
+import app.coronawarn.quicktest.model.Aggregation;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.ZonedDateTime;
 import lombok.Data;
 
+@Schema(
+    description = "The quick test tenant statistics model."
+)
 @Data
-public class DccPublicKey {
-    // !Warning. It is sha256 hash from send testId (or QuickTest.testResultServerHash)
-    private String testId;
-    private String dcci;
-    private String publicKey;
+public class QuickTestTenantStatisticsResponse {
+    Aggregation aggregation;
+    QuickTestStatisticsResponse quickTestStatistics;
+    String pocId;
+    ZonedDateTime timestamp;
 }

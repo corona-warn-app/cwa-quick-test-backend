@@ -18,16 +18,21 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Schema(
-    description = "The quick test statistics model."
+    description = "Configuration Model for Context Configuration for Frontend"
 )
 @Data
-public class QuickTestStatisticsResponse {
-    private Integer totalTestCount;
-    private Integer positiveTestCount;
+@RequiredArgsConstructor
+public class QuickTestContextFile {
+
+    @JsonProperty("rules-server-url")
+    private final String rulesServerUrl;
+
 }

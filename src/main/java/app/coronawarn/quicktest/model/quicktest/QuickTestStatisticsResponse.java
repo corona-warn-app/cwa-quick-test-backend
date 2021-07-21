@@ -18,17 +18,16 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 @Schema(
-        description = "Model for quicktest response."
+    description = "The quick test statistics model."
 )
 @Data
-public class QuickTestResponse {
-
-    private String shortHashedGuid;
-
+public class QuickTestStatisticsResponse {
+    private Integer totalTestCount;
+    private Integer positiveTestCount;
 }

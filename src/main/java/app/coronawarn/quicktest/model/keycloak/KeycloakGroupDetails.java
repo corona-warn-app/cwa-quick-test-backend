@@ -18,39 +18,32 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Schema(
-        description = "Response model for quick test archive entries."
+        description = "Request/Response model for group details."
 )
 @Data
-public class QuickTestArchiveResponse {
+public class KeycloakGroupDetails {
 
-    private String hashedGuid;
+    @Schema(description = "Ignored when used for updating the group details")
+    private String id;
 
-    private String lastName;
+    @NotEmpty
+    @Size(max = 50)
+    private String name;
 
-    private String firstName;
+    @Size(max = 300)
+    private String pocDetails;
 
-    private String email;
-
-    private String phoneNumber;
-
-    private Sex sex;
-
-    private String street;
-
-    private String houseNumber;
-
-    private String zipCode;
-
-    private String city;
-
-    private String birthday;
-
-    private String testResult;
+    @Size(max = 50)
+    private String pocId;
 
 }

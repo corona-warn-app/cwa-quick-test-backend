@@ -20,9 +20,9 @@
 
 package app.coronawarn.quicktest.client;
 
-import app.coronawarn.quicktest.model.DccPublicKey;
-import app.coronawarn.quicktest.model.DccUploadData;
-import app.coronawarn.quicktest.model.DccUploadResult;
+import app.coronawarn.quicktest.model.dcc.DccPublicKey;
+import app.coronawarn.quicktest.model.dcc.DccUploadData;
+import app.coronawarn.quicktest.model.dcc.DccUploadResult;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

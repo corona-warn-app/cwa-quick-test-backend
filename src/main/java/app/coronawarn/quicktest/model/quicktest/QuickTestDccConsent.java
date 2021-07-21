@@ -1,4 +1,4 @@
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
 import lombok.Data;
 

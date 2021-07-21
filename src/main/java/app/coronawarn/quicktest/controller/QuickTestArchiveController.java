@@ -24,8 +24,8 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
-import app.coronawarn.quicktest.model.QuickTestArchiveResponseList;
+import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
+import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;

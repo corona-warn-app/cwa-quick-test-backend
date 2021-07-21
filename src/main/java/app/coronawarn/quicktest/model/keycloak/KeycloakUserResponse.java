@@ -18,18 +18,38 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Schema(
-    description = ""
+        description = "Response model for user."
 )
 @Data
-@Builder
-public class QuickTestStatistics {
-    private Integer totalTestCount;
-    private Integer positiveTestCount;
+public class KeycloakUserResponse {
+
+    @NotEmpty
+    @Size(max = 30)
+    private String lastName;
+
+    @NotEmpty
+    @Size(max = 30)
+    private String firstName;
+
+    @NotEmpty
+    @Size(max = 50)
+    private String username;
+
+    @NotNull
+    private Boolean roleCounter;
+
+    @NotNull
+    private Boolean roleLab;
+
+    private String subGroup;
+
 }

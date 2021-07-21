@@ -18,13 +18,21 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.keycloak;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
+@Schema(
+    description = "Request model for group id."
+)
 @Data
-public class DccUploadData {
-    private String dccHash;
-    private String encryptedDcc;
-    private String dataEncryptionKey;
+public class KeycloakGroupId {
+
+    @NotEmpty
+    @Size(max = 50)
+    private String groupId;
+
 }

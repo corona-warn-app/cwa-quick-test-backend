@@ -18,30 +18,30 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
 import java.util.List;
-import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
+import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Schema(
-        description = "Model for quicktest response list."
+        description = "Response model for group."
 )
-@Getter
-@ToString
-@EqualsAndHashCode
-public class QuickTestResponseList {
+@Data
+public class KeycloakGroupResponse {
 
-    @NotNull
-    private List<@Valid QuickTestResponse> quickTests;
+    private String name;
 
-    public QuickTestResponseList setQuickTests(List<QuickTestResponse> quickTests) {
-        this.quickTests = quickTests;
-        return this;
-    }
+    private String id;
+
+    private String path;
+
+    private List<KeycloakGroupResponse> children = new ArrayList<>();
 
 }

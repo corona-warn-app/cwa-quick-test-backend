@@ -18,24 +18,31 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.config;
 
-import app.coronawarn.quicktest.validation.ValidGuid;
-import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotBlank;
+import java.util.Map;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Schema(
-    description = "The quick test creation model."
-)
-@Data
-public class QuickTestCreationRequest {
+@Getter
+@Setter
+@Configuration
+@ConfigurationProperties("keycloak-admin")
+public class KeycloakAdminProperties {
 
-    /**
-     * Hash (SHA256) of test result id (aka QR-Code, GUID) encoded as hex string.
-     */
-    @NotBlank
-    @ValidGuid
-    private String hashedGuid;
+    private String realm;
 
+    private String resource;
+
+    private String authServerUrl;
+
+    private KeycloakCredentials credentials;
+
+    @Data
+    public static class KeycloakCredentials {
+        private String secret;
+    }
 }

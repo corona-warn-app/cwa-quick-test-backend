@@ -64,6 +64,7 @@ class DccPdfGeneratorTest {
         when(pdfConfig.getCertCertlogoPath()).thenReturn(pdc.getCertCertlogoPath());
         when(pdfConfig.getCertFlagPath()).thenReturn(pdc.getCertFlagPath());
         when(pdfConfig.getCertFlagSeparatorPath()).thenReturn(pdc.getCertFlagSeparatorPath());
+        when(pdfConfig.getCertFoldingInstruction()).thenReturn(pdc.getCertFoldingInstruction());
         when(pdfConfig.getCertHeaderTestEn()).thenReturn(pdc.getCertHeaderTestEn());
         when(pdfConfig.getCertHeaderTestDe()).thenReturn(pdc.getCertHeaderTestDe());
         when(pdfConfig.getCertTestNameEn()).thenReturn(pdc.getCertTestNameEn());

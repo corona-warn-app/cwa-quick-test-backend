@@ -67,6 +67,7 @@ public class PdfConfig {
     private String certFlagPath = "pdf/eu_flag.png";
     private String certCertlogoPath = "pdf/certificate.png";
     private String certFlagSeparatorPath = "pdf/flag_seperator.png";
+    private String certFoldingInstruction = "pdf/folding-instruction.png";
     private String certLineSeparator = " <br> ";
     private String certNameDe = "Name, Vorname";
     private String certNameEn = "Surname(s) and forename(s)";

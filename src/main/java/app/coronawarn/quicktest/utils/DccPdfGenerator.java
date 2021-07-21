@@ -56,6 +56,7 @@ import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
 import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.util.Matrix;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -84,7 +85,7 @@ public class DccPdfGenerator {
 
 
     /**
-     * GAppends the QR code to the pdf.
+     * Appends the EU certificate including a QR code to the pdf.
      *
      * @param quicktest      Quicktest
      * @param dcc            certificate data
@@ -100,6 +101,7 @@ public class DccPdfGenerator {
     }
 
     private void configCertPage(PDDocument document) {
+        // Add Arial fonts to pdfbox
         final ClassPathResource cs = new ClassPathResource("pdf/fonts/arial.ttf");
         try {
             this.fontArial = PDTrueTypeFont.load(document,
@@ -134,8 +136,12 @@ public class DccPdfGenerator {
         cos.close();
     }
 
-    private void generateQrCode(PDDocument document, PDPageContentStream cos, PDRectangle rect, String text) {
+    private void generateQrCode(PDDocument document, PDPageContentStream cos, PDRectangle rect, String text,
+                                boolean foldable) {
         try {
+            // Print QR Code on the personal info page, aligning to the center of the whole page
+            float x = foldable ? mm2Point(45f) : rect.getWidth() / 2;
+            float y = foldable ? mm2Point(85f) : rect.getHeight() / 2 + mm2Point(85f);
             // Set QR Code size to 6 cm in px
             int qrCodeSizePx = 227;
             float qrCodeImageSizePt = qrCodeSizePx * 0.75f;
@@ -151,11 +157,7 @@ public class DccPdfGenerator {
             MatrixToImageConfig config = new MatrixToImageConfig(0xFF000001, 0xFFFFFFFF);
             BufferedImage bufferedImage = MatrixToImageWriter.toBufferedImage(matrix, config);
             PDImageXObject image = JPEGFactory.createFromImage(document, bufferedImage);
-            cos.drawImage(image,
-              rect.getWidth() / 2,
-              rect.getHeight() - 180,
-                qrCodeImageSizePt,
-                qrCodeImageSizePt);
+            cos.drawImage(image, x, y, qrCodeImageSizePt, qrCodeImageSizePt);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -188,6 +190,8 @@ public class DccPdfGenerator {
         cos.endText();
 
         try {
+            // Show flag with German country code
+
             String flag = pdfConfig.getCertFlagPath();
             final ClassPathResource classPathResource = new ClassPathResource(flag);
             final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
@@ -215,14 +219,22 @@ public class DccPdfGenerator {
         }
     }
 
-    private void generateCertTextPage2(PDDocument document, PDPageContentStream cos,
-                                       PDRectangle rect, QuickTest quicktest,
-                                       DccDecodeResult dccDecodeResult)
+    private void generatePersonalInfoPage(PDDocument document, PDPageContentStream cos,
+                                          PDRectangle rect, QuickTest quicktest,
+                                          DccDecodeResult dccDecodeResult, boolean foldable)
       throws IOException {
+        // Top right on single page, bottom left on foldable page
+        float offsetX = foldable ? 0 : rect.getWidth() / 2;
+        float offsetY = foldable ? 0 : rect.getHeight() / 2;
 
         cos.beginText();
         cos.setLeading(leading);
-        cos.newLineAtOffset(rect.getWidth() - mm2Point(42f), rect.getHeight() - 35f);
+        // Set text to the outside of the page, left fot foldable page, right for single page
+        if (foldable) {
+            cos.newLineAtOffset(offsetX + mm2Point(10f), offsetY + mm2Point(138f));
+        } else {
+            cos.newLineAtOffset(offsetX + mm2Point(62f), offsetY + mm2Point(138f));
+        }
 
         float textsize = 9f;
         cos.setFont(fontArial, textsize);
@@ -251,8 +263,8 @@ public class DccPdfGenerator {
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(cert)));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "cert");
-            cos.drawImage(pdImage, rect.getWidth() / 2 + leading,
-              rect.getHeight() - (rect.getHeight() / 4) - 75f, 295f - leading * 2, 70f - 7f);
+            cos.drawImage(pdImage, offsetX + mm2Point(5f), offsetY + mm2Point(60f), 295f - leading * 2,
+                70f - 7f);
         } catch (IOException | NullPointerException e) {
             log.error("Certificate image not found!");
         }
@@ -260,8 +272,10 @@ public class DccPdfGenerator {
         LocalDate birthday = LocalDate.parse(quicktest.getBirthday(), dtf);
         cos.beginText();
         cos.setLeading(leading);
-        cos.newLineAtOffset(rect.getWidth() / 2 + 20, rect.getHeight() / 2 + 120);
+        float newlineX = foldable ? 10f : 5f;
+        cos.newLineAtOffset(offsetX + mm2Point(newlineX), offsetY + mm2Point(50f));
 
+        // Print personal info
         List<List<String>> data = List.of(
           List.of(pdfConfig.getCertNameDe(), pdfConfig.getCertNameEn(),
             quicktest.getLastName().concat(", ".concat(quicktest.getFirstName()))),
@@ -297,8 +311,12 @@ public class DccPdfGenerator {
         }
     }
 
-    private void generateCertTextPage3(PDDocument document, PDPageContentStream cos,
-                                       PDRectangle rect) throws IOException {
+    private void generateMemberStateInfoPage(PDDocument document, PDPageContentStream cos,
+                                             PDRectangle rect, boolean foldable) throws IOException {
+        // If foldable, page is rotated by 180 degrees
+        // Bottom left for single page, top right for foldable page
+        float offsetX = 0;
+        float offsetY = foldable ? rect.getHeight() / 2 : 0;
 
         try {
             String flagSep = pdfConfig.getCertFlagSeparatorPath();
@@ -307,29 +325,55 @@ public class DccPdfGenerator {
               Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(flagSep)));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "flagSep");
-            cos.drawImage(pdImage, leading,rect.getHeight() / 2 - 100f, 295f - 2 * leading, 63f);
+            cos.drawImage(pdImage, offsetX + mm2Point(5f),offsetY + mm2Point(125f), 295f - 2 * leading, 63f);
         } catch (IOException | NullPointerException e) {
             log.error("Flag seperator image not found!");
         }
 
         cos.beginText();
+
         cos.setLeading(leading);
-        cos.newLineAtOffset(15f, rect.getHeight() / 2 - 125);
+        cos.newLineAtOffset(offsetX + mm2Point(5f), offsetY + mm2Point(120f));
         float textsize = 9f;
 
         printDescriptionBlock(cos, textsize, pdfConfig.getCertMemberStateDescriptionDe());
 
         cos.newLine();
-        cos.newLine();
+        if (!foldable) {
+            cos.newLine();
+        }
 
         printDescriptionBlock(cos, textsize, pdfConfig.getCertMemberStateDescriptionEn());
 
         cos.newLine();
-        cos.newLine();
+        if (!foldable) {
+            cos.newLine();
+        }
 
         printDescriptionBlock(cos, textsize, pdfConfig.getCertMemberStateFurtherDescription());
 
         cos.endText();
+
+        if (foldable) {
+            // Show folding instructions
+
+            cos.moveTo(offsetX + mm2Point(5f), offsetY + mm2Point(40f));
+            cos.lineTo(offsetX + mm2Point(80f), offsetY + mm2Point(40f));
+            cos.stroke();
+
+            try {
+                String foldingInstruction = pdfConfig.getCertFoldingInstruction();
+                final ClassPathResource classPathResource = new ClassPathResource(foldingInstruction);
+                final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
+                  Objects.requireNonNull(classPathResource.getClassLoader())
+                    .getResourceAsStream(foldingInstruction)));
+                PDImageXObject pdImage = PDImageXObject.createFromByteArray(
+                  document, sampleBytes, "foldingInstruction");
+                cos.drawImage(pdImage, offsetX + mm2Point(15f),offsetY + mm2Point(10f), 208f, 60f);
+            } catch (IOException | NullPointerException e) {
+                log.error("Folding instruction image not found!");
+            }
+        }
     }
 
     /**
@@ -362,14 +406,19 @@ public class DccPdfGenerator {
         }
     }
 
-    private void generateCertTextPage4(PDPageContentStream cos, PDRectangle rect, QuickTest quickTest,
-                                       DccDecodeResult dccDecodeResult) throws IOException {
+    private void generateCertificateInfoPage(PDPageContentStream cos, PDRectangle rect, QuickTest quickTest,
+                                             DccDecodeResult dccDecodeResult, boolean foldable) throws IOException {
+        // If foldable, page is rotated by 180 degrees
+        // Bottom right for single page, top left for foldable page
+
+        float offsetX = rect.getWidth() / 2;
+        float offsetY = foldable ? rect.getHeight() / 2 : 0;
 
         cos.beginText();
         cos.setLeading(leading);
         cos.setFont(fontArialBold, 13f);
         cos.setNonStrokingColor(pantoneReflexBlue);
-        cos.newLineAtOffset(rect.getWidth() / 2 + 20f, rect.getHeight() / 2 - 40);
+        cos.newLineAtOffset(offsetX + mm2Point(5f), offsetY + mm2Point(135f));
         cos.showText(pdfConfig.getCertHeaderTestDe());
         cos.newLineAtOffset(0, -15f);
         cos.setFont(fontArialBold, 13f);

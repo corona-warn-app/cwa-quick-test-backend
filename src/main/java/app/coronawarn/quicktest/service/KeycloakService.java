@@ -197,6 +197,7 @@ public class KeycloakService {
         return realm().groups().group(groupId).members().stream()
             .map(member -> {
                 KeycloakUserResponse userResponse = new KeycloakUserResponse();
+                userResponse.setId(member.getId());
                 userResponse.setFirstName(member.getFirstName());
                 userResponse.setLastName(member.getLastName());
                 userResponse.setUsername(member.getUsername());

@@ -32,6 +32,8 @@ import lombok.Data;
 @Data
 public class KeycloakUserResponse {
 
+    private String id;
+
     @NotEmpty
     @Size(max = 30)
     private String lastName;

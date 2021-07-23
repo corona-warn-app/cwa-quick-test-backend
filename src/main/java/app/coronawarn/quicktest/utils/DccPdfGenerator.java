@@ -212,7 +212,7 @@ public class DccPdfGenerator {
             float qrCodeImageSizePt = qrCodeSizePx * 0.75f;
 
             Map<EncodeHintType, Object> hintMap = new HashMap<>();
-            hintMap.put(EncodeHintType.MARGIN, 10);
+            hintMap.put(EncodeHintType.MARGIN, 0);
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
 
             BitMatrix matrix = new MultiFormatWriter().encode(

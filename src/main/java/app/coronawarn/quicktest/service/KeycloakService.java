@@ -87,8 +87,6 @@ public class KeycloakService {
         String rootGroupPath,
         String subGroupPath) throws KeycloakServiceException {
 
-        List<String> roleNames = getRoleNames(roleCounter, roleLab);
-
         CredentialRepresentation credentials = new CredentialRepresentation();
         credentials.setType(CredentialRepresentation.PASSWORD);
         credentials.setValue(password);
@@ -129,7 +127,7 @@ public class KeycloakService {
         }
 
         UserRepresentation createdUser = findUserByUsername(username);
-        addRealmRoles(createdUser.getId(), roleNames);
+        addRealmRoles(createdUser.getId(), getRoleNames(roleCounter, roleLab));
     }
 
     private List<String> getRoleNames(boolean roleCounter, boolean roleLab) {

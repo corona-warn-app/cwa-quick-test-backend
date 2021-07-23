@@ -130,19 +130,6 @@ public class KeycloakService {
         addRealmRoles(createdUser.getId(), getRoleNames(roleCounter, roleLab));
     }
 
-    private List<String> getRoleNames(boolean roleCounter, boolean roleLab) {
-        List<String> roleNames = new ArrayList<>();
-        if (roleCounter) {
-            roleNames.add(ROLE_COUNTER.replace(ROLE_PREFIX, ""));
-        }
-
-        if (roleLab) {
-            roleNames.add(ROLE_LAB.replace(ROLE_PREFIX, ""));
-        }
-
-        return roleNames;
-    }
-
     /**
      * Updates the name of a user.
      *
@@ -208,29 +195,6 @@ public class KeycloakService {
         newCredentials.setValue(newPassword);
 
         realm().users().get(userId).resetPassword(newCredentials);
-    }
-
-    private UserRepresentation findUserByUsername(String username) throws KeycloakServiceException {
-        List<UserRepresentation> foundUsers = realm().users().search(username);
-
-        if (foundUsers.size() != 1) {
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
-        } else {
-            return foundUsers.get(0);
-        }
-    }
-
-    private void addRealmRoles(String userId, List<String> roleNames) {
-        List<RoleRepresentation> roles = roleNames.stream()
-            .map(roleName -> {
-                RoleRepresentation role = new RoleRepresentation();
-                role.setName(roleName);
-                role.setId(realm().roles().get(role.getName()).toRepresentation().getId());
-                return role;
-            })
-            .collect(Collectors.toList());
-
-        realm().users().get(userId).roles().realmLevel().add(roles);
     }
 
     /**
@@ -323,31 +287,81 @@ public class KeycloakService {
     }
 
     /**
-     * Gets the Subgroup of a user.
+     * Deletes a group from Keycloak.
      *
-     * @param userId      id of the user
-     * @param rootGroupId rootGroup ID to filter
-     * @return ID of the subgroup of a user
+     * @param groupId ID opf the group
+     * @throws KeycloakServiceException if something went wrong.
      */
-    private String getSubgroupId(String userId, String rootGroupId) {
-        return realm().users().get(userId).groups().stream()
-            .filter(group -> !group.getId().equals(rootGroupId))
-            .findFirst()
-            .map(GroupRepresentation::getId)
-            .orElse(null);
+    public void deleteGroup(String groupId) throws KeycloakServiceException {
+        try {
+            realm().groups().group(groupId).remove();
+            log.info("Deleted group with id {}", groupId);
+        } catch (NotFoundException e) {
+            log.error("Failed to delete group: NOT FOUND");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        } catch (WebApplicationException e) {
+            log.error("Failed to delete group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
+        }
     }
 
-    private String getFromAttributes(Map<String, List<String>> attributes, String key) {
-        if (attributes == null) {
-            return null;
+    /**
+     * Moves a group into another group.
+     *
+     * @param groupId   ID of the group to be moved
+     * @param newParent ID of the new parent of the group.
+     * @throws KeycloakServiceException if something went wrong.
+     */
+    public void moveGroup(String groupId, String newParent) throws KeycloakServiceException {
+        try {
+            Response response = realm().groups().group(newParent).subGroup(
+                realm().groups().group(groupId).toRepresentation()
+            );
+
+            if (response.getStatus() == HttpStatus.CONFLICT.value()) {
+                log.error("Failed to move group: CONFLICT");
+                throw new KeycloakServiceException(KeycloakServiceException.Reason.ALREADY_EXISTS);
+            }
+
+            log.info("Moved group {} into group {}", groupId, newParent);
+        } catch (NotFoundException e) {
+            log.error("Failed to move group: NOT FOUND");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        } catch (WebApplicationException e) {
+            log.error("Failed to move group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
         }
+    }
 
-        List<String> attributeValues = attributes.get(key);
+    /**
+     * Moves a user into another group.
+     * This method removes the user from all groups except its root group and add him to the new group.
+     *
+     * @param userId      ID of the user to be moved
+     * @param rootGroupId ID of the root group of the user.
+     * @param newParent   ID of the new parent of the user.
+     * @throws KeycloakServiceException if something went wrong.
+     */
+    public void moveUser(String userId, String rootGroupId, String newParent) throws KeycloakServiceException {
+        try {
 
-        if (attributeValues != null && attributeValues.size() >= 1) {
-            return attributeValues.get(0);
-        } else {
-            return null;
+            log.info("Moving User {} into group {}", userId, newParent);
+
+            UserResource userResource = realm().users().get(userId);
+
+            // Remove user from all groups except root group
+            realm().users().get(userId).groups().stream()
+                .filter(group -> !group.getId().equals(rootGroupId))
+                .forEach(group -> userResource.leaveGroup(group.getId()));
+
+            realm().users().get(userId).joinGroup(newParent);
+            log.info("Moved user {} into group {}", userId, newParent);
+        } catch (NotFoundException e) {
+            log.error("Failed to move user: NOT FOUND");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        } catch (WebApplicationException e) {
+            log.error("Failed to move user: SERVER ERROR {}", e.getResponse().readEntity(String.class));
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
         }
     }
 
@@ -434,6 +448,66 @@ public class KeycloakService {
         }
     }
 
+    /**
+     * Gets the Subgroup of a user.
+     *
+     * @param userId      id of the user
+     * @param rootGroupId rootGroup ID to filter
+     * @return ID of the subgroup of a user
+     */
+    private String getSubgroupId(String userId, String rootGroupId) {
+        return realm().users().get(userId).groups().stream()
+            .filter(group -> !group.getId().equals(rootGroupId))
+            .findFirst()
+            .map(GroupRepresentation::getId)
+            .orElse(null);
+    }
+
+    private List<String> getRoleNames(boolean roleCounter, boolean roleLab) {
+        List<String> roleNames = new ArrayList<>();
+        if (roleCounter) {
+            roleNames.add(ROLE_COUNTER.replace(ROLE_PREFIX, ""));
+        }
+
+        if (roleLab) {
+            roleNames.add(ROLE_LAB.replace(ROLE_PREFIX, ""));
+        }
+
+        return roleNames;
+    }
+
+    private UserRepresentation findUserByUsername(String username) throws KeycloakServiceException {
+        List<UserRepresentation> foundUsers = realm().users().search(username);
+
+        if (foundUsers.size() != 1) {
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        } else {
+            return foundUsers.get(0);
+        }
+    }
+
+    private void addRealmRoles(String userId, List<String> roleNames) {
+        List<RoleRepresentation> roles = roleNames.stream()
+            .map(roleName -> realm().roles().get(roleName).toRepresentation())
+            .collect(Collectors.toList());
+
+        realm().users().get(userId).roles().realmLevel().add(roles);
+    }
+
+    private String getFromAttributes(Map<String, List<String>> attributes, String key) {
+        if (attributes == null) {
+            return null;
+        }
+
+        List<String> attributeValues = attributes.get(key);
+
+        if (attributeValues != null && attributeValues.size() >= 1) {
+            return attributeValues.get(0);
+        } else {
+            return null;
+        }
+    }
+
     private Map<String, List<String>> getGroupAttributes(String pocDetails, String pocId) {
         Map<String, List<String>> attributes = new HashMap<>();
         if (pocDetails != null) {
@@ -445,85 +519,6 @@ public class KeycloakService {
         }
 
         return attributes;
-    }
-
-    /**
-     * Deletes a group from Keycloak.
-     *
-     * @param groupId ID opf the group
-     * @throws KeycloakServiceException if something went wrong.
-     */
-    public void deleteGroup(String groupId) throws KeycloakServiceException {
-        try {
-            realm().groups().group(groupId).remove();
-            log.info("Deleted group with id {}", groupId);
-        } catch (NotFoundException e) {
-            log.error("Failed to delete group: NOT FOUND");
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
-        } catch (WebApplicationException e) {
-            log.error("Failed to delete group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Moves a group into another group.
-     *
-     * @param groupId   ID of the group to be moved
-     * @param newParent ID of the new parent of the group.
-     * @throws KeycloakServiceException if something went wrong.
-     */
-    public void moveGroup(String groupId, String newParent) throws KeycloakServiceException {
-        try {
-            Response response = realm().groups().group(newParent).subGroup(
-                realm().groups().group(groupId).toRepresentation()
-            );
-
-            if (response.getStatus() == HttpStatus.CONFLICT.value()) {
-                log.error("Failed to move group: CONFLICT");
-                throw new KeycloakServiceException(KeycloakServiceException.Reason.ALREADY_EXISTS);
-            }
-
-            log.info("Moved group {} into group {}", groupId, newParent);
-        } catch (NotFoundException e) {
-            log.error("Failed to move group: NOT FOUND");
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
-        } catch (WebApplicationException e) {
-            log.error("Failed to move group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
-        }
-    }
-
-    /**
-     * Moves a user into another group.
-     * This method removes the user from all groups except its root group and add him to the new group.
-     *
-     * @param userId      ID of the user to be moved
-     * @param rootGroupId ID of the root group of the user.
-     * @param newParent   ID of the new parent of the user.
-     * @throws KeycloakServiceException if something went wrong.
-     */
-    public void moveUser(String userId, String rootGroupId, String newParent) throws KeycloakServiceException {
-        try {
-
-            log.info("Moving User {} into group {}", userId, newParent);
-
-            UserResource userResource = realm().users().get(userId);
-
-            // Remove user from all groups except root group
-            realm().users().get(userId).groups().stream()
-                .filter(group -> !group.getId().equals(rootGroupId))
-                .forEach(group -> userResource.leaveGroup(group.getId()));
-
-            realm().users().get(userId).joinGroup(newParent);
-            log.info("Moved user {} into group {}", userId, newParent);
-        } catch (NotFoundException e) {
-            log.error("Failed to move user: NOT FOUND");
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
-        } catch (WebApplicationException e) {
-            log.error("Failed to move user: SERVER ERROR {}", e.getResponse().readEntity(String.class));
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
-        }
     }
 
     private RealmResource realm() {

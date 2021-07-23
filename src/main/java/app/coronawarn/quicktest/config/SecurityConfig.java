@@ -88,6 +88,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             .mvcMatchers(HttpMethod.GET, API_ROUTE).authenticated()
             .mvcMatchers(HttpMethod.POST, API_ROUTE).authenticated()
             .mvcMatchers(HttpMethod.PUT, API_ROUTE).authenticated()
+            .mvcMatchers(HttpMethod.PATCH, API_ROUTE).authenticated()
             .mvcMatchers(HttpMethod.DELETE, API_ROUTE).authenticated();
     }
 

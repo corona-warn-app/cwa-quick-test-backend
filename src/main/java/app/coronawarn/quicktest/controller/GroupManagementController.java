@@ -92,7 +92,7 @@ public class GroupManagementController {
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
 
         List<KeycloakGroupResponse> groups = new ArrayList<>();
-        convertGroups(groups, userRootGroup.getSubGroups(), true);
+        utils.convertGroups(groups, userRootGroup.getSubGroups(), true);
 
         return ResponseEntity.ok(groups);
     }
@@ -127,7 +127,7 @@ public class GroupManagementController {
     ) {
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
-        checkGroupIsInSubgroups(userRootGroup, id);
+        utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         KeycloakGroupDetails groupDetails = keycloakService.getSubGroupDetails(id);
 
@@ -211,7 +211,7 @@ public class GroupManagementController {
     ) {
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
-        checkGroupIsInSubgroups(userRootGroup, id);
+        utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {
             keycloakService.updateGroup(id, body.getName(), body.getPocDetails(), body.getPocId());
@@ -264,9 +264,9 @@ public class GroupManagementController {
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
 
         if (!parentId.equals(userRootGroup.getId())) { // Allow to put group into root group
-            checkGroupIsInSubgroups(userRootGroup, parentId);
+            utils.checkGroupIsInSubgroups(userRootGroup, parentId);
         }
-        checkGroupIsInSubgroups(userRootGroup, body.getGroupId());
+        utils.checkGroupIsInSubgroups(userRootGroup, body.getGroupId());
 
         try {
             keycloakService.moveGroup(body.getGroupId(), parentId);
@@ -319,7 +319,7 @@ public class GroupManagementController {
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
 
         if (!parentId.equals(userRootGroup.getId())) { // Allow to put group into root group
-            checkGroupIsInSubgroups(userRootGroup, parentId);
+            utils.checkGroupIsInSubgroups(userRootGroup, parentId);
         }
         List<String> userIds = keycloakService.getGroupMembers(userRootGroup.getId()).stream()
             .map(UserRepresentation::getId)
@@ -374,7 +374,7 @@ public class GroupManagementController {
     ) {
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
-        checkGroupIsInSubgroups(userRootGroup, id);
+        utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {
             keycloakService.deleteGroup(id);
@@ -387,48 +387,5 @@ public class GroupManagementController {
         }
 
         return ResponseEntity.noContent().build();
-    }
-
-    /**
-     * Method to convert list of Keycloak {@link GroupRepresentation}. Method works recursive to transform also
-     * sub group items.
-     *
-     * @param list          output List to add converted items.
-     * @param groups        Input Group List
-     * @param keepStructure flag whether the generated list should respect the structure of the subgroups. If false all
-     *                      groups will be put into 1-dimensional list.
-     */
-    private void convertGroups(
-        List<KeycloakGroupResponse> list, List<GroupRepresentation> groups, boolean keepStructure) {
-        if (groups == null) { // exit condition for recursion
-            return;
-        }
-
-        groups.forEach(group -> {
-            KeycloakGroupResponse response = new KeycloakGroupResponse();
-            response.setName(group.getName());
-            response.setId(group.getId());
-            response.setPath(group.getPath());
-
-            if (keepStructure) {
-                convertGroups(response.getChildren(), group.getSubGroups(), true);
-            } else {
-                convertGroups(list, group.getSubGroups(), false);
-            }
-
-            list.add(response);
-        });
-    }
-
-    private void checkGroupIsInSubgroups(GroupRepresentation rootGroup, String groupId) throws ResponseStatusException {
-        List<KeycloakGroupResponse> groups = new ArrayList<>();
-        convertGroups(groups, rootGroup.getSubGroups(), false);
-        List<String> groupIds = groups.stream()
-            .map(KeycloakGroupResponse::getId)
-            .collect(Collectors.toList());
-
-        if (!groupIds.contains(groupId)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Group is not within your subgroups");
-        }
     }
 }

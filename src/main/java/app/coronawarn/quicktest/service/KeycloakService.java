@@ -68,13 +68,13 @@ public class KeycloakService {
     /**
      * Creates a new Keycloak User in the Main Realm and sets roles and the root group.
      *
-     * @param firstName   First Name of the user.
-     * @param lastName    Last Name of the user.
-     * @param username    Username of the user.
-     * @param password    The initial password for the user. This has to be changed on first login.
-     * @param roleCounter If the Role for Counter should be added.
-     * @param roleLab     If the Role for Lab should be added.
-     * @param groupPath   Path of the ROOT-Group of the user.
+     * @param firstName     First Name of the user.
+     * @param lastName      Last Name of the user.
+     * @param username      Username of the user.
+     * @param password      The initial password for the user. This has to be changed on first login.
+     * @param roleCounter   If the Role for Counter should be added.
+     * @param roleLab       If the Role for Lab should be added.
+     * @param rootGroupPath Path of the ROOT-Group of the user.
      * @throws KeycloakServiceException if User Creation has failed.
      */
     public void createNewUserInGroup(
@@ -84,27 +84,28 @@ public class KeycloakService {
         String password,
         boolean roleCounter,
         boolean roleLab,
-        String groupPath) throws KeycloakServiceException {
+        String rootGroupPath,
+        String subGroupPath) throws KeycloakServiceException {
 
-        List<String> roleNames = new ArrayList<>();
-        if (roleCounter) {
-            roleNames.add(ROLE_COUNTER.replace(ROLE_PREFIX, ""));
-        }
-
-        if (roleLab) {
-            roleNames.add(ROLE_LAB.replace(ROLE_PREFIX, ""));
-        }
+        List<String> roleNames = getRoleNames(roleCounter, roleLab);
 
         CredentialRepresentation credentials = new CredentialRepresentation();
         credentials.setType(CredentialRepresentation.PASSWORD);
         credentials.setValue(password);
         credentials.setTemporary(true);
 
+        List<String> groupPaths = new ArrayList<>();
+        groupPaths.add(rootGroupPath);
+
+        if (subGroupPath != null) {
+            groupPaths.add(subGroupPath);
+        }
+
         UserRepresentation newUser = new UserRepresentation();
         newUser.setUsername(username);
         newUser.setFirstName(firstName);
         newUser.setLastName(lastName);
-        newUser.setGroups(List.of(groupPath));
+        newUser.setGroups(groupPaths);
         newUser.setEnabled(true);
         newUser.setCredentials(List.of(credentials));
 
@@ -127,17 +128,101 @@ public class KeycloakService {
             throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
         }
 
-        addRealmRoles(username, roleNames);
+        UserRepresentation createdUser = findUserByUsername(username);
+        addRealmRoles(createdUser.getId(), roleNames);
     }
 
-    private void addRealmRoles(String username, List<String> roleNames) {
+    private List<String> getRoleNames(boolean roleCounter, boolean roleLab) {
+        List<String> roleNames = new ArrayList<>();
+        if (roleCounter) {
+            roleNames.add(ROLE_COUNTER.replace(ROLE_PREFIX, ""));
+        }
+
+        if (roleLab) {
+            roleNames.add(ROLE_LAB.replace(ROLE_PREFIX, ""));
+        }
+
+        return roleNames;
+    }
+
+    /**
+     * Updates the name of a user.
+     *
+     * @param userId    ID of the user
+     * @param firstName new firstName
+     * @param lastName  new LastName
+     * @throws KeycloakServiceException if user not exists.
+     */
+    public void updateUserNames(String userId, String firstName, String lastName) throws KeycloakServiceException {
+        UserResource userResource = realm().users().get(userId);
+        UserRepresentation user;
+
+        try {
+            user = userResource.toRepresentation();
+        } catch (NotFoundException e) {
+            log.error("User not found");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        }
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+
+        userResource.update(user);
+    }
+
+    /**
+     * Updates the roles of a user.
+     *
+     * @param userId      ID of the user
+     * @param roleLab     Whether the user should have ROLE_LAB
+     * @param roleCounter Whether the user should have ROLE_COUNTER
+     */
+    public void updateUserRoles(String userId, boolean roleCounter, boolean roleLab) {
+        UserResource userResource = realm().users().get(userId);
+
+        // Delete not anymore needed roles
+        Map<String, RoleRepresentation> roles = userResource.roles().realmLevel().listAll().stream()
+            .collect(Collectors.toMap(RoleRepresentation::getName, r -> r));
+        List<RoleRepresentation> deleteRoles = new ArrayList<>();
+        if (!roleLab && roles.containsKey(ROLE_LAB.replace(ROLE_PREFIX, ""))) {
+            deleteRoles.add(roles.get(ROLE_LAB.replace(ROLE_PREFIX, "")));
+        }
+        if (!roleCounter && roles.containsKey(ROLE_COUNTER.replace(ROLE_PREFIX, ""))) {
+            deleteRoles.add(roles.get(ROLE_COUNTER.replace(ROLE_PREFIX, "")));
+        }
+        userResource.roles().realmLevel().remove(deleteRoles);
+
+        // Add new roles
+        addRealmRoles(userId, getRoleNames(roleCounter, roleLab));
+
+    }
+
+    /**
+     * Resets the password of a user to a new temporary password.
+     *
+     * @param userId      ID of the user
+     * @param newPassword new temporary password.
+     */
+    public void updateUserPassword(String userId, String newPassword) {
+        CredentialRepresentation newCredentials = new CredentialRepresentation();
+        newCredentials.setType(CredentialRepresentation.PASSWORD);
+        newCredentials.setTemporary(true);
+        newCredentials.setValue(newPassword);
+
+        realm().users().get(userId).resetPassword(newCredentials);
+    }
+
+    private UserRepresentation findUserByUsername(String username) throws KeycloakServiceException {
         List<UserRepresentation> foundUsers = realm().users().search(username);
 
         if (foundUsers.size() != 1) {
-            log.error("Could not find created user");
-            return;
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        } else {
+            return foundUsers.get(0);
         }
+    }
 
+    private void addRealmRoles(String userId, List<String> roleNames) {
         List<RoleRepresentation> roles = roleNames.stream()
             .map(roleName -> {
                 RoleRepresentation role = new RoleRepresentation();
@@ -147,7 +232,7 @@ public class KeycloakService {
             })
             .collect(Collectors.toList());
 
-        realm().users().get(foundUsers.get(0).getId()).roles().realmLevel().add(roles);
+        realm().users().get(userId).roles().realmLevel().add(roles);
     }
 
     /**

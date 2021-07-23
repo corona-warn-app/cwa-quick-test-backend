@@ -21,8 +21,12 @@
 package app.coronawarn.quicktest.controller;
 
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
+import app.coronawarn.quicktest.model.keycloak.KeycloakGroupResponse;
 import app.coronawarn.quicktest.service.KeycloakService;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
@@ -60,5 +64,58 @@ public class UserManagementControllerUtils {
         }
 
         return userRootGroups.get(0);
+    }
+
+    /**
+     * Method to convert list of Keycloak {@link GroupRepresentation}. Method works recursive to transform also
+     * sub group items.
+     *
+     * @param list          output List to add converted items.
+     * @param groups        Input Group List
+     * @param keepStructure flag whether the generated list should respect the structure of the subgroups. If false all
+     *                      groups will be put into 1-dimensional list.
+     */
+    protected void convertGroups(
+        List<KeycloakGroupResponse> list, List<GroupRepresentation> groups, boolean keepStructure) {
+        if (groups == null) { // exit condition for recursion
+            return;
+        }
+
+        groups.forEach(group -> {
+            KeycloakGroupResponse response = new KeycloakGroupResponse();
+            response.setName(group.getName());
+            response.setId(group.getId());
+            response.setPath(group.getPath());
+
+            if (keepStructure) {
+                convertGroups(response.getChildren(), group.getSubGroups(), true);
+            } else {
+                convertGroups(list, group.getSubGroups(), false);
+            }
+
+            list.add(response);
+        });
+    }
+
+    /**
+     * Checks whether a given group ID is within the subgroups of a given root group.
+     *
+     * @param rootGroup root group
+     * @param groupId   ID of subgroup to check
+     * @return The subgroup object.
+     * @throws ResponseStatusException if group is not within subgroups.
+     */
+    protected KeycloakGroupResponse checkGroupIsInSubgroups(
+        GroupRepresentation rootGroup, String groupId) throws ResponseStatusException {
+        List<KeycloakGroupResponse> groups = new ArrayList<>();
+        convertGroups(groups, rootGroup.getSubGroups(), false);
+        Map<String, KeycloakGroupResponse> groupsMap = groups.stream()
+            .collect(Collectors.toMap(KeycloakGroupResponse::getId, keycloakGroupResponse -> keycloakGroupResponse));
+
+        if (!groupsMap.containsKey(groupId)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Group is not within your subgroups");
+        } else {
+            return groupsMap.get(groupId);
+        }
     }
 }

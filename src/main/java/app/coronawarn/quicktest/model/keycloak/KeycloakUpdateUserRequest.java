@@ -21,41 +21,26 @@
 package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
 @Schema(
-        description = "Request model for user creation."
+        description = "Request model for user update."
 )
 @Data
-public class KeycloakCreateUserRequest {
+public class KeycloakUpdateUserRequest {
 
-    @NotEmpty
     @Size(max = 30)
     private String lastName;
 
-    @NotEmpty
     @Size(max = 30)
     private String firstName;
 
-    @NotEmpty
-    @Size(max = 50)
-    private String username;
-
-    @NotEmpty
     @Size(min = 8, max = 64)
     private String password;
 
-    @Size(min = 36, max = 36)
-    @Schema(description = "ID of a subgroup to put user into. If not provided user will just put into root group.")
-    private String subgroup;
-
-    @NotNull
     private Boolean roleCounter;
 
-    @NotNull
     private Boolean roleLab;
 
 }

@@ -208,8 +208,10 @@ public class DccPdfGenerator {
             float x = foldable ? mm2Point(45f) : rect.getWidth() / 2;
             float y = foldable ? mm2Point(85f) : rect.getHeight() / 2 + mm2Point(85f);
             // Set QR Code size to 6 cm in px
-            int qrCodeSizePx = 227;
-            float qrCodeImageSizePt = qrCodeSizePx * 0.75f;
+            // 708 -> 6cm at 300 dpi
+            // 226 -> 6cm at 96 dpi
+            int qrCodeSizePx = 708;
+            float qrCodeImageSizePt = mm2Point(60f);
 
             Map<EncodeHintType, Object> hintMap = new HashMap<>();
             hintMap.put(EncodeHintType.MARGIN, 0);
@@ -224,7 +226,7 @@ public class DccPdfGenerator {
             PDImageXObject image = JPEGFactory.createFromImage(document, bufferedImage);
             cos.drawImage(image, x, y, qrCodeImageSizePt, qrCodeImageSizePt);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Could not create QR code.", e);
         }
     }
 

@@ -61,10 +61,10 @@ public class PdfGenerator {
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-    private int offsetX = 70;
-    private float leading = 14.5f;
-    private int fontSize = 12;
-    private PDType1Font fontType = PDType1Font.HELVETICA;
+    private final int offsetX = 70;
+    private final float leading = 14.5f;
+    private final int fontSize = 12;
+    private final PDType1Font fontType = PDType1Font.HELVETICA;
 
     /**
      * Generates a PDF file for rapid test result to print.
@@ -80,10 +80,10 @@ public class PdfGenerator {
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
         page1.setMediaBox(PDRectangle.A4);
-        PDRectangle rect = page1.getMediaBox();
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
-        write(document, cos, rect, pocInformation, quicktest, user);
+        PDRectangle rect1 = page1.getMediaBox();
+        write(document, cos, rect1, pocInformation, quicktest, user);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -99,7 +99,8 @@ public class PdfGenerator {
         pdd.setCreationDate(gcal);
     }
 
-    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, List<String> pocInformation,
+    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect,
+                       List<String> pocInformation,
                        QuickTest quicktest,
                        String user) throws IOException {
         generatePoCAddress(cos, rect, pocInformation);
@@ -112,7 +113,7 @@ public class PdfGenerator {
     }
 
     private void generatePoCAddress(PDPageContentStream cos, PDRectangle rect, List<String> pocInformation)
-        throws IOException {
+      throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
@@ -131,30 +132,30 @@ public class PdfGenerator {
         try {
             final ClassPathResource classPathResource = new ClassPathResource(pdfConfig.getLogoPath());
             final byte[] sampleBytes = IOUtils.toByteArray(Objects.requireNonNull(
-                Objects.requireNonNull(classPathResource.getClassLoader())
+              Objects.requireNonNull(classPathResource.getClassLoader())
                 .getResourceAsStream(pdfConfig.getLogoPath())));
             PDImageXObject pdImage = PDImageXObject.createFromByteArray(document, sampleBytes, "logo");
-            cos.drawImage(pdImage, 280, rect.getHeight() - offsetX, 50, 50);
+            cos.drawImage(pdImage, 280f, rect.getHeight() - offsetX, 50f, 50f);
         } catch (IOException | NullPointerException e) {
             log.error("Logo not found!");
         }
         cos.beginText();
         cos.setFont(fontType, fontSize);
-        cos.newLineAtOffset(230, rect.getHeight() - 85);
+        cos.newLineAtOffset(230f, rect.getHeight() - 85f);
         cos.showText(pdfConfig.getQuickTestHeadlineText());
         cos.endText();
     }
 
     private void generatePersonAddress(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest)
-        throws IOException {
+      throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
-        cos.newLineAtOffset(offsetX, rect.getHeight() - 220);
+        cos.newLineAtOffset(offsetX, rect.getHeight() - 220f);
         cos.showText(quicktest.getFirstName() + " " + quicktest.getLastName());
         cos.newLine();
         cos.showText(quicktest.getStreet() + " "
-                + (quicktest.getHouseNumber() == null ? "" : quicktest.getHouseNumber()));
+            + (quicktest.getHouseNumber() == null ? "" : quicktest.getHouseNumber()));
         cos.newLine();
         cos.showText(quicktest.getZipCode() + " " + quicktest.getCity());
         cos.newLine();
@@ -184,12 +185,12 @@ public class PdfGenerator {
         cos.beginText();
         cos.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
         cos.setLeading(leading);
-        cos.newLineAtOffset(offsetX, rect.getHeight() - 340);
+        cos.newLineAtOffset(offsetX, rect.getHeight() - 340f);
         String dateAndTimeInGermany;
         if (quicktest.getUpdatedAt() != null) {
             dateAndTimeInGermany =
-                ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
-                    .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+              ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
         } else {
             dateAndTimeInGermany = "-";
         }
@@ -200,7 +201,7 @@ public class PdfGenerator {
     }
 
     private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest, String user)
-        throws IOException {
+      throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
@@ -227,8 +228,8 @@ public class PdfGenerator {
         String dateAndTimeInGermany;
         if (quicktest.getUpdatedAt() != null) {
             dateAndTimeInGermany =
-                ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
-                    .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+              ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
         } else {
             dateAndTimeInGermany = "-";
         }

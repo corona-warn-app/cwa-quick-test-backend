@@ -20,28 +20,28 @@
 
 package app.coronawarn.quicktest.utils;
 
+import static app.coronawarn.quicktest.utils.QuicktestUtils.getQuickTest;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
-import app.coronawarn.quicktest.model.Sex;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @Slf4j
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class PdfGeneratorTest {
 
     @InjectMocks
@@ -51,6 +51,7 @@ public class PdfGeneratorTest {
 
     @Test
     void generatePdfTest() throws IOException {
+        PdfConfig pdc = new PdfConfig();
         when(pdfConfig.getLogoPath()).thenReturn("/logo");
         when(pdfConfig.getAuthorPdfPropertiesText()).thenReturn("Unittest");
         when(pdfConfig.getQuickTestHeadlineText()).thenReturn("Unittest");
@@ -79,8 +80,9 @@ public class PdfGeneratorTest {
         pocInformation.add("Call: 0123-7890-0");
         QuickTest quicktest = getQuickTest();
         String user = "Mr. Unittest";
-        ByteArrayOutputStream file = pdfGenerator.generatePdf(pocInformation, quicktest, user);
-        PDDocument pdfDocument = PDDocument.load(file.toByteArray());
+        ByteArrayOutputStream file1 = pdfGenerator.generatePdf(pocInformation, quicktest, user);
+
+        PDDocument pdfDocument = PDDocument.load(file1.toByteArray());
         try {
             String pdfText = new PDFTextStripper().getText(pdfDocument);
             assertTrue(pdfText.contains("Unittest"));
@@ -110,33 +112,5 @@ public class PdfGeneratorTest {
         } finally {
             pdfDocument.close();
         }
-
-
-    }
-
-    private QuickTest getQuickTest() {
-        QuickTest quicktest = new QuickTest();
-        quicktest.setZipCode("12345");
-        quicktest.setTestResult(Short.parseShort("6"));
-        quicktest.setHashedGuid("mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht");
-        quicktest.setCity("oyvkpigcga");
-        quicktest.setConfirmationCwa(Boolean.TRUE);
-        quicktest.setShortHashedGuid("cjfybkfn");
-        quicktest.setPhoneNumber("00491777777777777");
-        quicktest.setEmail("test@test.test");
-        quicktest.setTenantId("4711");
-        quicktest.setPocId("4711-A");
-        quicktest.setTestBrandId("AT116/21");
-        quicktest.setTestBrandName("Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal)");
-        quicktest.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 11));
-        quicktest.setUpdatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
-        quicktest.setFirstName("Joe");
-        quicktest.setLastName("Miller");
-        quicktest.setStreet("Boe");
-        quicktest.setHouseNumber("11");
-        quicktest.setPrivacyAgreement(Boolean.FALSE);
-        quicktest.setSex(Sex.DIVERSE);
-        quicktest.setBirthday("1911-11-11");
-        return quicktest;
     }
 }

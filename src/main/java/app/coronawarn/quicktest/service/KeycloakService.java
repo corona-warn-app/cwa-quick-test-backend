@@ -172,13 +172,21 @@ public class KeycloakService {
         if (!roleLab && roles.containsKey(ROLE_LAB.replace(ROLE_PREFIX, ""))) {
             deleteRoles.add(roles.get(ROLE_LAB.replace(ROLE_PREFIX, "")));
         }
+
         if (!roleCounter && roles.containsKey(ROLE_COUNTER.replace(ROLE_PREFIX, ""))) {
             deleteRoles.add(roles.get(ROLE_COUNTER.replace(ROLE_PREFIX, "")));
         }
-        userResource.roles().realmLevel().remove(deleteRoles);
+
+        if (!deleteRoles.isEmpty()) {
+            userResource.roles().realmLevel().remove(deleteRoles);
+        }
+
 
         // Add new roles
-        addRealmRoles(userId, getRoleNames(roleCounter, roleLab));
+        addRealmRoles(userId, getRoleNames(
+            (roleCounter && !roles.containsKey(ROLE_COUNTER.replace(ROLE_PREFIX, ""))),
+            (roleLab && !roles.containsKey(ROLE_LAB.replace(ROLE_PREFIX, "")))
+        ));
 
     }
 
@@ -491,7 +499,9 @@ public class KeycloakService {
             .map(roleName -> realm().roles().get(roleName).toRepresentation())
             .collect(Collectors.toList());
 
-        realm().users().get(userId).roles().realmLevel().add(roles);
+        if (!roles.isEmpty()) {
+            realm().users().get(userId).roles().realmLevel().add(roles);
+        }
     }
 
     private String getFromAttributes(Map<String, List<String>> attributes, String key) {

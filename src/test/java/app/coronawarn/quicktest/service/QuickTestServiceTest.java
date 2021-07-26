@@ -124,7 +124,7 @@ public class QuickTestServiceTest {
         QuickTestService qs = spy(quickTestService);
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-            .thenReturn(new QuickTest());
+            .thenReturn(createPendingTest());
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
@@ -144,7 +144,7 @@ public class QuickTestServiceTest {
     void createPdfInUpdateQuickTestIoExceptionTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-            .thenReturn(new QuickTest());
+            .thenReturn(createPendingTest());
         when(pdf.generatePdf(any(), any(), any()))
             .thenThrow(new IOException());
         try {
@@ -184,11 +184,17 @@ public class QuickTestServiceTest {
         }
     }
 
+    private QuickTest createPendingTest() {
+        QuickTest quickTest = new QuickTest();
+        quickTest.setTestResult(QuickTest.TEST_RESULT_PENDING);
+        return quickTest;
+    }
+
     @Test
     void saveFailedInUpdateQuickTestTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-            .thenReturn(new QuickTest());
+            .thenReturn(createPendingTest());
         when(pdf.generatePdf(any(), any(), any()))
             .thenReturn(new ByteArrayOutputStream());
         when(quickTestArchiveRepository.save(any()))
@@ -213,7 +219,7 @@ public class QuickTestServiceTest {
     void deleteFailedInUpdateQuickTestTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-            .thenReturn(new QuickTest());
+            .thenReturn(createPendingTest());
         when(pdf.generatePdf(any(), any(), any()))
             .thenReturn(new ByteArrayOutputStream());
         doThrow(new NullPointerException()).when(quickTestRepository).deleteById(any());
@@ -238,7 +244,7 @@ public class QuickTestServiceTest {
     void callResultServerInUpdateQuickTestTest() throws IOException, ResponseStatusException {
         LocalDateTime now = ZonedDateTime.now().withNano(0).toLocalDateTime();
         Map<String, String> ids = new HashMap<>();
-        QuickTest quickTest = new QuickTest();
+        QuickTest quickTest = createPendingTest();
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         quickTest.setUpdatedAt(now);
@@ -331,7 +337,7 @@ public class QuickTestServiceTest {
         quickTest.setShortHashedGuid("00000000");
         quickTest.setDccConsent(true);
         quickTests.add(quickTest);
-        when(quickTestRepository.findAllByTenantIdAndPocIdAndVersionIsGreaterThan(any(), any(), any()))
+        when(quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(any(), any(), any(), any()))
                 .thenReturn(quickTests);
         List<QuickTest> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
         assertEquals(quickTests1.get(0).getPrivacyAgreement(), true);

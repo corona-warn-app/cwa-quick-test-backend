@@ -40,6 +40,15 @@ public class QuickTestConfig {
     private String dbEncryptionKey;
     private String labId;
 
+    private FrontendContextConfig frontendContextConfig = new FrontendContextConfig();
+
+    @Getter
+    @Setter
+    public static class FrontendContextConfig {
+
+        private String rulesServerUrl;
+    }
+
     @Getter
     @Setter
     public static class CleanUpSettings {

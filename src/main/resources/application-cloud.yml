@@ -90,4 +90,6 @@ quicktest:
     cron: 0 0 0 * * *
     max-age-in-minutes: 3600
     locklimit: 1800000
+  frontend-context-config:
+    rules-server-url: ${QUICK_TEST_DCC_RULES_SERVER_URL}
 

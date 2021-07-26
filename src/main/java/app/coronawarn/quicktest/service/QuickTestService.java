@@ -124,6 +124,10 @@ public class QuickTestService {
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
             shortHash
         );
+        if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING) {
+            log.info("Requested Quick Test with shortHash is not pending.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"not pending");
+        }
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
         log.info("Updating TestResult on TestResult-Server for hash");
         quicktest.setTestResult(quickTestUpdateRequest.getResult());
@@ -218,7 +222,7 @@ public class QuickTestService {
         quicktest.setStandardisedGivenName(quickTestPersonalData.getStandardisedGivenName());
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
-        quicktest.setDccConsent(quickTestPersonalData.getDccConsent());
+        quicktest.setDccConsent(quickTestPersonalData.getDccConsent() != null && quickTestPersonalData.getDccConsent());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
@@ -306,9 +310,10 @@ public class QuickTestService {
      * @return List including found quicktests
      */
     public List<QuickTest> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
-        List<QuickTest> quickTests = quickTestRepository.findAllByTenantIdAndPocIdAndVersionIsGreaterThan(
+        List<QuickTest> quickTests = quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
             ids.get(quickTestConfig.getTenantIdKey()),
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                QuickTest.TEST_RESULT_PENDING,
             0
         );
         return quickTests;

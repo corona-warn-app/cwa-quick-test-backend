@@ -23,6 +23,7 @@
         <springdoc.version>1.4.2</springdoc.version>
         <liquibase.version>4.3.2</liquibase.version>
         <pdfbox.version>2.0.23</pdfbox.version>
+        <google-zxing.version>3.4.1</google-zxing.version>
         <opencsv.version>5.3</opencsv.version>
         <springTestAddons.version>2.5.2</springTestAddons.version>
         <shedlock.version>4.23.0</shedlock.version>
@@ -145,6 +146,16 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
             <version>${pdfbox.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>${google-zxing.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>${google-zxing.version}</version>
         </dependency>
         <dependency>
             <groupId>com.opencsv</groupId>

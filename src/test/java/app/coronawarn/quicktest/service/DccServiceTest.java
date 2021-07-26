@@ -20,16 +20,24 @@
 
 package app.coronawarn.quicktest.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+
 import app.coronawarn.quicktest.client.DccServerClient;
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.dcc.DccPublicKey;
-import app.coronawarn.quicktest.model.dcc.DccUploadResult;
-import app.coronawarn.quicktest.model.dcc.DccUploadData;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.model.dcc.DccPublicKey;
+import app.coronawarn.quicktest.model.dcc.DccUploadData;
+import app.coronawarn.quicktest.model.dcc.DccUploadResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.utils.PdfGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DgciGenerator;
 import java.nio.charset.StandardCharsets;
@@ -51,10 +59,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.BDDMockito.given;
-
 @Slf4j
 @SpringBootTest
 class DccServiceTest {
@@ -66,6 +70,9 @@ class DccServiceTest {
 
     @Autowired
     QuickTestArchiveRepository quickTestArchiveRepository;
+
+    @Autowired
+    PdfGenerator pdfGenerator;
 
     private DgciGenerator dgciGenerator = new DgciGenerator("URN:UVCI:V1:DE");
 
@@ -117,8 +124,10 @@ class DccServiceTest {
         quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
         quickTest.setTestResult((short)6);
         quickTestRepository.saveAndFlush(quickTest);
+        byte[] pdfFirstPage = pdfGenerator.generatePdf(
+          List.of("PoC Address"), quickTest, "IT-Test User").toByteArray();
 
-        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quickTest,"dummy".getBytes(StandardCharsets.UTF_8));
+        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quickTest, pdfFirstPage);
         quickTestArchiveRepository.saveAndFlush(quickTestArchive);
 
         initDccMockPublicKey(quickTest);
@@ -142,11 +151,13 @@ class DccServiceTest {
         List<QuickTest> list = quickTestRepository.findAllById(Collections.singletonList(quickTest.getHashedGuid()));
         assertEquals(0,list.size());
 
-        Optional<QuickTestArchive> quickTestArchiveDb = quickTestArchiveRepository.findById(quickTest.getHashedGuid());
-        assertTrue(quickTestArchiveDb.isPresent());
-        assertNotNull(quickTestArchiveDb.get().getDcc());
-        System.out.println(quickTestArchiveDb.get().getDcc());
-
+        Optional<QuickTestArchive> quickTestArchiveOptional = quickTestArchiveRepository.findById(
+          quickTest.getHashedGuid());
+        assertTrue(quickTestArchiveOptional.isPresent());
+        QuickTestArchive quickTestArchiveFromDb = quickTestArchiveOptional.get();
+        assertNotNull(quickTestArchiveFromDb.getDcc());
+        System.out.println(quickTestArchiveFromDb.getDcc());
+        assertNotEquals(pdfFirstPage, quickTestArchiveFromDb.getPdf());
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestArchive(
@@ -174,6 +185,7 @@ class DccServiceTest {
         quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+
         quickTestArchive.setPdf(pdf);
         return quickTestArchive;
     }
@@ -220,6 +232,7 @@ class DccServiceTest {
         quickTest.setHouseNumber("11");
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
+        quickTest.setDiseaseAgentTargeted("COVID-19");
         return quickTest;
     }
 

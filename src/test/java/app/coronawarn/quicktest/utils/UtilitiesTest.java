@@ -20,21 +20,24 @@
 
 package app.coronawarn.quicktest.utils;
 
-import static org.assertj.core.api.Fail.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.service.KeycloakService;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.RefreshableKeycloakSecurityContext;
@@ -43,9 +46,11 @@ import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.adapters.springsecurity.account.SimpleKeycloakAccount;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.AccessToken;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.mockito.internal.util.collections.Sets;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -62,10 +67,18 @@ class UtilitiesTest {
     @Autowired
     QuickTestConfig quickTestConfig;
 
+    @Autowired
+    KeycloakAdminProperties keycloakAdminProperties;
+
+    @MockBean
+    KeycloakService keycloakServiceMock;
+
+    @Autowired
+    Utilities utilities;
+
     @Test
     @WithMockUser(username = "myUser", roles = {"myAuthority"})
     public void testGetIdsFromToken() {
-
         final String pocId = "testPOC";
 
         Map<String, Object> tokens = new HashMap<>();
@@ -87,13 +100,44 @@ class UtilitiesTest {
         KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);
         KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
         springSecurityContext.setAuthentication(token);
+        assertEquals(tokens, utilities.getIdsFromToken());
+    }
 
-        try {
-            Utilities utilities = new Utilities(quickTestConfig);
-            assertEquals(tokens, utilities.getIdsFromToken());
-        } catch (ResponseStatusException e) {
-            // Expected
-        }
+    @Test
+    @WithMockUser(username = "myUser", roles = {"myAuthority"})
+    public void testGetIdsFromTokenForSelfServiceRealm() {
+        final String pocId = "testPOC";
+        final String userId = "userId";
+        GroupRepresentation rootGroup = new GroupRepresentation();
+        rootGroup.setName("rootGroup");
+
+        when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup));
+
+        SecurityContext springSecurityContext = SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.setContext(springSecurityContext);
+        Set<String> roles = Sets.newSet("user");
+
+        KeycloakPrincipal principal = mock(KeycloakPrincipal.class);
+        RefreshableKeycloakSecurityContext keycloakSecurityContext = mock(RefreshableKeycloakSecurityContext.class);
+        when(principal.getKeycloakSecurityContext()).thenReturn(keycloakSecurityContext);
+        when(principal.getKeycloakSecurityContext().getRealm()).thenReturn(keycloakAdminProperties.getRealm());
+
+        AccessToken idToken = mock(AccessToken.class);
+        when(idToken.getSubject()).thenReturn(userId);
+        when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
+        Map<String, Object> mockTokens = new HashMap<>();
+        mockTokens.put(quickTestConfig.getPointOfCareIdName(), pocId);
+        when(idToken.getOtherClaims()).thenReturn(mockTokens);
+
+        KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);
+        KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
+        springSecurityContext.setAuthentication(token);
+
+        Map<String, Object> expectedTokens = new HashMap<>();
+        expectedTokens.put(quickTestConfig.getTenantPointOfCareIdKey(), pocId);
+        expectedTokens.put(quickTestConfig.getTenantIdKey(), rootGroup.getName());
+        assertEquals(expectedTokens, utilities.getIdsFromToken());
+
     }
 
     @Test
@@ -120,13 +164,8 @@ class UtilitiesTest {
         KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
         springSecurityContext.setAuthentication(token);
 
-        try {
-            Utilities utilities = new Utilities(quickTestConfig);
-            utilities.getIdsFromToken();
-            fail("No ResponseStatusException is coming");
-        } catch (ResponseStatusException e) {
-            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
-        }
+        ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class, () -> utilities.getIdsFromToken());
+        assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
     }
 
     @Test
@@ -149,12 +188,7 @@ class UtilitiesTest {
         KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
         springSecurityContext.setAuthentication(token);
 
-        try {
-            Utilities utilities = new Utilities(quickTestConfig);
-            assertEquals(Arrays.asList(pocInformation.split(quickTestConfig.getPointOfCareInformationDelimiter())), utilities.getPocInformationFromToken());
-        } catch (ResponseStatusException e) {
-            // Expected
-        }
+        assertEquals(Arrays.asList(pocInformation.split(quickTestConfig.getPointOfCareInformationDelimiter())), utilities.getPocInformationFromToken());
     }
 
     @Test
@@ -176,13 +210,8 @@ class UtilitiesTest {
         KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
         springSecurityContext.setAuthentication(token);
 
-        try {
-            Utilities utilities = new Utilities(quickTestConfig);
-            utilities.getPocInformationFromToken();
-            fail("No ResponseStatusException is coming");
-        } catch (ResponseStatusException e) {
-            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
-        }
+        ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class, () -> utilities.getPocInformationFromToken());
+        assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
     }
 
     @Test
@@ -204,12 +233,7 @@ class UtilitiesTest {
         KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
         springSecurityContext.setAuthentication(token);
 
-        try {
-            Utilities utilities = new Utilities(quickTestConfig);
-            assertEquals(name, utilities.getUserNameFromToken());
-        } catch (ResponseStatusException e) {
-            // Expected
-        }
+        assertEquals(name, utilities.getUserNameFromToken());
     }
 
     @Test
@@ -229,26 +253,21 @@ class UtilitiesTest {
         KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
         springSecurityContext.setAuthentication(token);
 
-        try {
-            Utilities utilities = new Utilities(quickTestConfig);
-            utilities.getUserNameFromToken();
-            fail("No ResponseStatusException is coming");
-        } catch (ResponseStatusException e) {
-            assertEquals(e.getStatus(),HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
-        }
+        ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class, () -> utilities.getUserNameFromToken());
+        assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
     }
 
     @Test
-    void testGetStartTimeForLocalDateInGermanyInUtc(){
+    void testGetStartTimeForLocalDateInGermanyInUtc() {
         assertEquals(ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
                 .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay()).withZoneSameInstant(ZoneId.of("UTC")),
             Utilities.getStartTimeForLocalDateInGermanyInUtc());
     }
 
     @Test
-    void testGetEndTimeForLocalDateInGermanInUtc(){
+    void testGetEndTimeForLocalDateInGermanInUtc() {
         assertEquals(ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
-            .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay()).withZoneSameInstant(ZoneId.of("UTC")),
+                .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay()).withZoneSameInstant(ZoneId.of("UTC")),
             Utilities.getEndTimeForLocalDateInGermanyInUtc());
     }
 }

@@ -20,7 +20,9 @@
 
 package app.coronawarn.quicktest.utils;
 
+import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.service.KeycloakService;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -31,11 +33,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -47,6 +51,10 @@ import org.springframework.web.server.ResponseStatusException;
 public class Utilities {
 
     private final QuickTestConfig quickTestConfig;
+
+    private final KeycloakAdminProperties keycloakAdminProperties;
+
+    private final KeycloakService keycloakService;
 
     /**
      * Returns current utc datetime.
@@ -86,7 +94,17 @@ public class Utilities {
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
-            ids.put(quickTestConfig.getTenantIdKey(), keycloakPrincipal.getKeycloakSecurityContext().getRealm());
+            String realmName = keycloakPrincipal.getKeycloakSecurityContext().getRealm();
+
+            if (realmName != null && realmName.equals(keycloakAdminProperties.getRealm())) {
+                String userId = keycloakPrincipal.getKeycloakSecurityContext().getToken().getSubject();
+                String rootGroupNames = keycloakService.getRootGroupsOfUser(userId).stream()
+                    .map(GroupRepresentation::getName)
+                    .collect(Collectors.joining(", "));
+                ids.put(quickTestConfig.getTenantIdKey(), rootGroupNames);
+            } else {
+                ids.put(quickTestConfig.getTenantIdKey(), realmName);
+            }
             IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
 
             Map<String, Object> customClaims = token.getOtherClaims();

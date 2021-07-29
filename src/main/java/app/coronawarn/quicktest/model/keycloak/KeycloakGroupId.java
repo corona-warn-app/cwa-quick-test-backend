@@ -18,29 +18,21 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.keycloak;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Schema(
-    description = "Configuration Model for KeyCloak Clients"
+    description = "Request model for group id."
 )
 @Data
-@RequiredArgsConstructor
-public class KeyCloakConfigFile {
+public class KeycloakGroupId {
 
-    @JsonProperty("auth-server-url")
-    private final String authServerUrl;
-
-    @JsonProperty("ssl-required")
-    private final String sslRequired = "external";
-
-    private final String resource = "quick-test-portal";
-
-    @JsonProperty("public-client")
-    private final boolean publicClient = true;
+    @NotEmpty
+    @Size(max = 50)
+    private String groupId;
 
 }

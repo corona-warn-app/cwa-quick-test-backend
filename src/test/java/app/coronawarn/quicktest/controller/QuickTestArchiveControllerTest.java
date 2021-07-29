@@ -35,8 +35,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.QuickTestArchiveResponseList;
-import app.coronawarn.quicktest.model.QuickTestArchiveResponse;
+import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
+import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.utils.Utilities;

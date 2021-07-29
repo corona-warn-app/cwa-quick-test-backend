@@ -50,6 +50,13 @@ management:
     mail:
       enabled: off
 
+keycloak-admin:
+  auth-server-url: ${KEYCLOAK_AUTH-SERVER-URL}
+  realm: ${KEYCLOAK_ADMIN_REALM}
+  resource: ${KEYCLOAK_ADMIN_RESOURCE}
+  credentials:
+    secret: ${KEYCLOAK_ADMIN_SECRET}
+
 server:
   ssl:
     key-store-password: ${QUICK_TEST_KEYSTORE_PASSWORD}

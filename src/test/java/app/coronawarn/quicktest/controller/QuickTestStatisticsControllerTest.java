@@ -22,11 +22,11 @@ package app.coronawarn.quicktest.controller;
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.model.Aggregation;
-import app.coronawarn.quicktest.model.QuickTestStatistics;
-import app.coronawarn.quicktest.model.QuickTestStatisticsResponse;
-import app.coronawarn.quicktest.model.QuickTestTenantStatistics;
-import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponse;
-import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponseList;
+import app.coronawarn.quicktest.model.quicktest.QuickTestStatistics;
+import app.coronawarn.quicktest.model.quicktest.QuickTestStatisticsResponse;
+import app.coronawarn.quicktest.model.quicktest.QuickTestTenantStatistics;
+import app.coronawarn.quicktest.model.quicktest.QuickTestTenantStatisticsResponse;
+import app.coronawarn.quicktest.model.quicktest.QuickTestTenantStatisticsResponseList;
 import app.coronawarn.quicktest.service.QuickTestStatisticsService;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;

@@ -18,21 +18,28 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.config;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.KeycloakBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@Schema(
-    description = "Configuration Model for Context Configuration for Frontend"
-)
-@Data
+@Configuration
 @RequiredArgsConstructor
-public class QuickTestContextFile {
+public class KeycloakAdminClientConfig {
 
-    @JsonProperty("rules-server-url")
-    private final String rulesServerUrl;
+    private final KeycloakAdminProperties config;
 
+    @Bean
+    Keycloak keycloak() {
+        return KeycloakBuilder.builder()
+            .grantType("client_credentials")
+            .serverUrl(config.getAuthServerUrl())
+            .realm(config.getRealm())
+            .clientId(config.getResource())
+            .clientSecret(config.getCredentials().getSecret())
+            .build();
+    }
 }

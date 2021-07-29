@@ -18,32 +18,22 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
+import app.coronawarn.quicktest.model.Aggregation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.ZonedDateTime;
-import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.ToString;
 
 @Schema(
-    description = "The quick test tenant statistics model list."
+    description = "The quick test tenant statistics model."
 )
-
-@Getter
-@ToString
-@EqualsAndHashCode
-public class QuickTestTenantStatisticsResponseList {
-    @NotNull
-    private List<@Valid QuickTestTenantStatisticsResponse> quickTestTenantStatistics;
-
-    public QuickTestTenantStatisticsResponseList setQuickTestTenantStatistics(
-        List<QuickTestTenantStatisticsResponse> quickTestTenantStatistics) {
-        this.quickTestTenantStatistics = quickTestTenantStatistics;
-        return this;
-    }
+@Data
+@Builder
+public class QuickTestTenantStatistics {
+    Aggregation aggregation;
+    QuickTestStatistics quickTestStatistics;
+    String pocId;
+    ZonedDateTime timestamp;
 }

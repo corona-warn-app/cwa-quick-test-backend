@@ -25,10 +25,10 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
 
 import app.coronawarn.quicktest.model.Aggregation;
-import app.coronawarn.quicktest.model.QuickTestStatisticsResponse;
-import app.coronawarn.quicktest.model.QuickTestTenantStatistics;
-import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponse;
-import app.coronawarn.quicktest.model.QuickTestTenantStatisticsResponseList;
+import app.coronawarn.quicktest.model.quicktest.QuickTestStatisticsResponse;
+import app.coronawarn.quicktest.model.quicktest.QuickTestTenantStatistics;
+import app.coronawarn.quicktest.model.quicktest.QuickTestTenantStatisticsResponse;
+import app.coronawarn.quicktest.model.quicktest.QuickTestTenantStatisticsResponseList;
 import app.coronawarn.quicktest.service.QuickTestStatisticsService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;

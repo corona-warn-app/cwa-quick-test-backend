@@ -18,18 +18,14 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.dcc;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Data;
 
-@Schema(
-    description = ""
-)
 @Data
-@Builder
-public class QuickTestStatistics {
-    private Integer totalTestCount;
-    private Integer positiveTestCount;
+public class DccPublicKey {
+    // !Warning. It is sha256 hash from send testId (or QuickTest.testResultServerHash)
+    private String testId;
+    private String dcci;
+    private String publicKey;
 }

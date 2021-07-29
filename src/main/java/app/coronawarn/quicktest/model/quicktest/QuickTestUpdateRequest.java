@@ -18,7 +18,7 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
 import app.coronawarn.quicktest.validation.ValidCommonCharAndNumber;
 import app.coronawarn.quicktest.validation.ValidTestUpdate;

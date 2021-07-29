@@ -18,14 +18,32 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.keycloak;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 import lombok.Data;
 
+@Schema(
+        description = "Request/Response model for group details."
+)
 @Data
-public class DccPublicKey {
-    // !Warning. It is sha256 hash from send testId (or QuickTest.testResultServerHash)
-    private String testId;
-    private String dcci;
-    private String publicKey;
+public class KeycloakGroupDetails {
+
+    @Schema(description = "Ignored when used for updating the group details")
+    private String id;
+
+    @NotEmpty
+    @Size(max = 50)
+    private String name;
+
+    @Size(max = 300)
+    private String pocDetails;
+
+    @Size(max = 50)
+    private String pocId;
+
 }

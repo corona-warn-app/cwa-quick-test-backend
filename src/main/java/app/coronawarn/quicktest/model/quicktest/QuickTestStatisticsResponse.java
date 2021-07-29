@@ -18,13 +18,16 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.quicktest;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+@Schema(
+    description = "The quick test statistics model."
+)
 @Data
-public class DccUploadData {
-    private String dccHash;
-    private String encryptedDcc;
-    private String dataEncryptionKey;
+public class QuickTestStatisticsResponse {
+    private Integer totalTestCount;
+    private Integer positiveTestCount;
 }

@@ -1,6 +1,6 @@
 package app.coronawarn.quicktest.validation.validators;
 
-import app.coronawarn.quicktest.model.QuickTestUpdateRequest;
+import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.validation.ValidTestUpdate;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;

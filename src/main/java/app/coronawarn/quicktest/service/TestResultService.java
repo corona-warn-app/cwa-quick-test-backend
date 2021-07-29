@@ -22,11 +22,10 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.model.QuickTestResult;
-import app.coronawarn.quicktest.model.QuickTestResultList;
+import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
+import app.coronawarn.quicktest.model.quicktest.QuickTestResultList;
 import feign.FeignException;
 import java.util.Collections;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

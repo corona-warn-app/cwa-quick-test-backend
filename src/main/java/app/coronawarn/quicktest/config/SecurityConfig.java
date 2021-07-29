@@ -44,8 +44,10 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 @EnableWebSecurity
 public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
+    public static final String ROLE_PREFIX = "ROLE_";
     public static final String ROLE_LAB = "ROLE_c19_quick_test_lab";
     public static final String ROLE_COUNTER = "ROLE_c19_quick_test_counter";
+    public static final String ROLE_ADMIN = "ROLE_c19_quick_test_admin";
     public static final String ROLE_TENANT_COUNTER = "ROLE_c19_quick_tenant_test_counter";
 
     private static final String API_ROUTE = "/api/**";
@@ -85,7 +87,9 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
             .mvcMatchers(HttpMethod.GET, CONFIG_ROUTE).permitAll()
             .mvcMatchers(HttpMethod.GET, API_ROUTE).authenticated()
             .mvcMatchers(HttpMethod.POST, API_ROUTE).authenticated()
-            .mvcMatchers(HttpMethod.PUT, API_ROUTE).authenticated();
+            .mvcMatchers(HttpMethod.PUT, API_ROUTE).authenticated()
+            .mvcMatchers(HttpMethod.PATCH, API_ROUTE).authenticated()
+            .mvcMatchers(HttpMethod.DELETE, API_ROUTE).authenticated();
     }
 
     private void addSameSiteToOAuthCookie(final HttpServletRequest request, final HttpServletResponse response) {

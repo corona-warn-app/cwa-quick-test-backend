@@ -33,6 +33,13 @@ keycloak:
   public-client: true
   bearer-only: true
 
+keycloak-admin:
+  auth-server-url: http://localhost:8080
+  realm: dummy
+  resource: dummy
+  credentials:
+    secret: dummy
+
 server:
   port: 8093
 

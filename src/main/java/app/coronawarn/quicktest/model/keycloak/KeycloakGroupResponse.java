@@ -18,19 +18,30 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model;
+package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Schema(
-    description = "The quick test tenant statistics model."
+        description = "Response model for group."
 )
 @Data
-public class QuickTestTenantStatisticsResponse {
-    Aggregation aggregation;
-    QuickTestStatisticsResponse quickTestStatistics;
-    String pocId;
-    ZonedDateTime timestamp;
+public class KeycloakGroupResponse {
+
+    private String name;
+
+    private String id;
+
+    private String path;
+
+    private List<KeycloakGroupResponse> children = new ArrayList<>();
+
 }

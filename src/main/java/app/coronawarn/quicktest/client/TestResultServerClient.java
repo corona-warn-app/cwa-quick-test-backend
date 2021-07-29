@@ -20,7 +20,7 @@
 
 package app.coronawarn.quicktest.client;
 
-import app.coronawarn.quicktest.model.QuickTestResultList;
+import app.coronawarn.quicktest.model.quicktest.QuickTestResultList;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.springframework.cloud.openfeign.FeignClient;

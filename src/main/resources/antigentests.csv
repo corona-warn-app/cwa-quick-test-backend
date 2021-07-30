@@ -1,370 +1,548 @@
 Test-ID;Handelsname des Herstellers / Europ. Bevollmächtigten;Evaluierung PEI;Hersteller Name;Hersteller Stadt;Hersteller Land;EU Bevollmächtigter Name;EU Bevollmächtigter Stadt;EU Bevollmächtigter Land;Testort*;Sensitivität %;95%iges Vertrauensintervall (Sensitivität);Spezifität %;95%iges Vertrauensintervall (Spezifität)
-AT116/21;Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal);Ja;Abbott Rapid Diagnostics Jena GmbH;Jena;DE;;;;POC (ohne Gerät);98,1;93,2 - 99,8;99,8;98,6 - 100
-AT005/20;Panbio™ COVID-19 Ag Rapid Test Device;Ja;Abbott Rapid Diagnostics Jena GmbH;Jena;DE;;;;POC (ohne Gerät);91,4;85,5 - 95,5;99,8;98,8 - 100
-AT018/21;Cora Gentest-19;Nein;ABIOTEQ;Lügde;DE;;;;POC (ohne Gerät);98,7;96,25 - 99,56;99,8;99,27 - 99,95
-AT810/21;ACCU-TELL SARS-CoV-2-Ag Cassette (Nasal Swab);Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);93,2;86,5 - 97,2;99,2;97,10 - 99,90
-AT084/21;ACCU-TELL SARS-CoV-2-Ag Cassette;Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);95,7;90,30 - 98,60;99,2;97,60 - 99,80
-AT579/21;ACCU-TELL SARS-CoV-2-Ag Cassette Saliva;Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);91,8;86,1 - 95,7;99,9;98,2 - 100
-AT155/20;SARS-CoV-2-Antigenschnelltest;Ja;ACON Biotech (Hangzhou) Co., Ltd;District, Hangzhou;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);96,9;92,8 - 98,9;99,5;98,1 - 99,9
-AT434/21;FIAflex SARS-CoV-2 Antigen FIA;Nein;ACON Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;MedNet GmbH;Münster;DE;POC (mit Gerät);97,5;93,61 - 99,30;99,5;98,25 - 99,94
-AT495/20;Swiss Point of Care SARS-CoV-2 Antigen Rapid Test;Nein;ACON Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);96,9;92,8 - 98,9;99,5;98,1 - 99,9
-AT874/21;Flowflex SARS-CoV-2 Antigen Rapid Test (Nasal/Saliva);Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);97,1;93,1 - 98,9;99,5;98,2 - 99,9
-AT261/21;Flowflex SARS-CoV-2 Antigen Rapid Test;Ja;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);97,1;93,1 - 98,9;99,5;98,2 - 99,9
-AT594/21;FIAflex SARS-CoV-2 Antigen FIA;Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (mit Gerät);97,5;93,61 - 99,30;99,5;98,25 - 99,94
-AT503/20;SARS-CoV-2-Antigenschnelltest;Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);96,9;92,8 - 98,9;99,5;98,1 - 99,9
-AT283/21;Ritter® Easy Check SARS-CoV-2 Antigen Rapid Test;Ja;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (mit Gerät);97,1;93,1 - 98,9;99,5;98,2 - 99,9
-AT052/21;SARS CoV-2 Antigen RAPID Test Kit;Nein;ADS Biotec Inc.;Omaha;US;EU-UK Authorised Representative Ltd.;Belfast;GB;POC (ohne Gerät);97,12;92,80 - 99,21;99,6;97,79 - 99,99
+AT116/21;Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal);Ja;Abbott Rapid Diagnostics Jena GmbH;Jena;DE;;;;POC (ohne Gerät);98,10;93,2 - 99,8;99,80;98,6 - 100
+AT005/20;Panbio™ COVID-19 Ag Rapid Test Device;Ja;Abbott Rapid Diagnostics Jena GmbH;Jena;DE;;;;POC (ohne Gerät);91,40;85,5 - 95,5;99,80;98,8 - 100
+AT018/21;Cora Gentest-19;Ja;ABIOTEQ;Lügde;DE;;;;POC (ohne Gerät);98,70;96,25 - 99,56;99,80;99,27 - 99,95
+AT971/21;Absoludy COVID-19 Ag;Nein;Absology Co., Ltd;Dongan-Gu, Anyang-Si, Gyeonggi-Do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (mit Gerät);97,00;93,66 - 100,00;98,37;96,54 - 100,00
+AT506/20;Absoludy COVID-19 Ag Rapid;Nein;Absology Co., Ltd;Dongan-Gu, Anyang-Si, Gyeonggi-Do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);88,00;81,63 - 94,37;100,00;100,00 - 100,00
+AT084/21;ACCU-TELL SARS-CoV-2-Ag Cassette;Ja;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);95,70;90,30 - 98,60;99,20;97,60 - 99,80
+AT810/21;ACCU-TELL SARS-CoV-2-Ag Cassette (Nasal Swab);Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);93,20;86,5 - 97,2;99,20;97,10 - 99,90
+AT579/21;ACCU-TELL SARS-CoV-2-Ag Cassette Saliva;Nein;AccuBioTech Co., Ltd.;Peking;CN;Medical Device Safety Service GmbH;Hannover;DE;POC (ohne Gerät);91,80;86,1 - 95,7;99,90;98,2 - 100
+AT155/20;SARS-CoV-2-Antigenschnelltest;Ja;ACON Biotech (Hangzhou) Co., Ltd;District, Hangzhou;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);96,90;92,8 - 98,9;99,50;98,1 - 99,9
+AT495/20;Swiss Point of Care SARS-CoV-2 Antigen Rapid Test;Nein;ACON Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);96,90;92,8 - 98,9;99,50;98,1 - 99,9
+AT434/21;FIAflex SARS-CoV-2 Antigen FIA;Nein;ACON Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;MedNet GmbH;Münster;DE;POC (mit Gerät);97,50;93,61 - 99,30;99,50;98,25 - 99,94
+AT1116/21;SARS-CoV-2 Antigen Rapid Test Strip;Nein;ACON Biotech(Hangzhou) Co., Ltd;Hangzhou;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);97,40;92,3 - 99,5;99,80;98,5 - 100
+AT951/21;SARS-CoV-2 Antigen Rapid Test (Nasal/Saliva);Ja;ACON Biotech(Hangzhou) Co., Ltd;Hangzhou;CN;MedNet GmbH;Nordrhein-Westfalen;DE;POC (ohne Gerät);97,10;93,1 - 98,9;99,50;98,2 - 99,9
+AT503/20;SARS-CoV-2-Antigenschnelltest;Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);96,90;92,8 - 98,9;99,50;98,1 - 99,9
+AT875/21;Flowflex SARS-CoV-2 Antigen Rapid Test Strip;Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (mit Gerät);97,40;92,3 - 99,50;99,80;98,5 - 100
+AT594/21;FIAflex SARS-CoV-2 Antigen FIA;Nein;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (mit Gerät);97,50;93,61 - 99,30;99,50;98,25 - 99,94
+AT283/21;Ritter® Easy Check SARS-CoV-2 Antigen Rapid Test;Ja;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (mit Gerät);97,10;93,1 - 98,9;99,50;98,2 - 99,9
+AT261/21;Flowflex SARS-CoV-2 Antigen Rapid Test;Ja;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);97,10;93,1 - 98,9;99,50;98,2 - 99,9
+AT874/21;Flowflex SARS-CoV-2 Antigen Rapid Test (Nasal/Saliva);Ja;ACON Laboratories, Inc.;San Diego;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);97,10;93,1 - 98,9;99,50;98,2 - 99,9
+AT930/21;SARS-CoV-2 Antigen Rapid Test;Nein;ACRO BIOTECH Inc.;California;US;MedNet GmbH;Münster;DE;POC (ohne Gerät);94,60;88,6 - 98,0;99,40;97,7 - 99,9
+AT1024/21;SARS-CoV-2 Antigen Rapid Detection Kit(LFA);Nein;Acro Diagnostics Co.,Ltd.;Beijing;CN;CMC Medical Devices& Drugs S.L.  ;Málaga;ES;POC (ohne Gerät);95,00;82,5 - 96;99,56;98,2 - 100
+AT1131/21;SARS-CoV-2 Antigen Rapid Test;Nein;ACtest Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);93,33;86,75 - 97,28;98,30;96,53 - 99,31
+AT1096/21;SARS-CoV-2 Antigen Rapid Test;Nein;ACtest Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);93,40;86,87 - 97,30;99,28;97,92 - 99,85
+AT052/21;SARS CoV-2 Antigen RAPID Test Kit;Nein;ADS Biotec Inc.;Omaha;US;EU-UK Authorised Representative Ltd.;Belfast;GB;POC (ohne Gerät);97,12;92,80 - 99,21;99,60;97,79 - 99,99
 AT466/21;Covid19 Antigen Rapid Test Kits (Colloidal Gold);Nein;AEHEALTH LIMITED;London;GB;MedNet GmbH;Münster;DE;POC (ohne Gerät);96,88;95,13 - 99,48;99,21;97,75 - 99,68
-AT363/20;AESKU.RAPID SARS-CoV-2;Ja;Aesku.Diagnostics GmbH & Co. KG;Wendelsheim;DE;;;;POC (ohne Gerät);96;91,00 - 99,00;98;95,00 - 99,00
-AT181/21;TestNOW - COVID-19 Ag Test;Ja;Affimedix, Inc.;Hayward;US;QARAD BV;Geel;BE;POC (ohne Gerät);93,7;89,50 - 97,90;99,2;97,69 - 100,00
-AT276/21;Corona Lollipop Schnelltest;Nein;Alltest Biotech Co.Ltd;Hongzhou, Zhejiang;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);90,1;82,5 - 95,1;99,3;97,7 - 99,9
-AT303/20;CoroVisio COVID-19 AntiGen Schnelltest;Nein;Amazing Biotech (Shanghai) Co.,ltd;Shanghai;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);82,78;74 - 89;97,34;93 - 99
-AT033/20;AMP Rapid Test SARS-CoV-2 Ag;Ja;AMEDA Labordiagnostik GmbH;Graz;AT;;;;POC (ohne Gerät);97,3;90,0 - 99,8;100;96,6 - 100
+AT363/20;AESKU.RAPID SARS-CoV-2;Ja;Aesku.Diagnostics GmbH & Co. KG;Wendelsheim;DE;;;;POC (ohne Gerät);96,00;91,00 - 99,00;98,00;95,00 - 99,00
+AT181/21;TestNOW - COVID-19 Ag Test;Ja;Affimedix, Inc.;Hayward;US;QARAD BV;Geel;BE;POC (ohne Gerät);93,70;89,50 - 97,90;99,20;97,69 - 100,00
+AT1002/21;COVID-19 Antigen Rapid Test Kit (Colloidal Gold);Nein;Aikang Diagnostics Co., Ltd;Shenzhen, Guangdong;CN;MedNet EC-REP GmbH;Münster;DE;POC (ohne Gerät);96,46;91,18 - 99,03;99,38;97,78 - 99,92
+AT276/21;Corona Lollipop Schnelltest;Nein;Alltest Biotech Co.Ltd;Hongzhou, Zhejiang;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);90,10;82,5 - 95,1;99,30;97,7 - 99,9
+AT514/21;DAILY TAMPON;Nein;ALLUM SRL;MERATE (LC);IT;;;;POC (ohne Gerät);98,98;89,3 - 99,2;99,27;94,7 - 98,9
+AT303/20;CoroVisio COVID-19 AntiGen Schnelltest;Ja;Amazing Biotech (Shanghai) Co.,ltd;Shanghai;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);82,78;74 - 89;97,34;93 - 99
+AT033/20;AMP Rapid Test SARS-CoV-2 Ag;Ja;AMEDA Labordiagnostik GmbH;Graz;AT;;;;POC (ohne Gerät);97,30;90,0 - 99,8;100,00;96,6 - 100
 AT246/21;COVID-19 Antigen Rapid Test Kit (Colloidal Gold);Ja;AmonMed (Xiamen) Biotechnology Co., Ltd.;Xiamen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98,02;93,07 - 99,46;99,55;97,47 - 99,92
-AT412/21;AMPER COVID-19 Antigen Rapid Testing Kit (Colloidal Gold);Nein;AMPER, INC;Morrisville, North Carolina;US;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,96;90,91 - 98,27;100;97,15 - 100,00
-AT454/21;Rapid COVID-19 Antigen Test Saliva (Colloidal Gold );Nein;"Anbio (Xiamen) Biotechnology Co.; Ltd";Xiamen, Fujian;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);99,27;98,2 - 99,8;100;97,1 - 100
-AT195/21;Anbio Rapid COVID-19 Antigen Test (Colloidal Gold);Ja;Anbio (Xiamen) Biotechnology Co.,Ltd.;Xiamen;CN;;;;POC (ohne Gerät);99,27;98,15 - 99,80;100;97,05 - 100,0
-AT147/20;Rapid COVID-19 Antigen Test (Colloidal Gold );Ja;Anbio (Xiamen) Biotechnology Co.,Ltd.;Xiamen;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);96,36;87,47 - 99,56;100;96,19 - 100
-AT031/20;Covid-19 (SARS-CoV-2) Antigen Test (Colloidal Gold);Ja;Anhui Deepblue Medical Technology Co. Ltd.;Hefei, Anhui;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);95,7;91,2 - 99,1;99,3;96,1 - 99,7
-AT238/21;COVID-19 (SARS-CoV-2) Antigentestkit - Speichel;Ja;Anhui Deepblue Medical Technology Co. Ltd.;Hefei, Anhui;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);97,1;90,8 - 98,2;99,8;94,4 - 99,9
-AT380/20;Deepblue;Ja;ANHUI DEEPBLUE MEDICAL TECHNOLOGY CO.,LTD.;Anhui;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);96,4;90,80 - 98,20;99,8;94,40 - 99,90
-AT785/21;New Coronavirus (COVID-19) Antigen Rapid Test;Nein;Anhui Formaster Biosci Co., Ltd.;Wuhu;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,15;90,58 - 97,67;98,5;95,48 - 99,69
-AT732/21;New Coronavirus (COVID-19) Antigen Rapid Test (Saliva);Nein;Anhui Formaster Biosci Co., Ltd.;Wuhu;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,24;92,51 - 98,17;99,8;98,98 - 100
+AT412/21;AMPER COVID-19 Antigen Rapid Testing Kit (Colloidal Gold);Ja;AMPER, INC;Morrisville, North Carolina;US;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,96;90,91 - 98,27;100,00;97,15 - 100,00
+AT454/21;Rapid COVID-19 Antigen Test Saliva (Colloidal Gold );Ja;"Anbio (Xiamen) Biotechnology Co.; Ltd";Xiamen, Fujian;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);99,27;98,2 - 99,8;100,00;97,1 - 100
+AT195/21;Anbio Rapid COVID-19 Antigen Test (Colloidal Gold);Ja;Anbio (Xiamen) Biotechnology Co.,Ltd.;Xiamen;CN;;;;POC (ohne Gerät);99,27;98,15 - 99,80;100,00;97,05 - 100,0
+AT147/20;Rapid COVID-19 Antigen Test (Colloidal Gold );Ja;Anbio (Xiamen) Biotechnology Co.,Ltd.;Xiamen;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);96,36;87,47 - 99,56;100,00;96,19 - 100
+AT238/21;COVID-19 (SARS-CoV-2) Antigentestkit - Speichel;Ja;Anhui Deepblue Medical Technology Co. Ltd.;Hefei, Anhui;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);97,10;90,8 - 98,2;99,80;94,4 - 99,9
+AT031/20;Covid-19 (SARS-CoV-2) Antigen Test (Colloidal Gold);Ja;Anhui Deepblue Medical Technology Co. Ltd.;Hefei, Anhui;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);96,40;90,8 - 98,2;99,80;94,4 - 99,9
+AT380/20;Deepblue;Ja;ANHUI DEEPBLUE MEDICAL TECHNOLOGY CO.,LTD.;Anhui;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);96,40;90,80 - 98,20;99,80;94,40 - 99,90
+AT732/21;New Coronavirus (COVID-19) Antigen Rapid Test (Saliva);Nein;Anhui Formaster Biosci Co., Ltd.;Wuhu;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,24;92,51 - 98,17;99,80;98,98 - 100
+AT785/21;New Coronavirus (COVID-19) Antigen Rapid Test;Nein;Anhui Formaster Biosci Co., Ltd.;Wuhu;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,15;90,58 - 97,67;98,50;95,48 - 99,69
+AT885/21;Omnex COVID-19 Antigen Schnell Test (Nasopharyngeal / Oropharyngeal Tupfer - Kasette );Nein;Apex Teknik Tekstil ve Saglik Ürünleri San. Tic. AS.;Adana;TR;Amet Europa GmbH;Jüchen;DE;POC (ohne Gerät);99,01;97,49 - 99,73;99,57;98,46 - 99,95
+AT1021/21;APOLLO SARS-CoV-2 Ag Schnelltestkit;Nein;Apollo Biomedical LLC;Utah;US;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);95,90;91,46 - 99,62;100,00;98,76 - 100,00
 AT104/21;HARDSON COVID-19 Antigen Schnelltest (Abstrich);Nein;Arbilim Biotechnology INC.;Istanbul;TR;-;-;;POC (ohne Gerät);97,74;97,67  - 97,80;99,45;99,42  - 99,47
-AT519/21;CoVard COVID 19 Rapid Antigen Test Kit;Nein;ARDI Medikal Arastirma ve Diagnostik Ürünleri San. Tic. Ltd.Sti.;Istanbul;TR;;;;POC (ohne Gerät);96,66;91,69 - 99,08;98,96;96,33 - 99,87
-AT518/20;Artron COVID-19 Antigen Test;Nein;Artron Laboratories Inc.;Burnaby;CA;MedNet EC-REP GmbH;Münster;DE;POC (ohne Gerät);91,27;84,9 - 95,6;100;99,2 - 100
+AT1045/21;CoVard COVID 19 Rapid Antigen Test Kit;Nein;ARDI Medikal Arastirma ve Diagnostik Ürünleri San. Tic. Ltd. Sti.;Istanbul;TR;;;;POC (ohne Gerät);96,66;91,69 - 99,08;98,96;96,29 - 99,87
+AT1000/21;CoVard SARS-CoV-2 Saliva Antigen Test Kit;Nein;ARDI MEDIKAL ARASTIRMA VE DIAGNOSTIK ÜRÜNLERI SAN. TIC. LTD. STI.;Kadiköy/Istanbul;TR;;;;POC (ohne Gerät);98,00;94,27 - 99,59;98,00;95,39 - 99,35
+AT476/20;ARISTA™ COVID-19 Antigen Rapid Test;Nein;ARISTA Biotech Pte. Ltd.;Singapore;SG;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);96,32;91,19 - 98,64;99,73;98,42 - 99,99
+AT518/20;Artron COVID-19 Antigen test;Ja;Artron Laboratories Inc.;Burnaby;CA;MedNet EC-REP GmbH;Münster;DE;POC (ohne Gerät);91,59;84,63 - 96,08;100,00;99,20 - 100
 AT431/20;Asan Easy Test COVID-19 Ag;Ja;ASAN PHARM. CO., LTD.;Gyeonggi-do;KR;MT Promedt / Medical Technology Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);94,67;89,76 - 97,67;97,71;95,55 - 99,01
 AT080/21;Asan Easy Test Influenza/COVID-19 Ag Kombi;Nein;ASAN PHARM. CO., LTD.;Gyeonggi-do;KR;MT Promedt / Medical Technology Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);94,67;89,76 - 97,67;98,57;96,67 - 99,53
-AT286/20;COVID -19 Antigen Rapid test Device;Nein;Assure Tech.(Hangzhou) Co.,Ltd.;Hangzhou;CN;UNIMAMA B.V;BADHOEVEDORP;NL;POC (ohne Gerät);80,2;73,9 - 85,3;100;97,7 - 100,0
-AT791/21;AS-check;Nein;Asterion Otel Insaat Bilisim Medikal Maden Tic.Ltd.Sti.;Ankara;TR;;;;POC (ohne Gerät);95,7;90,3 - 98,6;99,2;97,6 - 99,8
-AT132/20;NOVA Test® SARS-CoV-2 Antigen Rapid Test Kit (Colloidal Gold Immunochromatography);Ja;Atlas-Link Technology (Bejing) Co., Ltd;Langfang City;CN;MT Promedt Consulting;St. Ingbert;DE;POC (ohne Gerät);97,6;91,7 - 99,3;99,2;97,4 - 99,8
-AT441/20;KSmart(R) SARS-CoV-2 AG;Nein;AVALUN;Grenoble;FR;;;;POC (mit Gerät);93,18;89,32-97,04;99,32;95,55-100
-AT374/20;COVID-19 Antigen Schnelltest;Ja;AXIOM Gesellschaft für Diagnostica und Biochemica mbH;Bürstadt;DE;;;;POC (ohne Gerät);98,1;95,49 - 100,00;100;100,00 - 100,00
-AT194/21;COVID-19 Antigen Speichel Test;Nein;AXIOM Gesellschaft für Diagnostica und Biochemica mbH;Bürstadt;DE;;;;POC (ohne Gerät);98,1;95,49 - 100;99,33;98,02 - 100
-AT061/20;Dia Sure COVID-19 Antigen Rapid Test Device;Ja;Azure Biotech,Inc;Houston,Texas;US;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,3;84,6 - 98,1;99,1;98,4 - 99,5
-AT200/20;Veritor™ System For Rapid Detection of SARS-CoV-2;Ja;Becton, Dickinson and Company;Sparks, Maryland;US;Benex Limitted;Co. Dublin;IE;POC (mit Gerät);84;67 - 93;100;98 - 100
-AT926/21;2019-nCoV Antigen Rapid Test Cassette;Nein;Beijing Applied Biological Technologies Co., Ltd.;Beijing;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Málaga;ES;POC (ohne Gerät);90,29;82,87 - 95,25;100;96,64 - 100
-AT927/21;2019-nCoV Antigen Rapid Test Cassette;Nein;Beijing Applied Biological Technologies Co., Ltd.;Beijing;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Málaga;ES;POC (ohne Gerät);94,53;89,06 - 97,77;100;97,47 - 100
-AT074/20;COVID-19 Antigen Rapid Test Kit;Nein;Beijing Beier Bioengineering Co., Ltd.;Beijing;CN;MedNet EC-REP GmbH;Münster;DE;POC (ohne Gerät);96,5;93,7 - 99,3;99,7;99,0 - 100
-AT728/21;2019-nCoV Antigen Rapid Test Kit (Colloidal gold Assay);Nein;Beijing Diagreat Biotechnologies Co., Ltd.;Beijing;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);91,9;86,1 - 95,4;97,6;96,2 - 98,5
+AT1018/21;COVID-19 Antigen Saliva Test Kit;Nein;Assure Tech (Hangzhou) Co., Ltd.;Zhejing;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);89,00;88,1 - 89,9;100,00;99,0 - 100,0
+AT1030/21;COVID -19 Antigen Rapid test Device;Nein;Assure Tech.(Hangzhou) Co.,Ltd.;Hang Zhou;CN;Steigenz GmbH;Rosbach v.d.H;DE;POC (ohne Gerät);97,70;93,3 - 99,2;99,10;98,4 - 99,5
+AT286/20;COVID -19 Antigen Rapid test Device;Nein;Assure Tech.(Hangzhou) Co.,Ltd.;Hangzhou;CN;UNIMAMA B.V;BADHOEVEDORP;NL;POC (ohne Gerät);80,20;73,9 - 85,3;100,00;97,7 - 100,0
+AT421/20;SARS-COV 2 ANTIGEN RAPID SWAB;Nein;ASSUT EUROPE SPA;MAGLIANO DEI MARSI;IT;;;;POC (ohne Gerät);92,00;87 - 95,2;99,70;98,8 - 99,9
+AT791/21;AS-check;Nein;Asterion Otel Insaat Bilisim Medikal Maden Tic.Ltd.Sti.;Ankara;TR;;;;POC (ohne Gerät);95,70;90,3 - 98,6;99,20;97,6 - 99,8
+AT132/20;NOVA Test® SARS-CoV-2 Antigen Rapid Test Kit (Colloidal Gold Immunochromatography);Ja;Atlas-Link Technology (Bejing) Co., Ltd;Langfang City;CN;MT Promedt Consulting;St. Ingbert;DE;POC (ohne Gerät);97,60;91,7 - 99,3;99,20;97,4 - 99,8
+AT656/21;SARS-CoV-2 Ag Rapid Test;Nein;Autobio Diagnostics Co., Ltd.;Zhengzhou;CN;OBELIS S. A.;Brussels;BE;POC (ohne Gerät);87,90;80,8-92,7 (95CI);98,70;96,3-99,6(95CI)
+AT441/20;KSmart(R) SARS-CoV-2 AG;Ja;AVALUN;Grenoble;FR;;;;POC (mit Gerät);93,18;89,32-97,04;99,32;95,55-100
+AT374/20;COVID-19 Antigen Schnelltest;Ja;AXIOM Gesellschaft für Diagnostica und Biochemica mbH;Bürstadt;DE;;;;POC (ohne Gerät);98,10;95,49 - 100,00;100,00;100,00 - 100,00
+AT194/21;COVID-19 Antigen Speichel Test;Ja;AXIOM Gesellschaft für Diagnostica und Biochemica mbH;Bürstadt;DE;;;;POC (ohne Gerät);98,10;95,49 - 100;99,33;98,02 - 100
+AT061/20;Dia Sure COVID-19 Antigen Rapid Test Device;Ja;Azure Biotech,Inc;Houston,Texas;US;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,30;84,6 - 98,1;99,10;98,4 - 99,5
+AT1072/21;SARS-CoV-2 Antigen Rapid Test (Colloidal Gold);Nein;Baicare (Tianjin) Biotechnology Co., Ltd;Tianjin;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);93,18;88,39 - 96,43;99,32;98,03 - 99,86
+AT630/21;Saligen - Rapid Saliva Antigen Test;Nein;Bakter Medical s.r.o.;Brno;CZ;;;;POC (ohne Gerät);95,32;89,43 - 98,47;99,33;97,61 - 99,92
+AT200/20;Veritor™ System For Rapid Detection of SARS-CoV-2;Ja;Becton, Dickinson and Company;Sparks, Maryland;US;Benex Limitted;Co. Dublin;IE;POC (mit Gerät);84,00;67 - 93;100,00;98 - 100
+AT926/21;2019-nCoV Antigen Rapid Test Cassette;Nein;Beijing Applied Biological Technologies Co., Ltd.;Beijing;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Málaga;ES;POC (ohne Gerät);90,29;82,87 - 95,25;100,00;96,64 - 100
+AT927/21;2019-nCoV Antigen Rapid Test Cassette;Nein;Beijing Applied Biological Technologies Co., Ltd.;Beijing;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Málaga;ES;POC (ohne Gerät);94,53;89,06 - 97,77;100,00;97,47 - 100
+AT074/20;COVID-19 Antigen Rapid Test Kit;Ja;Beijing Beier Bioengineering Co., Ltd.;Beijing;CN;MedNet EC-REP GmbH;Münster;DE;POC (ohne Gerät);96,50;93,7 - 99,3;99,70;99,0 - 100
+AT728/21;2019-nCoV Antigen Rapid Test Kit (Colloidal gold Assay);Nein;Beijing Diagreat Biotechnologies Co., Ltd.;Beijing;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);91,90;86,1 - 95,4;97,60;96,2 - 98,5
+AT983/21;Antigen-COVID-19 Virus Test Kit (Colloidal Gold);Nein;Beijing Easy-Sweet Bio-medical Science and Technology Co., Ltd.;Beijing;CN;M/s CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);96,70;93,32 - 98,66;100,00;99,18 - 100
+AT966/21;COVID-19 Antigentest Kit (kolloidales Gold Immunochromatographie)- Nasenabstich;Nein;Beijing Homa Biological Engineering Co.,Ltd;Beijing;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);98,20;95,74 - 100;99,10;97,40 - 100
+AT1061/21;COVID-19 Antigentest Kit (kolloidales Gold Immunochromatographie)- Speichel;Nein;Beijing Homa Biological Engineering Co.,Ltd;Beijing;CN;Osmunda Medical Technology Service GmbH;Berlin;DE;POC (ohne Gerät);97,50;94,7 - 100;99,20;97,6 - 100
+AT967/21;COVID-19 Antigentest Kit (kolloidales Gold Immunochromatographie)- nasopharyngealen /oropharyngealen Proben;Nein;Beijing Homa Biological Engineering Co.,Ltd;Beijing;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);99,10;97,4 - 100,0;99,10;97,4 - 100,0
 AT030/20;CORA CHECK-19;Ja;Beijing Hotgen Biotech Co., Ltd;Beijing;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);97,33;95,15 - 98,71;99,18;97,92 - 99,78
-AT859/21;Coronavirus 2019-nCoV Antigen Test;Nein;Beijing Hotgen Biotech Co., Ltd.;Peking;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);97,1;"[93,80; 98,93]";99,76;"[98,65; 99,99]"
-AT095/21;Novel Coronavirus (2019-nCoV)-Antigentest   (Kolloidales Gold) - Speichel  Gebrauchsanweisung;Ja;Beijing Hotgen Biotech Co. Ltd;Beijing;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);96;90,9 - 98,7;99,78;98,8 - 99,9
+AT985/21;Novel Coronavirus 2019-nCoV Antigen Test (Colloidal Gold);Nein;Beijing Hotgen Biotech Co., Ltd.;Beijing, Peking;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);96,62;93,16 - 98,63;99,76;98,65 - 99,99
+AT095/21;Novel Coronavirus (2019-nCoV)-Antigentest   (Kolloidales Gold) - Speichel  Gebrauchsanweisung;Ja;Beijing Hotgen Biotech Co. Ltd;Beijing;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);96,00;90,9 - 98,7;99,78;98,8 - 99,9
+AT055/20;Coronavirus 2019-nCoV Antigen Test;Ja;Beijing Hotgen Biotech Co.,Ltd;Peking;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);97,10;93,80 - 98,93;99,76;98,65 - 99,99
 AT282/21;Novel Coronavirus (2019-nCoV)-Antigentest (Kolloidales Gold);Ja;Beijing Hotgen Biotech Co.,Ltd;Peking;CN;MedNet GmbH;Münster;;POC (ohne Gerät);95,37;89,62 - 98,01;99,13;95,24-99,85
-AT055/20;Coronavirus 2019-nCoV Antigen Test;Ja;Beijing Hotgen Biotech Co.,Ltd;Peking;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);97,1;93,80 - 98,93;99,76;98,65 - 99,99
-AT881/21;Neuartiges Coronavirus (SARS-CoV-2)-Antigen-Schnelltestkit;Nein;Beijing Jinwofu Bioengineering Technology Co.,Ltd;Beijing;CN;Royal Biotech GmbH;Frankfurt am Main;DE;POC (ohne Gerät);96,14;92,56-98,03;100;96,40-100,00
-AT205/20;Jinwofu®(SARS-CoV-2) Antigen Rapid Test;Nein;Beijing Jinwofu Bioengineering Technology Co.,Ltd.;Beijing;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;;96,88;92,89 - 98,66;100;98,57 - 100
-AT391/21;COVID-19 Antigen Rapid Test Kit(Oral Saliva);Nein;BEIJING KEWEI CLINICAL DIAGNOSTIC REAGENT INC;BEIJING;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);96,82;92,76 - 98,63;100;97,66 - 100
-AT313/20;COVID-19 Antigen Rapid Test Kit(Colloidal Gold);Nein;BEIJING KEWEI CLINICAL DIAGNOSTIC REAGENT INC.;BEIJING;CN;Lotus NL B.V.;Den Haag;NL;;96,18;91,91 - 98,24;100;98,54 - 100
-AT052/20;SARS-CoV-2 Antigen Rapid Test Kit (Colloidal Gold Immunochromatography);Ja;Beijing Lepu Medical Technology  Co.,  Ltd.;Beijing;CN;Lepu Medical (Europe) Cooperatief U.A.;Heerenveen;NL;POC (ohne Gerät);92;83,63 - 96,28;99,26;95,92 - 99,87
-AT064/20;SARS-CoV-2 Antigen Rapid Test Kit (Colloidal Gold Immunochromatography);Ja;Beijing Lepu Medical Technology  Co.,  Ltd.;Beijing;CN;Lepu Medical (Europe) Cooperatief U.A.;Heerenveen;NL;POC (ohne Gerät);92;83,63 - 96,28;99,26;95,92 - 99,87
-AT820/21;COVID-19 Antigen Rapid Test;Nein;Beijing O&D Biotech Co., Ltd.;Beijing;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);93,04;86,33 - 96,73;99;96,86 - 99,74
-AT163/20;MPV Antigenschnelltest SARS-CoV-2 1er-Pack;Nein;Beijing Savant Biotechnology Co., Ltd.;Beijing;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (mit Gerät);90,48;83,35 - 94,74;99,55;97,49 - 99,92
-AT122/21;Tigsun COVID-19 Speichel Antigen-Schnelltest;Ja;Beijing Tigsun Diagnostics Co. Ltd.;Beijing;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);93,75;88,15 - 96,80;99,7;98,34 - 99,95
-AT022/21;WANTAI SARS-CoV-2 Ag Rapid Test (FIA);Ja;BEIJING WANTAI BIOLOGICAL CO., LTD;Changping District, Beijing;CN;Qarad b.v.b.a.;Geel;BE;POC (mit Gerät);96,6;92,68 - 98,41;96,9;95,29 - 98,00
-AT496/20;WANTAI SARS-CoV-2 Ag Rapid Test (Colloidal Gold);Nein;Beijing Wantai Biological Pharmacy Enterprise Co., Ltd;Beijing;CN;Qarad;Geel;BE;POC (ohne Gerät);96,1;92,19 - 98,10;98,3;96,89 - 99,13
-AT284/21;Tell Me Fast COVID-19 Antigen Test;Nein;Biocan Diagnostics Inc.;Coquitlam;CA;CMC Medical Diagnostics & Drugs S.L.;Malaga;ES;POC (ohne Gerät);86,1;80,30 - 90,40;100;99,00 - 100,00
-AT043/20;SARS-CoV-2 Antigen Rapid Test Kit;Nein;Biohit Healthcare (Hefei) Co., Ltd.;Hefei;CN;ScheBo Biotech AG;Gießen;DE;POC (ohne Gerät);96,77;88,83 - 99,61;98,94;96,21 - 99,87
-AT172/21;SARS-CoV-2 Ag Rapid Test;Nein;BioMaxima S.A.;Lublin;PL;;;;POC (ohne Gerät);95,7;90,2 - 98,1;99,1;96,6 - 99,7
-AT007/21;BIOMERICA COVID-19 Antigen-Schnelltest / Nasopharyngeal-Abstrich;Ja;BIOMERICA Inc.;Irvine, California;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);94,7;89,8 - 97,7;99,7;98,1 - 99,9
-AT014/20;NowCheck COVID-19 Ag Test;Ja;Bionote, Inc.;Hwaseong-si, Gyeonggi-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;;89,2;81,7 - 93,9;97,6;95,1 - 98,8
-AT433/20;NowCheck COVID-19 Ag Test - Nasal Swab;Ja;BioNote Inc.;;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);89,2;81,70 - 93,90;97,3;94,80 - 98,60
-AT586/21;COVID-19 Rapid Antigen Test;Nein;Biopanda Reagents;Belfast;GB;;;;POC (ohne Gerät);93,8;89,2-96,9;99,6;97,7 – 99,9)
-AT025/20;BIOSYNEX COVID-19 Ag BSS;Ja;Biosynex Swiss SA;Freiburg;CH;;;;POC (ohne Gerät);96;93,6 - 98,4;100;100 - 100
-AT349/21;SARS-CoV-2 Antigen Test Kit(colloidal gold method);Nein;BioTeke Corporation (Wuxi) Co.,Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,49;91,26-99,04;99,28;97,43-99,91
-AT162/20;BZ COVID-19 Ag Test (nasal swab);Nein;Biozentech Co., Ltd.;Seoul;KR;ATLAS BEAUTY sp.Zo.o;Poznan;PL;POC (ohne Gerät);95;91,00 - 97,58;99,3;97,61 - 99,92
-AT050/20;ichroma™ COVI-19 Ag;Nein;Boditech Med Inc.;Chuncheon-si, Gang-won-do;KR;Obelis s.a;Brussels;BE;POC (mit Gerät);90,4;83,2 - 94,7;97,6;91,5 - 99,3
-AT102/21;Rapid Response COVID-19 Antigen Rapid Test CE-IVD;Nein;BTNX, Inc.;Markham, Ontario;CA;MDSS GmbH;Hannover;DE;POC (ohne Gerät);90,6;84,5 - 94,9;100;98,53 - 100
-AT020/20;Rapid Response COVID-19 Antigen Rapid Test Device;Ja;BTNX INC.;Ontario L3R 4G7;CA;MDSS GmbH;Hannover;DE;POC (ohne Gerät);94,55;83,93 - 98,58;100;97,1 - 100
-AT289/20;SARS-CoV-2 + Flu A + B Triple Kassettenschnelltest inkl. Tupfer + pos. Kontrolle;Nein;CerTest Biotec S.L.;Zaragoza;ES;;;;POC (ohne Gerät);92,9;76,5 – 99,1;99,6;97,6 – 100,0
-AT051/20;SARS-CoV-2 Kassettenschnelltest inkl. pos. Kontrolle;Nein;CerTest Biotec S.L.;Zaragoza;ES;;;;POC (ohne Gerät);92,9;76,5 – 99,1;99,6;97,6 – 100,0
-AT087/20;SARS-CoV-2 +  Flu A + B + RSV Quad Kassettenschnelltest inkl. Tupfer + pos. Kontrolle;Nein;CerTest Biotec S.L.;Zaragoza;ES;;;;POC (ohne Gerät);92,9;76,5 – 99,1;99,6;97,6 – 100,0
-AT543/21;SARS-CoV-2 Antigen Rapid Test (Lateral Flow Method);Nein;Changsha Sanji Bio-technology Co., Ltd;High-tech development zone, Changsha City,;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95;90,39 - 97,82;100;98,84 - 100,00
+AT881/21;Neuartiges Coronavirus (SARS-CoV-2)-Antigen-Schnelltestkit;Nein;Beijing Jinwofu Bioengineering Technology Co.,Ltd;Beijing;CN;Royal Biotech GmbH;Frankfurt am Main;DE;POC (ohne Gerät);96,14;92,56-98,03;100,00;96,40-100,00
+AT205/20;Jinwofu®(SARS-CoV-2) Antigen Rapid Test;Ja;Beijing Jinwofu Bioengineering Technology Co.,Ltd.;Beijing;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;;96,88;92,89 - 98,66;100,00;98,57 - 100
+AT391/21;COVID-19 Antigen Rapid Test Kit(Oral Saliva);Ja;BEIJING KEWEI CLINICAL DIAGNOSTIC REAGENT INC;BEIJING;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);96,82;92,76 - 98,63;100,00;97,66 - 100
+AT313/20;COVID-19 Antigen Rapid Test Kit(Colloidal Gold);Ja;BEIJING KEWEI CLINICAL DIAGNOSTIC REAGENT INC.;BEIJING;CN;Lotus NL B.V.;Den Haag;NL;;96,18;91,91 - 98,24;100,00;98,54 - 100
+AT354/20;SARS-CoV-2-Antigen-Schnelltestkit;Ja;Beijing Lepu Medical Technology  Co.,  Ltd.;Beijing;CN;Lepu Medical (Europe) Cooperatief U.A.;Heerenveen;NL;POC (ohne Gerät);92,00;83,63 - 96,28;99,26;95,92 - 99,87
+AT216/20;SARS-CoV-2-Antigen-Schnelltestkit ( Kolloidale Gold-Immunochromatographie);Ja;Beijing Lepu Medical Technology  Co.,  Ltd.;Beijing;CN;Lepu Medical (Europe) Cooperatief U.A.;Heerenveen;NL;POC (ohne Gerät);95,06;91,57 - 97,15;99,62;97,89 - 99,89
+AT052/20;SARS-CoV-2 Antigen Rapid Test Kit (Colloidal Gold Immunochromatography);Ja;Beijing Lepu Medical Technology  Co.,  Ltd.;Beijing;CN;Lepu Medical (Europe) Cooperatief U.A.;Heerenveen;NL;POC (ohne Gerät);95,06;91,57 - 97,15;99,62;97,89 - 99,93
+AT820/21;COVID-19 Antigen Rapid Test;Ja;Beijing O&D Biotech Co., Ltd.;Beijing;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);93,04;86,33 - 96,73;99,00;96,86 - 99,74
+AT1023/21;SARS-CoV-2 Antigen Rapid Test Device;Nein;Beijing Savant Biotechnology Co., Ltd.;Beijing;CN;Lotus NL B. V.;The Hague;NL;POC (ohne Gerät);97,25;92,22 - 99,06;99,52;97,35 - 99,92
+AT122/21;Tigsun COVID-19 Speichel Antigen-Schnelltest;Ja;Beijing Tigsun Diagnostics Co. Ltd.;Beijing;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);93,75;88,15 - 96,80;99,70;98,34 - 99,95
+AT022/21;WANTAI SARS-CoV-2 Ag Rapid Test (FIA);Ja;BEIJING WANTAI BIOLOGICAL CO., LTD;Changping District, Beijing;CN;Qarad b.v.b.a.;Geel;BE;POC (mit Gerät);96,60;92,68 - 98,41;96,90;95,29 - 98,00
+AT496/20;WANTAI SARS-CoV-2 Ag Rapid Test (Colloidal Gold);Ja;Beijing Wantai Biological Pharmacy Enterprise Co., Ltd;Beijing;CN;Qarad;Geel;BE;POC (ohne Gerät);96,10;92,19 - 98,10;98,30;96,89 - 99,13
+AT1050/21;SARS-CoV-2 Antigen Detection Kit (Colloidal Gold Immunochromatographic Assay);Nein;Bestnovo(Jiangsu) Medical Technology Co.,Ltd.;Taizhou City,Jiangsu Province;CN;SUNGO Europe B.V;Amsterdam,;NL;POC (ohne Gerät);96,72;91,82 - 99,10;98,96;94,86 - 99,98
+AT284/21;Tell Me Fast COVID-19 Antigen Test;Ja;Biocan Diagnostics Inc.;Coquitlam;CA;CMC Medical Diagnostics & Drugs S.L.;Malaga;ES;POC (ohne Gerät);86,10;80,30 - 90,40;100,00;99,00 - 100,00
+AT1164/21;Neuartiges Coronavirus (COVID-19) Antigen-Testkit (Kolloidales Gold);Nein;Bioda Diagnostics (Wuhan) Co., Ltd.;Wuhan;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);95,20;90,8 - 97,5;97,80;94,5 - 99,1
+AT787/21;SARS-COV-2-ANTIGEN-SCHNELLTEST-KARTE;Nein;BioDetect (Xiamen) Biotechnology Co., Ltd.;Xiamen;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);97,17;91,34 - 99,27;98,35;95,54 - 99,47
+AT043/20;SARS-CoV-2 Antigen Rapid Test Kit;Ja;Biohit Healthcare (Hefei) Co., Ltd.;Hefei;CN;ScheBo Biotech AG;Gießen;DE;POC (ohne Gerät);96,77;88,83 - 99,61;98,94;96,21 - 99,87
+AT879/21;SARS-CoV-2 Antigen Schnelltest (Kolloidale Gold-Methode);Nein;Biohit Healthcare (Hefei) Co., Ltd.;Hefei;CN;Brand-New Trading GmbH;Tiefgraben;AT;POC (ohne Gerät);96,12;91,19~98,73;99,49;97,19~99,99
+AT172/21;SARS-CoV-2 Ag Rapid Test;Nein;BioMaxima S.A.;Lublin;PL;;;;POC (ohne Gerät);95,70;90,2 - 98,1;99,10;96,6 - 99,7
+AT963/21;BioMedomics SARS-CoV-2 Antigen Test Kit (LFIA);Nein;BioMedomics, Inc.;Morrisville;US;MT Promedt Consulting GmbH;St Ingbert;DE;POC (ohne Gerät);95,54;89,9 - 98,5;99,04;94,8 - 100,0
+AT007/21;BIOMERICA COVID-19 Antigen-Schnelltest / Nasopharyngeal-Abstrich;Ja;BIOMERICA Inc.;Irvine, California;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);94,70;89,8 - 97,7;99,70;98,1 - 99,9
+AT1033/21;COVID-19 Antigen Test Kit (Colloidal Gold);Nein;BIONEOVAN CO., LTD;Beijing;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);97,14;91,88 - 99,41;99,25;95,88 - 99,98
+AT014/20;NowCheck COVID-19 Ag Test;Ja;Bionote, Inc.;Hwaseong-si, Gyeonggi-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;;89,20;81,7 - 93,9;97,60;95,1 - 98,8
+AT433/20;NowCheck COVID-19 Ag Test - Nasal Swab;Ja;BioNote Inc.;;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);89,20;81,70 - 93,90;97,30;94,80 - 98,60
+AT586/21;COVID-19 Rapid Antigen Test;Nein;Biopanda Reagents;Belfast;GB;;;;POC (ohne Gerät);93,80;89,2-96,9;99,60;97,7 – 99,9)
+AT805/21;Novel Coronavirus (2019-nCoV)-Antigen-Schnelltestgerät (vorderen Nasentupferproben);Nein;Bioscience (Tianjin) Diagnostic Technology Co.,Ltd.;Tianjin;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,67;91,31 - 98,94;99,20;96,83 - 99,86
+AT025/20;BIOSYNEX COVID-19 Ag BSS;Ja;Biosynex Swiss SA;Freiburg;CH;;;;POC (ohne Gerät);96,00;93,6 - 98,4;100,00;100 - 100
+AT349/21;SARS-CoV-2 Antigen Test Kit(colloidal gold method);Ja;BioTeke Corporation (Wuxi) Co.,Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,49;91,26-99,04;99,28;97,43-99,91
+AT948/21;SARS-CoV-2 Antigen Test Kit (Kolloidale Gold Methode);Nein;Bioteke Corporation(wuxi) Co.,Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);91,61;85,80-95,59;99,39;96,65-99,98
+AT162/20;BZ COVID-19 Ag Test (nasal swab);Nein;Biozentech Co., Ltd.;Seoul;KR;ATLAS BEAUTY sp.Zo.o;Poznan;PL;POC (ohne Gerät);95,00;91,00 - 97,58;99,30;97,61 - 99,92
+AT050/20;ichroma™ COVI-19 Ag;Nein;Boditech Med Inc.;Chuncheon-si, Gang-won-do;KR;Obelis s.a;Brussels;BE;POC (mit Gerät);90,40;83,2 - 94,7;97,60;91,5 - 99,3
+AT102/21;Rapid Response COVID-19 Antigen Rapid Test CE-IVD;Nein;BTNX, Inc.;Markham, Ontario;CA;MDSS GmbH;Hannover;DE;POC (ohne Gerät);90,60;84,5 - 94,9;100,00;98,53 - 100
+AT373/20;COVID-19 Antigen Rapid Test Device;Ja;BTNX Inc.;Ontario;CA;MDSS GmbH;Hannover;DE;POC (ohne Gerät);91,26;84,06 - 95,93;100,00;98,47 - 100
+AT797/21;C-Edge Covid19 Rapid Nasal Antigen;Nein;C EDGE BIOTECH ARGE TEKNOLOJI SAN VE TIC.LTD.STI;Gebze / KOCAELI;TR;;;;POC (ohne Gerät);97,46;95,82 - 98,51;98,90;97,81 - 99,69
+AT1176/21;AllCheck COVID19 Ag;Nein;CALTH Inc.;Gyeonggi-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);92,86;87,3 - 96,5;96,33;99,6 - 100
+AT1026/21;COVID19 (2019-nCoV) Antigen Rapid Test Kit (Colloidal Gold);Nein;Cangzhou Yongkang Medical Devices Co.,Ltd;Hebei;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);98,08;95,37 - 99,16;100,00;98,97 - 100,00
+AT924/21;CHECK UP SARS-COV-2 NASAL ANTIGEN RAPID TEST;Nein;Cesna Biyoteknoloji Arastirma Gelistirme Laboratuvar Sist. Ins.Müh.Dan.San.Tic.Ltd.Sti.;Pendik/istanbul;TR;;;;POC (ohne Gerät);99,30;95,82 - 98,51;98,80;97,81 - 99,69
+AT543/21;SARS-CoV-2 Antigen Rapid Test (Lateral Flow Method);Nein;Changsha Sanji Bio-technology Co., Ltd;High-tech development zone, Changsha City,;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95,00;90,39 - 97,82;100,00;98,84 - 100,00
+AT1010/21;Novel Coronavirus (COVID-19) Antigen Test Kit (Colloidal Gold);Nein;Changzhou Biowin Pharmaceutical Co.,Ltd.;Changzhou;CN;CMC Medical Devices& Drugs S.L.  ;Málaga;ES;POC (ohne Gerät);95,60;90,06 - 98,10;98,30;95,00 - 99,41
 AT337/20;COVID-19 Antigen Rapid Test (Nasopharyngeal / Oropharyngeal Swab-Casette)(POC);Ja;CHIL Tibbi Malzeme Sanayi Ticaret Ltd. Sti.;Izmir;TR;;;;POC (ohne Gerät);98,55;96,33 - 99,60;99,57;98,46 - 99,95
-AT795/21;ISIA SARS-CoV-2-Antigen-Schnelltestkit (Kollodiale Goldimmunochromatograpie);Nein;Chongqing iSIA BIO-Technology Co., Ltd;Chongqing;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);96,9;95,02-98,08;97,79;96,18-98,73
-AT595/21;M&D 2019-nCoV Antigen Test Kit;Nein;Chongqing M&D Biotechnology Co. Ltd;Chongqing;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);91,53;84,97 - 95,86;100;99,11 - 100,00
+AT841/21;SARS-CoV-2 Antigen Rapid Test kit;Nein;Chongiqng iSia Bio -Technology Co., Ltd;Chongqing;CN;CMC Medical-devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);96,90;95,02 - 98,08;97,79;96,18 - 98,73
+AT796/21;ISIA SARS-CoV-2-Antigen-Schnelltestkit;Nein;Chongqing iSIA BIO-Technology Co., Ltd;Chongqing;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);98,63;95,14 - 99,62;97,92;94,05 - 99,29
+AT795/21;ISIA SARS-CoV-2-Antigen-Schnelltestkit (Kollodiale Goldimmunochromatograpie);Nein;Chongqing iSIA BIO-Technology Co., Ltd;Chongqing;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);96,90;95,02-98,08;97,79;96,18-98,73
+AT635/21;ISIA SARS-CoV-2-Antigen-Schnelltestkit;Nein;Chongqing iSIA BIO-Technology Co., Ltd;Chongqing;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);97,06;93,3 - 98,74;98,00;94,97 - 99,22
+AT595/21;M&D 2019-nCoV Antigen Test Kit;Nein;Chongqing M&D Biotechnology Co. Ltd;Chongqing;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);91,53;84,97 - 95,86;100,00;99,11 - 100,00
 AT133/20;Novegent Test® SARS-CoV-2 Antigen Rapid Test Kit (Colloidal Gold Immunochromatography);Nein;Chongqing Novegent Biotech Co., Ltd;Jiulongpo District, Chongqing;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);98,31;90,91 - 99,96;99,18;95,52 - 99,98
-AT812/21;COVID-19 Antigen Rapid Test;Ja;CITEST DIAGNOSTICS INC;Vancouver BC;CA;CMC MEDICAL DEVICES & DRUGS SL;Málaga;ES;POC (ohne Gerät);95,3;90,0 - 98,3;99,3;97,4 - 99,9
-AT889/21;COVID-19 Antigen Rapid Test (Oral Fluid);Nein;CITEST DIAGNOSTICS INC;Vancouver BC;CA;CMC MEDICAL DEVICES & DRUGS SL;Málaga;ES;POC (ohne Gerät);90,1;82,5 - 95,1;99,3;97,7 - 99,9
-AT409/20;One Step 2019-Novel Coronavirus (2019-nCoV) Antigen Test Cassette;Nein;Co-Innovation Biotech Co. Ltd;Guangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);96,4;91 - 98,6;99,2;97,8 - 99,7
-AT185/21;2019-nCoV Antigen Screen Test;Nein;Co-Innovation Biotech Co. Ltd;Guangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);92,2;86,8 - 95,5;99,1;97,9 - 99,6
+AT812/21;COVID-19 Antigen Rapid Test;Ja;CITEST DIAGNOSTICS INC;Vancouver BC;CA;CMC MEDICAL DEVICES & DRUGS SL;Málaga;ES;POC (ohne Gerät);95,30;90,0 - 98,3;99,30;97,4 - 99,9
+AT889/21;COVID-19 Antigen Rapid Test (Oral Fluid);Ja;CITEST DIAGNOSTICS INC;Vancouver BC;CA;CMC MEDICAL DEVICES & DRUGS SL;Málaga;ES;POC (ohne Gerät);90,10;82,5 - 95,1;99,30;97,7 - 99,9
+AT185/21;2019-nCoV Antigen Screen Test;Nein;Co-Innovation Biotech Co. Ltd;Guangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);92,20;86,8 - 95,5;99,10;97,9 - 99,6
+AT409/20;One Step 2019-Novel Coronavirus (2019-nCoV) Antigen Test Cassette;Nein;Co-Innovation Biotech Co. Ltd;Guangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);96,40;91 - 98,6;99,20;97,8 - 99,7
 AT498/20;Convergys® COVID-19 Rapid Antigen Test;Nein;Convergent Technologies;Cölbe;DE;Lotus NL B. V.;The Hague;NL;POC (ohne Gerät);95,03;90,77 - 97,70;99,02;96,52 - 99,88
-AT548/21;Coretests® COVID-19 Ag Test (Nasopharyngeal swab specimens);Nein;Core Technology Co., Ltd.;Beijing;CN;Wellkang Ltd;Derry;IE;POC (ohne Gerät);98,1;94,50 - 99,60;99,6;98,60 - 100,00
-AT321/21;Core tests® COVID-19 Ag Test;Ja;Core Technology Co. ltd;Beijing,;CN;Wellkang Ltd.;Derry;IE;POC (ohne Gerät);98,1;94,5 - 99,6;99,6;98,2 - 100
-AT762/21;Canea Covid-19 Antigen Nasal Schnelltest - Canea Covid-19 Antigen Nasal Rapid Test;Nein;Core Technology Co.Ltd.;Beijing;CN;Wellkang Ltd. Enterprise Hub;Derry;IE;POC (ohne Gerät);98,1;94,5 - 99,6;99,2;97,3 - 99,9
-AT323/21;Canea Covid-19 Antigen Lutsch- & Speicheltest;Ja;Core Technology Co.Ltd.;Beijing;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,6;93,9 - 99,3;99,1;97,9 - 99,7
-AT267/20;Canea Covid-19 Antigen Schnelltest;Ja;Core Technology Co.Ltd.;Beijing;CN;Well Kang Ltd. Enterprise Hub;Derry;IE;POC (ohne Gerät);97,5;91,26 - 99,70;100;95,98 - 100,00
-AT390/21;OnSite COVID-19 Ag Rapid Test;Nein;CTK Biotech, Inc.;Poway;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);90,4;83,4 - 95,1;100;99,3 - 100
-AT096/20;DEDIATEST 2019-nCoV Antigen Rapid Test;Nein;Devidia GmbH;Weimar;DE;;;;;96,5;92,6 - 98,7;99,5;97,2 - 99,9
-AT058/20;DIAQUICK COVID-19 Ag Cassette;Ja;DIALAB GmbH;Wr. Neudorf;AT;;;;POC (ohne Gerät);97,3;90,45 - 99,67;100;97,72 - 100
-AT573/21;Diasia SARA-CoV-2 Ag;Nein;Diasia Biomedical Technology Co. Ltd.;Xixiang Tiegang Reservoir Road, Baoan District, Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);96,97;94,97 - 98,97;99,29;98,29 - 100
+AT548/21;Coretests® COVID-19 Ag Test (Nasopharyngeal swab specimens);Nein;Core Technology Co., Ltd.;Beijing;CN;Wellkang Ltd;Derry;IE;POC (ohne Gerät);98,10;94,50 - 99,60;99,60;98,60 - 100,00
+AT553/21;Coretests® COVID-19 Ag (Nasal swab specimens);Ja;Core Technology Co., Ltd.;Beijing;CN;Wellkang Ltd;Derry;IE;POC (ohne Gerät);98,10;94,45 - 99,06;99,20;97,25 - 99,91
+AT321/21;Core tests® COVID-19 Ag Test;Ja;Core Technology Co. ltd;Beijing,;CN;Wellkang Ltd.;Derry;IE;POC (ohne Gerät);98,10;94,5 - 99,6;99,60;98,2 - 100
+AT323/21;Canea Covid-19 Antigen Lutsch- & Speicheltest;Ja;Core Technology Co.Ltd.;Beijing;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,60;93,9 - 99,3;99,10;97,9 - 99,7
+AT267/20;Canea Covid-19 Antigen Schnelltest;Ja;Core Technology Co.Ltd.;Beijing;CN;Well Kang Ltd. Enterprise Hub;Derry;IE;POC (ohne Gerät);97,50;91,26 - 99,70;100,00;95,98 - 100,00
+AT762/21;Canea Covid-19 Antigen Nasal Schnelltest - Canea Covid-19 Antigen Nasal Rapid Test;Nein;Core Technology Co.Ltd.;Beijing;CN;Wellkang Ltd. Enterprise Hub;Derry;IE;POC (ohne Gerät);98,10;94,5 - 99,6;99,20;97,3 - 99,9
+AT1069/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold Method);Nein;CRDLIGHT Optoelectronic Technology CO., Ltd.;Jiangmen City, Guangdong Province;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);94,58;90,51 - 97,26;98,73;96,33 - 99,74
+AT390/21;OnSite COVID-19 Ag Rapid Test;Ja;CTK Biotech, Inc.;Poway;US;MDSS GmbH;Hannover;DE;POC (ohne Gerät);90,40;83,4 - 95,1;100,00;99,3 - 100
+AT715/21;COVID-19 Antigen Schnelltest;Nein;Dejavu Medikal San. ve Tic. Ltd. Sti.;Sehitkamil/Gaziantep;TR;;;;POC (ohne Gerät);99,01;97,49 - 99,73;99,57;98,46 - 99,95
+AT096/20;DEDIATEST 2019-nCoV Antigen Rapid Test;Nein;Devidia GmbH;Weimar;DE;;;;;96,50;92,6 - 98,7;99,50;97,2 - 99,9
+AT799/21;DEDIATEST Frontnasal;Nein;Devidia GmbH;Weimar;DE;MedNet GmbH;Münster;DE;POC (ohne Gerät);93,40;86,9-97,3;99,40;97,8-99,9
+AT1063/21;Covid-19 (2019-nCoV) Antigen Rapid Test Cassette;Nein;Dewei Medical Equipment Co., LTD.;Foshan, Shunde District;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);97,06;93,78 - 99,99;97,41;94,52 - 99,99
+AT1147/21;COVID-19 (2019-nCoV) Antigen Rapid Test Cassette;Nein;Dewei Medical Equipment Co.,Ltd;Foshan;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);97,06;93,78 - 99,99;97,41;94,52 - 99,99
+AT058/20;DIAQUICK COVID-19 Ag Cassette;Ja;DIALAB GmbH;Wr. Neudorf;AT;;;;;98,32;94,06 - 99,80;99,60;98,83 - 99,92
+AT1102/21;Diagnostic Kit for SARS-CoV-2 Ag;Nein;Diasia Biomedical Technology Co. Ltd.;Xixiang Tiegang Reservoir Road, Baoan District, Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (mit Gerät);97,24;95,34 - 99,14;99,33;98,43 - 100
 AT575/21;Diasia SARA-CoV-2 Ag;Nein;Diasia Biomedical Technology Co. Ltd.;Xixiang Tiegang Reservoir Road, Baoan District, Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);95,28;93,14 - 97,94;99,36;96,58 - 99,78
+AT573/21;Diasia SARA-CoV-2 Ag;Nein;Diasia Biomedical Technology Co. Ltd.;Xixiang Tiegang Reservoir Road, Baoan District, Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);96,97;94,97 - 98,97;99,29;98,29 - 100
 AT085/21;Covid-19 Antigen Detection Kit;Ja;DNA Diagnostic A/S;Risskov;DK;;;;POC (mit Gerät);93,75;89,8 - 97,7;99,56;98,69 - 100,0
-AT342/21;Dynamiker SARS-CoV-2 Ag Rapid Test;Nein;Dynamiker Biotechnology (Tianjin) Co., Ltd.;Tianjin;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,7;90,2 - 98,1;99,1;96,6 - 99,7
-AT605/21;Dynamiker SARS-CoV-2 Ag Rapid Test;Nein;Dynamiker Biotechnology (Tianjin) Co., Ltd.;Tianjin;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);93,28;87,29 - 96,55;99,2;95,61 - 99,86
+AT1146/21;COVID-19 Antigen Rapid Test (Nasal Swab);Nein;DRG Instruments GmbH;Marburg;DE;;;;POC (ohne Gerät);93,40;90,0 - 95,8;99,90;99,5 - 100
+AT1098/21;DS AntijenX Covid-19 AntigenSchnellnachweis-Kit;Nein;DS BIO VE NANO TEKNOLOJILERI ÜRÜN TAKIP DOGRULAMA IÇ VE DIS TICARET INC.;Çankaya / Ankara;TR;;;;POC (ohne Gerät);98,56;96,90 - 99,34;99,38;96,61 - 99,89
+AT605/21;Dynamiker SARS-CoV-2 Ag Rapid Test;Nein;Dynamiker Biotechnology (Tianjin) Co., Ltd.;Tianjin;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);93,28;87,29 - 96,55;99,20;95,61 - 99,86
+AT342/21;Dynamiker SARS-CoV-2 Ag Rapid Test;Ja;Dynamiker Biotechnology (Tianjin) Co., Ltd.;Tianjin;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,70;90,2 - 98,1;99,10;96,6 - 99,7
 AT609/21;Dynamiker SARS-CoV-2 Ag Rapid Test (Saliva);Nein;Dynamiker Biotechnology (Tianjin) Co., Ltd.;Tianjin;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);92,98;86,76 - 96,4;99,07;96,69 - 99,75
-AT032/20;Edinburgh Genetics ActivXpress+ COVID-19 Antigen Complete Testing Kit;Nein;Edinburgh Genetics Limited;Penicuik;GB;;;;;92,6;83 - 97,3;98,6;94,4 - 99,8
-AT712/21;BIOESSA SARS Cov-2 Antigen-Schne´lltest;Nein;ESSA COMMERCE Information Imp.&Exp. A.S;Istanbul;TR;ESSA COMMERCE Information Imp.&Exp. A.S.;Istanbul;TR;POC (ohne Gerät);99,4;98,1 - 99,8;99,68;95,5 - 99,9
+AT032/20;Edinburgh Genetics ActivXpress+ COVID-19 Antigen Complete Testing Kit;Ja;Edinburgh Genetics Limited;Penicuik;GB;;;;;92,60;83 - 97,3;98,60;94,4 - 99,8
+AT906/21;EONbt™ COVID-19 Antigen-Saliva;Nein;Eon Biotechnology Limited;Earley;GB;Neomedical Technologie;Marseille;FR;POC (ohne Gerät);91,95;86,35 - 95,77;99,27;97,89 - 99,85
+AT916/21;EONbt™ COVID-19 Antigen;Nein;Eon Biotechnology Limited;Earley;GB;Neomedical Technologie;Marseille;FR;POC (ohne Gerät);93,28;87,18 - 97,05;99,41;98,29 - 99,88
 AT714/21;BIOESSA SARS Cov-2 Antigen-Schne´lltest Nasalabstrich;Nein;ESSA COMMERCE Information Imp.&Exp. A.S;Istanbul;TR;ESSA COMMERCE Information Imp.&Exp. A.S.;Istanbul;TR;POC (ohne Gerät);99,15;92,09 - 99,2;98,75;98,1 - 99,8
-AT713/21;BIOESSA SARS Cov-2 Antigen-Schne´lltest  SPEICHEL;Nein;ESSA COMMERCE Information Imp.&Exp. A.S;Istanbul;TR;ESSA COMMERCE Information Imp.&Exp. A.S.;Istanbul;TR;POC (ohne Gerät);99,31;92 - 98,7;98,29;98,5 - 99,9
-AT491/20;EBS SARS-CoV-2 Ag Rapid Test;Ja;Eurobio Scientific;Les Ulis;FR;;;;POC (ohne Gerät);95,7;90,2 - 98,1;99,1;96,60 - 99,70
-AT173/21;CORA CHECK-19 comfort;Nein;fameditec GmbH;Düsseldorf;DE;;;;POC (ohne Gerät);92,9;87,89 - 96;99,58;97,39 - 99,99
-AT786/21;CORA CHECK-19 comfort;Nein;fameditec GmbH;Düsseldorf;DE;;;;POC (ohne Gerät);96,3;90,86 - 98,55;99,13;95,24 - 99,85
+AT712/21;BIOESSA SARS Cov-2 Antigen-Schne´lltest;Nein;ESSA COMMERCE Information Imp.&Exp. A.S;Istanbul;TR;ESSA COMMERCE Information Imp.&Exp. A.S.;Istanbul;TR;POC (ohne Gerät);99,40;98,1 - 99,8;99,68;95,5 - 99,9
+AT713/21;BIOESSA SARS Cov-2 Antigen-Schnelltest  SPEICHEL;Nein;ESSA COMMERCE Information Imp.&Exp. A.S;Istanbul;TR;ESSA COMMERCE Information Imp.&Exp. A.S.;Istanbul;TR;POC (ohne Gerät);99,31;92 - 98,7;98,29;98,5 - 99,9
+AT491/20;EBS SARS-CoV-2 Ag Rapid Test;Ja;Eurobio Scientific;Les Ulis;FR;Der Hersteller hat seinen Sitz in Frankreich;;;POC (ohne Gerät);95,70;90,2 - 98,1;99,10;96,60 - 99,70
+AT807/21;FAMEX SARS-CoV-2 Saliva Antigen Test Kit;Nein;Fago Medikal San. Tic. LTD;Bagcilar/Istanbul;TR;;;;POC (ohne Gerät);98,40;95,82 - 98,51;98,30;97,81 - 99,69
+AT808/21;FAMEX Coranavirus (2019-nCoV)-Antigentest;Nein;Fago Medikal San. Tic. LTD;Bagçilar/Istanbul;TR;;;;POC (ohne Gerät);97,70;95,82 - 98,51;98,00;97,81 - 99,69
+AT899/21;FAMEX SARS-CoV-2 AG Rapid Nasopharyngeal Test Kiti;Nein;Fago Medikal San. Tic. LTD;Bagggciiilar/Istanbul;TR;;;;POC (ohne Gerät);97,70;95,82 - 98,51;96,70;97,81 - 99,69
+AT786/21;CORA CHECK-19 comfort;Ja;fameditec GmbH;Düsseldorf;DE;;;;POC (ohne Gerät);96,30;90,86 - 98,55;99,13;95,24 - 99,85
 AT819/21;SARS-CoV-2 Antigen Test Kit(Colloidal Gold);Nein;Foregene Co., Ltd;Chengdu;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);94,55;88,51-97,97;96,88;92,19-99,14
-AT029/20;Espline SARS-CoV-2;Ja;Fujirebio Inc.;Shinjuku-ku, Tokyo;JP;Fujirebio Europe N.V.;Gent;BE;POC (ohne Gerät);80,6;69,1 - 88,6;100;96,3 - 100
-AT077/21;GA CoV-2 Antigen Rapid Test;Nein;GA Generic Assays GmbH;Dahlewitz / Berlin;DE;;;;POC (ohne Gerät);97,06;91,6 - 99,38;99,2;97,96 - 99,78
+AT587/21;FUJIFILM COVID-19 Ag Test;Ja;FUJIFILM Corporation;Tokyo;JP;FUJIFILM Europe GmbH;Düsseldorf;DE;POC (ohne Gerät);90,90;84,3 - 95,4;100,00;96,5 - 100,0
+AT029/20;Espline SARS-CoV-2;Ja;Fujirebio Inc.;Shinjuku-ku, Tokyo;JP;Fujirebio Europe N.V.;Gent;BE;POC (ohne Gerät);80,60;69,1 - 88,6;100,00;96,3 - 100
+AT782/21;GA CoV-2 Antigen Rapid Nasal;Nein;GA Generic Assays GmbH;Dahlewitz / Berlin;DE;;;;POC (ohne Gerät);96,10;90,26 - 98,92;99,20;97,96 - 99,78
+AT077/21;GA CoV-2 Antigen Rapid Test;Ja;GA Generic Assays GmbH;Dahlewitz / Berlin;DE;;;;POC (ohne Gerät);97,06;91,6 - 99,38;99,20;97,96 - 99,78
+AT019/20;GenBody COVID-19 Ag;Ja;GenBody Inc.;Cheonan-si;KR;MT Promedt Consulting GmbH;Sankt ingbert;DE;;90,00;73,47 - 97,89;98,00;92,96 - 99,76
 AT059/20;GenBody Influenza/COVID-19 Ag Multi;Ja;GenBody Inc.;Seobuk-gu, Cheonan-si, Chungcheongnam;KR;MT Promedt Consulting GmbH;St.Ingbert;DE;POC (ohne Gerät);96,83;92,07 - 99,13;99,18;97,25 - 99,59
-AT019/20;GenBody COVID-19 Ag;Ja;GenBody Inc.;Cheonan-si;KR;MT Promedt Consulting GmbH;Sankt ingbert;DE;;90;73,47 - 97,89;98;92,96 - 99,76
-AT494/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Ja;Genrui Biotech Inc.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,03;90,77 - 97,70;99,02;96,52 - 99,88
-AT815/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Genrui Biotech Inc.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);90,18;83,11 - 94,99;99,01;94,61 - 99,98
+AT843/21;COVID-19 Antigen Rapid Test;Nein;General Diagnostica Inc.;California;US;CMC Medical Devices & Drugs SL;Málaga;ES;POC (ohne Gerät);94,20;87,8 - 97,8;100,00;99,0 - 100,0
+AT1100/21;SARS-CoV-2 Antigen Rapid Test (Colloidal Gold) (Saliva/Swab);Nein;Genobio Pharmaceutical Co., Ltd.;Tianjin;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,19;91,42 - 99,27;99,26;97,97 - 99,76
 AT111/20;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Ja;Genrui Biotech Inc.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,03;90,77 - 97,70;99,02;96,52 - 99,88
 AT813/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Ja;Genrui Biotech Inc.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);91,15;84,33 - 95,67;99,02;94,66 - 99,98
-AT045/21;GenSure COVID-19 Antigen-Schnelltestkit;Nein;GenSure Biotec Inc.;Hebei;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);96,86;93,29 - 98,84;100;98,97 - 100
-AT364/21;DIA-COVID-19 Antigen Saliva Rapid Test;Ja;GenSure Biotech Inc.,;Hebei;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);96,73;92,54 - 98,93;100;98,38 - 100,0
-AT161/20;DIA-COVID COVID-19 Ag Rapid Test;Ja;GenSure Biotech Inc.,;Hebei;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);96,86;93,29 - 98,84;100;98,97 - 100,00
+AT763/21;ImuDiag™ COVID-19 Antigen Test (Colloidal Gold);Ja;Genrui Biotech Inc.;Shenzhen;CN;Lotus NL B.V.;Den Haag;NL;POC (mit Gerät);95,03;90,77-97,70;99,02;96,52-99,88
+AT815/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Genrui Biotech Inc.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);90,18;83,11 - 94,99;99,01;94,61 - 99,98
+AT494/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Ja;Genrui Biotech Inc.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,03;90,77 - 97,70;99,02;96,52 - 99,88
+AT045/21;GenSure COVID-19 Antigen-Schnelltestkit;Nein;GenSure Biotec Inc.;Hebei;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);96,86;93,29 - 98,84;100,00;98,97 - 100
+AT364/21;DIA-COVID-19 Antigen Saliva Rapid Test;Ja;GenSure Biotech Inc.,;Hebei;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);96,73;92,54 - 98,93;100,00;98,38 - 100,0
+AT161/20;DIA-COVID COVID-19 Ag Rapid Test;Ja;GenSure Biotech Inc.,;Hebei;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);96,86;93,29 - 98,84;100,00;98,97 - 100,00
 AT166/20;One Step test SARS- CoV-2 Antigen ( Colloidal Gold );Ja;Getein Biotech, inc;Nanjing;CN;Lotus NL B.V;Den Haag;NL;POC (ohne Gerät);97,06;93,30 - 98,74;98,71;96,73 - 99,50
-AT757/21;Neuartiges Coronavirus (2019-nCoV) -Antigen-Testkit (Kolloidale Goldimmunochromatographie) - Speichel;Nein;Glallergen CO., LTD.;Tianjin;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);93,52;88,88 - 98,16;99,02;97,11 - 100
-AT756/21;Neuartiges Coronavirus (2019-nCoV) -Antigen-Testkit  (Kolloidale Goldimmunochromatographie) -oropharyngealen Tupfern;Nein;Glallergen CO., LTD.;Tianjin;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);95,37;91,41 - 99,33;99,02;97,11 - 100,00
-AT755/21;Neuartiges Coronavirus (2019-nCoV) -Antigen-Testkit   (Kolloidale Goldimmunochromatographie)- Nasenabstrich;Nein;Glallergen CO., LTD.;Tianjin;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);94,44;90,12 - 98,76;99,02;97,11 - 100,00
-AT533/21;SARS-CoV-2 Antigen Kit (Colloidal Gold);Nein;Goldsite Diagnostics Inc.;Shenzhen;CN;CMC MEDICAL DEVICES & DRUGS, S.L.;Málaga;ES;POC (ohne Gerät);93,04;86,75 - 96,95;100;98,56 - 100,00
-AT018/20;GENEDIA W COVID-19 Ag;Ja;Green Cross Medical Science Corp.;Geumwang-eup, Eumseong-gun;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);90,1;85,1 - 93,9;100;98,4 - 100
-AT542/20;2019-nCoV Antigen-Testkit (kolloidale Goldmethode);Ja;Guangdong Hecin Scientific, Inc.;Guangzhou City;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,6;92,24 - 98,89;99,07;96,68 - 99,89
-AT731/21;2019-nCoV Ag Rapid Detection Kit (Immuno-Chromatography);Nein;Guangdong Longsee Biomedical Co., Ltd.;Guangzhou;CN;MedPath GmbH;München;DE;POC (mit Gerät);95,51;92,66 - 97,32;99,72;98,23 - 99,99
-AT215/21;2019-nCoV Ag Rapid Detection Kit (Immuno-Chromatography);Nein;Guangdong Longsee Biomedical Co., Ltd.;Guangzhou;CN;MedPath GmbH;München;DE;POC (mit Gerät);87,58;81,04 - 92,17;99,09;96,40 - 99,84
-AT086/20;Covid-19 AG Test Kit;Ja;Guangdong Wesail Biotech Co., Ltd.;Dongguan, Guangdong;CN;Lotus NL B.V;Gravenhagen;NL;POC (ohne Gerät);90;78,35 - 95,72;99,2;97,93 - 99,69
-AT015/21;V-ChekTM 2019-nCoV Saliva Schnelltest;Nein;Guangzhou Decheng Biotechnology Co., LTD;Guangzhou;CN;Caretechion GmbH;Düsseldorf;DE;POC (ohne Gerät);95,65;90,22 - 98,13;98,44;94,48 - 99,57
-AT232/20;V-Chek 2019-nCoV Ag Schnelltest;Nein;Guangzhou Decheng Biotechnology Co., LTD;Guangzhou;CN;Caretechion GmbH;Düsseldorf;DE;POC (ohne Gerät);96,67;88,64 - 99,08;99,5;97,22 - 99,91
-AT582/21;2019-nCoV Antigen Test Kit(Colloidal Gold Immunochromatographic Assay);Nein;Guangzhou Tebsun Bio-Tech Development Co., LTDGuangzhou Tebsun Bio-Tech Development Co., LTD;Guangzhou, Guangdong;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);95,1;90,9 - 97,4;99,6;97,5 - 99,9
-AT725/21;Finecare™ 2019-nCoV Antigen Test;Nein;Guangzhou Wondfo Biotech Co., Ltd;Guangzhou;CN;Qarad BV;Geel;BE;POC (mit Gerät);98,37;95,31 - 99,66;99,43;97,97 - 99,93
+AT814/21;One Step Test for SARS-CoV-2 Antigen (Colloidal Gold) (Saliva);Ja;Getein Biotech, Inc.;Nanjing;CN;MedNet EC-REP GmbH;Münster;DE;POC (ohne Gerät);98,70;95,39 - 99,64;99,61;97,83 - 99,93
+AT757/21;Neuartiges Coronavirus (2019-nCoV) -Antigen-Testkit (Kolloidale Goldimmunochromatographie) - Speichel;Ja;Glallergen CO., LTD.;Tianjin;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);93,52;88,88 - 98,16;99,02;97,11 - 100
+AT755/21;Neuartiges Coronavirus (2019-nCoV) -Antigen-Testkit   (Kolloidale Goldimmunochromatographie)- Nasenabstrich;Ja;Glallergen CO., LTD.;Tianjin;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);94,44;90,12 - 98,76;99,02;97,11 - 100,00
+AT756/21;Neuartiges Coronavirus (2019-nCoV) -Antigen-Testkit  (Kolloidale Goldimmunochromatographie) -oropharyngealen Tupfern;Ja;Glallergen CO., LTD.;Tianjin;CN;Osmunda Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);95,37;91,41 - 99,33;99,02;97,11 - 100,00
+AT533/21;SARS-CoV-2 Antigen Kit (Colloidal Gold);Nein;Goldsite Diagnostics Inc.;Shenzhen;CN;CMC MEDICAL DEVICES & DRUGS, S.L.;Málaga;ES;POC (ohne Gerät);93,04;86,75 - 96,95;100,00;98,56 - 100,00
+AT018/20;GENEDIA W COVID-19 Ag;Ja;Green Cross Medical Science Corp.;Geumwang-eup, Eumseong-gun;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);90,10;85,1 - 93,9;100,00;98,4 - 100
+AT1120/21;2019-nCoV Saliva Antigen Rapid Test Kit;Nein;Guangdong Hecin Scientific, Inc;Guangdong;CN;Share Info GmbH;Düsseldorf;DE;POC (ohne Gerät);91,82;85,04 - 96,19;98,45;94,51 - 99,81
+AT542/20;2019-nCoV Antigen-Testkit (kolloidale Goldmethode);Ja;Guangdong Hecin Scientific, Inc.;Guangzhou City;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,60;92,24 - 98,89;99,07;96,68 - 99,89
+AT731/21;2019-nCoV Ag Rapid Detection Kit (Immuno-Chromatography);Ja;Guangdong Longsee Biomedical Co., Ltd.;Guangzhou;CN;MedPath GmbH;München;DE;POC (mit Gerät);95,51;92,66 - 97,32;99,72;98,23 - 99,99
+AT215/21;2019-nCoV Ag Rapid Detection Kit (Immuno-Chromatography);Ja;Guangdong Longsee Biomedical Co., Ltd.;Guangzhou;CN;MedPath GmbH;München;DE;POC (mit Gerät);87,58;81,04 - 92,17;99,09;96,40 - 99,84
+AT086/20;Covid-19 AG Test Kit;Ja;Guangdong Wesail Biotech Co., Ltd.;Dongguan, Guangdong;CN;Lotus NL B.V;Gravenhagen;NL;POC (ohne Gerät);90,00;78,35 - 95,72;99,20;97,93 - 99,69
+AT876/21;2019-nCoV Saliva Ag EASY TEST (Immunochromatography);Nein;Guangzhou Decheng Biotechnology Co., LTD;Guangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);93,91;87,97 - 97,02;99,15;95,32 - 99,85
+AT688/21;2019-nCoV Ag Speichel Schnelltest-Kassette;Ja;Guangzhou Decheng Biotehnology Co.,LTD;Guangzhou;CN;Caretechion GmbH;Düsseldorf;DE;POC (ohne Gerät);95,65;90,22 - 98,13;98,44;94,48 - 99,57
+AT1111/21;SARS-CoV-2 antigen IVD kit NASAL;Nein;Guangzhou Fengle Medical Technology Co., Ltd.;Guangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);95,24;85,94 - 98,20;99,35;86,28 - 99,96
+AT582/21;2019-nCoV Antigen Test Kit(Colloidal Gold Immunochromatographic Assay);Nein;Guangzhou Tebsun Bio-Tech Development Co., LTDGuangzhou Tebsun Bio-Tech Development Co., LTD;Guangzhou, Guangdong;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);95,10;90,9 - 97,4;99,60;97,5 - 99,9
+AT1009/21;Weimibio;Nein;Guangzhou Weimi Bio-Tech Co., Ltd;Guangzhou;CN;CMCMedicalDevices & DrugsS.L.;Malaga;ES;POC (ohne Gerät);93,91;87,97 - 97,02;99,03;94,70 - 99,83
 AT382/21;Dr. Starke 2019-nCov-Antigen-Test ( Lateral Flow Method ) Nasal Swab;Nein;Guangzhou Wondfo Biotech Co., Ltd;Guangzhou;CN;Qarad BV;Geel;BE;;97,83;93,78-99,55;99,08;96,73-99,89
+AT258/21;2019-nCov-Antigen-Saliva/Sputum-Test;Ja;Guangzhou Wondfo Biotech Co., Ltd;Guangzhou;CN;Qarad BV;Geel;BE;;97,60;93,15-99,50;99,09;96,75-99,89
 AT125/20;Wondfo 2019-nCoV Antigen Test (Lateral Flow Method);Ja;Guangzhou Wondfo Biotech Co., Ltd;Guangzhou;CN;Qarad BV;Geel;BE;POC (ohne Gerät);96,18;94,11 - 97,54;99,72;98,45 - 99,95
-AT258/21;2019-nCov-Antigen-Saliva/Sputum-Test;Nein;Guangzhou Wondfo Biotech Co., Ltd;Guangzhou;CN;Qarad BV;Geel;BE;;97,6;93,15-99,50;99,09;96,75-99,89
-AT568/21;COVID-19 Antigen Rapid Test Cassette(Nasal Swab);Nein;Hangzhou Biotest Biotech Co.,Ltd;Hangzhou, Zhejiang;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);93,2;86,5 - 97,2;99,2;97,1 - 99,9
-AT086/21;COVID-19 Antigen Rapid Test Cassette(Saliva/Nasopharyngeal Swab);Nein;Hangzhou Biotest Biotech Co.,Ltd;Hangzhou, Zhejiang;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);89,9;83,0 - 94,7;100;98,2 - 100,0
-AT114/21;COVID-19 Antigen Rapid Test Cassette (Saliva);Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,8;92,0 - 98,7;99,6;98,5 - 99,9
-AT003/21;COVID-19/Influenza A+B Antigen Combo Rapid Test;Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);97,7;93,5 - 99,2;99,8;98,8 - 100
-AT373/21;COVID-19 Antigen Rapid Test Cassette (Nasal Swab);Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);91,4;85,9 - 94,9;99,4;98,1 - 99,8
-AT526/21;CLUNGENE COVID-19 Antigen Rapid Test Cassette;Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp. GmbH (Europa);Hamburg;DE;POC (ohne Gerät);92;87,0 - 95,2;99,7;98,8 - 99,9
-AT079/20;COVID-19 Antigen Rapid Test;Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);98,5;91,8 - 99,7;100;98,2 - 100
-AT816/21;COVID-19 Antigen-Testkassette;Nein;Hangzhou DIAN Biotechnology Co., Ltd.;Hangzhou;CN;DeRossi Investition & Entwicklung GmbH;Kalkar;DE;POC (ohne Gerät);97,6;94,9 - 100;98,4;96,9 - 99,9
+AT725/21;Finecare™ 2019-nCoV Antigen Test;Nein;Guangzhou Wondfo Biotech Co., Ltd;Guangzhou;CN;Qarad BV;Geel;BE;POC (mit Gerät);98,37;95,31 - 99,66;99,43;97,97 - 99,93
+AT070/21;Clongene COVID-19 Antigen Rapid Test Cassette;Nein;Hanghzou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH;Hamburg;DE;POC (ohne Gerät);98,00;94,2 - 99,3;99,70;98,8 - 99,9
+AT1151/21;SARS-CoV-2 Antigen Rapid Test (Swab);Nein;Hangzhou AllTest Biotech Co., Ltd.;Hangzhou;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);93,40;86,9 - 97,3;99,90;99,6 - 99,9
+AT766/21;SARS-CoV-2AntigenRapidTest(Nasal Swab);Nein;Hangzhou AllTest Biotech Co., Ltd.;Hangzhou;CN;MedNet GmbH;MÜNSTER;DE;POC (ohne Gerät);96,20;93,9 - 97,8;99,90;99,4 - 100
+AT972/21;SARS-CoV-2 Antigen Test Kit (colloidal gold method);Nein;Hangzhou Bioer Technology Co., Ltd.;Hangzhou;CN;CMC MEDICAL DEVICES & DRUGS SL;Málaga;ES;Labor;95,40;89,0 - 98,3;99,00;97,3 - 99,7
+AT086/21;COVID-19 Antigen Rapid Test Cassette(Saliva/Nasopharyngeal Swab);Nein;Hangzhou Biotest Biotech Co.,Ltd;Hangzhou, Zhejiang;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);89,90;83,0 - 94,7;100,00;98,2 - 100,0
+AT568/21;COVID-19 Antigen Rapid Test Cassette(Nasal Swab);Nein;Hangzhou Biotest Biotech Co.,Ltd;Hangzhou, Zhejiang;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);93,20;86,5 - 97,2;99,20;97,1 - 99,9
+AT968/21;BioAid® SARS-CoV-2 Antigen Rapid Test;Nein;Hangzhou Bosure Biotech Co., Ltd.;Hangzhou;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);92,59;85,93 - 96,75;99,41;97,88 - 99,93
+AT825/21;SARS-CoV-2 Rapid Antigen Test;Nein;Hangzhou Careomedic Tech Co. , Ltd;Hangzhou;CN;OBELIS S.A;Brussels;BE;POC (ohne Gerät);94,20;87,8 - 97,8;100,00;99,0 - 100,0
+AT828/21;Novel Coronavirus (SARS-COV-2) Antigen Rapid Test Kit;Nein;Hangzhou Chemi Health Technology Co., Ltd;Hangzhou City, Zhejiang Province;CN;Riomavix S.L.;Madrid;ES;POC (ohne Gerät);94,17;94 - 97;99,99;98,30 - 99,99
+AT003/21;COVID-19/Influenza A+B Antigen Combo Rapid Test;Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);97,70;93,5 - 99,2;99,80;98,8 - 100
+AT526/21;CLUNGENE COVID-19 Antigen Rapid Test Cassette;Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp. GmbH (Europa);Hamburg;DE;POC (ohne Gerät);92,00;87,0 - 95,2;99,70;98,8 - 99,9
+AT114/21;COVID-19 Antigen Rapid Test Cassette (Saliva);Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);91,30;85,9 - 94,7;99,60;98,5 - 99,9
+AT373/21;COVID-19 Antigen Rapid Test Cassette (Nasal Swab);Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);91,40;85,9 - 94,9;99,40;98,1 - 99,8
+AT079/20;COVID-19 Antigen Rapid Test;Ja;Hangzhou Clongene Biotech Co., Ltd.;Hangzhou;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);92,00;87,0 - 95,2;99,70;98,8 - 99,9
+AT816/21;COVID-19 Antigen-Testkassette;Nein;Hangzhou DIAN Biotechnology Co., Ltd.;Hangzhou;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);97,60;94,9 - 100;98,40;96,9 - 99,9
 AT662/21;Novel Coronavirus (SARS-CoV-2) Antigen Rapid Test Cassette;Nein;Hangzhou Fanttest Biotech Co.,Ltd;Hangzhou City;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,07;96,19 - 99,94;99,34;98,57 - 100
-AT415/21;SARS-CoV-2-Antigen-Schnelltestgerät;Nein;HANGZHOU FUNWORLD BIOTECH CO., LTD;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);92,9;88,5 - 97,4;98,6;96,8 - 100,00
+AT415/21;SARS-CoV-2-Antigen-Schnelltestgerät;Nein;HANGZHOU FUNWORLD BIOTECH CO., LTD;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);92,90;88,5 - 97,4;98,60;96,8 - 100,00
+AT818/21;KaiBiLi COVID-19 Antigen;Nein;Hangzhou Genesis Biodetection & Biocontrol Co.,LTD;HANGZHOU;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,20;92 - 99,4;100,00;98,3 - 100
+AT228/20;SARS-CoV2 Antigen Rapid Test;Ja;Hangzhou Immuno Biotech Co.,Ltd;Hangzhou City;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,60;88,89 - 98,63;100,00;98,78 - 100,00
 AT149/21;Immunobio SARS-CoV-2 Antigen SPUTUM Rapid Test Kit;Ja;Hangzhou Immuno Biotech Co.,Ltd;Hangzhou;CN;Brand-New Trading GmbH;Tiefgraben;AT;POC (ohne Gerät);91,06;84,55-95,08;98,67;94,96-99,94
-AT228/20;SARS-CoV2 Antigen Rapid Test;Ja;Hangzhou Immuno Biotech Co.,Ltd;Hangzhou City;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,6;88,89 - 98,63;100;98,78 - 100,00
 AT150/21;Immunobio SARS-CoV-2 Antigen ANTERIOR NASAL Rapid Test Kit (minimal invasive);Ja;Hangzhou Immuno Biotech Co.,Ltd;Hangzhou;CN;Brand-New Trading GmbH;Tiefgraben;AT;POC (ohne Gerät);94,39;88,06~97,65;97,67;97,00~100,00
-AT754/21;Immunobio SARS-CoV-2 Antigen SPUTUM Rapid Test Kit;Nein;Hangzhou Immuno Biotech Co.,Ltd.;Hangzhou City, Zhejiang;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);91,06;84,55 - 95,08;99;94,01 - 99,99
-AT011/20;Novel Coronavirus (COVID-19) Antigen Test Kit (Colloidal Gold);Ja;Hangzhou Laihe Biotech Co.,Ltd.;Hangzhou , Zhejiang Province;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,16;93,93 - 97,75;99,7;98,92 - 99,96
-AT060/20;COVID-19 antigen Rapid Test Device (Colloidal Gold);Ja;Hangzhou Lysun Biotechnology Co., Ltd.;Hangzhou;CN;Lotus NL B.V;The Hague;NL;POC (mit Gerät);96,29;92,18 - 100;100;99,8 - 100
-AT088/21;Heinzer Antigen Covid19 Spucktest Schnelltest;Nein;Hangzhou Realy Tech Co. Ltd.;Hangzhou;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (mit Gerät);92,9;87,89 - 96,00;99,58;97,39 - 99,99
+AT754/21;Immunobio SARS-CoV-2 Antigen SPUTUM Rapid Test Kit;Nein;Hangzhou Immuno Biotech Co.,Ltd.;Hangzhou City, Zhejiang;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);91,06;84,55 - 95,08;99,00;94,01 - 99,99
+AT1142/21;SARS-CoV-2 Ag Rapid Test Kit;Nein;Hangzhou Jucheng Medical Products Co., Ltd;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);91,59;90,01 - 97,53;100,00;97,61 - 100,00
+AT961/21;SARS-CoV-2 Ag Schnelltestkit;Nein;Hangzhou Jucheng Medical Products Co., Ltd;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);95,90;91,23 - 98,64;100,00;98,36 - 100,00
+AT011/20;Novel Coronavirus (COVID-19) Antigen Test Kit (Colloidal Gold);Ja;Hangzhou Laihe Biotech Co.,Ltd.;Hangzhou , Zhejiang Province;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,16;93,93 - 97,75;99,70;98,92 - 99,96
+AT905/21;COVID-19 Antigen-Schnelltestgerät (Kolloidales Gold);Ja;Hangzhou Lysun Biotechnology Co., Ltd.;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,46;93,05 - 99,87;100,00;100,00 - 100,00
+AT060/20;COVID-19 antigen Rapid Test Device (Colloidal Gold);Ja;Hangzhou Lysun Biotechnology Co., Ltd.;Hangzhou;CN;Lotus NL B.V;The Hague;NL;POC (ohne Gerät);96,67;92,39 - 98,91;100,00;99,39 - 100
+AT1057/21;SARS-CoV-2 Rapid Antigen Test;Nein;Hangzhou Newlink Biotech Co.,Ltd;Hangzhou;CN;CMC MEDICAL DEVICES & DRUGS SL;Málaga;ES;POC (ohne Gerät);93,30;86,7 - 97,3;100,00;99,0 - 100,0
+AT1017/21;SARS-CoV-2 Rapid Antigen Test;Nein;Hangzhou Newlink Biotech Co.,Ltd;Hangzhou;CN;CMC MEDICAL DEVICES & DRUGS SL;Málaga;ES;POC (ohne Gerät);94,20;87,8 - 97,8;100,00;99,0 - 100,0
+AT088/21;Heinzer Antigen Covid19 Spucktest Schnelltest;Nein;Hangzhou Realy Tech Co. Ltd.;Hangzhou;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);92,90;87,89 - 96,00;99,58;97,39 - 99,99
+AT945/21;COVID-19 Antigen Rapid Test Device(nasal swab);Nein;HangZhou Realy Tech Co.,Ltd.;Hangzhou;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);95,38;91,34 - 97,67;100,00;98,93 - 100
 AT653/21;SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Hangzhou Sejoy Electronics & Instruments Co., Ltd.;Hangzhou City;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);95,76;90,39 - 98,61;99,38;98,20 - 99,87
+AT1062/21;SARS-CoV-2 & Influenza A+B Antigen Combo Rapid Test Cassette;Nein;Hangzhou Sejoy Electronics & Instruments Co.,Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);97,40;90,39 - 98,61;99,10;98,20 - 99,87
+AT628/21;SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Hangzhou Sejoy Electronics & Instruments Co.,Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);97,40;90,39 - 98,61;99,10;98,20 - 99,87
 AT615/21;SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Hangzhou Sejoy Electronics & Instruments Co.,Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);95,65;90,14 - 98,75;99,26;97,84 - 99,85
 AT629/21;SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Hangzhou Sejoy Electronics & Instruments Co.,Ltd.;Hangzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);95,76;90,39 - 98,61;99,38;98,20 - 99,87
 AT437/21;COVID-19 Test Kit (Colloidal Gold Method);Nein;Hangzhou Singclean Medical Products Co., Ltd.;Hangzhou, Zhejiang;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98,56;95,87 - 99,51;99,03;97,18 - 99,67
-AT233/20;Testsealabs COVID-19 Antigen Test Cassette (Swab);Ja;Hangzhou Testsea Biotechnology Co. Ltd;Hangzhou;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);92,1;87,7 - 93,9;98,1;95,14 - 99,44
-AT375/21;Testsealabs Covid-19 Antigen Schnelltest Kassette (Saliva);Nein;Hangzhou Testsea Biotechnology Co. LTD;Juhang District, Hangzhou, China;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);93,6;92,5 - 94,7;98,8;98,5 - 99,1
-AT082/20;Testsealabs Covid-19 Antigen Schnelltest Kassette;Ja;Hangzhou Testsea Biotechnology Co. LTD;Juhang District, Hangzhou, China;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);97,6;94,9 - 100,0;98,4;96,9 - 99,9
-AT821/21;SARS-CoV-2 Nucleocapsid (N) Antigen Rapid Test Cassette;Nein;Hangzhou Zheda Dixun Biological Gene Engineering Co., Ltd.;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (mit Gerät);93;85,6 - 96,9;100;95,4 - 100
-AT001/20;Clinitest Rapid COVID-19 Antigentest - Coronavirus Ag Rapid Test Cassette (Swab);Ja;Healgen Scientific Limited Liability Company;Houston;US;Shanghai International Holding Corp. GmbH (Europe);;DE;POC (ohne Gerät);97,25;92,17 - 99,43;100;97,16 - 100
-AT079/21;Coronavirus Ag Rapid Test Cassette (swab);Nein;Healgen Scientific Limited Liability Company;Houston;US;Shanghai International Holding Corp.;Hamburg;DE;POC (ohne Gerät);98,32;94,06 - 99,80;99,6;98,83 - 99,92
-AT564/21;Corona Virus (COVID-19) Antigen Rapid Test (Colloidal Gold) - for saliva;Nein;Hoyotek Biomedical Co., Ltd.;Tianjin;CN;QAdvis EAR AB;Lund;SE;POC (ohne Gerät);91;83,60 - 95,80;97,3;93,36 - 99,27
-AT562/21;Corona Virus (COVID-19) Antigen Rapid Test (Colloidal Gold) - for oropharyngeal swab;Nein;Hoyotek Biomedical Co., Ltd.;Tianjin;CN;QAdvis EAR AB;Lund;SE;POC (ohne Gerät);93;86,11 - 97,14;97,5;95,45 - 98,79
-AT563/21;Corona Virus (COVID-19) Antigen Rapid Test (Colloidal Gold) - for nasopharyngeal swab;Nein;Hoyotek Biomedical Co., Ltd.;Tianjin;CN;QAdvis EAR AB;Lund;SE;POC (ohne Gerät);96;90,7-98,8;99;97,46-99,73
-AT294/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold Method);Nein;Hubei Jinjian Biology Co.,Ltd;Xianning city;CN;Lotus NL B.V;The Hague;NL;POC (ohne Gerät);98,02;93,07 - 99,46;99,3;96,30 - 99,88
-AT083/20;Humasis COVID-19 Ag Test;Ja;Humasis Co,.Ltd.;Gyeonggi-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;;95,5;90,0 - 98,1;100;98,0 - 100,0
-AT411/20;One Step 2019-Novel Coronavirus (2019-nCoV) Antigen Test;Nein;iDUN Solutions LLC;Walnut, California;US;Qarad EC-REP BV;Geel;BE;POC (ohne Gerät);96,4;91,0 - 98,6;99,2;97,8 - 99,7
-AT533/20;PreventID® SARS-CoV-2-Antigen;Nein;Immundiagnostik AG;Bensheim;DE;;;;POC (ohne Gerät);93,7;89,50 - 97,90;99,2;97,69 - 100
-AT637/21;INNOVA SARS-CoV2 Rapid Antigen Qualitative Test;Nein;Innova Medical Group, Inc.;Pasadena;US;Lotus LN B.V.;The Hague;NL;POC (ohne Gerät);97,6;93,15 - 99,50;100;98,64 - 100,00
-AT665/21;Coronavirus (SARS-Cov-2) Antigen Rapid Test Cassette(Speichel);Nein;Innovation Biotech (Beijing) Co., Ltd;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);96,73;92,54 - 98,93;100;98,38 - 100,00
-AT536/21;INVBIO Coronavirus (SARS-Cov-2) Antigen Rapid Test Cassette(swab);Nein;Innovation Biotech (Beijing) Co., Ltd;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);95,6;93,79 - 98,66;99;97,12 - 100
-AT247/21;INVBIO SARS-CoV-2 Antigen Rapid Test (Saliva);Nein;Innovation Biotech (Beijing) Co. LTD;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);95,6;93,79 - 98,66;99,99;97,12 - 100,00
-AT199/21;2019 nCoV A g Test (Latex Chromatography Assay);Nein;Innovita (Tangshan) Biological Technology Co., Ltd.;Qian'an/ Hebei;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98,7;95,27 - 99,84;100;98,53 - 100
-AT749/21;2019-nCoV Ag-Test (Latex-Chromatografie-Testsatz);Nein;Innovita (Tangshan) Biological Technology Co., Ltd.;Qian'an;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);94,78;88,99 - 98,06;100;97,02 - 100,00
-AT783/21;2019-nCoV Ag-Test (Latex-Chromatografie-Testsatz)-Speichel;Nein;Innovita (Tangshan) Biological Technology Co., Ltd.;Qian'an;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);94,59;88,61 - 97,99;100;96,67 - 100
-AT574/21;Rapid SARS-CoV-2 Antigen Test;Nein;InTec PRODUCTS, INC.;Xiamen;CN;Qarad BV;Geel;BE;POC (ohne Gerät);93,1;86,40 - 96,60;100;98,70 - 100,00
-AT909/21;COVID-19/Influenza A&B Antigen Rapid Test Kit (ColloidalGold);Nein;Jiangsu Accuracy Biotechnology Co.,Ltd.;Danyang , Jiangsu Province;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,04;92,59 - 99,19;99,4;98,69 - 99,78
-AT849/21;Novel Corona Virus(SARS-COV-2) AG Rapid Test Kit;Nein;JIANGSU BIOPERFECTUS TECHNOLOGIES CO., LTD.;Taizhou, Jiangsu;CN;MedNet EC-Rep;Münster;DE;POC (ohne Gerät);97,06;93,30 - 98,74;99,15;98,25 - 99,59
-AT267/21;COVID-19 Salivary Antigen Rapid Test Kit(Colloidal Gold);Nein;Jiangsu Konsung Bio-Medical Science And Technology Co., Ltd.;Danyang , Jiangsu Province;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,3;91,57 - 98,79;99,34;98,70 - 99,71
-AT231/20;COVID-19 Antigen Rapid Test Kit (Colloidal Gold);Nein;Jiangsu Konsung Bio-Medical Science And Technology Co., Ltd.;Danyang , Jiangsu Province;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,3;91,57 - 98,79;99,34;98,70 - 99,71
-AT170/21;COVID-19/Influenza A&B Antigen Rapid Test Kit (ColloidalGold);Nein;Jiangsu Konsung Bio-Medical Science And Technology Co., Ltd.;Danyang , Jiangsu Province;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);97,04;92,59 - 99,19;99,4;98,69 - 99,78
-AT329/21;COVID-19 Salivary Antigen Rapid Test Kit (Colloidal Gold);Nein;Jiangsu Konsung Bio-Medical Science And Technology Co.,Ltd.;Danyang;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,3;91,57 - 98,79;99,34;98,7 - 99,71
-AT671/21;SARS-CoV-2 Virus Antigen Detection Kit (colloidal gold method);Nein;Jiangsu Macro & Micro-Test Med-Tech Co., Ltd;Nantong;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);96,85;91,64 - 98,99;99,49;96,77 - 99,97
+AT1013/21;COVID-19 Test Kit (Colloidal Gold Method);Nein;Hangzhou Singclean Medical Products Co., Ltd.;hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,22;92,15 - 99,05;99,00;97,47 - 99,61
+AT1012/21;COVID-19 Antigen Test Kit (Colloidal Gold);Nein;Hangzhou Singclean Medical Products Co., Ltd.;hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);99,99;97,75 - 100;99,57;97,58 - 99,92
+AT1132/21;SARS-CoV-2 Nucleocapsid (N) Antigen Rapid Test Cassette(Swab);Nein;Hangzhou Sino-Europe Biomedical Science Park Co., Ltd;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);92,73;85,74 - 96,58;100,00;95,79 - 100
+AT233/20;Testsealabs COVID-19 Antigen Test Cassette (Swab);Ja;Hangzhou Testsea Biotechnology Co. Ltd;Hangzhou;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);92,10;87,7 - 93,9;98,10;95,14 - 99,44
+AT082/20;Testsealabs Covid-19 Antigen Schnelltest Kassette;Ja;Hangzhou Testsea Biotechnology Co. LTD;Juhang District, Hangzhou, China;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);97,60;94,9 - 100,0;98,40;96,9 - 99,9
+AT375/21;Testsealabs Covid-19 Antigen Schnelltest Kassette (Saliva);Nein;Hangzhou Testsea Biotechnology Co. LTD;Juhang District, Hangzhou, China;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);93,60;92,5 - 94,7;98,80;98,5 - 99,1
+AT1112/21;SARS-CoV-2 Antigen Test (COV-N002);Nein;Hangzhou Tongzhou Biotechnology Co., Ltd.;Hangzhou;CN;SUNGO Europe B.V;Amsterdam,;NL;POC (ohne Gerät);94,20;87,8 - 97,8;100,00;99,0 - 100,0
+AT934/21;SARS-CoV-2 Nucleocapsid (N) Antigen Rapid Test Cassette(Swab);Nein;Hangzhou Zheda Dixun Biological Gene Engineering Co., Ltd.;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (mit Gerät);93,52;86,64 - 97,13;99,15;94,68 - 99,96
+AT821/21;SARS-CoV-2 Nucleocapsid (N) Antigen Rapid Test Cassette;Nein;Hangzhou Zheda Dixun Biological Gene Engineering Co., Ltd.;Hangzhou;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (mit Gerät);93,00;85,6 - 96,9;100,00;95,4 - 100
+AT219/20;COVID-19 Antigen Rapid Test Device;Nein;HangzhouLysun Biotechnology Co. Ltd.;Hangzhou;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);97,55;93.84 - 99.33;100,00;99.38 - 100
+AT079/21;Coronavirus Ag Rapid Test Cassette (swab);Nein;Healgen Scientific Limited Liability Company;Houston;US;Shanghai International Holding Corp.;Hamburg;DE;POC (ohne Gerät);98,32;94,06 - 99,80;99,60;98,83 - 99,92
+AT001/20;Clinitest Rapid COVID-19 Antigentest - Coronavirus Ag Rapid Test Cassette (Swab);Ja;Healgen Scientific Limited Liability Company;Houston;US;Shanghai International Holding Corp. GmbH (Europe);;DE;POC (ohne Gerät);97,25;92,17 - 99,43;100,00;97,16 - 100
+AT965/21;Rapid COVID-19 Antigen Test (Swab);Nein;Healgen Scientific Limited Liability Company;Houston;US;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);98,32;94,06 - 99,80;99,60;98,83 - 99,92
+AT563/21;Corona Virus (COVID-19) Antigen Rapid Test (Colloidal Gold) - for nasopharyngeal swab;Ja;Hoyotek Biomedical Co., Ltd.;Tianjin;CN;QAdvis EAR AB;Lund;SE;POC (ohne Gerät);96,00;90,7-98,8;99,00;97,46-99,73
+AT564/21;Corona Virus (COVID-19) Antigen Rapid Test (Colloidal Gold) - for saliva;Ja;Hoyotek Biomedical Co., Ltd.;Tianjin;CN;QAdvis EAR AB;Lund;SE;POC (ohne Gerät);91,00;83,60 - 95,80;97,30;93,36 - 99,27
+AT562/21;Corona Virus (COVID-19) Antigen Rapid Test (Colloidal Gold) - for oropharyngeal swab;Ja;Hoyotek Biomedical Co., Ltd.;Tianjin;CN;QAdvis EAR AB;Lund;SE;POC (ohne Gerät);93,00;86,11 - 97,14;97,50;95,45 - 98,79
+AT922/21;2019-nCoV Ag Rapid Test Kit;Nein;Huachenyang (Shenzhen) Technology Co., Ltd;Shenzhen;CN;Qarad EC-REP BV;Geel;BE;POC (ohne Gerät);96,15;90,86 - 99,69;99,78;97,75 - 99,81
+AT294/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold Method);Ja;Hubei Jinjian Biology Co.,Ltd;Xianning city;CN;Lotus NL B.V;The Hague;NL;POC (ohne Gerät);98,02;93,07 - 99,46;99,30;96,30 - 99,88
+AT083/20;Humasis COVID-19 Ag Test;Ja;Humasis Co,.Ltd.;Gyeonggi-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;;95,50;90,0 - 98,1;100,00;98,0 - 100,0
+AT1106/21;2019-nCoV Ag Saliva Rapid Test Card (Immunochromatography);Nein;Hunan Zonka Biotech Co., Ltd;Changsha;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);95,65;90,22 - 98,13;98,44;94,48 - 99,57
+AT411/20;One Step 2019-Novel Coronavirus (2019-nCoV) Antigen Test;Nein;iDUN Solutions LLC;Walnut, California;US;Qarad EC-REP BV;Geel;BE;POC (ohne Gerät);96,40;91,0 - 98,6;99,20;97,8 - 99,7
+AT533/20;PreventID® SARS-CoV-2-Antigen;Nein;Immundiagnostik AG;Bensheim;DE;;;;POC (ohne Gerät);93,70;89,50 - 97,90;99,20;97,69 - 100
+AT637/21;INNOVA SARS-CoV2 Rapid Antigen Qualitative Test;Ja;Innova Medical Group, Inc.;Pasadena;US;Lotus LN B.V.;The Hague;NL;POC (ohne Gerät);97,60;93,15 - 99,50;100,00;98,64 - 100,00
+AT536/21;INVBIO Coronavirus (SARS-Cov-2) Antigen Rapid Test Cassette(swab);Nein;Innovation Biotech (Beijing) Co., Ltd;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);95,60;93,79 - 98,66;99,00;97,12 - 100
+AT665/21;Coronavirus (SARS-Cov-2) Antigen Rapid Test Cassette(Speichel);Nein;Innovation Biotech (Beijing) Co., Ltd;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);96,73;92,54 - 98,93;100,00;98,38 - 100,00
+AT1073/21;Coronavirus (SARS-Cov-2) Antigen Test Cassette (Nasal swab);Nein;Innovation Biotech (Beijing) Co., Ltd;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,60;93,79 - 98,66;99,00;97,12 - 100
+AT247/21;INVBIO SARS-CoV-2 Antigen Rapid Test (Saliva);Ja;Innovation Biotech (Beijing) Co. LTD;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);95,60;93,79 - 98,66;99,99;97,12 - 100,00
+AT199/21;2019 nCoV A g Test (Latex Chromatography Assay);Nein;Innovita (Tangshan) Biological Technology Co., Ltd.;Qian'an/ Hebei;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98,70;95,27 - 99,84;100,00;98,53 - 100
+AT749/21;2019-nCoV Ag-Test (Latex-Chromatografie-Testsatz);Nein;Innovita (Tangshan) Biological Technology Co., Ltd.;Qian'an;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);94,78;88,99 - 98,06;100,00;97,02 - 100,00
+AT783/21;2019-nCoV Ag-Test (Latex-Chromatografie-Testsatz)-Speichel;Nein;Innovita (Tangshan) Biological Technology Co., Ltd.;Qian'an;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);94,59;88,61 - 97,99;100,00;96,67 - 100
+AT939/21;Rapid SARS-CoV-2 Antigen Test;Nein;InTec PRODUCTS, INC.;Xiamen;CN;Qarad BV;Geel;BE;POC (ohne Gerät);91,09;83,93 - 95,24;99,33;97,59 - 99,82
+AT981/21;Rapid SARS-CoV-2 Antigen Test;Nein;InTec PRODUCTS, INC.;Xiamen;CN;Qarad BV;Geel;BE;POC (ohne Gerät);96,30;93,1 - 98,0;100,00;99,3 - 100,0
+AT574/21;Rapid SARS-CoV-2 Antigen Test;Ja;InTec PRODUCTS, INC.;Xiamen;CN;Qarad BV;Geel;BE;POC (ohne Gerät);93,10;86,40 - 96,60;100,00;98,70 - 100,00
+AT910/21;COVID-19 Salivary Antigen Rapid Test Kit(Colloidal Gold);Nein;Jiangsu Accuracy Biotechnology Co.,Ltd.;Danyang , Jiangsu Province;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,30;91,57 - 98,79;99,34;98,70 - 99,71
+AT908/21;COVID-19 Antigen Rapid Test Kit (Colloidal Gold);Nein;Jiangsu Accuracy Biotechnology Co.,Ltd.;Danyang , Jiangsu Province;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,14;93,46 - 99,07;99,06;96,63 - 99,89
+AT909/21;COVID-19/Influenza A&B Antigen Rapid Test Kit (ColloidalGold);Nein;Jiangsu Accuracy Biotechnology Co.,Ltd.;Danyang , Jiangsu Province;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,04;92,59 - 99,19;99,40;98,69 - 99,78
+AT849/21;Novel Corona Virus(SARS-COV-2) AG Rapid Test Kit;Ja;JIANGSU BIOPERFECTUS TECHNOLOGIES CO., LTD.;Taizhou, Jiangsu;CN;MedNet EC-Rep;Münster;DE;POC (ohne Gerät);97,06;93,30 - 98,74;99,15;98,25 - 99,59
+AT642/21;SARS-CoV-2-Antigen Test;Nein;Jiangsu Dablood Pharmaceutical Co., Ltd;Nanjing;CN;CMC Medical Devices & Drugs SL;Malaga;ES;POC (ohne Gerät);98,41;93,81 - 99,72;98,94;98,8 - 99,82
+AT303/21;COVID-19 Antigen Schnelltest Kassette (Speichel);Ja;Jiangsu Diagnostics Biotechnology Co.,Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);97,26;93,17 - 98,93;100,00;97,21 - 100
+AT267/21;COVID-19 Salivary Antigen Rapid Test Kit(Colloidal Gold);Nein;Jiangsu Konsung Bio-Medical Science And Technology Co., Ltd.;Danyang , Jiangsu Province;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,30;91,57 - 98,79;99,34;98,70 - 99,71
+AT231/20;COVID-19 Antigen Rapid Test Kit (Colloidal Gold);Ja;Jiangsu Konsung Bio-Medical Science And Technology Co., Ltd.;Danyang , Jiangsu Province;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,30;91,57 - 98,79;99,34;98,70 - 99,71
+AT170/21;COVID-19/Influenza A&B Antigen Rapid Test Kit (ColloidalGold);Nein;Jiangsu Konsung Bio-Medical Science And Technology Co., Ltd.;Danyang , Jiangsu Province;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);97,04;92,59 - 99,19;99,40;98,69 - 99,78
+AT329/21;COVID-19 Salivary Antigen Rapid Test Kit (Colloidal Gold);Nein;Jiangsu Konsung Bio-Medical Science And Technology Co.,Ltd.;Danyang;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,30;91,57 - 98,79;99,34;98,7 - 99,71
 AT667/21;SARS-CoV-2 Virus Antigen Detection Kit (colloidal gold method);Nein;Jiangsu Macro & Micro-Test Med-Tech Co., Ltd;Nantong;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);97,46;92,19 - 99,34;99,45;96,53 - 99,97
-AT244/20;SARS-CoV-2 antigen Test Kit (LFIA);Ja;Jiangsu Medomics medical technology Co.,Ltd;Nan Jing;CN;R Sight B.V.;Eindhoven;NL;POC (ohne Gerät);96,64;91,62 - 99,08;99,1;96,77 - 99,89
-AT509/20;COVID-19-Antigen-Schnelltestkit (kolloidales Gold);Nein;Jiangsu Shurui Biologische Technologie Co., Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);98,74;96,36 - 99,57;100;99,13 - 100
-AT612/21;COVID-19 Ag Rapid Saliva Test Device;Nein;Jiangsu Well Biotech Co., Ltd.;Changzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,6;93,79 - 98,66;100;97,12 - 100
-AT883/21;COVID-19 Ag Rapid Test Device;Nein;Jiangsu Well Biotech Co., Ltd.;Changzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,74;89,53 - 97,43;99;98,12 - 100
-AT303/21;COVID-19 Antigen Schnelltest Kassette (Speichel);Nein;JiangsuDiagnosticsBiotechnologyCo.,Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);97,26;93,17-98,93;100;97,21-100
-AT418/20;COVID-19-Antigen-Schnelltestkit (kolloidales Gold);Nein;JiangsuDiagnosticsBiotechnologyCo.,Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);97,58;95,6 - 98,68;100;98,18 - 100
-AT305/21;COVID-19 / Influenza A + B Antigen Combo Schnelltestkassette  (Speichel)Kolloidales Gold;Nein;JiangsuDiagnosticsBiotechnologyCo.,Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);97,45;93,63-99;100;96,4-100
-AT770/21;Novel Coronavirus (SARS-CoV-2) Antigen Rapid Detection Kit;Nein;Jiangxi Province JinHuan Medical Instrument Co., LTD.;Nanchang, Jiangxi;CN;SINNO GmbH;Friedberg;DE;POC (ohne Gerät);96;94,07 - 97,93;99,7;95,46 - 96,54
+AT671/21;SARS-CoV-2 Virus Antigen Detection Kit (colloidal gold method);Nein;Jiangsu Macro & Micro-Test Med-Tech Co., Ltd;Nantong;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);96,85;91,64 - 98,99;99,49;96,77 - 99,97
+AT781/21;SARS-CoV-2-Antigen-Testkit (LFIA);Ja;Jiangsu Medomics Medica Technology Co., Ltd;Nanjing;CN;R Sight B.V.;Eindhoven;NL;POC (ohne Gerät);97,73;94,78 - 99,26;99,51;98,24 - 99,94
+AT244/20;SARS-CoV-2 antigen Test Kit (LFIA);Ja;Jiangsu Medomics medical technology Co.,Ltd;Nan Jing;CN;R Sight B.V.;Eindhoven;NL;POC (ohne Gerät);96,64;91,62 - 99,08;99,10;96,77 - 99,89
+AT1082/21;SARS-CoV-2 Antigen Test Cassette;Nein;Jiangsu Mole Bioscience Co., LTD.;Tai Zhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,31;94,00 - 99,50;99,17;95,50 - 99,90
+AT673/21;SARS-CoV-2-Antigen-Testkassette (Nasenabstrichprobe);Nein;Jiangsu Mole Bioscience CO., LTD.;Tai Zhou;CN;SUNGO EUROPE B.V.;Amsterdam;NL;POC (ohne Gerät);97,30;94,8 - 99,8;98,40;96,9---99,9
+AT509/20;COVID-19-Antigen-Schnelltestkit (kolloidales Gold);Nein;Jiangsu Shurui Biologische Technologie Co., Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);98,74;96,36 - 99,57;100,00;99,13 - 100
+AT612/21;COVID-19 Ag Rapid Saliva Test Device;Nein;Jiangsu Well Biotech Co., Ltd.;Changzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,60;93,79 - 98,66;100,00;97,12 - 100
+AT1081/21;COVID-19 Ag Rapid Saliva Test Device;Nein;Jiangsu Well Biotech Co., Ltd.;Changzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,15;91,31 - 98,35;100,00;98,12 - 100
+AT883/21;COVID-19 Ag Rapid Test Device;Nein;Jiangsu Well Biotech Co., Ltd.;Changzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,74;89,53 - 97,43;99,00;98,12 - 100
+AT305/21;COVID-19 / Influenza A + B Antigen Combo Schnelltestkassette  (Speichel)Kolloidales Gold;Nein;JiangsuDiagnosticsBiotechnologyCo.,Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);97,45;93,63-99;100,00;96,4-100
+AT418/20;COVID-19-Antigen-Schnelltestkit (kolloidales Gold);Nein;JiangsuDiagnosticsBiotechnologyCo.,Ltd.;Taizhou;CN;CMC Medical Devices&Drugs S.L.;málaga;ES;POC (ohne Gerät);97,58;95,6 - 98,68;100,00;98,18 - 100
+AT770/21;Novel Coronavirus (SARS-CoV-2) Antigen Rapid Detection Kit;Ja;Jiangxi Province JinHuan Medical Instrument Co., LTD.;Nanchang, Jiangxi;CN;SINNO GmbH;Friedberg;DE;POC (ohne Gerät);96,00;94,07 - 97,93;99,70;95,46 - 96,54
+AT882/21;SARS-CoV-2 (2019-nCoV)-Antigen-Speicheltestkit;Nein;Jiaxing Wisetest Bio-Tech Co., Ltd.;Jiaxing;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);91,80;83-95;100,00;93-100
 AT559/21;SARS-CoV-2 Antigen Rapid Detection Kit (Colloidal Gold Method);Nein;JINAN BABIO BIOTECHNOLOGY CO., LTD.;Jinan City, Shandong Province;CN;MedPath GmbH;München;DE;POC (ohne Gerät);97,05;95,38 - 98,72;99,76;99,53 - 99,99
-AT236/20;Covid-19 Antigen Schnelltest (Colloidales Gold);Ja;Joinstar Biomedical Technology Co., Ltd;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,1;88,9 - 99,2;98,1;95,3 - 99,5
-AT353/21;COVID-19 Antigen Schnelltest (Kollodiales Gold);Nein;JOINSTAR BIOMEDICAL TECHNOLOGY CO.,LTD;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,1;90,26 - 98,92;99,2;97,96 - 99,78
-AT527/20;COVID-19 Speichel Antigen Rapid Test;Nein;Joysbio Biotechnology Co., Ltd;Tianjin;CN;Lotus NL. B.V.;The Hague;NL;;95,1;88,9 - 98,4;100;98,6 - 100
+AT236/20;Covid-19 Antigen Schnelltest (Colloidales Gold);Ja;Joinstar Biomedical Technology Co., Ltd;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,10;88,9 - 99,2;98,10;95,3 - 99,5
+AT824/21;Joinstar COVID-19 Antigen-Schnellstest Spucktest (Kolloidales Gold);Nein;Joinstar Biomedical Technology Co.,Ltd.;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,10;90,26 - 98,92;99,00;97,68 - 99,67
+AT353/21;COVID-19 Antigen Schnelltest (Kollodiales Gold);Nein;JOINSTAR BIOMEDICAL TECHNOLOGY CO.,LTD;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,10;90,26 - 98,92;99,20;97,96 - 99,78
+AT527/20;COVID-19 Speichel Antigen Rapid Test;Ja;Joysbio Biotechnology Co., Ltd;Tianjin;CN;Lotus NL. B.V.;The Hague;NL;;95,10;88,9 - 98,4;100,00;98,6 - 100
 AT692/21;SARS-CoV-2 Antigen Rapid Test Kit-PRO (Colloidal Gold) / Test Kit für neuartiges Coronavirus-Antigen PRO (kolloidale Gold-Methode);Nein;JOYSBIO (Tianjin) Biotechnology CO., LTD.;Tianjin;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,18;93,6 - 99,8;99,55;97,5 - 100,0
-AT099/20;COVID-19 Antigen Rapid Test Strip;Nein;Koch Biotechnology (Beijing) Co., Ltd.;Beijing;CN;Wellkang Ltd.;Dover;GB;POC (ohne Gerät);98,5;97,2 - 99,8;99,3;98,5 - 100
-AT487/21;KOCH Biotechnology Covid-19 Antigen Schnelltest Kit;Nein;KOCH Biotechnology (Beijing) Co., Ltd.;Beijing;CN;CARETECHION GmbH;Düsseldorf;DE;POC (ohne Gerät);98,5;97,2 - 99,80;99,3;98,50 - 100
-AT127/20;LABNOVATION SARS-CoV-2 Antigen Schnelltest;Ja;LABNOVATION TECHNOLOGIES, INC.;Guangming District,Shenzhen;CN;MedNet EC-Rep GmbH;Münster;DE;POC (ohne Gerät);96,3;89,4 - 99,22;97,3;94,81 - 98,84
+AT099/20;COVID-19 Antigen Rapid Test Strip;Nein;Koch Biotechnology (Beijing) Co., Ltd.;Beijing;CN;Wellkang Ltd.;Dover;GB;POC (ohne Gerät);98,50;97,2 - 99,8;99,30;98,5 - 100
+AT487/21;KOCH Biotechnology Covid-19 Antigen Schnelltest Kit;Nein;KOCH Biotechnology (Beijing) Co., Ltd.;Beijing;CN;CARETECHION GmbH;Düsseldorf;DE;POC (ohne Gerät);98,50;97,2 - 99,80;99,30;98,50 - 100
+AT1032/21;SARS-CoV-2 Antigen Saliva Rapid Test Kit (Immunochromatography);Nein;Labnovation Technologies, Inc.;Shenzhen, Guangdong;CN;MedNet EC-REP GmbH;Münster;DE;POC (ohne Gerät);95,10;88,93 - 98,39;97,25;95,13 - 98,62
+AT127/20;LABNOVATION SARS-CoV-2 Antigen Schnelltest;Ja;LABNOVATION TECHNOLOGIES, INC.;Guangming District,Shenzhen;CN;MedNet EC-Rep GmbH;Münster;DE;POC (ohne Gerät);96,30;89,4 - 99,22;97,30;94,81 - 98,84
 AT128/21;Medicovid SARS-CoV-2 AG Antigen Schnelltest SPEICHEL 1;Nein;LANGJIE Biotechnology, Ltd;Xiamen, Fuijan;CN;SUNGO EUROPE B.V.;Amsterdam;NL;POC (ohne Gerät);91,71;90,11 - 94,41;99,69;98,09 - 100
-AT746/21;Reagent Test Kit COVID-19 Antigen;Nein;Lansion Biotechnology Co., Ltd.;Najing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);85,8;80,3 - 91,3;100;98,12 - 100,0
-AT684/21;SARS-Cov-2 Nucleocapsid(N) Antigen Rapid Test Cassette (Swab);Nein;LiClear Biotech(Hangzhou)Co.,Ltd;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,1;89,03-97,89;99,34;96,34-99,88
+AT746/21;Reagent Test Kit COVID-19 Antigen;Nein;Lansion Biotechnology Co., Ltd.;Najing;CN;Lotus NL B.V.;The Hague;NL;POC (mit Gerät);85,80;80,3 - 91,3;100,00;98,12 - 100,0
+AT684/21;SARS-Cov-2 Nucleocapsid(N) Antigen Rapid Test Cassette (Swab);Nein;LiClear Biotech(Hangzhou)Co.,Ltd;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,10;89,03-97,89;99,34;96,34-99,88
+AT1055/21;COVID-19 Antigen-Schnelltest Nasenabstrich;Nein;Lifecosm Biotech Limited;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);93,60;88,20 - 96,60;99,40;98,10 - 99,80
+AT1054/21;SARS-CoV-2 COVID-19 Antigen-Schnelltest;Nein;Lifecosm Biotech Limited;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);92,20;85,30 - 96,00;98,10;95,30 - 99,30
+AT1056/21;COVID-19 Antigen-Speichelschnelltest;Nein;Lifecosm Biotech Limited;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);91,00;83,77 - 95,19;99,59;98,51 - 99,89
+AT720/21;Novel Coronavirus (SARS-CoV-2) Antigen Rapid Test (Collodial Gold);Nein;LT Biotech LTD.;Vilnius;LT;;;;POC (ohne Gerät);95,07;91,13 - 97,61;99,74;98,55 - 99,99
 AT455/20;PocRoc ® SARS-CoV-2 Antigen Schnellnachweiskit (Gold kolloidal);Ja;Lumigenex (Suzhou) Co., Ltd.;Suzhou;CN;Riomavix S.L.;Madrid;ES;POC (ohne Gerät);93,33;86,27 - 97,05;99,16;96,68 - 99,85
-AT151/20;QuickProfile COVID-19 Antigen Test Card;Ja;LumiQuick Diagnostics Inc.;CA;US;Lotus NL B.V.;;NL;POC (ohne Gerät);93,7;89,5 - 97,9;98,8;96,5 - 99,99
-AT075/20;LumiraDx SARS-CoV-2 Ag Test;Ja;LumiraDx UK Ltd.;Alloa, Stirling;GB;LumiraDx AB;Solna;SE;POC (mit Gerät);93,8;89,2 - 96,5;98,8;97,6 - 99,4
-AT912/21;Compromise Covid19 Rapid Antigen Test Kit;Nein;MCC SAGLIK MEDIKAL ITHALAT IHRACAT SAN. VE TIC. LTD. STI.;ISTANBUL;TR;Boom Bap Nederland BV;Hoofddorp- Amsterdam;NL;POC (ohne Gerät);97,9;95,82 - 98,51;99,6;97,81 - 99,69
+AT151/20;QuickProfile COVID-19 Antigen Test Card;Ja;LumiQuick Diagnostics Inc.;CA;US;Lotus NL B.V.;;NL;POC (ohne Gerät);96,10;94,5 - 97,7;99,50;99,1 - 99,9
+AT075/20;LumiraDx SARS-CoV-2 Ag Test;Ja;LumiraDx UK Ltd.;Alloa, Stirling;GB;LumiraDx AB;Solna;SE;POC (mit Gerät);93,80;89,2 - 96,5;98,80;97,6 - 99,4
+AT1003/21;LumiraDx SARS-CoV-2 Ag Pool Test;Ja;LumiraDx UK Ltd.;Alloa, Stirling;GB;LumiraDx AB;Solna;SE;POC (mit Gerät);93,80;89,2 - 96,5;98,80;97,6 - 99,4
+AT940/21;Severe Acute Respiratory Syndrome Coronavirus 2(SARS-CoV-2) Antigen Assay Kit by Colloidal Gold Method;Nein;Maccura Biotechnology Co.,Ltd.;Chengdu;CN;Shanghai International Holding Corp. GmbH(Europe);Hamburg;DE;POC (ohne Gerät);96,08;90,35 - 98,47;99,19;97,08 - 99,78
+AT912/21;Compromise Covid19 Rapid Antigen Test Kit;Nein;MCC SAGLIK MEDIKAL ITHALAT IHRACAT SAN. VE TIC. LTD. STI.;ISTANBUL;TR;Boom Bap Nederland BV;Hoofddorp- Amsterdam;NL;POC (ohne Gerät);97,90;95,82 - 98,51;99,60;97,81 - 99,69
+AT868/21;Wellion SARS-CoV-2 PLUS ANTIGEN Rapid Test;Nein;MED TRUST Handelsges.m.b.H.;Marz;AT;;;;POC (ohne Gerät);96,69;92,48 - 98,58;99,48;98,11 - 99,86
 AT284/20;VivaDiag Wellion SARS CoV-2 Antigen Schnelltest;Nein;MED TRUST Handelsges.m.b.H.;Marz;AT;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,65;90,22 - 98,13;99,99;98,63 - 100
-AT541/20;"	@Sight COVID-19 Antigen Test Kit";Nein;Mediclone Biotech Pvt. Ltd.;Chennai, Tamil Nadu;IN;HÄLSA Pharma GmbH;Lübeck;DE;POC (ohne Gerät);95,6;94,31-96,67;99;98,27-99,49
-AT479/20;BioCheck;Nein;Medicon Co.,Ltd.;Hanoi;VN;CMC Medical Devices & Drugs, S.L.;Malaga;ES;POC (ohne Gerät);96,52;91,40 - 98,64;100;97,74 - 100,00
-AT028/20;MEDsan® Multiplex (SC2 & Flu A/B) Rapid Test;Ja;MEDsan GmbH;Hamburg;DE;;;;POC (ohne Gerät);92,5;86,4 - 96,0;99,8;98,9 - 100
-AT082/21;MEDsan® SARS-CoV-2 Ag Duo;Ja;MEDsan GmbH;Hamburg;DE;;;;POC (ohne Gerät);96,7;91,7 - 98,7;100;99,2 - 100
-AT012/20;MEDsan® SARS-CoV-2 Antigen Rapid Test;Ja;MEDsan GmbH;Hamburg;DE;;;;POC (ohne Gerät);92,5;86,4 - 96,0;99,8;98,9 - 100
-AT214/20;SARS-CoV-2 Antigen Rapid Test Cassette (Colloidal Gold);Nein;Merlin Biomedical (Xiamen) Co., Ltd.;Xiamen;CN;Qarad EC-REP BV;Geel;BE;POC (ohne Gerät);95,05;88,93 - 97,87;98,99;94,50 - 99,82
-AT500/21;COVID-19 Antigen Schnelltest;Ja;MEXACARE GmbH;Heidelberg;DE;;;;POC (ohne Gerät);96,1;95,5 - 98,8;99,1;98,4 - 99,9
+AT541/20;"	@Sight COVID-19 Antigen Test Kit";Nein;Mediclone Biotech Pvt. Ltd.;Chennai, Tamil Nadu;IN;HÄLSA Pharma GmbH;Lübeck;DE;POC (ohne Gerät);95,60;94,31-96,67;99,00;98,27-99,49
+AT479/20;BioCheck;Nein;Medicon Co.,Ltd.;Hanoi;VN;CMC Medical Devices & Drugs, S.L.;Malaga;ES;POC (ohne Gerät);96,52;91,40 - 98,64;100,00;97,74 - 100,00
+AT012/20;MEDsan® SARS-CoV-2 Antigen Rapid Test;Ja;MEDsan GmbH;Hamburg;DE;;;;POC (ohne Gerät);92,50;86,4 - 96,0;99,80;98,9 - 100
+AT082/21;MEDsan® SARS-CoV-2 Ag Duo;Ja;MEDsan GmbH;Hamburg;DE;;;;POC (ohne Gerät);96,70;91,7 - 98,7;100,00;99,2 - 100
+AT028/20;MEDsan® Multiplex (SC2 & Flu A/B) Rapid Test;Ja;MEDsan GmbH;Hamburg;DE;;;;POC (ohne Gerät);92,50;86,4 - 96,0;99,80;98,9 - 100
+AT234/21;MERISCREEN COVID-19 Antigen Detection Test;Nein;Meril Diagnostics. Pvt. Ltd.;Gujarat;IN;OBELIS S.A.;Brussels;BE;POC (ohne Gerät);97,12;91,80 - 99,40;100,00;96,38 - 100
+AT214/20;SARS-CoV-2 Antigen Rapid Test Cassette (Colloidal Gold);Ja;Merlin Biomedical (Xiamen) Co., Ltd.;Xiamen;CN;Qarad EC-REP BV;Geel;BE;POC (ohne Gerät);95,05;88,93 - 97,87;98,99;94,50 - 99,82
+AT790/21;SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Merlin Biomedical (Xiamen) Co., Ltd.;Xiamen;CN;Qarad EC-REP BV;Geel;BE;POC (ohne Gerät);95,50;90,5 - 98,0;99,70;98,1 - 99,9
+AT500/21;COVID-19 Antigen Schnelltest;Ja;MEXACARE GmbH;Heidelberg;DE;;;;POC (ohne Gerät);96,10;95,5 - 98,8;99,10;98,4 - 99,9
 AT047/20;mö-screen Corona Antigen Test;Ja;möLab GmbH;Langenfeld;DE;;;;;97,25;92,17 - 99,43;99,99;97,16 - 99,99
+AT655/21;Covid-19 Rapid Antigen Test;Nein;Mologic Ltd.;Thurleigh, Bedfordshire;GB;Advena Ltd.;Swatar;MT;POC (ohne Gerät);90,60;85,6 - 94,0;100,00;99,2 - 100
 AT198/20;Rapid SARS-CoV-2 Antigen Test Card;Ja;MP Biomedicals Germany GmbH;Eschwege;DE;;;;POC (ohne Gerät);96,39;92,37 - 99,99;99,03;98,09 - 99,98
-AT823/21;MSP SARS-CoV-2 Antigen Schnelltest;Nein;MSP bodmann GmbH;Bobingen;DE;;;;POC (ohne Gerät);96,69;92,48 - 98,58;99,48;98,11 - 99,86
-AT021/20;NADAL COVID-19 Ag Test;Ja;nal von minden GmbH;Moers;DE;;;;POC (ohne Gerät);97,6;93,1 - 99,2;99,9;97,7 - 100
-AT068/20;NADAL COVID-19 Ag+Influenza A/B Test;Ja;nal von minden GmbH;Moers;DE;;;;POC (ohne Gerät);97,6;93,1 - 99,2;99,9;97,7 - 100
+AT823/21;MSP SARS-CoV-2 Antigen Schnelltest;Ja;MSP bodmann GmbH;Bobingen;DE;;;;POC (ohne Gerät);96,69;92,48 - 98,58;99,48;98,11 - 99,86
+AT021/20;NADAL COVID-19 Ag Test;Ja;nal von minden GmbH;Moers;DE;;;;POC (ohne Gerät);97,60;93,1 - 99,2;99,90;97,7 - 100
+AT1113/21;dedicio COVID-19 Ag pro Test;Nein;nal von minden GmbH;Moers;DE;;;;POC (ohne Gerät);97,09;93,4 - 98,8;99,99;99,1 - 100
+AT068/20;NADAL COVID-19 Ag+Influenza A/B Test;Ja;nal von minden GmbH;Moers;DE;;;;POC (ohne Gerät);97,60;93,1 - 99,2;99,90;97,7 - 100
 AT107/20;System Device for SARS-CoV-2 & Influenza A/B ComboAntigen Rapid Test;Nein;Nanjing Liming Bio-Products Co., Ltd;Nanjing;CN;WellKang Ltd;Dover;GB;POC (ohne Gerät);92,31;79,13-  98,38;97,26;90,45 - 99,67
 AT593/21;SARS-CoV-2 Antigen Rapid Test;Nein;Nanjing Liming Bio-Products Co., Ltd.;Nanjing;CN;Wellkang Ltd;Derry;GB;POC (mit Gerät);96,19;90,53~98,95;99,26;97,85~99,85
+AT462/20;Novel coronavirus (2019-nCov) Antigen Testing Kit (Colloidal Gold);Ja;Nanjing Norman Biological Technology Co., Ltd.;Nanjing;CN;Caretechion GmbH;Düsseldorf;DE;POC (ohne Gerät);93,21;88,18 - 96,56;99,29;97,95 - 99,85
 AT406/21;Novel Coronavirus (2019-nCoV) Antigen Testing Kit (Colloidal Gold)(Saliva);Ja;Nanjing Norman Biological Technology Co., Ltd.;Nanjing;CN;CMC Medical Devices& Drugs S.L.;Málaga;ES;POC (ohne Gerät);91,13;84,48 - 95,49;99,09;96,74 - 99,89
 AT657/21;Novel Coronavirus (2019-nCoV) Antigen Testing Kit  (Colloidal Gold) (Anterior Nasal swab);Ja;Nanjing Norman Biological Technology Co., Ltd.;Nanjing;CN;CMC Medical Devices& Drugs S.L.;Málaga;ES;POC (ohne Gerät);93,02;88,13 - 96,34;99,23;97,25 - 99,91
-AT462/20;Novel coronavirus (2019-nCov) Antigen Testing Kit (Colloidal Gold);Ja;Nanjing Norman Biological Technology Co., Ltd.;Nanjing;CN;Caretechion GmbH;Düsseldorf;DE;POC (ohne Gerät);93,21;88,18 - 96,56;99,29;97,95 - 99,85
 AT678/21;Neues Coronavirus (SARS-CoV-2) Antigen-Schnellerkennungskit (Collate Gold-Methode);Nein;Nanjing Synthgene Medical Technology Co., Ltd.;Nanjing;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,26;93,47 - 99,76;99,56;97,69 - 99,89
-AT255/20;Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-COV-2 ) Antigen detection kit;Nein;Nanjing Vazyme Medical Technology Co.,Ltd;Nanjing;CN;Obelis S.A.;Brussels;BE;POC (ohne Gerät);91,94;82,47 - 96,51;97,06;94,05 - 98,57
-AT090/20;FREND COVID-19 Ag;Ja;NanoEntek Inc;Guro-gu,Seoul;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (mit Gerät);94,12;78,94 - 98,97;100;93,93 - 100
-AT317/20;NANORREPRO SARS-CoV-2 Antigen Schnelltest;Nein;NanoRepro AG;Marburg;DE;;;;POC (ohne Gerät);97;91,5 - 99,4;98;95,7 - 99,3
-AT194/20;DIAGNOS COVID-19 Antigen Test;Nein;Nantong Diagnos Biotechnology Co., Ltd.;Jiangsu Province;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,1;95,49 - 100;100;100 - 100
-AT517/20;COVID-19 Antigen Saliva Test Kit (Colloidal Gold);Ja;Nantong Diagnos Biotechnology Co.,Ltd.;Rugao City, Jiangsu Province;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Málaga;ES;POC (ohne Gerät);98,1;95,49 - 100;99,33;98,02 - 100
-AT759/21;COVID-19 Antigen Detection Kit (Kolloidales Gold);Nein;Nantong Diagnos Biotechnology Co.,Ltd.;Jiangsu;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,73;95,19 - 100,00;99,44;98,35 - 100,00
-AT425/21;SARS-CoV-2 Antigen Rapid Test;Nein;Nantong Egens Biotechnology Co.,Ltd.;Nantong;CN;Shanghai International Holding Corp.GmbH(Europe);Hamburg;DE;POC (ohne Gerät);95,8;90,62-98,21;99,8;98,9-100
-AT722/21;COVID 19 Antigen Test Kit (Colloidal Gold Method);Nein;Neo-nostics (Suzhou) Bioengineering Co., Ltd.;Jiang Su;CN;Osmunda Medical Tchnology Service GmbH;Potsdam;DE;POC (ohne Gerät);98,36;96,11 - 100,61;99,19;97,60 - 100,77
-AT502/21;COVID-19 Antigen Detection Kit NG08 SN;Ja;New Gene (Hangzhou) Bioengineering Co., Ltd.;Hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,1;93,4 - 99,1;99,2;97,3 - 99,9
-AT331/21;COVID-19 Antigen Detection Kit NG08NS;Ja;New Gene (Hangzhou) Bioengineering Co., Ltd.;Hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98;90,3 - 99,3;99,1;95,2 - 100
-AT416/21;COVID-19 Antigen Detection Kit NG08 S;Ja;New Gene (Hangzhou) Bioengineering Co., Ltd.;Hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,3;92,4 - 99,4;99,2;95,8 - 100
-AT489/20;NG-Test SARS-CoV-2-AG;Nein;NG Biotech S.A.S.;Guipry;FR;;;;POC (ohne Gerät);83;74-90;100;96-100
+AT255/20;Severe Acute Respiratory Syndrome Coronavirus 2 (SARS-COV-2 ) Antigen detection kit;Ja;Nanjing Vazyme Medical Technology Co.,Ltd;Nanjing;CN;Obelis S.A.;Brussels;BE;POC (ohne Gerät);91,94;82,47 - 96,51;97,06;94,05 - 98,57
+AT090/20;FREND COVID-19 Ag;Ja;NanoEntek Inc;Guro-gu,Seoul;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (mit Gerät);94,12;78,94 - 98,97;100,00;93,93 - 100
+AT317/20;NANORREPRO SARS-CoV-2 Antigen Schnelltest;Ja;NanoRepro AG;Marburg;DE;;;;POC (ohne Gerät);97,00;91,5 - 99,4;98,00;95,7 - 99,3
+AT414/21;NanoRepro SARS-CoV-2 Saliva Antigen Test;Nein;NanoRepro AG;Marburg;DE;;;;POC (ohne Gerät);94,29;87,98 - 97,87;99,00;97,46 - 99,73
+AT194/20;DIAGNOS COVID-19 Antigen Test;Ja;Nantong Diagnos Biotechnology Co., Ltd.;Jiangsu Province;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,10;95,49 - 100;100,00;100 - 100
+AT759/21;COVID-19 Antigen Detection Kit (Kolloidales Gold);Ja;Nantong Diagnos Biotechnology Co.,Ltd.;Jiangsu;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,73;95,19 - 100,00;99,44;98,35 - 100,00
+AT517/20;COVID-19 Antigen Saliva Test Kit (Colloidal Gold);Ja;Nantong Diagnos Biotechnology Co.,Ltd.;Rugao City, Jiangsu Province;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Málaga;ES;POC (ohne Gerät);98,10;95,49 - 100;99,33;98,02 - 100
+AT425/21;SARS-CoV-2 Antigen Rapid Test;Nein;Nantong Egens Biotechnology Co.,Ltd.;Nantong;CN;Shanghai International Holding Corp.GmbH(Europe);Hamburg;DE;POC (ohne Gerät);95,80;90,62-98,21;99,80;98,9-100
+AT722/21;COVID 19 Antigen Test Kit (Colloidal Gold Method);Ja;Neo-nostics (Suzhou) Bioengineering Co., Ltd.;Jiang Su;CN;Osmunda Medical Tchnology Service GmbH;Potsdam;DE;POC (ohne Gerät);98,36;96,11 - 100,61;99,19;97,60 - 100,77
+AT834/21;Covid-19-Antigen-Testkit;Ja;New Gene (Hangzhou) Bioengineering Co., Ltd.;Hangzhou City;CN;Sungo Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,10;93,4 - 99,1;99,20;97,3 - 99,9
+AT416/21;COVID-19 Antigen Detection Kit NG08 S;Ja;New Gene (Hangzhou) Bioengineering Co., Ltd.;Hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,30;92,4 - 99,4;99,20;95,8 - 100
+AT331/21;COVID-19 Antigen Detection Kit NG08NS;Ja;New Gene (Hangzhou) Bioengineering Co., Ltd.;Hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98,00;90,3 - 99,3;99,10;95,2 - 100
+AT502/21;COVID-19 Antigen Detection Kit NG08 SN;Ja;New Gene (Hangzhou) Bioengineering Co., Ltd.;Hangzhou;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,10;93,4 - 99,1;99,20;97,3 - 99,9
+AT489/20;NG-Test SARS-CoV-2-AG;Nein;NG Biotech S.A.S.;Guipry;FR;;;;POC (ohne Gerät);83,00;74-90;100,00;96-100
 AT569/21;Ninonasal 5 professional;Nein;NG Biotech SAS;Guipry;FR;;;;POC (ohne Gerät);97,66;93,30-99,51;99,49;98,16-99,94
-AT153/20;Saliva SARS-Cov-2 (2019-nCoV) Antigen Combined Test Kit(Nanocarbon Assay);Nein;Ningbo Beautiful Life Medical Biotechnology Development Co., Ltd.;Free Trade West Zone,Ningbo;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);89,2;82,6 - 94;100;92,9 - 100
+AT153/20;Saliva SARS-Cov-2 (2019-nCoV) Antigen Combined Test Kit(Nanocarbon Assay);Nein;Ningbo Beautiful Life Medical Biotechnology Development Co., Ltd.;Free Trade West Zone,Ningbo;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);89,20;82,6 - 94;100,00;92,9 - 100
+AT989/21;Saliva SARS-CoV-2 (2019- nCoV) Antigen Test Kit (Nanocarbon Assay);Ja;Ningbo Beautiful Life Medical Biotechnology Development Co., Ltd.;Ningbo;CN;Lotus NL B.V.;Gravenhage;NL;POC (ohne Gerät);91,79;85,45 - 95,63;100,00;95,79 - 99,92
 AT726/21;SARS-CoV-2 Antigen Rapid Test kit(Saliva Test);Nein;Ningbo Home Test  Bio-technology Co.,Ltd.;Ningbo;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,92;95,14 - 99,44;98,34;95,33 - 99,67
-AT036/21;SARS-CoV-2 Antigen Rapid Test;Ja;NOVATECH TIBBI CIHAZ ÜRÜNLERI SANAYI VE TICARET A.S.;GAZIANTEP;TR;Meermed GmbH i. G;Neuss;DE;POC (ohne Gerät);97,54;93,86 - 99,04;100;98,53 - 100
-AT658/21;COVID-19 Saliva Test;Ja;Noviral International AB;Stockholm;SE;;;;POC (ohne Gerät);98,1;95,49 - 100;99,33;98,02 - 100
+AT036/21;SARS-CoV-2 Antigen Rapid Test;Ja;NOVATECH TIBBI CIHAZ ÜRÜNLERI SANAYI VE TICARET A.S.;GAZIANTEP;TR;Meermed GmbH;Neuss;DE;POC (ohne Gerät);97,54;93,86 - 99,04;100,00;98,53 - 100
+AT993/21;SARS-CoV-2 Antigen Rapid Test (Saliva);Nein;NOVATECH TIBBI CIHAZ ÜRÜNLERI SANAYI VE TICARET A.S.;GAZIANTEP;TR;;;;POC (ohne Gerät);95,35;92,58 - 97,12;100,00;99,31 - 100
+AT658/21;COVID-19 Saliva Test;Ja;Noviral International AB;Stockholm;SE;;;;POC (ohne Gerät);98,10;95,49 - 100;99,33;98,02 - 100
 AT117/20;CAT 2019-nCoV Antigen Rapid Single Use Test;Ja;Oncosem Onkolojik Sistemler;Ankara;TR;Casada International GmbH;Paderborn;DE;POC (ohne Gerät);96,36;91,32 - 99,99;98,04;96,14 - 99,94
-AT404/21;Pantest SARS-CoV-2 Ag Rapid Test;Nein;Pantest S.A.;Souto de Lafões;PT;;;;POC (ohne Gerät);95,7;90,20 - 98,10;99,1;96,6 - 99,70
+AT046/21;GeneFinder COVID-19 Ag;Nein;OSANG Healthcare Co., Ltd.;Anyang-si, Gyeonggi-do;KR;Obelis S.A.;Brüssel;BE;POC (ohne Gerät);93,00;86,25 - 96,57;99,00;94,55 - 99,82
+AT404/21;Pantest SARS-CoV-2 Ag Rapid Test;Nein;Pantest S.A.;Souto de Lafões;PT;;;;POC (ohne Gerät);95,70;90,20 - 98,10;99,10;96,6 - 99,70
 AT362/20;PCL Covid19 Ag Gold Saliva;Ja;PCL Inc.;Seoul;KR;MT Promedt;St.Ingbert;DE;POC (ohne Gerät);94,92;80,84 - 99,30;99,99;94,87 - 100,0
 AT209/20;SARS-CoV-2 Antigen Detection Kit (Colloidal Gold Immunochromatographic assay);Ja;PerGrande BioTech Development Co., Ltd.;Beijing;CN;CMC Medical Devices& Drugs S.L.;Málaga;ES;POC (ohne Gerät);94,28;92,33 - 95,76;99,11;97,94 - 99,62
-AT106/21;(SARS-CoV-2) Antigen Rapid test COVIDENT COVID-19;Nein;Pierenkemper GmbH;Ehringshausen;DE;;;;POC (ohne Gerät);99,27;98,15 - 99,8;100;97,05 - 100
-AT078/20;Exdia COVID-19 Ag;Ja;Precision Biosensor;Yuseong-gu, Daejeon;KR;MDI Europa GmbH;Langenhagen;DE;POC (mit Gerät);93,88;83,5 - 97,9;98;89,5 - 99,6
-AT701/21;PBCheck COVID-19 Ag;Nein;Precision Biosensor;Yuseong-gu, Daejeon;KR;MDI Europa GmbH;Langenhagen;DE;POC (ohne Gerät);90;82,6 - 94,5;100;96,6 - 100
+AT921/21;GenViro!;Nein;Pharma Tech Solutions Inc.;Westlake Village;US;Pedima International GmbH;Düsseldorf;DE;POC (mit Gerät);86,84;71,10 - 95,00;97,92;87,50 - 99,80
+AT106/21;(SARS-CoV-2) Antigen Rapid test COVIDENT COVID-19;Nein;Pierenkemper GmbH;Ehringshausen;DE;;;;POC (ohne Gerät);99,27;98,15 - 99,8;100,00;97,05 - 100
+AT078/20;Exdia COVID-19 Ag;Ja;Precision Biosensor;Yuseong-gu, Daejeon;KR;MDI Europa GmbH;Langenhagen;DE;POC (mit Gerät);93,88;83,5 - 97,9;98,00;89,5 - 99,6
+AT701/21;PBCheck COVID-19 Ag;Nein;Precision Biosensor;Yuseong-gu, Daejeon;KR;MDI Europa GmbH;Langenhagen;DE;POC (ohne Gerät);90,00;82,6 - 94,5;100,00;96,6 - 100
+AT727/21;Sure Status® COVID-19 Antigen Card Test;Nein;Premier Medical Corporation Private Limited;Sarigam, Dist. Valsad, Gujarat,;IN;Obelis s.a.;Brüssel;BE;POC (ohne Gerät);94,16;88,44 - 98,5;100,00;95,64 - 100
+AT1108/21;2019-nCoV Antigen Device (Anterior Nasal Swab);Nein;Prestige Diagnostics UK Ltd;Galgorm;GB;;;;POC (mit Gerät);96,30;94,20 - 97,10;99,50;97,90 - 100
+AT1126/21;2019-nCoV Antigen Device (Saliva);Nein;Prestige Diagnostics UK Ltd;Galgorm;GB;;;;POC (mit Gerät);94,60;88,50 - 98,00;99,10;96,80 - 99,90
 AT376/20;RAPID Test Ag 2019-nCoV;Ja;Prognosis Biotech Ltd.;Larissa;GR;;;;POC (ohne Gerät);95,56;90,6 - 98,4;99,58;98,5 - 99,9
-AT864/21;COVID-19 Antigen-Schnellnachweis-Kit (Kolloidales Gold);Nein;Pro-med (Beijing) Technology Co., Ltd.;Beijing;CN;Lotus NL B. V.;Hague;NL;POC (ohne Gerät);94,74;89,53 - 97,43;99,44;96,90 - 99,90
 AT863/21;COVID-19 Antigen-Schnellnachweis-Kit (Kolloidales Gold);Nein;Pro-med (Beijing) Technology Co., Ltd.;Beijing;CN;Lotus NL B. V.;Hague;NL;POC (ohne Gerät);93,98;88,58 - 96,92;99,44;96,90 - 99,90
-AT338/20;HIGHTOP SARS-CoV-2 and Influenza A+B Antigen Rapid Test;Ja;Qingdao Hightop Biotech Co., Ltd.;QINGDAO;CN;MedNet EC-REP GmbH;Muenster;DE;POC (ohne Gerät);95;88,83 - 97,85;99,75;98,60 - 99,96
-AT320/20;SARS-CoV-2 Antigen Rapid Test;Ja;Qingdao Hightop Biotech Co., Ltd.;QINGDAO;CN;MedNet EC-REP GmbH;Muenster;DE;POC (ohne Gerät);95;88,83 - 97,85;99,75;98,60 - 99,96
-AT006/20;Sofia SARS Antigen FIA;Ja;Quidel Corporation;San Diego, CA;US;MDSS GmbH;Hannover;DE;POC (mit Gerät) / Labor;96,7;83,3 - 99,4;100;97,9 - 100
-AT008/20;RIDA®QUICK SARS-CoV-2 Antigen;Ja;R-Biopharm AG;Darmstadt;DE;;;;POC (ohne Gerät);80,4;71 - 88;97,4;92,50 - 99,50
-AT302/21;COVID-19 Antigen Test;Nein;RED CELL BIOTECHNOLOGY INC.;Istanbul;TR;;;;POC (ohne Gerät);95,08;89,60 - 98,17;98,8;95,23 - 100
-AT318/20;CoVAg Rx SARS-CoV2 COVID-19 Antigen Test;Nein;ROXALL Medicine Ilaç Ithalat Ihracat San. ve Tic. Ltd. Sti.;Çankaya / Ankara;TR;ROXALL Medizin GmbH;Hamburg;DE;POC (ohne Gerät);96,97;84,24 - 99,92;100;95,65 - 100,00
-AT483/20;Multi-Respiratory Virus Antigen Test Kit(Swab) (Influenza A+B/ COVID-19);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);97,04;92,59 - 99,19;99,44;96,94 - 99,99
-AT199/20;COVID-19 Antigen Rapid Test Kit (Swab);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);97,27;94,45 - 98,89;99,42;97,93 - 99,93
-AT027/21;Multi-Respiratory Virus Antigen Test Kit(Swab) (Influenza A+B/ COVID-19);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);97,04;92,59 - 99,19;99,44;96,94 - 99,99
+AT864/21;COVID-19 Antigen-Schnellnachweis-Kit (Kolloidales Gold);Nein;Pro-med (Beijing) Technology Co., Ltd.;Beijing;CN;Lotus NL B. V.;Hague;NL;POC (ohne Gerät);94,74;89,53 - 97,43;99,44;96,90 - 99,90
+AT935/21;Neues Coronavirus (COVID-19) Antigen-Schnelltestkit;Nein;Qingdao AIBO Diagnostic Co., Ltd.;Qingdao;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);97,25;92,17 - 99,43;100,00;97,69 - 100,00
+AT320/20;SARS-CoV-2 Antigen Rapid Test;Ja;Qingdao Hightop Biotech Co., Ltd.;QINGDAO;CN;MedNet EC-REP GmbH;Muenster;DE;POC (ohne Gerät);95,00;88,83 - 97,85;99,75;98,60 - 99,96
+AT338/20;HIGHTOP SARS-CoV-2 and Influenza A+B Antigen Rapid Test;Ja;Qingdao Hightop Biotech Co., Ltd.;QINGDAO;CN;MedNet EC-REP GmbH;Muenster;DE;POC (ohne Gerät);95,00;88,83 - 97,85;99,75;98,60 - 99,96
+AT1071/21;BIOBEAT COVID-19 Ag Test;Nein;RapiGEN Inc.;Anyang-si, Gyeonggi-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (mit Gerät);93,80;88,15 - 97,28;99,36;97,44 - 99,89
+AT008/20;RIDA®QUICK SARS-CoV-2 Antigen;Ja;R-Biopharm AG;Darmstadt;DE;;;;POC (ohne Gerät);80,40;71 - 88;97,40;92,50 - 99,50
+AT302/21;COVID-19 Antigen Test;Nein;RED CELL BIOTECHNOLOGY INC.;Istanbul;TR;;;;POC (ohne Gerät);95,08;89,60 - 98,17;98,80;95,23 - 100
+AT318/20;CoVAg Rx SARS-CoV2 COVID-19 Antigen Test;Nein;ROXALL Medicine Ilaç Ithalat Ihracat San. ve Tic. Ltd. Sti.;Çankaya / Ankara;TR;ROXALL Medizin GmbH;Hamburg;DE;POC (ohne Gerät);96,97;84,24 - 99,92;100,00;95,65 - 100,00
+AT1048/21;COVID-19 Antigen Rapid Test (Colloidal Gold);Nein;RUNBIO BIOTECH CO., LTD;Shantou, Guangdong;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);98,23;93,8 - 99,8;99,53;97,4 - 100
 AT376/21;COVID-19 Antigen Rapid Test Kit (Swab);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);97,04;92,59 - 99,19;99,44;96,94 - 99,99
-AT346/21;COVID-19 Antigen Rapid Test Kit (Saliva);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);98,5;94,67 - 99,82;99,45;96,99 - 99,99
-AT322/21;SIENNA COVID-19 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);89,9;83,0 - 94,7;99,9;98,2 - 100,0
-AT093/21;Salocor SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);92,7;88,8 – 95,5;100;99,1 – 100,0
-AT497/21;Salocor SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);90;83,2 - 94,7;100;98,2 - 100,0
-AT063/20;SIENNA COVID-19 Antigen Rapid Test Cassette;Ja;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);95,9;91,3 - 98,1;98,9;97,4 - 99,5
-AT176/21;SIENNA COVID-19 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);92,7;88,8 - 95,5;99,9;99,1 - 100,0
-AT069/20;ScheBo SARS-CoV-2 Quick ANTIGEN;Ja;ScheBo Biotech AG;Gießen;DE;;;;POC (ohne Gerät);97,25;92,17 - 99,43;99,6;98,57 - 99,95
+AT199/20;COVID-19 Antigen Rapid Test Kit (Swab);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);97,27;94,45 - 98,89;99,42;97,93 - 99,93
+AT483/20;Multi-Respiratory Virus Antigen Test Kit(Swab) (Influenza A+B/ COVID-19);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);97,04;92,59 - 99,19;99,44;96,94 - 99,99
+AT346/21;COVID-19 Antigen Rapid Test Kit (Saliva);Ja;Safecare Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);98,50;94,67 - 99,82;99,45;96,99 - 99,99
+AT1037/21;COVID-19 Antigen Rapid Test Kit (Swab);Nein;Safecare Biotech (Hangzhou) Co.,Ltd.;Hangzhou;CN;NIC GmbH;Osnabrück;DE;POC (ohne Gerät);97,04;92,59 - 99,19;99,44;96,94 - 99,99
+AT497/21;Salocor SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);90,00;83,2 - 94,7;100,00;98,2 - 100,0
+AT322/21;SIENNA COVID-19 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);89,90;83,0 - 94,7;99,90;98,2 - 100,0
+AT176/21;SIENNA COVID-19 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);92,70;88,8 - 95,5;99,90;99,1 - 100,0
+AT093/21;Salocor SARS-CoV-2 Antigen Rapid Test Cassette;Nein;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);92,70;88,8 – 95,5;100,00;99,1 – 100,0
+AT063/20;SIENNA COVID-19 Antigen Rapid Test Cassette;Ja;Salofa Oy;Salo;FI;;;;POC (ohne Gerät);95,90;91,3 - 98,1;98,90;97,4 - 99,5
+AT506/21;SARS-CoV-2 Rapid Antigen Test (Colloidal Gold Method);Nein;Sansure Biotech Inc.;Changsha,Hunan,China;CN;Obelis S.A;Brussels;BE;POC (ohne Gerät);98,40;85,9 - 99,1;98,10;95,2 - 99,6
+AT1130/21;SARS-CoV-2 Rapid Antigen Test (Immunochromatography );Nein;Sansure Biotech Inc.;Changsha,Hunan China;CN;Obelis S.A;Brussels;BE;POC (ohne Gerät);98,16;92,79 - 98,93;100,00;99,1 - 100
+AT898/21;ScheBo SARS CoV-2 Quick Antigen (Colloidal Gold Method);Nein;ScheBo Biotech AG;Gießen;DE;;;;POC (ohne Gerät);95,35;90,15 - 98,27;99,49;97,19 - 99,99
+AT069/20;ScheBo SARS-CoV-2 Quick ANTIGEN;Ja;ScheBo Biotech AG;Gießen;DE;;;;POC (ohne Gerät);97,25;92,17 - 99,43;99,60;98,57 - 99,95
+AT394/21;Standard Q Covid-19 Ag Nasal;Ja;SD Biosensor;Heungdeok-gu, Cheongju-si, Chungcheongbuk-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);97,12;91,86 – 99,01;100,00;99,05 – 100
 AT023/20;Standard Q Covid-19 Ag Reagenzienkit;Ja;SD Biosensor;Heungdeok-gu, Cheongju-si, Chungcheongbuk-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);96,52;91,33 – 99,04;99,68;98,22 - 99,99
-AT394/21;Standard Q Covid-19 Ag Nasal;Ja;SD Biosensor;Heungdeok-gu, Cheongju-si, Chungcheongbuk-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);97,12;91,86 – 99,01;100;99,05 – 100
-AT022/20;Standard F COVID-19 Ag FIA Reagenzienkit;Ja;SD Biosensor;Heungdeok-gu, Cheongju-si, Chungcheongbuk-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (mit Gerät) / Labor;94;80,32 - 99,28;97;83,3 - 99,92
+AT022/20;Standard F COVID-19 Ag FIA Reagenzienkit;Ja;SD Biosensor;Heungdeok-gu, Cheongju-si, Chungcheongbuk-do;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (mit Gerät) / Labor;94,00;80,32 - 99,28;97,00;83,3 - 99,92
+AT307/21;SARS-CoV-2 Rapid Antigen Test Nasal;Ja;SD Biosensor Inc.;Yeongtong-gu, Suwon-si, Gyeonggi-do 16690;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);82,70;75,60 - 88,40;99,10;97,90 - 99,70
 AT004/20;SARS-CoV-2 Rapid Antigen Test;Ja;SD Biosensor Inc.;Yeongtong-gu, Suwon-si, Gyeonggi-do 16690;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);96,52;91,33 - 99,04;99,68;98,22 - 99,99
-AT307/21;SARS-CoV-2 Rapid Antigen Test Nasal;Ja;SD Biosensor Inc.;Yeongtong-gu, Suwon-si, Gyeonggi-do 16690;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);82,7;75,60 - 88,40;99,1;97,90 - 99,70
-AT550/21;Sensiva Health React Rapid Antigen Test (Lateral Flow Method);Nein;Sensiva Health LLC;New Orleans;US;Obelis s.a.;Brussels;BE;POC (ohne Gerät);96,35;80.84% - 99.30%;100;96.84% - 100%
+AT471/21;SARS-CoV-2 Antigen Rapid Test (Nasal/Saliva);Nein;Selfdiagnostics Deutschland GmbH;Leipzig;DE;;;;POC (ohne Gerät);97,10;93,1 - 98,9;99,50;98,2 - 99,9
+AT1064/21;GreenLight SARS-CoV-2-Antigen-Test nasal;Ja;Senova Gesellschaft für Biowissenschaft und Technik mbH;Weimar;DE;;;;POC (mit Gerät);90,00;80,7 - 99,3;98,00;95,3 - 100
+AT591/21;S1 Covid-19 Antigen Schnelltest;Nein;Sensing Self Pte.;Singapore;SG;VENARI, s.r.o.;Praha - Zizkov;CZ;POC (ohne Gerät);95,60;93,79 - 98,66;99,99;97,12 - 100
+AT550/21;Sensiva Health React Rapid Antigen Test (Lateral Flow Method);Nein;Sensiva Health LLC;New Orleans;US;Obelis s.a.;Brussels;BE;POC (ohne Gerät);96,35;80.84% - 99.30%;100,00;96.84% - 100%
 AT242/21;Covid-19 Antigen Test Kit;Nein;SG Diagnostic Pte Ltd;Singapore;SG;Obelis s.a.;Brüssel;BE;POC (ohne Gerät);97,24;93,67 - 99,10;98,31;96,54 - 99,32
-AT803/21;Chemtrue® COVID-19 Ag-Schnelltest (kolloidales Gold);Nein;Shanghai Chemtron Biotech Co., Ltd.;Shanghai;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);92,96;89,33 - 95,65;100;97,24 - 100,00
-AT753/21;COVID-19 Antigen Detection Kit (kolloidales Gold);Nein;Shanghai Focusgen Biotech Ltd;Shanghai;CN;SUNGO Europe B.V;Amsterdam;NL;POC (ohne Gerät);98,1;81,2 - 98,7;99,33;97,8 - 99,9
-AT767/21;Fosun Covid-19 Ag CARD;Nein;Shanghai Fosun Long March Medical Science Co., Ltd;Shang hai;CN;Obeliss.a.;Brüssel;BE;POC (ohne Gerät);96,1;92,4 - 99,8;99,5;98,1 - 100,0
-AT748/21;LionRun™?SARS-CoV-2 Antigen Rapid Test Kit (Lateral Flow Immunoassay);Nein;Shanghai Liangrun Biomedicine Technology Co., Ltd.;Shanghai;CN;RIOMAVIX SL;Madrid;ES;POC (ohne Gerät);95;91,89 - 97,17;99,34;97,65 - 99,92
-AT387/20;Novel Coronavirus (SARS-CoV-2) Antigen Rapid Test (Colloidal Gold);Nein;Shanghai Outdo Biotech Co.,Ltd.;Shanghai;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);90,84;84,67-94,68;100;98,14-100
-AT842/21;SARS-CoV-2 COVID-19 Antigen Detection Kit;Nein;Shenzhen Biocup Biotech Co., Ltd.;Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);92,2;85,30 - 96,00;98,1;95,30 - 99,30
+AT1171/21;InstaView COVID-19 Antigen;Nein;SG Medical, Inc.;Seoul;KR;MT promedt Consulting GmbH;St.Ingbert;DE;POC (ohne Gerät);91,09;83,76 - 95,84;100,00;97,79 - 100,00
+AT918/21;V-Chek SARS-CoV-2 Rapid Ag Test Kit;Nein;SGA Müh. Dan. Egitim Iç ve Dis Tic. A.S.;Ankara;TR;;;;POC (ohne Gerät);96,66;94,90 - 97,95;99,00;97,68 - 99,67
+AT925/21;Detection Kit for Antigen to SARS-CoV-2  (Colloidal Gold Immunochromatography Method);Nein;Shandong Diano Bio-tech Co., Ltd.;Anqiu City, Weifang City;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,00;91,55 - 98,98;100,00;97,50 - 100
+AT932/21;Coronavirus Ag Rapid Test Cassette (Swab);Nein;Shandong ThinkLabor Biotechnology Co., Ltd.;Jining;CN;Riomavix S.L.;Madrid;ES;POC (ohne Gerät);94,20;88,4 - 100;98,30;96,6 - 100
+AT1067/21;Chemtrue® COVID-19 (SARS-Cov-2) Antigen Rapid Test Kit (Nasal Swab);Nein;Shanghai Chemtron Biotech Co., Ltd.;Shanghai;CN;OSMUNDA Medical Technology Service GmbH;Berlin;DE;POC (ohne Gerät);95,09;90,56 - 97,86;100,00;96,7 - 100,0
+AT803/21;Chemtrue® COVID-19 Ag-Schnelltest (kolloidales Gold);Nein;Shanghai Chemtron Biotech Co., Ltd.;Shanghai;CN;OSMUNDA Medical Technology Service GmbH;Potsdam;DE;POC (ohne Gerät);92,96;89,33 - 95,65;100,00;97,24 - 100,00
+AT1068/21;Chemtrue® COVID-19 (SARS-COV-2) Antigen Rapid Test Kit (Saliva);Nein;Shanghai Chemtron Biotech Co., Ltd.;Shanghai;CN;OSMUNDA Medical Technology Service GmbH;Berlin;DE;POC (ohne Gerät);92,11;86,62 - 95,85;100,00;96,64 - 100,00
+AT753/21;COVID-19 Antigen Detection Kit (kolloidales Gold);Nein;Shanghai Focusgen Biotech Ltd;Shanghai;CN;SUNGO Europe B.V;Amsterdam;NL;POC (ohne Gerät);98,10;81,2 - 98,7;99,33;97,8 - 99,9
+AT767/21;Fosun Covid-19 Ag CARD;Ja;Shanghai Fosun Long March Medical Science Co., Ltd;Shang hai;CN;Obeliss.a.;Brüssel;BE;POC (ohne Gerät);96,10;92,4 - 99,8;99,50;98,1 - 100,0
+AT748/21;LionRun™?SARS-CoV-2 Antigen Rapid Test Kit (Lateral Flow Immunoassay);Nein;Shanghai Liangrun Biomedicine Technology Co., Ltd.;Shanghai;CN;RIOMAVIX SL;Madrid;ES;POC (ohne Gerät);95,00;91,89 - 97,17;99,34;97,65 - 99,92
+AT387/20;Novel Coronavirus (SARS-CoV-2) Antigen Rapid Test (Colloidal Gold);Nein;Shanghai Outdo Biotech Co.,Ltd.;Shanghai;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);90,84;84,67-94,68;100,00;98,14-100
+AT1052/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Shen Zhen Dymind Biotechnology Co.,ltd;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,58;91,5 - 99,1;98,37;94,3 - 99,8
+AT857/21;SARS-CoV-2(COVID-19)Antigen Rapid Detection Kit (Lateral Flow Method);Nein;Shen Zhen Zi Jian Biotechnology Co., Ltd.;Shen Zhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,69;94,68 - 99,24;97,65;94,95 - 99,13
+AT842/21;SARS-CoV-2 COVID-19 Antigen Detection Kit;Nein;Shenzhen Biocup Biotech Co., Ltd.;Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);92,20;85,30 - 96,00;98,10;95,30 - 99,30
+AT928/21;SARS-CoV-2-Antigen-Schnellnachweiskits;Nein;Shenzhen CAS-Envision Medical Technology Co., Ltd.;Shenzhen;CN;Riomavix S.L.;Madrid;ES;POC (ohne Gerät);98,10;94,7 - 99,4;99,50;97,0 - 99,9
+AT1093/21;Rapid SARS-CoV-2 antigen detection kit (Latex);Nein;ShenZhen Channel Biotechnology Co., Ltd.;Shenzhen;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);92,86;88,10 - 96,14;99,19;95,59 - 99,98
+AT1092/21;Rapid SARS-CoV-2 antigen detection kit (Colloidal Gold);Nein;ShenZhen Channel Biotechnology Co., Ltd.;Shenzhen;CN;Luxus Lebenswelt GmbH;Willich;DE;POC (ohne Gerät);96,25;93,22 - 98,19;99,35;97,67 - 99,92
+AT829/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Ja;Shenzhen Dymind Biotechnology Co., Ltd;Shenzhen;CN;Sungo Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,58;91,48 - 99,06;98,37;94,25 - 99,80
 AT260/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Shenzhen Dymind Biotechnology Co., Ltd;Shenzhen;CN;Sungo Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95,35;90,15 - 98,27;97,55;93,84 - 99,33
-AT829/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Shenzhen Dymind Biotechnology Co., Ltd;Shenzhen;CN;Sungo Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,58;91,48 - 99,06;98,37;94,25 - 99,80
-AT424/21;SARS-CoV-2 Antigen Rapid Test Kit(Immunochromatography);Nein;Shenzhen Huaree Technology Co.,Ltd;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98;97,12 - 99,98;100;98,12 - 99,99
-AT458/21;SARS-CoV-2 Antigen Saliva Rapid Test Kit(Immunochromatography);Nein;Shenzhen Huaree Technology Co.,Ltd;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,64;93,25-99,51;100;97,76-100,00
-AT472/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Shenzhen Huian Biosci Technology Co., Ltd.;Shenzhen;CN;SUNGO Europe B.V.;Olympisch;NL;POC (ohne Gerät);91,59;84,63 - 96,08;97,69;93,40 - 99,52
-AT420/21;SARS-CoV-2 Antigen Test Kit (GICA);Nein;Shenzhen Kisshealth Biotechnology Co., Ltd.;Shenzhen;CN;MedNet GmbH;Muenster;DE;POC (ohne Gerät);99,3;96,12 - 99,88;99,29;96,09 - 99,87
+AT458/21;SARS-CoV-2 Antigen Saliva Rapid Test Kit(Immunochromatography);Nein;Shenzhen Huaree Technology Co.,Ltd;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,64;93,25-99,51;100,00;97,76-100,00
+AT919/21;SARS-CoV-2 Antigen Rapid Sampling and Detection Tube(Colloidal Gold);Nein;Shenzhen Huaree Technology Co.,Ltd;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,18;96,43 - 98,49;99,72;98,45 - 99,95
+AT424/21;SARS-CoV-2 Antigen Rapid Test Kit(Immunochromatography);Nein;Shenzhen Huaree Technology Co.,Ltd;Shenzhen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);98,00;97,12 - 99,98;100,00;98,12 - 99,99
+AT1091/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Shenzhen Huian Biosci Technology Co., Ltd.;Shenzhen;CN;SUNGO Europe B.V.;Olympisch;NL;POC (ohne Gerät);94,60;88,5 - 98,0;99,10;96,8 - 99,9
+AT472/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Ja;Shenzhen Huian Biosci Technology Co., Ltd.;Shenzhen;CN;SUNGO Europe B.V.;Olympisch;NL;POC (ohne Gerät);91,59;84,63 - 96,08;97,69;93,40 - 99,52
+AT1065/21;SARS-CoV-2 Antigen Rapid Test (Lateral Flow Assay);Nein;Shenzhen Kang Sheng Bao Bio-Technology Co.,Ltd.;Shenzhen, Provinz Guangdong;CN;Qarad EC-REP BV;Geel;BE;POC (ohne Gerät);96,49;91,26 - 99,04;98,48;94,63 - 99,82
+AT1019/21;COVID-19 Antigen Detection Kit (Quantum Dots-Based Immunofluorescence Chromatography);Nein;Shenzhen Kingfocus Biomedical Engineering Co., Ltd.;Shenzhen;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);90,83;84,19 - 95,34;99,28;96,08 - 99,98
+AT420/21;SARS-CoV-2 Antigen Test Kit (GICA);Ja;Shenzhen Kisshealth Biotechnology Co., Ltd.;Shenzhen;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);99,30;96,12 - 99,88;99,29;96,09 - 99,87
 AT777/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Shenzhen Landwind Biotechnology Co.,Ltd.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,65;89,65 - 98,39;99,21;96,87 - 99,86
-AT417/20;Green Spring® SARS-CoV-2-Antigen-Schnelltest-Set;Ja;Shenzhen Lvshiyuan Biotechnology Co., Ltd;Shenzhen;CN;Obelis s.a.;Brüssel;BE;POC (ohne Gerät);98;97,12 - 99,98;100;98,12 - 99,99
-AT070/20;Fluorecare SARS-CoV-2 Spike Protein Test kit - Colloidal Gold;Ja;Shenzhen Microprofit Biotech Co., Ltd;Shenzhen;CN;CMC Medical Devices & Drugs SL;Malaga;ES;POC (ohne Gerät);89,68;89,68 - 100,00;100;96,73 - 100,00
-AT071/20;Fluorecare SARS-CoV-2 Spike Protein Test kit - Fluoreszenz-Immuntest;Nein;Shenzhen Microprofit Biotech Co., Ltd;Shenzhen;CN;CMC Medical Devices & Drugs SL;Malaga;ES;POC (mit Gerät);91,27;91,27 - 100,00;100;96,73 - 100,00
-AT544/21;Fluorecare SARS-CoV-2 Antigen Test Kit (Colloidal Gold Chromatographic Immunoassay);Nein;Shenzhen Microprofit Biotech Co., Ltd.;Shenzhen;CN;CMC Medical Devices & Drugs, S.L.;Málaga;ES;POC (ohne Gerät);94,35;88,71 - 97,70;100;98,78 - 100
-AT844/21;SARS-CoV-2 Antigen IVD-Kit SWAB;Nein;Shenzhen Reagent Technology Co., Ltd.;Guangdong;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);95,2;85,94 - 98,86;98,1;86,75 - 99,12
+AT977/21;SARS-CoV-2 Antigen (GICA);Nein;Shenzhen Lifotronic Technology Co., Ltd.;Shenzhen;CN;Shanghai International Holding Corporation GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,38;93,27 - 98,09;99,38;98,2 - 99,79
+AT417/20;Green Spring® SARS-CoV-2-Antigen-Schnelltest-Set;Ja;Shenzhen Lvshiyuan Biotechnology Co., Ltd;Shenzhen;CN;Obelis s.a.;Brüssel;BE;POC (ohne Gerät);98,00;97,12 - 99,98;100,00;98,12 - 99,99
+AT070/20;Fluorecare SARS-CoV-2 Spike Protein Test kit - Colloidal Gold;Ja;Shenzhen Microprofit Biotech Co., Ltd;Shenzhen;CN;CMC Medical Devices & Drugs SL;Malaga;ES;POC (ohne Gerät);89,68;89,68 - 100,00;100,00;96,73 - 100,00
+AT071/20;Fluorecare SARS-CoV-2 Spike Protein Test kit - Fluoreszenz-Immuntest;Nein;Shenzhen Microprofit Biotech Co., Ltd;Shenzhen;CN;CMC Medical Devices & Drugs SL;Malaga;ES;POC (mit Gerät);91,27;91,27 - 100,00;100,00;96,73 - 100,00
+AT544/21;Fluorecare SARS-CoV-2 Antigen Test Kit (Colloidal Gold Chromatographic Immunoassay);Ja;Shenzhen Microprofit Biotech Co., Ltd.;Shenzhen;CN;CMC Medical Devices & Drugs, S.L.;Málaga;ES;POC (ohne Gerät);94,35;88,71 - 97,70;100,00;98,78 - 100
+AT1080/21;SARS-CoV-2 Antigen IVD-Kit NASAL;Nein;Shenzhen Reagent Technology Co., Ltd.;Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);95,20;85,94 - 98,20;99,40;86,28 - 99,96
+AT1085/21;SARS-CoV-2 Antigen IVD-Kit SALIVA;Nein;Shenzhen Reagent Technology Co., Ltd.;Shenzhen;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);89,50;76,94 - 98,20;97,40;86,28 - 98,96
+AT844/21;SARS-CoV-2 Antigen IVD-Kit SWAB;Nein;Shenzhen Reagent Technology Co., Ltd.;Guangdong;CN;CMC Medical Devices & Drugs S.L.;Malaga;ES;POC (ohne Gerät);95,20;85,94 - 98,86;98,10;86,75 - 99,12
 AT385/20;SARS-CoV-2 Ag Test (Immunofluorescence);Nein;Shenzhen Watmind Medical Co. LDT.;Shenzhen;CN;Shanghai International Holding Corp. GmbH;Hamburg;DE;POC (mit Gerät);90,83;84,3 - 94,8;99,13;96,89 - 99,76
 AT108/20;SARS-CoV-2 Ag Diagnostic Test Kit (Colloidal Gold);Ja;Shenzhen Watmind Medical Co., Ltd.;Shenzhen;CN;Shanghai International Holding Corp. GmbH (Europe);Hamburg;DE;POC (ohne Gerät);95,15;89,14 - 97,91;99,12;96,86 - 99,76
+AT1105/21;GLINE-2019-nCoV Ag Saliva;Nein;Shenzhen YHLO Biotech Co., Ltd.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,27;93,15 - 96,89;100,00;97,05 - 100,00
 AT409/21;GLINE-2019-nCoVAg;Nein;Shenzhen YHLO Biotech Co., Ltd.;Shenzhen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,49;91,26 - 99,04;99,25;97,82 - 99,85
-AT679/21;COVID-19 Antigen Speichel-Schnelltest;Nein;Shenzhen Zhenrui Biotech Co., Ltd;Shenzhen;CN;Obelis s.a.;Bruxelles;BE;POC (ohne Gerät);85,4;77,40 - 91,00;99,3;96,20 - 99,90
-AT211/20;Covid 19 rapid test;Ja;Shenzhen Zhenrui Biotech Co., Ltd;Shenzhen City;CN;Obelis S.a;Brussels;BE;POC (ohne Gerät);96;92,10-99,90;97;93,10-100
+AT211/20;Covid 19 rapid test;Ja;Shenzhen Zhenrui Biotech Co., Ltd;Shenzhen City;CN;Obelis S.a;Brussels;BE;POC (ohne Gerät);96,00;92,10-99,90;97,00;93,10-100
+AT679/21;COVID-19 Antigen Speichel-Schnelltest;Ja;Shenzhen Zhenrui Biotech Co., Ltd;Shenzhen;CN;Obelis s.a.;Bruxelles;BE;POC (ohne Gerät);85,40;77,40 - 91,00;99,30;96,20 - 99,90
 AT602/21;Hipro SARS-CoV-2 Antigen Test;Nein;Shijiazhuang Hipro Biotechnology Co. LTD;Shyiazhuang;CN;Schloss Wendischbora GmbH;Nossen;DE;POC (ohne Gerät);97,77;95,87 - 99,51;98,26;97,18 - 99,67
-AT560/21;SARS-Cov-2 Antigen Assay kit by Immunofluorescence Chromatography method;Nein;Sichuan Xincheng Biological Co.,LTD;Sichuan;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);95,5;91,7-97,6;100;98,1-100
-AT493/21;REDTEST PROFESSIONAL- SARS-CoV-2 ANTIGEN RAPID SALIVA TEST (Covid-19Ag);Nein;Sigmed Sp. z o.o.;Cisek;PL;;;;POC (ohne Gerät);91,06;84,55 - 95,08;99;94,01 - 99,99
-AT384/21;REDTEST PROFESSIONAL SARS-CoV-2 ANTIGEN RAPIDTEST(Covid-19 Ag);Ja;Sigmed Sp. z o.o.;Cisek;PL;;;;POC (ohne Gerät);98,13;93,02 - 99,90;100;97,73 - 100
-AT010/20;SGTi-flex COVID-19 Ag;Ja;Sugentech, INC.;Cheongju;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);95,1;90,2 - 97,6;99;94,5 - 99,8
-AT789/21;SureScreen SARS-CoV-2 Antigen Rapid Test Cassette;Nein;SureScreen Diagnostics Ltd.;Derby;GB;SureScreen Ireland;Dublin;IE;POC (ohne Gerät);96,1;91,2 - 98,7;99;97,5 - 99,7
-AT072/20;VTRUST TD-4531 'COVID-19 Antigen Rapid Test';Nein;TaiDoc Technology Corporation;New Taipei City;TW;EC-REP MedNet GmbH;Muenster;DE;POC (ohne Gerät);91,3;73,2 - 97,6;98,6;92,6 - 100
+AT560/21;SARS-Cov-2 Antigen Assay kit by Immunofluorescence Chromatography method;Nein;Sichuan Xincheng Biological Co.,LTD;Sichuan;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (mit Gerät);95,50;91,7-97,6;100,00;98,1-100
+AT941/21;SARS-Cov-2 Antigen Assay kit by Latex Immunochromatography method;Nein;Sichuan Xincheng Biological Co.,LTD;Sichuan;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);96,00;90,2-98,4;100,00;96,3-100,0
+AT384/21;REDTEST PROFESSIONAL SARS-CoV-2 ANTIGEN RAPIDTEST(Covid-19 Ag);Ja;Sigmed Sp. z o.o.;Cisek;PL;;;;POC (ohne Gerät);98,13;93,02 - 99,90;100,00;97,73 - 100
+AT493/21;REDTEST PROFESSIONAL- SARS-CoV-2 ANTIGEN RAPID SALIVA TEST (Covid-19Ag);Nein;Sigmed Sp. z o.o.;Cisek;PL;;;;POC (ohne Gerät);91,06;84,55 - 95,08;99,00;94,01 - 99,99
+AT351/21;SARS-CoV-2 Antigen-Schnelltestkassette (Speichel);Nein;Spring Healthcare Services Sp zoo;Warschau;PL;;;;POC (ohne Gerät);97,69;96,07 - 99,31;99,90;99,56 - 100
+AT837/21;SARS-Cov-2  Antigen-Schnelltestkassette (Abstrich) - vordere Nasenhöhle;Nein;Spring Healthcare Services Sp zoo;Warschau;PL;;;;POC (ohne Gerät);98,52;97,90 - 100;100,00;97,90 - 100
+AT010/20;SGTi-flex COVID-19 Ag;Ja;Sugentech, INC.;Cheongju;KR;MT Promedt Consulting GmbH;St. Ingbert;DE;POC (ohne Gerät);95,10;90,2 - 97,6;99,00;94,5 - 99,8
+AT789/21;SureScreen SARS-CoV-2 Antigen Rapid Test Cassette;Nein;SureScreen Diagnostics Ltd.;Derby;GB;SureScreen Ireland;Dublin;IE;POC (ohne Gerät);96,10;91,2 - 98,7;99,00;97,5 - 99,7
+AT765/21;COVID-19 Antigen Test Kit;Nein;SURGE MEDICAL INC.;Tonghua City;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Malaga;ES;POC (ohne Gerät);98,62;97,77 - 99,43;98,94;98,21 - 99,67
+AT830/21;InstantSure Covid-19 Ag CARD;Nein;Suzhou Soochow University Saier ImmunoBiotech Co., Ltd;SuZhou;CN;ZWL GmbH;Pirmasens;DE;POC (ohne Gerät);93,68;90,20 - 96,21;99,68;98,24 - 99,99
+AT1058/21;Viral antigen detection reagent (colloidal gold);Nein;Tai Zhou Sun Trine Biotechnology Co.,Ltd;Taizhou;CN;CMC Medical Devices & Drugs, S.L.;Málaga;ES;POC (ohne Gerät);88,79;81,41 - 93,47;98,08;93,26 - 99,47
+AT980/21;SARS-CoV-2 Antigen Rapid Test;Nein;TBG Biotechnology Xiamen Inc.;Xiamen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95,63;91,87 - 97,98;99,68;98,22 - 99,99
+AT973/21;SARS-CoV-2 Antigen Rapid Test;Nein;TBG Biotechnology Xiamen Inc.;Xiamen City;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);96,62;93,16 - 98,63;99,76;98,49 - 99,99
+AT931/21;SARs-COV-2Antigen Rapid Test (Oropharyngea|swabs);Nein;TBG Biotechnology Xiamen Inc.;Xiamen City;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,10;93,80 - 98,93;99,76;98,49 - 99,99
+AT974/21;SARS-CoV-2 Antigen Rapid Test;Nein;TBG Biotechnology Xiamen Inc.;Xiamen City;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95,65;91,83 - 97,81;99,27;97,77 - 99,86
 AT848/21;SARS-CoV-2 Antigen Rapid Test;Nein;TBG Biotechnology Xiamen Inc.;Xiamen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95,63;91,87 - 97,98;99,68;98,22 - 99,99
-AT379/20;Toda Coronadiag Ag;Ja;Toda Pharma;Strasbourg;FR;;;;POC (ohne Gerät);96,6;91,7 - 98,7;100;97,1 - 100
-AT044/21;SARS-CoV-2-Antigen-Schnelltest-Kit;Ja;Triplex International Biosciences (China) Co., LTD;Xiamen;CN;Lotus NL B. V.;The Hague;NL;POC (ohne Gerät);100;95,39 - 100;100;99,21 - 100
-AT477/21;SARS-CoV-2 (COVID-19) Antigen Rapid Detection Kit;Nein;Tsinglight (Wuhan) Biotechnology Co., Ltd.;Wuhan City;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,37;94,83 - 97,91;100;98,8 - 100,0
+AT1016/21;VIRASPEC;Nein;Thyrolytics AB;Lund;SE;;;;POC (ohne Gerät);90,00;83,2 - 94,7;99,90;98,2 - 100,0
+AT379/20;Toda Coronadiag Ag;Ja;Toda Pharma;Strasbourg;FR;;;;POC (ohne Gerät);96,60;91,7 - 98,7;100,00;97,1 - 100
+AT044/21;SARS-CoV-2-Antigen-Schnelltest-Kit;Ja;Triplex International Biosciences (China) Co., LTD;Xiamen;CN;Lotus NL B. V.;The Hague;NL;POC (ohne Gerät);100,00;95,39 - 100;100,00;99,21 - 100
+AT477/21;SARS-CoV-2 (COVID-19) Antigen Rapid Detection Kit;Nein;Tsinglight (Wuhan) Biotechnology Co., Ltd.;Wuhan City;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,37;94,83 - 97,91;100,00;98,8 - 100,0
 AT745/21;TEST IT COVID-19 Ag Test;Nein;TÜRKLAB TIBBI MALZEMELER SAN. ve TIC. A.S.;IZMIR;TR;;;;POC (ohne Gerät);93,18;88,39 - 96,43;99,32;98,02 - 99,86
+AT492/20;RAPIDAN TESTER COVID-19 Ag Test;Nein;TÜRKLAB TIBBI MALZEMELER SAN. ve TIC. A.S.;IZMIR;TR;;;;POC (ohne Gerät);92,25;86,56 - 96,07;99,99;98,86 - 100,00
+AT890/21;TOYO COVID-19 Ag Test;Nein;TÜRKLAB TIBBI MALZEMELER SAN. ve TIC. A.S.;IZMIR;TR;;;;POC (ohne Gerät);93,18;88,39 - 96,43;99,32;98,02 - 99,86
 AT075/21;COVID-19 Antigen Saliva Test Card;Ja;ultimed Products (Deutschland) GmbH;Ahrensburg;DE;;;;POC (ohne Gerät);95,65;90,22 - 98,13;98,44;94,48 - 99,57
+AT835/21;Covid-19 Rapid Nasopharynx Antigen Test;Nein;Unioninvest Ltd.;Istanbul;TR;;;;POC (ohne Gerät);98,57;96,70 - 99,53;99,14;97,52 - 99,82
 AT332/21;Covid-19 Antigen Schnelltest Saliva;Nein;Unioninvest Ltd.;Istanbul;TR;;;;POC (ohne Gerät);98,67;96,62 - 99,64;99,67;98,16 - 99,99
-AT333/21;Covid-19 Antigen Schnelltest Nasal;Nein;Unioninvest Ltd.;Istanbul;TR;;;;POC (ohne Gerät);99;97,46 - 99,73;99,75;98,62 - 99,99
-AT418/21;2019-nCoV Antigen Rapid Test;Nein;Ustar Biotechnologies (Hangzhou) Ltd.;Hangzhou;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);95,34;91,33-97,85;99,3;97,50 - 99,91
+AT333/21;Covid-19 Antigen Schnelltest Nasal;Nein;Unioninvest Ltd.;Istanbul;TR;;;;POC (ohne Gerät);99,00;97,46 - 99,73;99,75;98,62 - 99,99
 AT419/21;2019- nCoV and Flu A/B Antigen Combo Rapid Test Kit (Colloid Gold Immunoassay);Nein;Ustar Biotechnologies (Hangzhou) Ltd.;Hangzhou;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);95,65;91,25 - 98,23;99,27;97,40 - 99,91
-AT344/20;Romed Coronavirus Ag Rapid Test Cassette (Swab);Nein;Van Oostveen Medical B.V.;Wilnis;NL;;;;POC (ohne Gerät);96,72;88,65 - 99,6;99,22;97,21 - 99,91
-AT750/21;VISION SARS-CoV-2 Saliva Antigen Rapid Test;Nein;Vision Biyoteknoloji Arastirma Gelistirme Laboratuvar Sistemleri Sanayi ve Ticaret Limited Sirketi;Kadiköy/Istanbul;TR;Pro-Aster GmbH;Güterlosh;DE;POC (ohne Gerät);94,08;92,31 - 97,42;98,79;93,56 - 98,93
-AT315/21;VISION COVID-19 Antigen Schnelltest;Nein;Vision Biyoteknoloji Arastirma Gelistirme Labt. Sist. San ve Tic LTD STI.;Kadiköy/Istanbul;TR;Pro-Aster GmbH;Verl;DE;POC (ohne Gerät);97,57;95,82 - 98,51;99,6;97,81, 99,69
-AT069/21;RapidFor SARS-CoV-2 Saliva Antigen Test;Ja;Vitrosens Biyoteknoloji Ltd. Sti.;Ümraniye/Istanbul;TR;;;;POC (ohne Gerät);95,3;92,31 - 97,42;99,1;93,56 - 98,93
+AT418/21;2019-nCoV Antigen Rapid Test;Nein;Ustar Biotechnologies (Hangzhou) Ltd.;Hangzhou;CN;Lotus NL B.V.;Hague;NL;POC (ohne Gerät);95,34;91,33-97,85;99,30;97,50 - 99,91
+AT1115/21;Novel Coronavirus (SARS-CoV-2) Antigen Detection Kit (Immunochromatography);Nein;Vacure Prelab Medical Technology Co., Ltd.;Chengdu;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);98,32;94,08 - 99,54;99,47;98,10 - 99,86
+AT344/20;Romed Coronavirus Ag Rapid Test Cassette (Swab);Ja;Van Oostveen Medical B.V.;Wilnis;NL;;;;POC (ohne Gerät);98,32;94,06 - 99,8;99,60;98,83 - 99,92
+AT892/21;VISION SARS-COV-2 AG RAPID NASOPHARYNGEAL TEST KIT;Nein;Vision Biyoteknoloji Arastirma Gelistirme Laboratuvar Sistemleri Sanayi ve Ticaret Limited Sirketi;Kadiköy/Istanbul;TR;;;;POC (ohne Gerät);99,30;95,82,98,51;99,40;97,81, 99,69
+AT750/21;VISION SARS-CoV-2 Saliva Antigen Rapid Test;Nein;Vision Biyoteknoloji Arastirma Gelistirme Laboratuvar Sistemleri Sanayi ve Ticaret Limited Sirketi;Kadiköy/Istanbul;TR;;;;POC (ohne Gerät);94,08;92,31 - 97,42;98,79;93,56 - 98,93
+AT315/21;VISION COVID-19 Antigen Schnelltest;Nein;Vision Biyoteknoloji Arastirma Gelistirme Labt. Sist. San ve Tic LTD STI.;Kadiköy/Istanbul;TR;;;;POC (ohne Gerät);97,57;95,82 - 98,51;99,60;97,81, 99,69
+AT069/21;RapidFor SARS-CoV-2 Saliva Antigen Test;Ja;Vitrosens Biyoteknoloji Ltd. Sti.;Ümraniye/Istanbul;TR;;;;POC (ohne Gerät);95,30;92,31 - 97,42;99,10;93,56 - 98,93
 AT292/21;RapidFor SARS-CoV-2 Duo Antigen Test;Nein;Vitrosens Biyoteknoloji Ltd. Sti.;Ümraniye/Istanbul;TR;;;;POC (ohne Gerät);96,76;93,44 - 98,69;99,29;97,45 - 99,91
-AT507/20;RapidFor SARS-CoV-2 Rapid Antigen Test;Ja;Vitrosens Biyoteknoloji Ltd. Sti.;Ümraniye/Istanbul;TR;;;;POC (ohne Gerät);97,3;95,82 - 98,51;99;97,81 - 99,69
-AT132/21;VivaDiagTM Pro SARS-CoV-2 Ag-Schnelltest;Nein;VivaChek Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,12;90,44 - 98,48;99,99;98,63 - 100
+AT507/20;RapidFor SARS-CoV-2 Rapid Antigen Test;Ja;Vitrosens Biyoteknoloji Ltd. Sti.;Ümraniye/Istanbul;TR;;;;POC (ohne Gerät);97,30;95,82 - 98,51;99,00;97,81 - 99,69
 AT524/20;IME® SARS-CoV-2 Ag Speichel Schnelltest;Nein;VivaChek Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,26;95,00 - 99,41;99,99;99,12 - 100
-AT294/20;VivaDiag Pro SARS-CoV-2 Ag Schnelltest;Nein;VivaChek Biotech (Hangzhou) Co., Ltd..;Hangzhou;CN;Lotus NL B.V.;Den Haag;NL;POC (ohne Gerät);97,06;91,71 - 98,99;100;99,12 - 100
+AT929/21;Verino Pro SARS-CoV-2 Antigen Schnelltest;Ja;VivaChek Biotech (Hangzhou) Co., Ltd.;Hangzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,69;92,48 - 98,58;99,48;98,11 - 99,86
 AT694/21;2in1 Max SARS-CoV-2 Ag Schnelltest;Nein;VPD, Bled, d.o.o.;Bled;SI;;;;POC (ohne Gerät);96,69;92,48 - 98,58;99,48;98,11 - 99,86
-AT711/21;COVID-19 Antigen Rapid Test;Nein;Weihai Kangzhou Biotechnology Engineering Co., Ltd.;Shandong;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);97,5;95,17 - 98,39;99,1;98,51 - 99,28
+AT711/21;COVID-19 Antigen Rapid Test;Nein;Weihai Kangzhou Biotechnology Engineering Co., Ltd.;Shandong;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);97,50;95,17 - 98,39;99,10;98,51 - 99,28
+AT1118/21;SARS-CoV-2 Antigen Detection Kit (Colloidal Gold Method);Nein;Wenzhou OJA Biotechnology Co., Ltd;Wenzhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,63;91,62 - 99,08;99,20;96,77 - 99,89
 AT125/21;SARS-CoV-2 Antigen Detection Kit (Colloidal Gold Method);Nein;Wenzhou OJA Biotechnology Co., Ltd;Wenzhou;CN;Lotus NL B.V.;The Hague;;POC (ohne Gerät);98,29;91,62-99,08;99,54;96,77-99,89
-AT730/21;Willi Fox COVID-19 Antigen Speichel Schnelltest;Nein;Willi Fox GmbH;Basel;CH;;;;POC (ohne Gerät);90,1;82,5 - 95,1;99,3;97,7 - 99,9
-AT729/21;Willi Fox COVID-19 Easy Antigen Schnelltest;Nein;Willi Fox GmbH;Basel;CH;;;;POC (ohne Gerät);95,38;91,34 - 97,67;99,9;98,93 - 100
+AT1145/21;WH Accu Test SARS-CoV-2 Antigen Test;Nein;W.H.P.M. Bioresearch & Technology Co., Ltd.;Beijing;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,70;91,70 - 98,70;98,80;95,8 - 99,7
+AT729/21;Willi Fox COVID-19 Easy Antigen Schnelltest;Nein;Willi Fox GmbH;Basel;CH;;;;POC (ohne Gerät);95,38;91,34 - 97,67;99,90;98,93 - 100
+AT730/21;Willi Fox COVID-19 Antigen Speichel Schnelltest;Nein;Willi Fox GmbH;Basel;CH;;;;POC (ohne Gerät);90,10;82,5 - 95,1;99,30;97,7 - 99,9
 AT873/21;COVID-19 (SARS-CoV-2) Antigen Test Kit;Nein;Wuhan EasyDiagnosis Biomedicine Co., Ltd;Wuhan;CN;MedNet GmbH;Münster;DE;POC (ohne Gerät);96,15;91,31 - 98,35;99,26;97,84 - 99,75
 AT430/20;COVID-19 (SARS-CoV-2) Antigen Test Kit;Ja;Wuhan EasyDiagnosis Biomedicine Co., Ltd.;Wuhan;CN;MedNet EC-REP GmbH;Muenster;DE;POC (ohne Gerät);96,15;91,31 - 98,35;99,26;97,84 - 99,75
-AT172/20;The SARS-CoV-2 Antigen Assay Kit (Immunochromatography);Nein;Wuhan Life Origin Biotech Joint Stock Co. Ltd.;Wuhan City, Hubei Province;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);92,67;87,26 - 96,28;98,29;96,31 - 99,37
-AT429/20;SARS-CoV-2 Antigen Rapid Test Kit;Nein;Wuhan UNscience Biotechnology Co. Ltd.;Wuhan;CN;CMC Medical Devices & Drugs SL;Málaga;ES;POC (ohne Gerät);96,33;90,9 - 98,9;99,57;97,6 - 99,9
+AT997/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold);Nein;Wuhan HealthCare Biotechnology Co., Ltd.;Wuhan;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);96,95;93,03 - 99,00;99,36;96,48 - 99,98
+AT172/20;The SARS-CoV-2 Antigen Assay Kit (Immunochromatography);Ja;Wuhan Life Origin Biotech Joint Stock Co. Ltd.;Wuhan City, Hubei Province;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);92,67;87,26 - 96,28;98,29;96,31 - 99,37
+AT009/21;COVID-19 Antigen/FLU A+B Antigen Combo Rapid Test Cassette (Colloidal Gold Method);Nein;Wuhan NanoDiagnosis for Health Biotechnology Co., Ltd.;Wuhan;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,10;93,32 - 99,48;99,40;97,82 - 99,83
+AT010/21;COVID-19 Antigen Rapid Test Cassette (Colloidal Gold Method);Nein;Wuhan NanoDiagnosis for Health Biotechnology Co., Ltd.;Wuhan;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);98,10;93,32 - 99,48;99,40;97,82 - 99,83
+AT429/20;SARS-CoV-2 Antigen Rapid Test Kit;Ja;Wuhan UNscience Biotechnology Co. Ltd.;Wuhan;CN;CMC Medical Devices & Drugs SL;Málaga;ES;POC (ohne Gerät);96,33;90,9 - 98,9;99,57;97,6 - 99,9
 AT847/21;SARS-CoV-2 Antigen Test Kit(Lateral Flow Immunoassay);Nein;Wuxi BioHermes Bio & Medical Technology Co., Ltd;WuXi;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,31;90,08 - 98,26;98,02;95,43 - 99,35
-AT866/21;SARS-CoV-2-Antigen-Test;Nein;Wuxi Techstar Technology Co., Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);90;82,38 - 95,10;98,52;94,75 - 99,82
-AT633/21;SARS-CoV-2 Antigen Test;Nein;Wuxi Techstar Technology Co.,Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95;88,72 - 98,36;99;94,55 - 99,98
-AT498/21;COVID-19 SALIVA Antigen Rapid Test Kit (Colloidal Gold);Ja;Xiamen AmonMed Biotechnology Co., Ltd.;Xiamen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,32;92,42 - 99,08;99,56;97,56 - 99,92
-AT038/20;Biotime SARS-CoV-2 Antigen Rapid Qualitative Test;Nein;Xiamen Biotime Biotechnology Co Ltd.;Xiamen;CN;Logcon East GmbH;Wien;AT;;96;88,75 - 99,17;100;98,34 - 100,00
+AT866/21;SARS-CoV-2-Antigen-Test;Nein;Wuxi Techstar Technology Co., Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);90,00;82,38 - 95,10;98,52;94,75 - 99,82
+AT942/21;SARS-CoV-2-Antigen-Test;Nein;Wuxi Techstar Technology Co., Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);89,00;81,17 - 94,38;98,44;94,47 - 99,81
+AT633/21;SARS-CoV-2 Antigen Test;Nein;Wuxi Techstar Technology Co.,Ltd;Wuxi;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95,00;88,72 - 98,36;99,00;94,55 - 99,98
+AT498/21;COVID-19 Antigen Rapid Test Kit (Colloidal Gold);Ja;Xiamen AmonMed Biotechnology Co., Ltd.;Xiamen;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);97,32;92,42 - 99,08;99,56;97,56 - 99,92
 AT116/20;BOSON SARS-CoV-2 Antigen Schnelltest;Ja;Xiamen Boson Biotech Co., Ltd;Xiamen, Fujian;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);96,49;91,71 - 99,99;99,03;98,09 - 99,98
-AT001/21;SARS-CoV-2 Antigen Detection Kit (Collodial Gold Method);Nein;Xiamen Jiqing Biomedical Technology Co. Ltd;Xiamen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,39;90,57 - 98,21;100;96,91 - 100
-AT277/21;GRUENBANKA SARS-CoV-2 Antigen Detection Kit (Collodial Gold Method);Nein;Xiamen Jiqing Biomedical Technology Co. Ltd;Xiamen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,39;90,57-98,21;100;96,91-100
-AT109/20;SARS-CoV-2 Antigen Rapid Test;Ja;Xiamen Wiz Biotech Co.Ltd.;Xiamen;CN;Wellkang Ltd.;Dover;GB;POC (ohne Gerät);96,3;89,67 - 98,73;100;98,53 - 100
-AT162/21;SARS-CoV-2 Antigen Rapid Test (Sputum/Saliva/Stool);Ja;XIAMEN WIZ BIOTECH CO.,LTD.;Xiamen;CN;QARAD BV;Geel;BE;POC (ohne Gerät);96,67;94,50 - 98,01;100;99,35 - 100,00
-AT296/21;SARS-CoV-2 Antigen Rapid Test (Colloidal Gold);Ja;XIAMEN WIZ BIOTECH CO.,LTD.;Xiamen;CN;QARAD BV;Geel;BE;POC (ohne Gerät);95,91;93,25 - 97,55;100;99,26 - 100,00
-AT240/21;SARS-CoV-2 Antigen Rapid Test (Saliva);Ja;XIAMEN WIZ BIOTECH CO.,LTD.;Xiamen;CN;QARAD BV;Geel;BE;POC (ohne Gerät);95,35;92,58 - 97,12;100;99,31 - 100,00
+AT664/21;COVID-19 Antigen Rapid Test Kit;Nein;Xiamen Hopegen Medical Technology Co.,Ltd;Xiamen,Fujian;CN;SUNGO Europe B.V;Amsterdam,;NL;POC (ohne Gerät);93,20;86,50-97,22;99,55;97,49-99,99
+AT001/21;SARS-CoV-2 Antigen Detection Kit (Collodial Gold Method);Nein;Xiamen Jiqing Biomedical Technology Co. Ltd;Xiamen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,39;90,57 - 98,21;100,00;96,91 - 100
+AT277/21;GRUENBANKA SARS-CoV-2 Antigen Detection Kit (Collodial Gold Method);Nein;Xiamen Jiqing Biomedical Technology Co. Ltd;Xiamen;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);94,39;90,57-98,21;100,00;96,91-100
+AT109/20;SARS-CoV-2 Antigen Rapid Test;Ja;Xiamen Wiz Biotech Co.Ltd.;Xiamen;CN;Wellkang Ltd.;Dover;GB;POC (ohne Gerät);96,30;89,67 - 98,73;100,00;98,53 - 100
+AT296/21;SARS-CoV-2 Antigen Rapid Test (Colloidal Gold);Ja;XIAMEN WIZ BIOTECH CO.,LTD.;Xiamen;CN;QARAD BV;Geel;BE;POC (ohne Gerät);95,91;93,25 - 97,55;100,00;99,26 - 100,00
+AT162/21;SARS-CoV-2 Antigen Rapid Test (Sputum/Saliva/Stool);Ja;XIAMEN WIZ BIOTECH CO.,LTD.;Xiamen;CN;QARAD BV;Geel;BE;POC (ohne Gerät);96,67;94,50 - 98,01;100,00;99,35 - 100,00
+AT240/21;SARS-CoV-2 Antigen Rapid Test (Saliva);Ja;XIAMEN WIZ BIOTECH CO.,LTD.;Xiamen;CN;QARAD BV;Geel;BE;POC (ohne Gerät);95,35;92,58 - 97,12;100,00;99,31 - 100,00
 AT311/21;ZandCell COVID-19 Saliva Antigen Test;Nein;ZandCell AB;Skövde;SE;-;-;;POC (ohne Gerät);98,52;95,74 - 99,69;99,74;98,55 - 99,99
-AT513/21;Softec Sars Cov-19 AG Nasalabstrich;Nein;ZET Medical Tekstil Dis Ticaret LTD. STI;Umraniye, Istanbul;TR;ESSA COMMERCE information Import/Export A.S;Istanbul;TR;POC (ohne Gerät);97,5;92,9 - 99,2;99,4;98,1 - 99,8
-AT184/21;COVID-19-Antigen-Schnelltestkassette (Speichel);Ja;ZET Medical Tekstil Dis Ticaret LTD. STI;Umraniye, Istanbul;TR;ESSA COMMERCE information Import/Export A.S;ISTANBUL;TR;POC (ohne Gerät);96,8;92,0 - 98,7;99,6;98,5 - 99,9
-AT167/20;softec SARS Cov Antigen-Schnelltestkasette;Ja;ZET Medikal Tekstil DIS. TIC. LTD. STI.;Istanbul;TR;ESSA COMMERCE Information Imp.&Exp. Ltd. Sti.;Istanbul;TR;POC (ohne Gerät);84,38;72,35 - 93,14;100;97,13 - 100
-AT522/21;Seinofy  COVID-19 Antigen Rapid Test;Nein;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,5;93,76 - 99,32;99,1;96,89 - 99,89
-AT268/21;AndLucky SARS-CoV-2 Antigen SPUTUM Rapid Test Kit (non-invasive);Ja;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou City;CN;Brand-New Trading GmbH;Tiefgraben;AT;POC (ohne Gerät);93,5;90,14 - 95,31;99,4;91,19 - 97,56
-AT102/20;reOpenTest™ COVID-19 Antigen Rapid Test;Ja;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);95,8;89,17 - 94,39;99;91,21 - 97,68
-AT269/21;AndLucky SARS-CoV-2 Antigen Anterior Nasal Rapid Test;Ja;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou City;CN;Brand-New Trading GmbH;Tiefgraben;AT;POC (ohne Gerät);97,5;89,17 - 94,93;99,1;91,21 - 97,68
+AT513/21;Softec Sars Cov-19 AG Nasalabstrich;Ja;ZET Medical Tekstil Dis Ticaret LTD. STI;Umraniye, Istanbul;TR;;;;POC (ohne Gerät);97,50;92,9 - 99,2;99,40;98,1 - 99,8
+AT184/21;COVID-19-Antigen-Schnelltestkassette (Speichel);Ja;ZET Medical Tekstil Dis Ticaret LTD. STI;Umraniye, Istanbul;TR;;;;POC (ohne Gerät);96,80;92,0 - 98,7;99,60;98,5 - 99,9
+AT167/20;softec SARS Cov Antigen-Schnelltestkasette;Ja;ZET Medikal Tekstil DIS. TIC. LTD. STI.;Istanbul;TR;ESSA COMMERCE Information Imp.&Exp. Ltd. Sti.;Istanbul;TR;POC (ohne Gerät);96,38;89,8 - 99,2;99,17;95,5 - 99,9
+AT102/20;reOpenTest™ COVID-19 Antigen Rapid Test;Ja;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou;CN;Lotus NL B.V.;The Hague;NL;;97,50;93,76 - 99,32;99,10;96,89 - 99,89
+AT268/21;AndLucky SARS-CoV-2 Antigen SPUTUM Rapid Test Kit (non-invasive);Ja;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou City;CN;Brand-New Trading GmbH;Tiefgraben;AT;POC (ohne Gerät);93,50;90,14 - 95,31;99,40;91,19 - 97,56
+AT522/21;Seinofy  COVID-19 Antigen Rapid Test;Ja;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou;CN;Lotus NL B.V.;The Hague;NL;POC (ohne Gerät);97,50;93,76 - 99,32;99,10;96,89 - 99,89
+AT269/21;AndLucky SARS-CoV-2 Antigen Anterior Nasal Rapid Test;Ja;Zhejiang Anji Saianfu Biotech Co., Ltd.;HuZhou City;CN;Brand-New Trading GmbH;Tiefgraben;AT;POC (ohne Gerät);97,50;89,17 - 94,93;99,10;91,21 - 97,68
 AT737/21;Vacsure COVID-19 Antigen Kassettenschnelltest;Nein;Zhejiang Anji Saianfu Biotech Co.,Ltd.;Zhejiang;CN;Lotus NL B.V.;The Hague,;NL;POC (ohne Gerät);97,52;93,79 - 99,03;99,13;96,89 - 99,76
-AT044/20;Covid-19 Rapid Ag Test Cassette;Ja;Zhejiang Orient Gene Biotech Co.,Ltd;Huzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,72;88,65 - 99,6;99,22;97,21 - 99,91
+AT771/21;Vacsure COVID-19 Antigen Kassettenschnelltest;Nein;Zhejiang Anji Saianfu Biotech Co.,Ltd.;Zhejiang;CN;Lotus NL B.V.;The Hague,;NL;POC (ohne Gerät);97,52;93,79 - 99,03;99,13;96,89 - 99,76
+AT516/21;Testkassette für neuartiges Coronavirus (COVID-19)-Antigen  (Latex-Immunochromatographie);Nein;Zhejiang GENE SCIENCE Co., Ltd.;Shaoxing, Zhejiang;CN;Lotus NL B. V.;Hague;NL;POC (mit Gerät);94,58;90,51 - 97,26;98,73;96,33 - 99,74
+AT1043/21;SARS-CoV-2 Ag Rapid Test Kit;Nein;ZHEJIANG HONGYU MEDICAL COMMODITY CO.,LTD;Yiwu;CN;SUNGO Europe B.V;Amsterdam;NL;POC (ohne Gerät);95,50;92,23 - 99,42;100,00;97,96 - 100
+AT933/21;2019- nCoV Antigen Rapid Test (Colloidal Gold);Nein;ZHEJIANG KANGTE BIO-TECH CO., LTD.;Shaoxing;CN;CMC Medical Devices & Drugs S.L;Málaga;ES;POC (ohne Gerät);94,77;92,20 - 97,40;99,20;98,10 - 100,00
+AT152/20;Covid-19 Rapid Ag Test Cassette;Ja;Zhejiang Orient Gene Biotech Co., Ltd;Huzhou, Zhejiang;CN;Shanghai International Holding Corp. GmbH;Hamburg;DE;POC (ohne Gerät);96,72;88,65 - 99,6;99,22;97,21 - 99,91
+AT039/20;Coronavirus Ag Rapid test Cassette (Swab);Ja;Zhejiang Orient Gene Biotech Co. Ltd;Huzhou, Zhejiang;CN;Shanghai International Holding Corp GmbH ( Europe);Hamburg;DE;POC (ohne Gerät);98,32;94,06-99,8;99,60;98,83-99,2
+AT360/20;Influenza A/B & Covid-19 Rapid Ag Test Cassette;Ja;Zhejiang Orient Gene Biotech Co.,Ltd;Huzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,72;94,06 - 99,80;99,60;98,83 - 99,92
+AT044/20;Covid-19 Rapid Ag Test Cassette;Ja;Zhejiang Orient Gene Biotech Co.,Ltd;Huzhou;CN;Shanghai International Holding Corp.GmbH (Europe);Hamburg;DE;POC (ohne Gerät);96,72;88,65-99,6;99,22;97,21-99,91
 AT488/20;Novel Coronavirus Ag Rapid Test Device;Nein;Zhejiang Quark Biotechnology Co., Ltd;Shaoxing, Zheijang;CN;Wellkang Ltd.;Derry;IR;POC (ohne Gerät);94,87;89,17 - 98,09;99,34;97,65 - 99,92
-AT103/20;Novel Coronavirus Ag Rapid Test Device;Nein;Zhejiang Quark Biotechnology Co., Ltd.;Shaoxing / Zhejiang;CN;Wellkang Ltd;Derry;IE;POC (ohne Gerät);90,6;83,80 - 95,21;99,34;97,65 - 99,92
-AT839/21;Neuartiges Coronavirus (2019-nCoV) Antigendetektionsreagenz (immunochromatographischer Assay);Nein;Zhongxiu Science And Technology Co.,Ltd;Changyuan;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95;91,47 - 97,12;98,75;96,39 - 99,57
-AT583/21;SARS-COV-2 Antigen Schnelltest;Nein;Zhuhai Encode Medical Engineering Co.,Ltd;Jinwan District, Zhuhai, VR;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);93,86;89,45 - 98,27;100;99,82 - 100
-AT350/21;LITUO COVID-19 Antigen Detection Kit (CG);Nein;Zhuhai Lituo Biotechnology Co. Ltd.;Zhuhai;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);93,27;90,44 - 95,31;99,47;98,19 - 99,85
-AT542/21;LITUO COVID-19 Antigen Detection Kit (CG);Nein;Zhuhai Lituo Biotechnology Co. Ltd.;Zhuhai;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);95,96;93,60 - 97,48;99,47;98,19 - 99,85
+AT103/20;Novel Coronavirus Ag Rapid Test Device;Nein;Zhejiang Quark Biotechnology Co., Ltd.;Shaoxing / Zhejiang;CN;Wellkang Ltd;Derry;IE;POC (ohne Gerät);90,60;83,80 - 95,21;99,34;97,65 - 99,92
+AT1153/21;COVID-19 Antigen-Schnelltest-Kit (kolloidales Gold);Nein;ZHONGSHAN BIO-TECH CO., LTD.;Zhongshan;CN;Lotus NL B. V.;The Hague;NL;POC (ohne Gerät);98,51;95,37 - 99,62;99,64;97,66 - 99,98
+AT839/21;Neuartiges Coronavirus (2019-nCoV) Antigendetektionsreagenz (immunochromatographischer Assay);Nein;Zhongxiu Science And Technology Co.,Ltd;Changyuan;CN;SUNGO Europe B.V.;Amsterdam;NL;POC (ohne Gerät);95,00;91,47 - 97,12;98,75;96,39 - 99,57
+AT583/21;SARS-COV-2 Antigen Schnelltest;Nein;Zhuhai Encode Medical Engineering Co.,Ltd;Jinwan District, Zhuhai, VR;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);96,49;93,11 - 99,87;100,00;99,82 - 100
+AT987/21;SARS-COV-2 Antigen Schnelltest (Speichelprobe);Nein;Zhuhai Encode Medical Engineering Co.,Ltd;Jinwan District, Zhuhai;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);93,86;89,45 - 98,27;100,00;99,82 - 100
+AT904/21;SARS-CoV-2 Antigen Test Kit (Colloidal Gold Assay);Nein;Zhuhai Keyu Biological Engineering Co., Ltd.;Zhuhai;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);90,61;86,3 - 94,0;98,48;97,2 - 99,3
+AT426/21;COVID-19 Antigen Detection Kit (Colloidal Gold);Ja;Zhuhai Lituo Biotechnology Co., Ltd.;Zhuhai;CN;CMC MEDICAL DEVICES & DRUGS S.L.;Malaga;ES;POC (ohne Gerät);93,27;90,44 - 95,31;99,47;98,19 - 99,85
+AT542/21;LITUO COVID-19 Antigen Detection Kit (CG);Ja;Zhuhai Lituo Biotechnology Co. Ltd.;Zhuhai;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);95,96;93,60 - 97,48;99,47;98,19 - 99,85
+AT350/21;LITUO COVID-19 Antigen Detection Kit (CG);Ja;Zhuhai Lituo Biotechnology Co. Ltd.;Zhuhai;CN;CMC Medical Devices & Drugs S.L.;Málaga;ES;POC (ohne Gerät);93,27;90,44 - 95,31;99,47;98,19 - 99,85
+AT888/21;SARS-CoV-2-Anigen-Assay-Kit (Kolloidale Goldmethode);Nein;Zybio Inc.;Chongqing;CN;Shanghai International Holding Corp. GmbH (Europe;Hamburg;DE;POC (ohne Gerät);97,60;93,15 - 99,50;99,45;96,99 - 99,99

@@ -106,14 +106,14 @@ public class QuickTestService {
     }
 
 
-
     /**
      * process quicktest result.
-     * @param ids ids
-     * @param shortHash shortHash
+     *
+     * @param ids                    ids
+     * @param shortHash              shortHash
      * @param quickTestUpdateRequest quickTestUpdateRequest
-     * @param pocInformation pocInformation
-     * @param user user
+     * @param pocInformation         pocInformation
+     * @param user                   user
      * @throws ResponseStatusException exception
      */
     @Transactional(rollbackOn = ResponseStatusException.class)
@@ -125,25 +125,34 @@ public class QuickTestService {
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
             shortHash
         );
+
         if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING) {
             log.info("Requested Quick Test with shortHash is not pending.");
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"not pending");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not pending");
         }
         log.debug("Updating TestResult on TestResult-Server for hash {}", quicktest.getHashedGuid());
         log.info("Updating TestResult on TestResult-Server for hash");
         quicktest.setTestResult(quickTestUpdateRequest.getResult());
-        if (quicktest.getDccConsent() != null && quicktest.getDccConsent().booleanValue()) {
+
+        if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
+            if (quickTestUpdateRequest.getDccTestManufacturerId() == null) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "DccTestManufacturerId must be set for DCC Tests");
+            }
+
             quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
             quicktest.setTestBrandName(quickTestUpdateRequest.getDccTestManufacturerDescription());
         } else {
             quicktest.setTestBrandId(quickTestUpdateRequest.getTestBrandId());
             quicktest.setTestBrandName(quickTestUpdateRequest.getTestBrandName());
         }
+
         quicktest.setUpdatedAt(LocalDateTime.now());
+
         if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
-                && quicktest.getDccStatus() == null) {
+            && quicktest.getDccStatus() == null) {
             if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()
-                    && quicktest.getDccConsent() != null && quicktest.getDccConsent().booleanValue()) {
+                && quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
                 quicktest.setDccStatus(DccStatus.pendingPublicKey);
             } else {
                 quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
@@ -169,7 +178,7 @@ public class QuickTestService {
             if (quicktest.getDccStatus() == null) {
                 quickTestRepository.deleteById(quicktest.getHashedGuid());
                 log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
-                        quicktest.getPocId(), quicktest.getShortHashedGuid());
+                    quicktest.getPocId(), quicktest.getShortHashedGuid());
             }
         } catch (Exception e) {
             log.error("Could not delete QuickTest. updateQuickTest failed.");
@@ -179,7 +188,7 @@ public class QuickTestService {
             quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
             quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
-                quickTestUpdateRequest.getResult());
+            quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
     }
 
@@ -237,12 +246,12 @@ public class QuickTestService {
      * @param deleteTimestamp Timestamp before which everything will be deleted
      */
     public void removeAllBefore(LocalDateTime deleteTimestamp) {
-        quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(deleteTimestamp, 0).forEach(quickTest -> {
-            this.sendResultToTestResultServer(quickTest.getTestResultServerHash(),
+        quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(deleteTimestamp, 0)
+            .forEach(quickTest -> this.sendResultToTestResultServer(
+                quickTest.getTestResultServerHash(),
                 TestResult.FAILED.getValue(),
                 deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
-                quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false);
-        });
+                quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
 
         quickTestRepository.deleteByCreatedAtBefore(deleteTimestamp);
     }
@@ -303,17 +312,16 @@ public class QuickTestService {
      * @return List including found quicktests
      */
     public List<QuickTest> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
-        List<QuickTest> quickTests = quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+        return quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
             ids.get(quickTestConfig.getTenantIdKey()),
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                QuickTest.TEST_RESULT_PENDING,
+            QuickTest.TEST_RESULT_PENDING,
             0
         );
-        return quickTests;
     }
 
     private void sendResultToTestResultServer(String testResultServerHash, short result, Long sc,
-                                              boolean confirmationCwa)throws ResponseStatusException {
+                                              boolean confirmationCwa) throws ResponseStatusException {
         if (confirmationCwa && testResultServerHash != null) {
             log.info("Sending TestResult to TestResult-Server");
             QuickTestResult quickTestResult = new QuickTestResult();
@@ -331,7 +339,8 @@ public class QuickTestService {
 
     /**
      * get dcc consent.
-     * @param ids ids
+     *
+     * @param ids       ids
      * @param shortHash shortHash
      * @return the data you need
      */

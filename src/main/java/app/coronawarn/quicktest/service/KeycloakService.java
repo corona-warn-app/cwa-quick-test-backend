@@ -240,16 +240,16 @@ public class KeycloakService {
      */
     public List<KeycloakUserResponse> getExtendedUserListForRootGroup(String groupId) {
         List<String> labRoleMembers = realm().roles().get(ROLE_LAB.replace(ROLE_PREFIX, ""))
-            .getRoleUserMembers().stream()
+            .getRoleUserMembers(0, Integer.MAX_VALUE).stream()
             .map(UserRepresentation::getId)
             .collect(Collectors.toList());
 
         List<String> counterRoleMembers = realm().roles().get(ROLE_COUNTER.replace(ROLE_PREFIX, ""))
-            .getRoleUserMembers().stream()
+            .getRoleUserMembers(0, Integer.MAX_VALUE).stream()
             .map(UserRepresentation::getId)
             .collect(Collectors.toList());
 
-        return realm().groups().group(groupId).members().stream()
+        return getGroupMembers(groupId).stream()
             .map(member -> {
                 KeycloakUserResponse userResponse = new KeycloakUserResponse();
                 userResponse.setId(member.getId());
@@ -271,7 +271,7 @@ public class KeycloakService {
      * @return List of {@link UserRepresentation}
      */
     public List<UserRepresentation> getGroupMembers(String groupId) {
-        return realm().groups().group(groupId).members();
+        return realm().groups().group(groupId).members(0, Integer.MAX_VALUE);
     }
 
     /**
@@ -380,7 +380,7 @@ public class KeycloakService {
      * @return List of Groups.
      */
     public List<GroupRepresentation> getRootGroupsOfUser(String userId) {
-        List<GroupRepresentation> rootGroups = realm().groups().groups();
+        List<GroupRepresentation> rootGroups = realm().groups().groups(0, Integer.MAX_VALUE);
 
         List<String> userGroupIds = realm().users().get(userId).groups().stream()
             .map(GroupRepresentation::getId)

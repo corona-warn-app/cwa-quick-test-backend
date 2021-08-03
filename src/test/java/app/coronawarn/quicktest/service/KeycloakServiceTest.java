@@ -175,7 +175,7 @@ public class KeycloakServiceTest {
         rootGroupResourceMock = mock(GroupResource.class);
         rootGroupRepresentation.setSubGroups(List.of(groupRepresentation));
         when(groupsResourceMock.group(rootGroupid)).thenReturn(rootGroupResourceMock);
-        when(groupsResourceMock.groups()).thenReturn(List.of(rootGroupRepresentation));
+        when(groupsResourceMock.groups(0, Integer.MAX_VALUE)).thenReturn(List.of(rootGroupRepresentation));
         when(rootGroupResourceMock.toRepresentation()).thenReturn(rootGroupRepresentation);
 
         // REALM
@@ -487,9 +487,9 @@ public class KeycloakServiceTest {
         GroupRepresentation subgroup = new GroupRepresentation();
         subgroup.setId("xxx");
 
-        when(roleLabResourceMock.getRoleUserMembers()).thenReturn(Set.of(userRepresentation));
-        when(roleCounterResourceMock.getRoleUserMembers()).thenReturn(Set.of(userRepresentation));
-        when(groupResourceMock.members()).thenReturn(List.of(userRepresentation));
+        when(roleLabResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
+        when(roleCounterResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
+        when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
         when(userResourceMock.groups()).thenReturn(List.of(groupRepresentation, subgroup));
 
         List<KeycloakUserResponse> response = keycloakService.getExtendedUserListForRootGroup(groupid);
@@ -507,9 +507,9 @@ public class KeycloakServiceTest {
     @Test
     void testGetExtendedUserListNoSubgroup() {
 
-        when(roleLabResourceMock.getRoleUserMembers()).thenReturn(Set.of(userRepresentation));
-        when(roleCounterResourceMock.getRoleUserMembers()).thenReturn(Set.of(userRepresentation));
-        when(groupResourceMock.members()).thenReturn(List.of(userRepresentation));
+        when(roleLabResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
+        when(roleCounterResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
+        when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
         when(userResourceMock.groups()).thenReturn(List.of(groupRepresentation));
 
         List<KeycloakUserResponse> response = keycloakService.getExtendedUserListForRootGroup(groupid);
@@ -530,9 +530,9 @@ public class KeycloakServiceTest {
         GroupRepresentation subgroup = new GroupRepresentation();
         subgroup.setId("xxx");
 
-        when(roleLabResourceMock.getRoleUserMembers()).thenReturn(Set.of(userRepresentation));
-        when(roleCounterResourceMock.getRoleUserMembers()).thenReturn(Collections.emptySet());
-        when(groupResourceMock.members()).thenReturn(List.of(userRepresentation));
+        when(roleLabResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
+        when(roleCounterResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Collections.emptySet());
+        when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
         when(userResourceMock.groups()).thenReturn(List.of(groupRepresentation, subgroup));
 
         List<KeycloakUserResponse> response = keycloakService.getExtendedUserListForRootGroup(groupid);
@@ -550,11 +550,11 @@ public class KeycloakServiceTest {
     @Test
     void testGetGroupMembers() {
 
-        when(groupResourceMock.members()).thenReturn(List.of(userRepresentation));
+        when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
 
         List<UserRepresentation> members = keycloakService.getGroupMembers(groupid);
 
-        verify(groupResourceMock).members();
+        verify(groupResourceMock).members(0, Integer.MAX_VALUE);
         Assertions.assertEquals(1, members.size());
         Assertions.assertEquals(userRepresentation, members.get(0));
     }

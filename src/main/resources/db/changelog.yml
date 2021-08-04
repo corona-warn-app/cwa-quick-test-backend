@@ -23,3 +23,6 @@ databaseChangeLog:
   - include:
       file: changelog/V008_add_dcc_consent_again.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V009_add_index.yml
+      relativeToChangelogFile: true

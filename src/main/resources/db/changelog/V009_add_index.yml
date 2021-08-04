@@ -1,0 +1,52 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-index-on-archive-tennant-id
+      author: mschulte-tsi
+      changes:
+        - createIndex :
+            tableName: quick_test_archive
+            indexName: idx_tennant_archive
+            columns:
+              - column:
+                  name: tenant_id
+  - changeSet:
+      id: add-index-on-archive-poc-id
+      author: mschulte-tsi
+      changes:
+        - createIndex:
+            tableName: quick_test_archive
+            indexName: idx_poc_archive
+            columns:
+              - column:
+                  name: poc_id
+  - changeSet:
+      id: add-index-on-archive-test-result
+      author: mschulte-tsi
+      changes:
+        - createIndex:
+            tableName: quick_test_archive
+            indexName: idx_test_result_archive
+            columns:
+              - column:
+                  name: test_result
+
+  - changeSet:
+      id: add-index-on-quicktest-tennant-id
+      author: mschulte-tsi
+      changes:
+        - createIndex:
+            tableName: quick_test
+            indexName: idx_tennant
+            columns:
+              - column:
+                  name: tenant_id
+  - changeSet:
+      id: add-index-on-quicktest-poc-id
+      author: mschulte-tsi
+      changes:
+        - createIndex:
+            tableName: quick_test
+            indexName: idx_poc
+            columns:
+              - column:
+                  name: poc_id

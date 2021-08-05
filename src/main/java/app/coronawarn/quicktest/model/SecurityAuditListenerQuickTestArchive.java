@@ -62,18 +62,28 @@ public class SecurityAuditListenerQuickTestArchive {
             name = utilities.getUserNameFromToken();
             tenantId = utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey());
             pocId = utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey());
+            log.info(pattern,
+                    name,
+                    tenantId,
+                    pocId,
+                    action,
+                    "QuickTestArchive",
+                    quickTestArchive.getHashedGuid());
         } catch (ResponseStatusException e) {
             name = "called by Backend";
             tenantId = quickTestArchive.getTenantId();
             pocId = quickTestArchive.getPocId();
+            if (!action.equals("Select")) {
+                log.debug(e.getReason());
+                log.info(pattern,
+                        name,
+                        tenantId,
+                        pocId,
+                        action,
+                        "QuickTestArchive",
+                        quickTestArchive.getHashedGuid());
+            }
         }
 
-        log.info(pattern,
-            name,
-            tenantId,
-            pocId,
-            action,
-            "QuickTestArchive",
-            quickTestArchive.getHashedGuid());
     }
 }

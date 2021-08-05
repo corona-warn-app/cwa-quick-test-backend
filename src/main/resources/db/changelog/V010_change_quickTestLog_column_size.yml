@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: alter-quicktest-log-column-size
+      author: bergmann-dierk
+      changes:
+        - modifyDataType:
+            tableName: quick_test_log
+            columnName: poc_id
+            newDataType: varchar(255)
+
+        - modifyDataType:
+            tableName: quick_test_log
+            columnName: tenant_id
+            newDataType: varchar(255)

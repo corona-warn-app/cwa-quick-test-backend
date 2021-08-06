@@ -41,16 +41,18 @@ public class SecurityAuditListenerQuickTestArchive {
     private final Utilities utilities;
     private final QuickTestConfig quickTestConfig;
     private String pattern = "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}";
+    private static final String SELECT_ACTION = "Select";
+    private static final String SAVE_ACTION = "Save";
 
     @PostLoad
     private void afterSelectQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
-        createAuditLog(quickTestArchive, "Select");
+        createAuditLog(quickTestArchive, SELECT_ACTION);
     }
 
     @PostPersist
     @PostUpdate
     private void afterSaveQuickTestArchive(QuickTestArchive quickTestArchive) throws ResponseStatusException {
-        createAuditLog(quickTestArchive, "Save");
+        createAuditLog(quickTestArchive, SAVE_ACTION);
     }
 
     private void createAuditLog(QuickTestArchive quickTestArchive, String action) {
@@ -62,18 +64,27 @@ public class SecurityAuditListenerQuickTestArchive {
             name = utilities.getUserNameFromToken();
             tenantId = utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey());
             pocId = utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey());
+            log.info(pattern,
+                    name,
+                    tenantId,
+                    pocId,
+                    action,
+                    "QuickTestArchive",
+                    quickTestArchive.getHashedGuid());
         } catch (ResponseStatusException e) {
             name = "called by Backend";
             tenantId = quickTestArchive.getTenantId();
             pocId = quickTestArchive.getPocId();
+            if (!action.equals(SELECT_ACTION)) {
+                log.info(pattern,
+                        name,
+                        tenantId,
+                        pocId,
+                        action,
+                        "QuickTestArchive",
+                        quickTestArchive.getHashedGuid());
+            }
         }
 
-        log.info(pattern,
-            name,
-            tenantId,
-            pocId,
-            action,
-            "QuickTestArchive",
-            quickTestArchive.getHashedGuid());
     }
 }

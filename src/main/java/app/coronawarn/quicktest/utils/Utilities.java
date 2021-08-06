@@ -139,7 +139,7 @@ public class Utilities {
 
         }
         log.warn("TenantID not found in User-Token");
-        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "TenantID not found in User-Token");
     }
 
     /**
@@ -164,7 +164,8 @@ public class Utilities {
         }
         if (information == null) {
             log.warn("Poc Information not found in User-Token");
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Poc Information not found in User-Token");
         }
         return Arrays.asList(information.split(quickTestConfig.getPointOfCareInformationDelimiter()));
     }
@@ -186,8 +187,7 @@ public class Utilities {
             name = token.getName();
         }
         if (name == null) {
-            log.warn("Name not found in User-Token");
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Name not found in User-Token");
         }
         return name;
     }

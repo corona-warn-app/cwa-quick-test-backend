@@ -42,21 +42,24 @@ public class SecurityAuditListenerQuickTest {
     private final QuickTestConfig quickTestConfig;
     private final Utilities utilities;
     private String pattern = "User: {}; tenantId: {}; pocID: {}; action: {}; Object: {}; ID: {}";
+    private static final String SELECT_ACTION = "Select";
+    private static final String SAVE_ACTION = "Save";
+    private static final String REMOVE_ACTION = "Remove";
 
     @PostLoad
     private void afterSelectQuickTest(QuickTest quickTest) throws ResponseStatusException {
-        createAuditLog(quickTest, "Select");
+        createAuditLog(quickTest, SELECT_ACTION);
     }
 
     @PostPersist
     @PostUpdate
     private void afterSaveQuickTest(QuickTest quickTest) throws ResponseStatusException {
-        createAuditLog(quickTest, "Save");
+        createAuditLog(quickTest, SAVE_ACTION);
     }
 
     @PostRemove
     private void afterRemoveQuickTest(QuickTest quickTest) throws ResponseStatusException {
-        createAuditLog(quickTest, "Remove");
+        createAuditLog(quickTest, REMOVE_ACTION);
     }
 
     private void createAuditLog(QuickTest quickTest, String action) {
@@ -68,19 +71,27 @@ public class SecurityAuditListenerQuickTest {
             name = utilities.getUserNameFromToken();
             tenantId = utilities.getIdsFromToken().get(quickTestConfig.getTenantIdKey());
             pocId = utilities.getIdsFromToken().get(quickTestConfig.getTenantPointOfCareIdKey());
+            log.info(pattern,
+                    name,
+                    tenantId,
+                    pocId,
+                    action,
+                    "QuickTest",
+                    quickTest.getHashedGuid());
         } catch (ResponseStatusException e) {
             name = "called by Backend";
             tenantId = quickTest.getTenantId();
             pocId = quickTest.getPocId();
+            if (!action.equals(SELECT_ACTION)) {
+                log.info(pattern,
+                        name,
+                        tenantId,
+                        pocId,
+                        action,
+                        "QuickTest",
+                        quickTest.getHashedGuid());
+            }
         }
-
-        log.info(pattern,
-            name,
-            tenantId,
-            pocId,
-            action,
-            "QuickTest",
-            quickTest.getHashedGuid());
     }
 
 }

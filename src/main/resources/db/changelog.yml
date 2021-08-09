@@ -29,3 +29,6 @@ databaseChangeLog:
   - include:
       file: changelog/V010_change_quickTestLog_column_size.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V011_change_testBrandName_column_size.yml
+      relativeToChangelogFile: true

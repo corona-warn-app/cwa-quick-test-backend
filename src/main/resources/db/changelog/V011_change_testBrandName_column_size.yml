@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: alter-quicktest-testBrandName-column-size
+      author: bergmann-dierk
+      changes:
+        - modifyDataType:
+            tableName: quick_test
+            columnName: test_brand_name
+            newDataType: varchar(350)
+
+        - modifyDataType:
+            tableName: quick_test_archive
+            columnName: test_brand_name
+            newDataType: varchar(350)

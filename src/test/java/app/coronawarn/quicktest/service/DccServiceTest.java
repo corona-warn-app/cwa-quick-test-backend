@@ -38,8 +38,10 @@ import app.coronawarn.quicktest.model.dcc.DccUploadResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DgciGenerator;
+import feign.FeignException;
+import feign.Request;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -50,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
@@ -58,6 +61,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 
 @Slf4j
 @SpringBootTest
@@ -117,13 +121,9 @@ class DccServiceTest {
 
     @Test
     void dccSignDcc() throws Exception {
-        genKeys();
-        QuickTest quickTest = getData();
-        quickTest.setDccStatus(DccStatus.pendingPublicKey);
-        quickTestRepository.saveAndFlush(quickTest);
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
-        quickTest.setTestResult((short)6);
-        quickTestRepository.saveAndFlush(quickTest);
+
+        var quickTest = prepareQuicktest();
+
         byte[] pdfFirstPage = pdfGenerator.generatePdf(
           List.of("PoC Address"), quickTest, "IT-Test User").toByteArray();
 
@@ -142,9 +142,7 @@ class DccServiceTest {
         quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
         assertNotNull(quickTest.getDccSignData());
         assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
-        ObjectMapper objectMapper = new ObjectMapper();
         System.out.println("\n### upload data ###\n"+quickTest.getDccSignData());
-
 
         dccService.uploadDccData();
 
@@ -158,6 +156,29 @@ class DccServiceTest {
         assertNotNull(quickTestArchiveFromDb.getDcc());
         System.out.println(quickTestArchiveFromDb.getDcc());
         assertNotEquals(pdfFirstPage, quickTestArchiveFromDb.getPdf());
+    }
+
+
+
+    @Test
+    void deleteQuicktestAfterDcc409() throws Exception {
+
+        var quickTest = prepareQuicktest();
+        initDccMockPublicKey(quickTest);
+
+        given(dccServerClient.uploadDcc(any(),any(DccUploadData.class)))
+          .willThrow(createFeignException(HttpStatus.CONFLICT.value()));
+
+        dccService.collectPublicKeys();
+
+        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
+        assertNotNull(quickTest.getDccSignData());
+        assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
+
+        dccService.uploadDccData();
+
+        List<QuickTest> list = quickTestRepository.findAllById(Collections.singletonList(quickTest.getHashedGuid()));
+        assertEquals(0,list.size());
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestArchive(
@@ -244,5 +265,22 @@ class DccServiceTest {
         assertEquals(testIdHash, Hex.toHexString(digest.digest(testId.getBytes(StandardCharsets.UTF_8))));
         digest.reset();
         assertEquals(testIdHash, Hex.toHexString(digest.digest(testId.getBytes(StandardCharsets.UTF_8))));
+    }
+
+    private QuickTest prepareQuicktest() throws Exception {
+        genKeys();
+        QuickTest quickTest = getData();
+        quickTest.setDccStatus(DccStatus.pendingPublicKey);
+        quickTestRepository.saveAndFlush(quickTest);
+        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
+        quickTest.setTestResult((short)6);
+        quickTestRepository.saveAndFlush(quickTest);
+        return quickTest;
+    }
+
+    private FeignException.FeignClientException createFeignException(int status) {
+        Request request = Request.create(Request.HttpMethod.POST, "url", Map.of(), "body".getBytes(),
+          Charset.defaultCharset(), null);
+        return new FeignException.FeignClientException(status, "Conflict", request, "body".getBytes());
     }
 }

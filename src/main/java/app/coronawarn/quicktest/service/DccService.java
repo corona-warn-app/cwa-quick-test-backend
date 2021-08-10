@@ -60,6 +60,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.bouncycastle.util.encoders.Hex;
+import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -96,6 +97,7 @@ public class DccService {
         if (!quickTestMap.isEmpty()) {
             log.info("search publick keys for {} keys", quickTestMap.size());
             List<DccPublicKey> publicKeys = dccServerClient.searchPublicKeys(quickTestConfig.getLabId());
+            log.info("found public keys: size=[{}]", publicKeys.size());
             ObjectMapper objectMapper = new ObjectMapper();
             for (DccPublicKey dccPublicKey : publicKeys) {
                 QuickTest quickTest = quickTestMap.get(dccPublicKey.getTestId());
@@ -147,7 +149,10 @@ public class DccService {
     public void uploadDccData() {
         ObjectMapper objectMapper = new ObjectMapper();
         MessageDigest digest = createSha256Digest();
-        for (QuickTest quickTest : quickTestRepository.findAllByDccStatus(DccStatus.pendingSignature)) {
+
+        List<QuickTest> quicktestsPending = quickTestRepository.findAllByDccStatus(DccStatus.pendingSignature);
+        log.info("Upload dcc data for quicktests: size=[{}]", quicktestsPending.size());
+        for (QuickTest quickTest : quicktestsPending) {
             log.debug("dcc sign {}", quickTest.getHashedGuid());
             try {
                 DccUploadData dccUploadData = objectMapper.readValue(quickTest.getDccSignData(), DccUploadData.class);
@@ -170,6 +175,8 @@ public class DccService {
                     } catch (IOException exception) {
                         log.warn("Appending Certificate to PDF failed for quicktest hashedGuid=[{}]",
                           quickTest.getHashedGuid());
+                    } catch (Exception exception) {
+                        log.warn("General Exception while appending certifiate to PDF for quicktest hashedGuid=[{}]");
                     }
                     quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
                 } else {
@@ -178,6 +185,11 @@ public class DccService {
                 quickTestRepository.delete(quickTest);
             } catch (FeignException e) {
                 log.warn("Error during uploading dcc data {}", quickTest.getHashedGuid(), e);
+                if (HttpStatus.CONFLICT.value() == e.status()) {
+                    // Delete quicktest if dcc server responds with conflict (already present)
+                    log.warn("Dcc data already exists for hashedGuid=[{}]", quickTest.getHashedGuid());
+                    quickTestRepository.delete(quickTest);
+                }
             } catch (JsonProcessingException e) {
                 log.warn("Error during signing {}", quickTest.getHashedGuid(), e);
             } catch (IllegalArgumentException e) {

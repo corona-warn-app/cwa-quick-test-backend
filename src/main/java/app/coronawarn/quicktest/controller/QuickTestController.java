@@ -156,7 +156,7 @@ public class QuickTestController {
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
             //TODO remove after
-            log.error(e.getMessage());
+            log.error("Temporary Error Log:" + e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

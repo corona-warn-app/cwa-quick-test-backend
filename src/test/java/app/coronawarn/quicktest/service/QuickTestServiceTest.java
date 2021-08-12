@@ -20,7 +20,10 @@
 
 package app.coronawarn.quicktest.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -52,6 +55,7 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -357,6 +361,33 @@ public class QuickTestServiceTest {
         assertNotNull(dccContent);
         assertTrue(dccContent.getDccConsent());
 
+    }
+
+    @Test
+    void sanitiseInput() throws IOException, ResponseStatusException {
+        Map<String, String> ids = new HashMap<>();
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
+          .thenReturn(createPendingTest());
+        when(pdf.generatePdf(any(), any(), any())).thenReturn(new ByteArrayOutputStream());
+
+        // Wrong paranthesis block, Unicode Block FF00 to FFEF is not availabe in pdf font
+        String input = "COVID-19 Antigen Rapid Test Device（Colloidal Gold）";
+        String expected = "COVID-19 Antigen Rapid Test Device Colloidal Gold ";
+        try {
+            QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
+            quickTestUpdateRequest.setTestBrandId("testBrandId");
+            quickTestUpdateRequest.setResult((short)6);
+            quickTestUpdateRequest.setTestBrandName(input);
+            quickTestService.updateQuickTest(ids,
+              "6fa4dc",
+              quickTestUpdateRequest,
+              new ArrayList<>(),
+              "User");
+        } catch (NullPointerException e) {
+        }
+        ArgumentCaptor<QuickTestArchive> captor = ArgumentCaptor.forClass(QuickTestArchive.class);
+        verify(quickTestArchiveRepository).save(captor.capture());
+        assertEquals(expected, captor.getValue().getTestBrandName());
     }
 
 }

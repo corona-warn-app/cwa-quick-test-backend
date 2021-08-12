@@ -95,14 +95,14 @@ public class DccService {
             quickTestMap.put(Hex.toHexString(testIdHashed), quickTest);
         }
         if (!quickTestMap.isEmpty()) {
-            log.info("search publick keys for {} keys", quickTestMap.size());
+            log.info("search public keys for {} keys", quickTestMap.size());
             List<DccPublicKey> publicKeys = dccServerClient.searchPublicKeys(quickTestConfig.getLabId());
             log.info("found public keys: size=[{}]", publicKeys.size());
             ObjectMapper objectMapper = new ObjectMapper();
             for (DccPublicKey dccPublicKey : publicKeys) {
                 QuickTest quickTest = quickTestMap.get(dccPublicKey.getTestId());
                 if (quickTest != null) {
-                    log.info("got public key for {} testid", dccPublicKey.getTestId());
+                    log.debug("got public key for {} testid", dccPublicKey.getTestId());
                     DgcData dgcData = genDcc(quickTest, dccPublicKey.getPublicKey(), dccPublicKey.getDcci());
                     DccUploadData dccUploadData = new DccUploadData();
                     dccUploadData.setDccHash(Hex.toHexString(dgcData.getHash()));
@@ -114,11 +114,7 @@ public class DccService {
                         quickTest.setDccSignData(dccUploadDataJson);
                         quickTest.setPublicKey(dccPublicKey.getPublicKey());
                         quickTest.setDccUnsigned(Base64.getEncoder().encodeToString(dgcData.getDccData()));
-                        log.info("Saving quicktest id=[{}], with dccstatus=[pendingSignature]",
-                          quickTest.getHashedGuid());
                         quickTestRepository.saveAndFlush(quickTest);
-                        log.info("Saved quicktest id=[{}], with dccstatus=[pendingSignature]",
-                          quickTest.getHashedGuid());
                     } catch (JsonProcessingException e) {
                         log.error("can not create json data", e);
                     }
@@ -157,7 +153,7 @@ public class DccService {
         List<QuickTest> quicktestsPending = quickTestRepository.findAllByDccStatus(DccStatus.pendingSignature);
         log.info("Upload dcc data for quicktests: size=[{}]", quicktestsPending.size());
         for (QuickTest quickTest : quicktestsPending) {
-            log.info("dcc sign {}", quickTest.getHashedGuid());
+            log.debug("dcc sign {}", quickTest.getHashedGuid());
             try {
                 DccUploadData dccUploadData = objectMapper.readValue(quickTest.getDccSignData(), DccUploadData.class);
                 String testIdHashHex = Hex.toHexString(digest.digest(

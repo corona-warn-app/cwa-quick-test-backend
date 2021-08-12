@@ -141,10 +141,10 @@ public class QuickTestService {
             }
 
             quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
-            quicktest.setTestBrandName(quickTestUpdateRequest.getDccTestManufacturerDescription());
+            quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getDccTestManufacturerDescription()));
         } else {
             quicktest.setTestBrandId(quickTestUpdateRequest.getTestBrandId());
-            quicktest.setTestBrandName(quickTestUpdateRequest.getTestBrandName());
+            quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getTestBrandName()));
         }
 
         quicktest.setUpdatedAt(LocalDateTime.now());
@@ -355,5 +355,11 @@ public class QuickTestService {
         quickTestDccConsent.setDccConsent(quicktest.getDccConsent());
         quickTestDccConsent.setTestResult(quicktest.getTestResult());
         return quickTestDccConsent;
+    }
+
+    private String sanitiseInput(String input) {
+        // Unicode Block FF00 to FFEF is not availabe in pdf font
+        // Replace with whitespace
+        return input != null ? input.replaceAll("[\\uFF00-\\uFFEF]", " ") : null;
     }
 }

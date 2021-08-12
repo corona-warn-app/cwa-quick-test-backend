@@ -36,6 +36,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -79,15 +81,58 @@ public class QuickTestController {
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId() {
         try {
+            String uuid = UUID.randomUUID().toString();
+            long start = System.currentTimeMillis();
+            log.info("request-uuid:[{}], start=[{}]", uuid, start);
             List<QuickTest> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
                     utilities.getIdsFromToken());
+            long afterDb = System.currentTimeMillis();
+            log.info("request-uuid:[{}], durationDb=[{}]", uuid, afterDb - start);
             TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
             List<QuickTestResponse> quickTestResponses = modelMapper.map(
                     quickTests,
                     typeToken.getType()
             );
+            long afterMapping = System.currentTimeMillis();
+            log.info("request-uuid:[{}], durationMapping=[{}]", uuid, afterMapping - afterDb);
             QuickTestResponseList response = new QuickTestResponseList();
             response.setQuickTests(quickTestResponses);
+            long end = System.currentTimeMillis();
+            log.info("request-uuid:[{}], durationComplete=[{}]", uuid, end - start);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error("Failed to find pending quicktests");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Temporary Endpoint.
+     */
+    @GetMapping(value = "/temp", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured(ROLE_LAB)
+    public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocIdWithoutMapping() {
+        try {
+            String uuid = UUID.randomUUID().toString();
+            long start = System.currentTimeMillis();
+            log.info("request-uuid:[{}], start=[{}]", uuid, start);
+            List<QuickTest> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
+              utilities.getIdsFromToken());
+            long afterDb = System.currentTimeMillis();
+            log.info("request-uuid:[{}], durationDb=[{}]", uuid, afterDb - start);
+            List<QuickTestResponse> quickTestResponses = quickTests.stream()
+              .map(quickTest -> {
+                  var quickTestResponse = new QuickTestResponse();
+                  quickTestResponse.setShortHashedGuid(quickTest.getShortHashedGuid());
+                  return quickTestResponse;
+              })
+              .collect(Collectors.toList());
+            long afterMapping = System.currentTimeMillis();
+            log.info("request-uuid:[{}], durationMapping=[{}]", uuid, afterMapping - afterDb);
+            QuickTestResponseList response = new QuickTestResponseList();
+            response.setQuickTests(quickTestResponses);
+            long end = System.currentTimeMillis();
+            log.info("request-uuid:[{}], durationComplete=[{}]", uuid, end - start);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Failed to find pending quicktests");

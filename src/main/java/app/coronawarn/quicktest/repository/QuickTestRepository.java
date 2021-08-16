@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.DccStatus;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.model.quicktest.QuickTestResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -38,8 +39,15 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
     List<QuickTest> findAllByTenantIdAndPocIdAndVersionIsGreaterThan(String tenantId, String pocId, Integer version);
 
-    List<QuickTest> findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(String tenantId,
-            String pocId, Short testResult, Integer version);
+    List<QuickTestResponse> findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(String tenantId,
+                                                                                          String pocId,
+                                                                                          Short testResult,
+                                                                                          Integer version);
+
+    List<QuicktestView> getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(String tenantId,
+                                                                                                 String pocId,
+                                                                                                 Short testResult,
+                                                                                                 Integer version);
 
     List<QuickTest> findAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time, Integer version);
 

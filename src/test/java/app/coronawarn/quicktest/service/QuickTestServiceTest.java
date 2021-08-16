@@ -50,7 +50,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -331,21 +330,7 @@ public class QuickTestServiceTest {
         verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 
-    @Test
-    void findAllPendingQuickTestsByTenantIdAndPocIdTest() {
-        Map<String, String> ids = new HashMap<>();
-        List<QuickTest> quickTests = new ArrayList<>();
-        QuickTest quickTest = new QuickTest();
-        quickTest.setPrivacyAgreement(true);
-        quickTest.setShortHashedGuid("00000000");
-        quickTest.setDccConsent(true);
-        quickTests.add(quickTest);
-        when(quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(any(), any(), any(), any()))
-                .thenReturn(quickTests);
-        List<QuickTest> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
-        assertEquals(quickTests1.get(0).getPrivacyAgreement(), true);
-        assertEquals(quickTests1.get(0).getShortHashedGuid(), "00000000");
-    }
+
 
     @Test
     void getDccContent() {

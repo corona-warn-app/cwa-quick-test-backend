@@ -37,11 +37,11 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -83,24 +83,30 @@ public class QuickTestController {
             String uuid = UUID.randomUUID().toString();
             long start = System.currentTimeMillis();
             log.info("request-uuid:[{}], start=[{}]", uuid, start);
-            List<QuickTest> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
-                    utilities.getIdsFromToken());
+            List<QuickTestResponse> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
+                    utilities.getIdsFromToken())
+              .stream().map(quicktestView -> {
+                  QuickTestResponse response = new QuickTestResponse();
+                  response.setShortHashedGuid(quicktestView.getShortHashedGuid());
+                  return response;
+              }).collect(Collectors.toList());
             long afterDb = System.currentTimeMillis();
             log.info("request-uuid:[{}], durationDb=[{}]", uuid, afterDb - start);
-            TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
-            List<QuickTestResponse> quickTestResponses = modelMapper.map(
-                    quickTests,
-                    typeToken.getType()
-            );
-            long afterMapping = System.currentTimeMillis();
-            log.info("request-uuid:[{}], durationMapping=[{}]", uuid, afterMapping - afterDb);
+            //TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
+            //List<QuickTestResponse> quickTestResponses = modelMapper.map(
+            //        quickTests,
+            //        typeToken.getType()
+            //);
+            //long afterMapping = System.currentTimeMillis();
+            //log.info("request-uuid:[{}], durationMapping=[{}]", uuid, afterMapping - afterDb);
             QuickTestResponseList response = new QuickTestResponseList();
-            response.setQuickTests(quickTestResponses);
+            response.setQuickTests(quickTests);
             long end = System.currentTimeMillis();
             log.info("request-uuid:[{}], durationComplete=[{}]", uuid, end - start);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Failed to find pending quicktests");
+            log.error(e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

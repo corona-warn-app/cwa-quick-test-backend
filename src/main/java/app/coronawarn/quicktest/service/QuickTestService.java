@@ -32,6 +32,7 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -311,8 +312,8 @@ public class QuickTestService {
      * @param ids Map with tenantId und pocId from token
      * @return List including found quicktests
      */
-    public List<QuickTest> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
-        return quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+    public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
+        return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
             ids.get(quickTestConfig.getTenantIdKey()),
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
             QuickTest.TEST_RESULT_PENDING,

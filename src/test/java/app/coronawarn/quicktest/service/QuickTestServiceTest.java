@@ -40,6 +40,7 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.io.ByteArrayOutputStream;
@@ -50,6 +51,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -330,7 +332,17 @@ public class QuickTestServiceTest {
         verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 
-
+    @Test
+    void findAllPendingQuickTestsByTenantIdAndPocIdTest() {
+        Map<String, String> ids = new HashMap<>();
+        List<QuickTest> quickTests = new ArrayList<>();
+        QuicktestView quicktestView = () -> "00000000";
+        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+          any(), any(), any(), any()))
+          .thenReturn(List.of(quicktestView));
+        List<QuicktestView> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
+        assertEquals(quickTests1.get(0).getShortHashedGuid(), "00000000");
+    }
 
     @Test
     void getDccContent() {

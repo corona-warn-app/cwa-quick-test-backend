@@ -312,6 +312,7 @@ public class QuickTestService {
      * @param ids Map with tenantId und pocId from token
      * @return List including found quicktests
      */
+    @Transactional(Transactional.TxType.NOT_SUPPORTED)
     public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
         return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
             ids.get(quickTestConfig.getTenantIdKey()),

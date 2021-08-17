@@ -30,6 +30,7 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
+import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
@@ -83,22 +84,13 @@ public class QuickTestController {
             String uuid = UUID.randomUUID().toString();
             long start = System.currentTimeMillis();
             log.info("request-uuid:[{}], start=[{}]", uuid, start);
-            List<QuickTestResponse> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
-                    utilities.getIdsFromToken())
-              .stream().map(quicktestView -> {
-                  QuickTestResponse response = new QuickTestResponse();
-                  response.setShortHashedGuid(quicktestView.getShortHashedGuid());
-                  return response;
-              }).collect(Collectors.toList());
+            List<QuickTestResponse> quickTests =
+              quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(utilities.getIdsFromToken())
+                .stream()
+                .map(this::mapViewToResponse)
+                .collect(Collectors.toList());
             long afterDb = System.currentTimeMillis();
             log.info("request-uuid:[{}], durationDb=[{}]", uuid, afterDb - start);
-            //TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
-            //List<QuickTestResponse> quickTestResponses = modelMapper.map(
-            //        quickTests,
-            //        typeToken.getType()
-            //);
-            //long afterMapping = System.currentTimeMillis();
-            //log.info("request-uuid:[{}], durationMapping=[{}]", uuid, afterMapping - afterDb);
             QuickTestResponseList response = new QuickTestResponseList();
             response.setQuickTests(quickTests);
             long end = System.currentTimeMillis();
@@ -240,4 +232,9 @@ public class QuickTestController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    private QuickTestResponse mapViewToResponse(QuicktestView quicktestView) {
+        QuickTestResponse response = new QuickTestResponse();
+        response.setShortHashedGuid(quicktestView.getShortHashedGuid());
+        return response;
+    }
 }

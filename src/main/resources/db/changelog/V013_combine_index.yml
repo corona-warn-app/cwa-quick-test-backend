@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: drop-index-on-quicktest-test-result
+      author: bergmann-dierk
+      changes:
+        - dropIndex:
+            tableName: quick_test
+            indexName: idx_test_result
+
+  - changeSet:
+      id: drop-index-on-quicktest-version
+      author: bergmann-dierk
+      changes:
+        - dropIndex:
+            tableName: quick_test
+            indexName: idx_version
+
+  - changeSet:
+      id: drop-index-on-quicktest-poc-id
+      author: bergmann-dierk
+      changes:
+        - dropIndex:
+            tableName: quick_test
+            indexName: idx_poc
+
+  - changeSet:
+      id: drop-index-on-quicktest-tenant-id
+      author: bergmann-dierk
+      changes:
+        - dropIndex:
+            tableName: quick_test
+            indexName: idx_tennant
+
+  - changeSet:
+      id: add-combined-index-on-quicktest
+      author: bergmann-dierk
+      changes:
+        - createIndex:
+            tableName: quick_test
+            indexName: idx_tenant_poc
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: poc_id

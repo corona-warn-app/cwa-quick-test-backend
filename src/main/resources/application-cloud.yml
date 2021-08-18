@@ -1,7 +1,4 @@
 spring:
-  datasource:
-    driver-class-name: ${DB_DRIVER_CLASS_NAME}
-    url: ${DB_JDBC_URL}
   archive-datasource:
     driver-class-name: ${DB_ARCHIVE_DRIVER_CLASS_NAME}
     url: ${DB_ARCHIVE_JDBC_URL}
@@ -19,6 +16,14 @@ spring:
       "[mail.smtp.auth]": true
       "[mail.smtp.starttls.enable]": true
       "[mail.smtp.starttls.required]": true
+
+jdbc:
+  master:
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+    url: ${DB_JDBC_URL}
+  replica:
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+    url: ${DB_JDBC_URL_READ}
 
 management:
   server:

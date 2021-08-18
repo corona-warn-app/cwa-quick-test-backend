@@ -5,13 +5,9 @@ spring:
   application:
     name: cwa-quick-test-backend
   jpa:
+    database: mysql
     hibernate:
       ddl-auto: validate
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:quicktest;MODE=MYSQL
-    username: sa
-    password: ''
   archive-datasource:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:quicktest-archive;MODE=MYSQL
@@ -30,6 +26,14 @@ spring:
       "[mail.smtp.starttls.enable]": true
       "[mail.smtp.starttls.required]": true
       "[mail.smtp.ssl.trust]": "*"
+
+jdbc:
+  master:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:quicktest;MODE=MYSQL
+  replica:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:quicktest;MODE=MYSQL
 
 logging:
   pattern:

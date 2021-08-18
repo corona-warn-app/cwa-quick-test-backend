@@ -40,11 +40,11 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -117,7 +117,7 @@ public class QuickTestService {
      * @param user                   user
      * @throws ResponseStatusException exception
      */
-    @Transactional(rollbackOn = ResponseStatusException.class)
+    @Transactional(rollbackFor = ResponseStatusException.class)
     public void updateQuickTest(Map<String, String> ids, String shortHash,
                                 QuickTestUpdateRequest quickTestUpdateRequest, List<String> pocInformation,
                                 String user) throws ResponseStatusException {
@@ -199,7 +199,7 @@ public class QuickTestService {
      * @param shortHash             the short-hash of the testresult to be updated
      * @param quickTestPersonalData the quick test personaldata.
      */
-    @Transactional(rollbackOn = ResponseStatusException.class)
+    @Transactional(rollbackFor = ResponseStatusException.class)
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
         throws ResponseStatusException {
@@ -312,7 +312,7 @@ public class QuickTestService {
      * @param ids Map with tenantId und pocId from token
      * @return List including found quicktests
      */
-    @Transactional(Transactional.TxType.NOT_SUPPORTED)
+    @Transactional(readOnly = true)
     public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
         return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
             ids.get(quickTestConfig.getTenantIdKey()),

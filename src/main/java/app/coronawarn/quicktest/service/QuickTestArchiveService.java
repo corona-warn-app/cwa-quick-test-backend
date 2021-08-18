@@ -31,6 +31,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -67,6 +68,7 @@ public class QuickTestArchiveService {
      * @param dateTo     End date
      * @return quickTestArchives List of all found quickTestArchives
      */
+    @Transactional(readOnly = true)
     public List<QuickTestArchive> findByTestResultAndUpdatedAtBetween(
         Map<String, String> ids, Short testResult, LocalDateTime dateFrom, LocalDateTime dateTo) {
         List<QuickTestArchive> archives;

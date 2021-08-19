@@ -161,7 +161,11 @@ public class PdfGenerator {
         cos.newLine();
         cos.showText(pdfConfig.getPersonPhoneDescriptionText() + quicktest.getPhoneNumber());
         cos.newLine();
-        cos.showText(pdfConfig.getPersonEmailDescriptionText() + quicktest.getEmail());
+        
+        if (quicktest.getEmail() != null) {
+            cos.showText(pdfConfig.getPersonEmailDescriptionText() + quicktest.getEmail());
+        }
+        
         cos.newLine();
         cos.endText();
 

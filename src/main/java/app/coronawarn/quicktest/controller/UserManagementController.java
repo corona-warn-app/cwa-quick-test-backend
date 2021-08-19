@@ -86,15 +86,15 @@ public class UserManagementController {
     @Secured(ROLE_ADMIN)
     public ResponseEntity<List<KeycloakUserResponse>> getUsers(KeycloakAuthenticationToken token) {
         Long startTime = System.currentTimeMillis();
-        log.info("Get sub groups started at {}",startTime );
+        log.info("Get sub groups started at {}",startTime);
 
         utils.checkRealm(token);
 
-        log.info("CheckReam took {}", (System.currentTimeMillis()-startTime));
+        log.info("CheckReam took {}", (System.currentTimeMillis() - startTime));
 
 
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
-        log.info("CheckRootGroup took {}", (System.currentTimeMillis()-startTime));
+        log.info("CheckRootGroup took {}", (System.currentTimeMillis() - startTime));
 
         return ResponseEntity.ok(keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId()));
     }

@@ -26,11 +26,13 @@ import com.zaxxer.hikari.HikariDataSource;
 import java.util.HashMap;
 import java.util.Map;
 import javax.sql.DataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+@Slf4j
 @Configuration
 @EnableTransactionManagement
 public class TransactionRoutingConfiguration {
@@ -53,6 +55,7 @@ public class TransactionRoutingConfiguration {
      */
     @Bean
     public DataSource dataSource() {
+        log.info("Creating TransactionRoutingDatasource");
         TransactionRoutingDatasource routingDatasource = new TransactionRoutingDatasource();
         Map<Object, Object> targetDataSources = new HashMap<>();
         targetDataSources.put(DataSourceType.READ_WRITE, masterDataSource());
@@ -69,6 +72,7 @@ public class TransactionRoutingConfiguration {
      */
     public DataSource replicaDataSource() {
 
+        log.info("Creating Replica Datasource");
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(replicaDriverClassName);
         hikariDataSource.setJdbcUrl(replicaUrl);
@@ -80,6 +84,8 @@ public class TransactionRoutingConfiguration {
      * @return master
      */
     public DataSource masterDataSource() {
+
+        log.info("Creating Master Datasource");
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(masterDriverClassName);
         hikariDataSource.setJdbcUrl(masterUrl);

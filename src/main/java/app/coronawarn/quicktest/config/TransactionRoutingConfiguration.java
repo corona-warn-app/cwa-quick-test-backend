@@ -37,6 +37,12 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 public class TransactionRoutingConfiguration {
 
+    @Value("${jdbc.min-pool}")
+    private int minPool;
+
+    @Value("${jdbc.max-pool}")
+    private int maxPool;
+
     @Value("${jdbc.master.url}")
     private String masterUrl;
 
@@ -76,6 +82,8 @@ public class TransactionRoutingConfiguration {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(replicaDriverClassName);
         hikariDataSource.setJdbcUrl(replicaUrl);
+        hikariDataSource.setMaximumPoolSize(maxPool);
+        hikariDataSource.setMinimumIdle(minPool);
         return hikariDataSource;
     }
 
@@ -89,6 +97,8 @@ public class TransactionRoutingConfiguration {
         HikariDataSource hikariDataSource = new HikariDataSource();
         hikariDataSource.setDriverClassName(masterDriverClassName);
         hikariDataSource.setJdbcUrl(masterUrl);
+        hikariDataSource.setMaximumPoolSize(maxPool);
+        hikariDataSource.setMinimumIdle(minPool);
         return hikariDataSource;
     }
 }

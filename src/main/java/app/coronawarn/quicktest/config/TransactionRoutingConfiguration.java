@@ -62,7 +62,7 @@ public class TransactionRoutingConfiguration {
      */
     @Bean
     @Primary
-    public DataSource dataSource() {
+    public TransactionRoutingDatasource dataSource() {
         log.info("Creating TransactionRoutingDatasource");
         TransactionRoutingDatasource routingDatasource = new TransactionRoutingDatasource();
         Map<Object, Object> targetDataSources = new HashMap<>();
@@ -78,7 +78,6 @@ public class TransactionRoutingConfiguration {
      * Replication datasource.
      * @return replica
      */
-    @Bean
     public DataSource replicaDataSource() {
 
         log.info("Creating Replica Datasource");
@@ -94,7 +93,6 @@ public class TransactionRoutingConfiguration {
      * Master datasource.
      * @return master
      */
-    @Bean
     public DataSource masterDataSource() {
 
         log.info("Creating Master Datasource");

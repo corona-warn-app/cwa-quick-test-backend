@@ -43,6 +43,7 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -97,10 +98,7 @@ public class Utilities {
             String realmName = keycloakPrincipal.getKeycloakSecurityContext().getRealm();
 
             if (realmName != null && realmName.equals(keycloakAdminProperties.getRealm())) {
-                String userId = keycloakPrincipal.getKeycloakSecurityContext().getToken().getSubject();
-                String rootGroupNames = keycloakService.getRootGroupsOfUser(userId).stream()
-                    .map(GroupRepresentation::getName)
-                    .collect(Collectors.joining(", "));
+                String rootGroupNames = getRootGroupsFromToken();
                 ids.put(quickTestConfig.getTenantIdKey(), rootGroupNames);
             } else {
                 ids.put(quickTestConfig.getTenantIdKey(), realmName);
@@ -113,6 +111,7 @@ public class Utilities {
                 ids.put(quickTestConfig.getTenantPointOfCareIdKey(),
                     String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
             }
+
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
             || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
@@ -120,6 +119,38 @@ public class Utilities {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ids;
+    }
+
+    /**
+     * Get root group from Token.
+     *
+     * @return group
+     * @throws ResponseStatusException 500 if Id not found in User-Token
+     */
+    public String getRootGroupsFromToken() throws ResponseStatusException {
+
+        String information = null;
+        Principal principal = getPrincipal();
+
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            Map<String, Object> customClaims = token.getOtherClaims();
+            if (customClaims.containsKey(quickTestConfig.getGoupKey())) {
+                information = String.valueOf(customClaims.get(quickTestConfig.getGoupKey()));
+            }
+        }
+        if (information == null) {
+            log.warn("Group not found in User-Token");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Group not found in User-Token");
+        }
+        List<String> groups = Arrays.asList(information.split(quickTestConfig.getGroupInformationDelimiter()));
+        return groups.stream().filter(it -> StringUtils.countOccurrencesOf(it, "/") == 1)
+                .map(group -> group.replace("/",""))
+                .map(group -> group.replace("]",""))
+                .map(group -> group.replace("[",""))
+                .collect(Collectors.joining(", "));
     }
 
     /**

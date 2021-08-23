@@ -115,6 +115,8 @@ class UtilitiesTest {
         GroupRepresentation rootGroup = new GroupRepresentation();
         rootGroup.setName("rootGroup");
 
+        when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup));
+
         SecurityContext springSecurityContext = SecurityContextHolder.createEmptyContext();
         SecurityContextHolder.setContext(springSecurityContext);
         Set<String> roles = Sets.newSet("user");

@@ -129,7 +129,7 @@ class UtilitiesTest {
         when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
         Map<String, Object> mockTokens = new HashMap<>();
         mockTokens.put(quickTestConfig.getPointOfCareIdName(), pocId);
-        mockTokens.put(quickTestConfig.getGoupKey(), tokenGroupString);
+        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroupString);
         when(idToken.getOtherClaims()).thenReturn(mockTokens);
 
         KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);

@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -91,19 +92,27 @@ public class Utilities {
 
         Map<String, String> ids = new HashMap<>();
         Principal principal = getPrincipal();
+        long start = System.currentTimeMillis();
+        String reqId = UUID.randomUUID().toString();
+        log.info("request-uuid:[{}], startGetIds=[{}]", reqId, start);
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
             String realmName = keycloakPrincipal.getKeycloakSecurityContext().getRealm();
 
             if (realmName != null && realmName.equals(keycloakAdminProperties.getRealm())) {
+                long beforeKC = System.currentTimeMillis();
+                log.info("request-uuid:[{}], gettingFromKC=[{}]", reqId, beforeKC - start);
                 String userId = keycloakPrincipal.getKeycloakSecurityContext().getToken().getSubject();
                 String rootGroupNames = keycloakService.getRootGroupsOfUser(userId).stream()
                     .map(GroupRepresentation::getName)
                     .collect(Collectors.joining(", "));
                 ids.put(quickTestConfig.getTenantIdKey(), rootGroupNames);
+                long afterKC = System.currentTimeMillis();
+                log.info("request-uuid:[{}], afterKeycloakUserGroups=[{}]", reqId, afterKC - beforeKC);
             } else {
                 ids.put(quickTestConfig.getTenantIdKey(), realmName);
+                log.info("request-uuid:[{}], afterTenantFromRealm=[{}]", reqId, System.currentTimeMillis() - start);
             }
             IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
 
@@ -113,6 +122,8 @@ public class Utilities {
                 ids.put(quickTestConfig.getTenantPointOfCareIdKey(),
                     String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
             }
+
+            log.info("request-uuid:[{}], getIdsFromTokenFinal=[{}]", reqId, System.currentTimeMillis() - start);
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
             || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {

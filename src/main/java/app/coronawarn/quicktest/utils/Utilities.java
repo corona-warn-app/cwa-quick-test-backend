@@ -140,7 +140,9 @@ public class Utilities {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
             IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
             Map<String, Object> customClaims = token.getOtherClaims();
+            log.info("Custom claims {}", customClaims.get("groups"));
             if (customClaims.containsKey(quickTestConfig.getGoupKey())) {
+                log.info("Groups {}",customClaims.get(quickTestConfig.getGoupKey()));
                 information = String.valueOf(customClaims.get(quickTestConfig.getGoupKey()));
             }
         }

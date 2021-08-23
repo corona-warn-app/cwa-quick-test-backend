@@ -52,6 +52,8 @@ server:
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
+  groupKey: groups
+  groupInformationDelimiter: \,
   tenantPointOfCareIdKey: pocId
   dbEncryptionKey: abcdefghjklmnopq
   pointOfCareInformationName: poc_details

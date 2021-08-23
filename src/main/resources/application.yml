@@ -69,9 +69,11 @@ server:
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
+  groupKey: groups
   tenantPointOfCareIdKey: pocId
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
+  groupInformationDelimiter: \,
   db-encryption-key: abcdefghjklmnopq
   labId: labId4711
   clean-up-settings:

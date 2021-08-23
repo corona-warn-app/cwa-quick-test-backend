@@ -34,7 +34,7 @@ public class QuickTestConfig {
     private CleanUpSettings cleanUpSettings;
     private String pointOfCareIdName;
     private String tenantIdKey;
-    private String goupKey;
+    private String groupKey;
     private String tenantPointOfCareIdKey;
     private String pointOfCareInformationName;
     private String pointOfCareInformationDelimiter;

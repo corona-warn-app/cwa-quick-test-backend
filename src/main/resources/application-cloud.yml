@@ -19,7 +19,7 @@ spring:
 
 jdbc:
   min-pool: 20
-  max-pool: 50
+  max-pool: 33
   master:
     driver-class-name: ${DB_DRIVER_CLASS_NAME}
     url: ${DB_JDBC_URL}

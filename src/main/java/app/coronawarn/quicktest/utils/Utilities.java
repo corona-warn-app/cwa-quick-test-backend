@@ -40,7 +40,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakPrincipal;
 import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
-import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -132,6 +131,15 @@ public class Utilities {
      * @throws ResponseStatusException 500 if Id not found in User-Token
      */
     public String getRootGroupsFromToken() throws ResponseStatusException {
+        return getRootGroupsFromTokenAsList().stream().collect(Collectors.joining(", "));
+    }
+
+    /**
+     * Get root Groups from token as list.
+     * @return List of rootGroup Ids
+     * @throws ResponseStatusException 500 if not found in token
+     */
+    public List<String> getRootGroupsFromTokenAsList() throws ResponseStatusException {
 
         String information = null;
         Principal principal = getPrincipal();
@@ -149,14 +157,14 @@ public class Utilities {
         if (information == null) {
             log.warn("Group not found in User-Token");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Group not found in User-Token");
+              "Group not found in User-Token");
         }
         List<String> groups = Arrays.asList(information.split(quickTestConfig.getGroupInformationDelimiter()));
         return groups.stream().filter(it -> StringUtils.countOccurrencesOf(it, "/") == 1)
-                .map(group -> group.replace("/",""))
-                .map(group -> group.replace("]",""))
-                .map(group -> group.replace("[",""))
-                .collect(Collectors.joining(", "));
+          .map(group -> group.replace("/",""))
+          .map(group -> group.replace("]",""))
+          .map(group -> group.replace("[",""))
+          .collect(Collectors.toList());
     }
 
     /**

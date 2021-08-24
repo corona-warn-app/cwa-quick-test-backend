@@ -89,14 +89,14 @@ public class UserManagementController {
         log.info("Get sub groups started at {}",startTime);
 
         utils.checkRealm(token);
-
-        log.info("CheckReam took {}", (System.currentTimeMillis() - startTime));
-
-
+        long start = System.currentTimeMillis();
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
-        log.info("CheckRootGroup took {}", (System.currentTimeMillis() - startTime));
-
-        return ResponseEntity.ok(keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId()));
+        long endUserGroups = System.currentTimeMillis();
+        log.info("checkUserRootGroup took:[{}]", endUserGroups - start);
+        List<KeycloakUserResponse> extendedUserListForRootGroup =
+          keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId());
+        log.info("getExtendedUserLust took:[{}]", System.currentTimeMillis() - endUserGroups);
+        return ResponseEntity.ok(extendedUserListForRootGroup);
     }
 
     /**

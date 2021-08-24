@@ -27,6 +27,7 @@ import app.coronawarn.quicktest.utils.Utilities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +58,7 @@ public class UserManagementControllerUtils {
     }
 
     protected GroupRepresentation checkUserRootGroup(KeycloakAuthenticationToken token) throws ResponseStatusException {
-        String userId = token.getAccount().getKeycloakSecurityContext().getToken().getSubject();
+        //String userId = token.getAccount().getKeycloakSecurityContext().getToken().getSubject();
         //List<GroupRepresentation> userRootGroups = keycloakService.getRootGroupsOfUser(userId);
 
         List<String> s = utilities.getRootGroupsFromTokenAsList();
@@ -67,9 +68,13 @@ public class UserManagementControllerUtils {
         } else if (s.size() < 1) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your user is not assigned to a root group");
         }
-        GroupRepresentation group = keycloakService.getGroup(s.get(0));
+        log.info("Getting group from Keycloak:[{}]", s.get(0));
+        Optional<GroupRepresentation> group = keycloakService.getGroup(s.get(0));
 
-        return group;
+        if (group.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Root GroupRepresentation not found");
+        }
+        return group.get();
     }
 
     /**

@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
@@ -457,13 +458,16 @@ public class KeycloakService {
     }
 
     /**
-     * gruppe.
-     * @param id die id
-     * @return groupRep
+     * get group by name.
+     * @param name the name of the group
+     * @return the representation of the group.
      */
-    public GroupRepresentation getGroup(String id) {
-        GroupResource groupResource = realm().groups().group(id);
-        return groupResource != null ? groupResource.toRepresentation() : null;
+    public Optional<GroupRepresentation> getGroup(String name) {
+        String path = name.startsWith("/") ? name : "/" + name;
+        return realm().groups().groups(name, 0, Integer.MAX_VALUE)
+          .stream()
+          .filter(group -> group.getPath().equals(path))
+          .findFirst();
     }
 
     /**

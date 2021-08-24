@@ -464,9 +464,13 @@ public class KeycloakService {
      */
     public Optional<GroupRepresentation> getGroup(String name) {
         String path = name.startsWith("/") ? name : "/" + name;
+        log.info("Getting group: [{}]", path);
         return realm().groups().groups(name, 0, Integer.MAX_VALUE)
           .stream()
-          .filter(group -> group.getPath().equals(path))
+          .filter(group -> {
+              log.info("group path from server: {}", group.getPath());
+              return group.getPath().equals(path);
+          })
           .findFirst();
     }
 

@@ -38,6 +38,7 @@ import app.coronawarn.quicktest.model.keycloak.KeycloakCreateUserRequest;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUpdateUserRequest;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.service.KeycloakService;
+import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.IdTokenClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
@@ -66,7 +67,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = UserManagementController.class, properties = "keycloak-admin.realm=REALM")
-@Import(UserManagementControllerUtils.class)
+@Import({UserManagementControllerUtils.class, Utilities.class})
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
 class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
@@ -88,6 +89,9 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @MockBean
     private KeycloakService keycloakServiceMock;
 
+    @MockBean
+    private Utilities utilities;
+
     @BeforeEach
     void setup() {
         user1.setId(userId);
@@ -101,6 +105,9 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         rootGroup.setSubGroups(List.of(subGroup));
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup));
         when(keycloakServiceMock.getGroupMembers(rootGroupId)).thenReturn(List.of(user1));
+
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId));
+        when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(rootGroup);
 
         // Inject Realm Name into Security Context
         SecurityContext originalContext = TestSecurityContextHolder.getContext();

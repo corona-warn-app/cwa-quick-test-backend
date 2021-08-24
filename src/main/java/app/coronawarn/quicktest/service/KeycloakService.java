@@ -457,6 +457,16 @@ public class KeycloakService {
     }
 
     /**
+     * gruppe.
+     * @param id die id
+     * @return groupRep
+     */
+    public GroupRepresentation getGroup(String id) {
+        GroupResource groupResource = realm().groups().group(id);
+        return groupResource != null ? groupResource.toRepresentation() : null;
+    }
+
+    /**
      * Gets the Subgroup of a user.
      *
      * @param userId      id of the user

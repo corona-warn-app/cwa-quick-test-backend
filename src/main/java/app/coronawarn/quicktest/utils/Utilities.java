@@ -160,6 +160,7 @@ public class Utilities {
           .map(group -> group.replace("/",""))
           .map(group -> group.replace("]",""))
           .map(group -> group.replace("[",""))
+          .map(String::trim)
           .collect(Collectors.toList());
     }
 

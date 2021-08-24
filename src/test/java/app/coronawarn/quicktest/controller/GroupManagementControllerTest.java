@@ -45,6 +45,7 @@ import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKey
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -109,7 +110,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
         when(keycloakServiceMock.getGroupMembers(rootGroupId)).thenReturn(List.of(user1));
 
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId));
-        when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(rootGroup);
+        when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(Optional.of(rootGroup));
 
         // Inject Realm Name into Security Context
         SecurityContext originalContext = TestSecurityContextHolder.getContext();

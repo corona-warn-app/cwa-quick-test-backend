@@ -45,6 +45,7 @@ import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKey
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -107,7 +108,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         when(keycloakServiceMock.getGroupMembers(rootGroupId)).thenReturn(List.of(user1));
 
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId));
-        when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(rootGroup);
+        when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(Optional.of(rootGroup));
 
         // Inject Realm Name into Security Context
         SecurityContext originalContext = TestSecurityContextHolder.getContext();
@@ -181,7 +182,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         id = @IdTokenClaims(sub = userId)
     )
     void testGetAllUsers_AssignedToNoRootGroup() throws Exception {
-        when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(Collections.emptyList());
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(Collections.emptyList());
 
         mockMvc().perform(MockMvcRequestBuilders
             .get("/api/usermanagement/users"))
@@ -194,7 +195,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         id = @IdTokenClaims(sub = userId)
     )
     void testGetAllUsers_AssignedToTwoRootGroups() throws Exception {
-        when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup, rootGroup));
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId, rootGroupId));
 
         mockMvc().perform(MockMvcRequestBuilders
             .get("/api/usermanagement/users"))

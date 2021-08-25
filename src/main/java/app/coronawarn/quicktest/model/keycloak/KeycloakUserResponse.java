@@ -22,7 +22,6 @@ package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Data;
 
@@ -46,10 +45,8 @@ public class KeycloakUserResponse {
     @Size(max = 50)
     private String username;
 
-    @NotNull
     private Boolean roleCounter;
 
-    @NotNull
     private Boolean roleLab;
 
     private String subGroup;

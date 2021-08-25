@@ -233,6 +233,44 @@ public class KeycloakService {
     }
 
     /**
+     * Gets a KeycloakUserResponse object by given User ID. The object contains information of assigned roles.
+     *
+     * @param userId      to search for.
+     * @param rootGroupId ID of the root group of the user
+     * @return {@link KeycloakUserResponse}
+     */
+    public KeycloakUserResponse getUserDetails(String userId, String rootGroupId) throws KeycloakServiceException {
+        UserRepresentation user;
+        List<String> realmRoles;
+        try {
+            user = realm().users().get(userId).toRepresentation();
+        } catch (ClientErrorException e) {
+            log.error("Could not find user");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        }
+
+        try {
+            realmRoles = realm().users().get(userId).roles().realmLevel().listAll()
+                .stream().map(RoleRepresentation::getName)
+                .collect(Collectors.toList());
+        } catch (ClientErrorException e) {
+            log.error("Could not get user roles");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
+        }
+
+        KeycloakUserResponse userResponse = new KeycloakUserResponse();
+        userResponse.setUsername(user.getUsername());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setLastName(user.getLastName());
+        userResponse.setId(user.getId());
+        userResponse.setSubGroup(getSubgroupId(userId, rootGroupId));
+        userResponse.setRoleCounter(realmRoles.contains(ROLE_COUNTER.replace(ROLE_PREFIX, "")));
+        userResponse.setRoleLab(realmRoles.contains(ROLE_LAB.replace(ROLE_PREFIX, "")));
+
+        return userResponse;
+    }
+
+    /**
      * Gets a list of all user inside a given Root Group.
      * The returned User Object contains also information about assigned roles and assigned subgroups.
      *
@@ -240,16 +278,6 @@ public class KeycloakService {
      * @return List of KeycloakUserResponse Objects.
      */
     public List<KeycloakUserResponse> getExtendedUserListForRootGroup(String groupId) {
-        /*List<String> labRoleMembers = realm().roles().get(ROLE_LAB.replace(ROLE_PREFIX, ""))
-            .getRoleUserMembers(0, Integer.MAX_VALUE).stream()
-            .map(UserRepresentation::getId)
-            .collect(Collectors.toList());
-
-        List<String> counterRoleMembers = realm().roles().get(ROLE_COUNTER.replace(ROLE_PREFIX, ""))
-            .getRoleUserMembers(0, Integer.MAX_VALUE).stream()
-            .map(UserRepresentation::getId)
-            .collect(Collectors.toList());*/
-
         return getGroupMembers(groupId).stream()
             .map(member -> {
                 KeycloakUserResponse userResponse = new KeycloakUserResponse();
@@ -257,8 +285,8 @@ public class KeycloakService {
                 userResponse.setFirstName(member.getFirstName());
                 userResponse.setLastName(member.getLastName());
                 userResponse.setUsername(member.getUsername());
-                userResponse.setRoleLab(false);
-                userResponse.setRoleCounter(false);
+                userResponse.setRoleLab(null);
+                userResponse.setRoleCounter(null);
                 userResponse.setSubGroup(getSubgroupId(member.getId(), groupId));
                 return userResponse;
             })
@@ -459,6 +487,7 @@ public class KeycloakService {
 
     /**
      * get group by name.
+     *
      * @param name the name of the group
      * @return the representation of the group.
      */
@@ -466,12 +495,12 @@ public class KeycloakService {
         String path = name.startsWith("/") ? name : "/" + name;
         log.info("Getting group: [{}]", path);
         return realm().groups().groups(name, 0, Integer.MAX_VALUE)
-          .stream()
-          .filter(group -> {
-              log.info("group path from server: {}", group.getPath());
-              return group.getPath().equals(path);
-          })
-          .findFirst();
+            .stream()
+            .filter(group -> {
+                log.info("group path from server: {}", group.getPath());
+                return group.getPath().equals(path);
+            })
+            .findFirst();
     }
 
     /**

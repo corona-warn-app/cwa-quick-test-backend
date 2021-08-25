@@ -35,7 +35,6 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
@@ -88,7 +87,6 @@ public class KeycloakServiceTest {
 
     private final String rootGroupname = "Root Group A";
     private final String rootGroupid = "rootgroupid";
-    private GroupsResource rootGroupsResourceMock;
     private GroupResource rootGroupResourceMock;
     private GroupRepresentation rootGroupRepresentation;
 
@@ -466,6 +464,39 @@ public class KeycloakServiceTest {
     }
 
     @Test
+    void testGetUserDetails() throws KeycloakService.KeycloakServiceException {
+        GroupRepresentation subgroup = new GroupRepresentation();
+        subgroup.setId("xxx");
+        when(roleScopeResourceMock.listAll()).thenReturn(List.of(roleCounter, roleLab));
+        when(userResourceMock.groups()).thenReturn(List.of(rootGroupRepresentation, subgroup));
+
+        KeycloakUserResponse userDetails = keycloakService.getUserDetails(userid, rootGroupid);
+
+        Assertions.assertEquals(username, userDetails.getUsername());
+        Assertions.assertEquals(firstname, userDetails.getFirstName());
+        Assertions.assertEquals(lastname, userDetails.getLastName());
+        Assertions.assertEquals(userid, userDetails.getId());
+        Assertions.assertEquals(subgroup.getId(), userDetails.getSubGroup());
+        Assertions.assertTrue(userDetails.getRoleCounter());
+        Assertions.assertTrue(userDetails.getRoleLab());
+
+        when(roleScopeResourceMock.listAll()).thenReturn(List.of(roleCounter));
+        userDetails = keycloakService.getUserDetails(userid, rootGroupid);
+        Assertions.assertTrue(userDetails.getRoleCounter());
+        Assertions.assertFalse(userDetails.getRoleLab());
+
+        when(roleScopeResourceMock.listAll()).thenReturn(List.of(roleLab));
+        userDetails = keycloakService.getUserDetails(userid, rootGroupid);
+        Assertions.assertFalse(userDetails.getRoleCounter());
+        Assertions.assertTrue(userDetails.getRoleLab());
+
+        when(roleScopeResourceMock.listAll()).thenReturn(Collections.emptyList());
+        userDetails = keycloakService.getUserDetails(userid, rootGroupid);
+        Assertions.assertFalse(userDetails.getRoleCounter());
+        Assertions.assertFalse(userDetails.getRoleLab());
+    }
+
+    @Test
     void testUpdateSubGroupDetails() {
         KeycloakGroupDetails groupDetails = keycloakService.getSubGroupDetails(groupid);
 
@@ -487,10 +518,7 @@ public class KeycloakServiceTest {
         GroupRepresentation subgroup = new GroupRepresentation();
         subgroup.setId("xxx");
 
-        when(roleLabResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
-        when(roleCounterResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
         when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
-        when(userResourceMock.groups()).thenReturn(List.of(groupRepresentation, subgroup));
 
         List<KeycloakUserResponse> response = keycloakService.getExtendedUserListForRootGroup(groupid);
 
@@ -500,15 +528,13 @@ public class KeycloakServiceTest {
         Assertions.assertEquals(lastname, response.get(0).getLastName());
         Assertions.assertEquals(username, response.get(0).getUsername());
         Assertions.assertEquals(subgroup.getId(), response.get(0).getSubGroup());
-        Assertions.assertFalse(response.get(0).getRoleCounter());
-        Assertions.assertFalse(response.get(0).getRoleLab());
+        Assertions.assertNull(response.get(0).getRoleCounter());
+        Assertions.assertNull(response.get(0).getRoleLab());
     }
 
     @Test
     void testGetExtendedUserListNoSubgroup() {
 
-        when(roleLabResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
-        when(roleCounterResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
         when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
         when(userResourceMock.groups()).thenReturn(List.of(groupRepresentation));
 
@@ -520,31 +546,8 @@ public class KeycloakServiceTest {
         Assertions.assertEquals(lastname, response.get(0).getLastName());
         Assertions.assertEquals(username, response.get(0).getUsername());
         Assertions.assertNull(response.get(0).getSubGroup());
-        Assertions.assertFalse(response.get(0).getRoleCounter());
-        Assertions.assertFalse(response.get(0).getRoleLab());
-    }
-
-    @Test
-    void testGetExtendedUserList_RoleLab() {
-
-        GroupRepresentation subgroup = new GroupRepresentation();
-        subgroup.setId("xxx");
-
-        when(roleLabResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Set.of(userRepresentation));
-        when(roleCounterResourceMock.getRoleUserMembers(0, Integer.MAX_VALUE)).thenReturn(Collections.emptySet());
-        when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
-        when(userResourceMock.groups()).thenReturn(List.of(groupRepresentation, subgroup));
-
-        List<KeycloakUserResponse> response = keycloakService.getExtendedUserListForRootGroup(groupid);
-
-        Assertions.assertEquals(1, response.size());
-        Assertions.assertEquals(userid, response.get(0).getId());
-        Assertions.assertEquals(firstname, response.get(0).getFirstName());
-        Assertions.assertEquals(lastname, response.get(0).getLastName());
-        Assertions.assertEquals(username, response.get(0).getUsername());
-        Assertions.assertEquals(subgroup.getId(), response.get(0).getSubGroup());
-        Assertions.assertFalse(response.get(0).getRoleCounter());
-        Assertions.assertFalse(response.get(0).getRoleLab());
+        Assertions.assertNull(response.get(0).getRoleCounter());
+        Assertions.assertNull(response.get(0).getRoleLab());
     }
 
     @Test

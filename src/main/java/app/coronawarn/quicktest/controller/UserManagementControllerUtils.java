@@ -58,9 +58,6 @@ public class UserManagementControllerUtils {
     }
 
     protected GroupRepresentation checkUserRootGroup(KeycloakAuthenticationToken token) throws ResponseStatusException {
-        //String userId = token.getAccount().getKeycloakSecurityContext().getToken().getSubject();
-        //List<GroupRepresentation> userRootGroups = keycloakService.getRootGroupsOfUser(userId);
-
         List<String> s = utilities.getRootGroupsFromTokenAsList();
 
         if (s.size() > 1) {
@@ -68,7 +65,6 @@ public class UserManagementControllerUtils {
         } else if (s.size() < 1) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your user is not assigned to a root group");
         }
-        log.info("Getting group from Keycloak:[{}]", s.get(0));
         Optional<GroupRepresentation> group = keycloakService.getGroup(s.get(0));
 
         if (group.isEmpty()) {

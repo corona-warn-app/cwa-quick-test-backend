@@ -98,6 +98,7 @@ public class QuickTestController {
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Failed to find pending quicktests");
+            log.debug("Extended error information getQuickTests: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -126,6 +127,7 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute createQuickTest.");
+            log.debug("Extended error information createQuickTest: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -162,6 +164,7 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
+            log.debug("Extended error information updateQuickTestStatus: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -191,6 +194,7 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
+            log.debug("Extended error information getDccConsent: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -226,6 +230,7 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
+            log.debug("Extended error information updateQuickTestStatus: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

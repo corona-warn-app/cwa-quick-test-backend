@@ -40,7 +40,6 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -75,24 +74,13 @@ public class QuickTestService {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
 
-        String reqUuid = UUID.randomUUID().toString();
-        long start = System.currentTimeMillis();
-        log.info("request-uuid:[{}], start=[{}]", reqUuid, start);
-
-
         Optional<QuickTest> conflictingQuickTestByHashed =
             quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(
                 ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
                 shortHash, hashedGuid);
-        long afterQuicktest = System.currentTimeMillis();
-
-
-        log.info("request-uuid:[{}], durationQuicktestDb=[{}]", reqUuid, afterQuicktest - start);
 
         Optional<QuickTestArchive> conflictingQuickTestArchiveByHashed =
             quickTestArchiveRepository.findByHashedGuid(hashedGuid);
-        long afterArchive = System.currentTimeMillis();
-        log.info("request-uuid:[{}], durationArchiveDb=[{}]", reqUuid, afterArchive - afterQuicktest);
 
         if (conflictingQuickTestByHashed.isPresent() || conflictingQuickTestArchiveByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);
@@ -109,12 +97,10 @@ public class QuickTestService {
         log.debug("Persisting QuickTest in database");
         try {
             quickTestRepository.save(newQuickTest);
-            long afterSave = System.currentTimeMillis();
-            log.info("request-uuid:[{}], durationSave=[{}]", reqUuid, afterSave - afterArchive);
             log.debug("Created new QuickTest with hashedGUID {}", hashedGuid);
             log.info("Created new QuickTest with hashedGUID");
         } catch (Exception e) {
-            log.debug("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
+            log.debug("Failed to insert new QuickTest, hashedGuid = {}, message=[{}]", hashedGuid, e.getMessage());
             log.error("Failed to insert new QuickTest");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -179,6 +165,7 @@ public class QuickTestService {
             pdf = createPdf(quicktest, pocInformation, user);
         } catch (IOException e) {
             log.error("generating PDF failed.");
+            log.debug("generating PDF failed, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
@@ -187,6 +174,7 @@ public class QuickTestService {
                 quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
             log.error("Could not save quickTestArchive. updateQuickTest failed.");
+            log.debug("Could not save quickTestArchive, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
@@ -244,6 +232,7 @@ public class QuickTestService {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
             log.error("Could not save. updateQuickTestWithPersonalData failed.");
+            log.debug("Could not save updateQuickTestWithPersonalData, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),

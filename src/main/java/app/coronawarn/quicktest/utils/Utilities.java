@@ -22,7 +22,6 @@ package app.coronawarn.quicktest.utils;
 
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.service.KeycloakService;
 import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,7 +32,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,8 +52,6 @@ public class Utilities {
     private final QuickTestConfig quickTestConfig;
 
     private final KeycloakAdminProperties keycloakAdminProperties;
-
-    private final KeycloakService keycloakService;
 
     /**
      * Returns current utc datetime.
@@ -92,9 +88,6 @@ public class Utilities {
 
         Map<String, String> ids = new HashMap<>();
         Principal principal = getPrincipal();
-        long start = System.currentTimeMillis();
-        String reqId = UUID.randomUUID().toString();
-        log.info("request-uuid:[{}], startGetIds=[{}]", reqId, start);
 
         if (principal instanceof KeycloakPrincipal) {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
@@ -148,9 +141,7 @@ public class Utilities {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
             IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
             Map<String, Object> customClaims = token.getOtherClaims();
-            log.info("Custom claims {}", customClaims.get("groups"));
             if (customClaims.containsKey(quickTestConfig.getGroupKey())) {
-                log.info("Groups {}",customClaims.get(quickTestConfig.getGroupKey()));
                 information = String.valueOf(customClaims.get(quickTestConfig.getGroupKey()));
             }
         }

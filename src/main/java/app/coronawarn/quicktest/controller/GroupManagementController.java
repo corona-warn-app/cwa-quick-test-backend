@@ -87,19 +87,10 @@ public class GroupManagementController {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_ADMIN)
     public ResponseEntity<List<KeycloakGroupResponse>> getSubGroups(KeycloakAuthenticationToken token) {
-        Long startTime = System.currentTimeMillis();
-        log.info("Get sub groups started at {}",startTime);
         utils.checkRealm(token);
-        log.info("Get sub groups started at {}", (System.currentTimeMillis() - startTime));
-
         GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
-        log.info("Get sub groups took {}", (System.currentTimeMillis() - startTime));
-
-        log.info("Convert groups started at {}", (System.currentTimeMillis() - startTime));
-
         List<KeycloakGroupResponse> groups = new ArrayList<>();
         utils.convertGroups(groups, userRootGroup.getSubGroups(), true);
-        log.info("Get sub groups took {}", (System.currentTimeMillis() - startTime));
 
         return ResponseEntity.ok(groups);
     }

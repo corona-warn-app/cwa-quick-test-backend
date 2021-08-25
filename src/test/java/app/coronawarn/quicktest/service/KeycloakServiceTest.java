@@ -519,6 +519,7 @@ public class KeycloakServiceTest {
         subgroup.setId("xxx");
 
         when(groupResourceMock.members(0, Integer.MAX_VALUE)).thenReturn(List.of(userRepresentation));
+        when(userResourceMock.groups()).thenReturn(List.of(groupRepresentation, subgroup));
 
         List<KeycloakUserResponse> response = keycloakService.getExtendedUserListForRootGroup(groupid);
 

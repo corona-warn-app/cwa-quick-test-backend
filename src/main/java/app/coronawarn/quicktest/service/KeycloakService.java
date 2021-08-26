@@ -519,7 +519,7 @@ public class KeycloakService {
      * @param rootGroupId rootGroup ID to filter
      * @return ID of the subgroup of a user
      */
-    public String getSubgroupId(String userId, String rootGroupId) {
+    private String getSubgroupId(String userId, String rootGroupId) {
         return realm().users().get(userId).groups().stream()
             .filter(group -> !group.getId().equals(rootGroupId))
             .findFirst()

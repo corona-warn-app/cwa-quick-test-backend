@@ -85,8 +85,6 @@ public class UserManagementController {
     @GetMapping("")
     @Secured(ROLE_ADMIN)
     public ResponseEntity<List<KeycloakUserResponse>> getUsers(KeycloakAuthenticationToken token) {
-        Long startTime = System.currentTimeMillis();
-
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 

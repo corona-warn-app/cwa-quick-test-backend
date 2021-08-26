@@ -278,6 +278,16 @@ public class KeycloakService {
      * @return List of KeycloakUserResponse Objects.
      */
     public List<KeycloakUserResponse> getExtendedUserListForRootGroup(String groupId) {
+        List<String> labRoleMembers = realm().roles().get(ROLE_LAB.replace(ROLE_PREFIX, ""))
+            .getRoleUserMembers(0, Integer.MAX_VALUE).stream()
+            .map(UserRepresentation::getId)
+            .collect(Collectors.toList());
+
+        List<String> counterRoleMembers = realm().roles().get(ROLE_COUNTER.replace(ROLE_PREFIX, ""))
+            .getRoleUserMembers(0, Integer.MAX_VALUE).stream()
+            .map(UserRepresentation::getId)
+            .collect(Collectors.toList());
+
         return getGroupMembers(groupId).stream()
             .map(member -> {
                 KeycloakUserResponse userResponse = new KeycloakUserResponse();
@@ -285,8 +295,8 @@ public class KeycloakService {
                 userResponse.setFirstName(member.getFirstName());
                 userResponse.setLastName(member.getLastName());
                 userResponse.setUsername(member.getUsername());
-                userResponse.setRoleLab(null);
-                userResponse.setRoleCounter(null);
+                userResponse.setRoleLab(labRoleMembers.contains(member.getId()));
+                userResponse.setRoleCounter(counterRoleMembers.contains(member.getId()));
                 userResponse.setSubGroup(getSubgroupId(member.getId(), groupId));
                 return userResponse;
             })

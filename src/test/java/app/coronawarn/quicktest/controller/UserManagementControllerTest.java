@@ -46,6 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -572,7 +573,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     )
     void testCreateUser() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(subGroup.getId());
+        createUserRequest.setSubGroup(subGroup.getId());
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -580,11 +581,21 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         createUserRequest.setRoleCounter(true);
         createUserRequest.setRoleLab(true);
 
+        when(keycloakServiceMock.createNewUserInGroup(any(),any(), any(), any(), anyBoolean(), anyBoolean(), any(), any()))
+            .thenReturn(userId);
+
         mockMvc().perform(MockMvcRequestBuilders
             .post("/api/usermanagement/users")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(createUserRequest)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(userId))
+            .andExpect(jsonPath("$.lastName").value("newLastName"))
+            .andExpect(jsonPath("$.firstName").value("newFirstName"))
+            .andExpect(jsonPath("$.username").value("newUsername"))
+            .andExpect(jsonPath("$.roleCounter").value(true))
+            .andExpect(jsonPath("$.roleLab").value(true))
+            .andExpect(jsonPath("$.subGroup").value(subGroup.getId()));
 
         verify(keycloakServiceMock).createNewUserInGroup(
             createUserRequest.getFirstName(),
@@ -604,7 +615,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     )
     void testCreateUser_WithoutSubgroup() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(null);
+        createUserRequest.setSubGroup(null);
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -612,11 +623,21 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         createUserRequest.setRoleCounter(true);
         createUserRequest.setRoleLab(true);
 
+        when(keycloakServiceMock.createNewUserInGroup(any(),any(), any(), any(), anyBoolean(), anyBoolean(), any(), any()))
+            .thenReturn(userId);
+
         mockMvc().perform(MockMvcRequestBuilders
             .post("/api/usermanagement/users")
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(objectMapper.writeValueAsString(createUserRequest)))
-            .andExpect(status().isCreated());
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(userId))
+            .andExpect(jsonPath("$.lastName").value("newLastName"))
+            .andExpect(jsonPath("$.firstName").value("newFirstName"))
+            .andExpect(jsonPath("$.username").value("newUsername"))
+            .andExpect(jsonPath("$.roleCounter").value(true))
+            .andExpect(jsonPath("$.roleLab").value(true))
+            .andExpect(jsonPath("$.subGroup").value(Matchers.nullValue()));
 
         verify(keycloakServiceMock).createNewUserInGroup(
             createUserRequest.getFirstName(),
@@ -636,7 +657,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     )
     void testCreateUser_SubGroupNotInRootGroup() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup("x".repeat(36));
+        createUserRequest.setSubGroup("x".repeat(36));
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -665,7 +686,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
             .when(keycloakServiceMock).createNewUserInGroup(any(), any(), any(), any(), anyBoolean(), anyBoolean(), any(), any());
 
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(subGroup.getId());
+        createUserRequest.setSubGroup(subGroup.getId());
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -701,7 +722,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
             .when(keycloakServiceMock).createNewUserInGroup(any(), any(), any(), any(), anyBoolean(), anyBoolean(), any(), any());
 
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(subGroup.getId());
+        createUserRequest.setSubGroup(subGroup.getId());
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -737,7 +758,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
             .when(keycloakServiceMock).createNewUserInGroup(any(), any(), any(), any(), anyBoolean(), anyBoolean(), any(), any());
 
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(subGroup.getId());
+        createUserRequest.setSubGroup(subGroup.getId());
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -769,7 +790,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     )
     void testCreateUser_WrongRole() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(subGroup.getId());
+        createUserRequest.setSubGroup(subGroup.getId());
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -793,7 +814,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(Collections.emptyList());
 
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(subGroup.getId());
+        createUserRequest.setSubGroup(subGroup.getId());
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");
@@ -817,7 +838,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup, rootGroup));
 
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
-        createUserRequest.setSubgroup(subGroup.getId());
+        createUserRequest.setSubGroup(subGroup.getId());
         createUserRequest.setUsername("newUsername");
         createUserRequest.setFirstName("newFirstName");
         createUserRequest.setLastName("newLastName");

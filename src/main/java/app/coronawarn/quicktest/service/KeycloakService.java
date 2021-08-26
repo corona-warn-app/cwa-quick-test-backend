@@ -76,9 +76,10 @@ public class KeycloakService {
      * @param roleCounter   If the Role for Counter should be added.
      * @param roleLab       If the Role for Lab should be added.
      * @param rootGroupPath Path of the ROOT-Group of the user.
+     * @return ID of the newly created user.
      * @throws KeycloakServiceException if User Creation has failed.
      */
-    public void createNewUserInGroup(
+    public String createNewUserInGroup(
         String firstName,
         String lastName,
         String username,
@@ -129,6 +130,8 @@ public class KeycloakService {
 
         UserRepresentation createdUser = findUserByUsername(username);
         addRealmRoles(createdUser.getId(), getRoleNames(roleCounter, roleLab));
+
+        return createdUser.getId();
     }
 
     /**
@@ -516,7 +519,7 @@ public class KeycloakService {
      * @param rootGroupId rootGroup ID to filter
      * @return ID of the subgroup of a user
      */
-    private String getSubgroupId(String userId, String rootGroupId) {
+    public String getSubgroupId(String userId, String rootGroupId) {
         return realm().users().get(userId).groups().stream()
             .filter(group -> !group.getId().equals(rootGroupId))
             .findFirst()

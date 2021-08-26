@@ -192,7 +192,7 @@ public class KeycloakServiceTest {
         ArgumentCaptor<List<RoleRepresentation>> rolesCaptor = ArgumentCaptor.forClass(List.class);
         doNothing().when(roleScopeResourceMock).add(rolesCaptor.capture());
 
-        keycloakService.createNewUserInGroup(
+        String createdUserId = keycloakService.createNewUserInGroup(
             firstname,
             lastname,
             username,
@@ -201,6 +201,8 @@ public class KeycloakServiceTest {
             true,
             rootGroupPath,
             subGroupPath);
+
+        Assertions.assertEquals(userid, createdUserId);
 
         Assertions.assertEquals(2, rolesCaptor.getValue().size());
         Assertions.assertEquals(roleCounterName, rolesCaptor.getValue().get(0).getName());
@@ -229,7 +231,7 @@ public class KeycloakServiceTest {
         ArgumentCaptor<List<RoleRepresentation>> rolesCaptor = ArgumentCaptor.forClass(List.class);
         doNothing().when(roleScopeResourceMock).add(rolesCaptor.capture());
 
-        keycloakService.createNewUserInGroup(
+        String createdUserId = keycloakService.createNewUserInGroup(
             firstname,
             lastname,
             username,
@@ -238,6 +240,8 @@ public class KeycloakServiceTest {
             true,
             rootGroupPath,
             subGroupPath);
+
+        Assertions.assertEquals(userid, createdUserId);
 
         Assertions.assertEquals(1, rolesCaptor.getValue().size());
         Assertions.assertEquals(roleLabName, rolesCaptor.getValue().get(0).getName());
@@ -264,7 +268,7 @@ public class KeycloakServiceTest {
         ArgumentCaptor<List<RoleRepresentation>> rolesCaptor = ArgumentCaptor.forClass(List.class);
         doNothing().when(roleScopeResourceMock).add(rolesCaptor.capture());
 
-        keycloakService.createNewUserInGroup(
+        String createdUserId = keycloakService.createNewUserInGroup(
             firstname,
             lastname,
             username,
@@ -273,6 +277,8 @@ public class KeycloakServiceTest {
             true,
             rootGroupPath,
             null);
+
+        Assertions.assertEquals(userid, createdUserId);
 
         Assertions.assertEquals(1, rolesCaptor.getValue().size());
         Assertions.assertEquals(roleLabName, rolesCaptor.getValue().get(0).getName());

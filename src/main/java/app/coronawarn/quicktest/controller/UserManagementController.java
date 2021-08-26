@@ -89,7 +89,7 @@ public class UserManagementController {
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         List<KeycloakUserResponse> extendedUserListForRootGroup =
-          keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId());
+            keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId());
         return ResponseEntity.ok(extendedUserListForRootGroup);
     }
 
@@ -271,18 +271,20 @@ public class UserManagementController {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     @Secured(ROLE_ADMIN)
-    public ResponseEntity<Void> createNewUser(
+    public ResponseEntity<KeycloakUserResponse> createNewUser(
         KeycloakAuthenticationToken token, @Valid @RequestBody KeycloakCreateUserRequest body) {
 
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
-        String subgroupPath = body.getSubgroup() != null
-            ? utils.checkGroupIsInSubgroups(userRootGroup, body.getSubgroup()).getPath()
+        String subgroupPath = body.getSubGroup() != null
+            ? utils.checkGroupIsInSubgroups(userRootGroup, body.getSubGroup()).getPath()
             : null;
 
+        String newUserId;
+
         try {
-            keycloakService.createNewUserInGroup(
+            newUserId = keycloakService.createNewUserInGroup(
                 body.getFirstName(),
                 body.getLastName(),
                 body.getUsername(),
@@ -302,7 +304,18 @@ public class UserManagementController {
             }
         }
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        KeycloakUserResponse createdUser = new KeycloakUserResponse();
+        createdUser.setUsername(body.getUsername());
+        createdUser.setFirstName(body.getFirstName());
+        createdUser.setLastName(body.getLastName());
+        createdUser.setRoleCounter(body.getRoleCounter());
+        createdUser.setRoleLab(body.getRoleLab());
+        createdUser.setId(newUserId);
+        createdUser.setSubGroup(body.getSubGroup());
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(createdUser);
     }
 
 }

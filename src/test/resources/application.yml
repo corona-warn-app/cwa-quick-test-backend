@@ -12,16 +12,22 @@ spring:
   application:
     name: cwa-quick-test-backend
   jpa:
+    database: h2
     hibernate:
       ddl-auto: validate
-  datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:quicktest;MODE=MYSQL
-    username: sa
-    password: ''
   cloud:
     vault:
       enabled: false
+
+jdbc:
+  min-pool: 15
+  max-pool: 25
+  master:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:quicktest;MODE=MYSQL
+  replica:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:quicktest;MODE=MYSQL
 
 cwa-testresult-server:
   url: http://localhost:1234
@@ -46,6 +52,8 @@ server:
 quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
+  groupKey: groups
+  groupInformationDelimiter: \,
   tenantPointOfCareIdKey: pocId
   dbEncryptionKey: abcdefghjklmnopq
   pointOfCareInformationName: poc_details

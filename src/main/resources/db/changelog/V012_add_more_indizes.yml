@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-index-on-quicktest-test-result
+      author: bergmann-dierk
+      changes:
+        - createIndex:
+            tableName: quick_test
+            indexName: idx_test_result
+            columns:
+              - column:
+                  name: test_result
+
+  - changeSet:
+      id: add-index-on-quicktest-version
+      author: bergmann-dierk
+      changes:
+        - createIndex:
+            tableName: quick_test
+            indexName: idx_version
+            columns:
+              - column:
+                  name: version

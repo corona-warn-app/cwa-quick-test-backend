@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 import javax.ws.rs.BadRequestException;
@@ -229,6 +230,44 @@ public class KeycloakService {
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
 
         return groupDetails;
+    }
+
+    /**
+     * Gets a KeycloakUserResponse object by given User ID. The object contains information of assigned roles.
+     *
+     * @param userId      to search for.
+     * @param rootGroupId ID of the root group of the user
+     * @return {@link KeycloakUserResponse}
+     */
+    public KeycloakUserResponse getUserDetails(String userId, String rootGroupId) throws KeycloakServiceException {
+        UserRepresentation user;
+        List<String> realmRoles;
+        try {
+            user = realm().users().get(userId).toRepresentation();
+        } catch (ClientErrorException e) {
+            log.error("Could not find user");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
+        }
+
+        try {
+            realmRoles = realm().users().get(userId).roles().realmLevel().listAll()
+                .stream().map(RoleRepresentation::getName)
+                .collect(Collectors.toList());
+        } catch (ClientErrorException e) {
+            log.error("Could not get user roles");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
+        }
+
+        KeycloakUserResponse userResponse = new KeycloakUserResponse();
+        userResponse.setUsername(user.getUsername());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setLastName(user.getLastName());
+        userResponse.setId(user.getId());
+        userResponse.setSubGroup(getSubgroupId(userId, rootGroupId));
+        userResponse.setRoleCounter(realmRoles.contains(ROLE_COUNTER.replace(ROLE_PREFIX, "")));
+        userResponse.setRoleLab(realmRoles.contains(ROLE_LAB.replace(ROLE_PREFIX, "")));
+
+        return userResponse;
     }
 
     /**
@@ -454,6 +493,20 @@ public class KeycloakService {
             log.error("Failed to create group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
             throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
         }
+    }
+
+    /**
+     * get group by name.
+     * @param name the name of the group
+     * @return the representation of the group.
+     */
+    public Optional<GroupRepresentation> getGroup(String name) {
+        String path = name.startsWith("/") ? name : "/" + name;
+        log.debug("Getting group: [{}]", path);
+        return realm().groups().groups(name, 0, Integer.MAX_VALUE)
+          .stream()
+          .filter(group -> group.getPath().equals(path))
+          .findFirst();
     }
 
     /**

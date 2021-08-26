@@ -18,37 +18,14 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model.keycloak;
+package app.coronawarn.quicktest.datasource;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import lombok.Data;
+import org.springframework.jdbc.datasource.lookup.AbstractRoutingDataSource;
 
-@Schema(
-        description = "Response model for user."
-)
-@Data
-public class KeycloakUserResponse {
+public class TransactionRoutingDatasource extends AbstractRoutingDataSource {
 
-    private String id;
-
-    @NotEmpty
-    @Size(max = 30)
-    private String lastName;
-
-    @NotEmpty
-    @Size(max = 30)
-    private String firstName;
-
-    @NotEmpty
-    @Size(max = 50)
-    private String username;
-
-    private Boolean roleCounter;
-
-    private Boolean roleLab;
-
-    private String subGroup;
-
+    @Override
+    protected Object determineCurrentLookupKey() {
+        return DatasourceContextHolder.getDataSourceType();
+    }
 }

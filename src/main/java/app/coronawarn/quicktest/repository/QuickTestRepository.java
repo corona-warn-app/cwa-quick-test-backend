@@ -38,8 +38,11 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
 
     List<QuickTest> findAllByTenantIdAndPocIdAndVersionIsGreaterThan(String tenantId, String pocId, Integer version);
 
-    List<QuickTest> findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(String tenantId,
-            String pocId, Short testResult, Integer version);
+
+    List<QuicktestView> getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(String tenantId,
+                                                                                                 String pocId,
+                                                                                                 Short testResult,
+                                                                                                 Integer version);
 
     List<QuickTest> findAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time, Integer version);
 

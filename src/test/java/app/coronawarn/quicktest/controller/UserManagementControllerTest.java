@@ -38,12 +38,14 @@ import app.coronawarn.quicktest.model.keycloak.KeycloakCreateUserRequest;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUpdateUserRequest;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.service.KeycloakService;
+import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.IdTokenClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -66,7 +68,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = UserManagementController.class, properties = "keycloak-admin.realm=REALM")
-@Import(UserManagementControllerUtils.class)
+@Import({UserManagementControllerUtils.class, Utilities.class})
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
 class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
@@ -88,6 +90,9 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @MockBean
     private KeycloakService keycloakServiceMock;
 
+    @MockBean
+    private Utilities utilities;
+
     @BeforeEach
     void setup() {
         user1.setId(userId);
@@ -101,6 +106,9 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         rootGroup.setSubGroups(List.of(subGroup));
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup));
         when(keycloakServiceMock.getGroupMembers(rootGroupId)).thenReturn(List.of(user1));
+
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId));
+        when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(Optional.of(rootGroup));
 
         // Inject Realm Name into Security Context
         SecurityContext originalContext = TestSecurityContextHolder.getContext();
@@ -138,7 +146,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         when(keycloakServiceMock.getExtendedUserListForRootGroup(rootGroupId)).thenReturn(List.of(userResponse));
 
         mockMvc().perform(MockMvcRequestBuilders
-            .get("/api/usermanagement/users"))
+                .get("/api/usermanagement/users"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.length()").value(1))
             .andExpect(jsonPath("$[0]").value(userResponse));
@@ -174,7 +182,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         id = @IdTokenClaims(sub = userId)
     )
     void testGetAllUsers_AssignedToNoRootGroup() throws Exception {
-        when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(Collections.emptyList());
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(Collections.emptyList());
 
         mockMvc().perform(MockMvcRequestBuilders
             .get("/api/usermanagement/users"))
@@ -187,10 +195,83 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
         id = @IdTokenClaims(sub = userId)
     )
     void testGetAllUsers_AssignedToTwoRootGroups() throws Exception {
-        when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup, rootGroup));
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId, rootGroupId));
 
         mockMvc().perform(MockMvcRequestBuilders
-            .get("/api/usermanagement/users"))
+                .get("/api/usermanagement/users"))
+            .andExpect(status().isForbidden());
+    }
+
+
+    @Test
+    @WithMockKeycloakAuth(
+        authorities = ROLE_ADMIN,
+        id = @IdTokenClaims(sub = userId)
+    )
+    void testGetUserDetails() throws Exception {
+        KeycloakUserResponse userResponse = new KeycloakUserResponse();
+        userResponse.setId(user1.getId());
+        userResponse.setSubGroup(subGroup.getId());
+        userResponse.setLastName(user1.getLastName());
+        userResponse.setFirstName(user1.getFirstName());
+        userResponse.setRoleCounter(true);
+        userResponse.setRoleLab(false);
+
+        when(keycloakServiceMock.getUserDetails(userId, rootGroupId)).thenReturn(userResponse);
+
+        mockMvc().perform(MockMvcRequestBuilders
+                .get("/api/usermanagement/users/" + userId))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").value(userResponse));
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+        authorities = ROLE_ADMIN,
+        id = @IdTokenClaims(sub = userId)
+    )
+    void testGetUserDetails_WrongRealm() throws Exception {
+        doReturn("randomRealmName").when(keycloakSecurityContextSpy).getRealm();
+
+        mockMvc().perform(MockMvcRequestBuilders
+                .get("/api/usermanagement/users/userid"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+        authorities = ROLE_LAB,
+        id = @IdTokenClaims(sub = userId)
+    )
+    void testGetUserDetails_WrongRole() throws Exception {
+        mockMvc().perform(MockMvcRequestBuilders
+                .get("/api/usermanagement/users/userid"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+        authorities = ROLE_LAB,
+        id = @IdTokenClaims(sub = userId)
+    )
+    void testGetUserDetails_AssignedToNoRootGroup() throws Exception {
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(Collections.emptyList());
+
+        mockMvc().perform(MockMvcRequestBuilders
+                .get("/api/usermanagement/users/userid"))
+            .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+        authorities = ROLE_LAB,
+        id = @IdTokenClaims(sub = userId)
+    )
+    void testGetUserDetails_AssignedToTwoRootGroups() throws Exception {
+        when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId, rootGroupId));
+
+        mockMvc().perform(MockMvcRequestBuilders
+                .get("/api/usermanagement/users/userid"))
             .andExpect(status().isForbidden());
     }
 
@@ -201,7 +282,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     )
     void testDeleteUser() throws Exception {
         mockMvc().perform(MockMvcRequestBuilders
-            .delete("/api/usermanagement/users/" + userId))
+                .delete("/api/usermanagement/users/" + userId))
             .andExpect(status().isNoContent());
 
         verify(keycloakServiceMock).deleteUser(userId);

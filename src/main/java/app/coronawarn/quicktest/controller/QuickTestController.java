@@ -30,17 +30,18 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
+import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -79,18 +80,17 @@ public class QuickTestController {
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId() {
         try {
-            List<QuickTest> quickTests = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(
-                    utilities.getIdsFromToken());
-            TypeToken<List<QuickTestResponse>> typeToken = new TypeToken<>() {};
-            List<QuickTestResponse> quickTestResponses = modelMapper.map(
-                    quickTests,
-                    typeToken.getType()
-            );
+            List<QuickTestResponse> quickTests =
+              quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(utilities.getIdsFromToken())
+                .stream()
+                .map(this::mapViewToResponse)
+                .collect(Collectors.toList());
             QuickTestResponseList response = new QuickTestResponseList();
-            response.setQuickTests(quickTestResponses);
+            response.setQuickTests(quickTests);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Failed to find pending quicktests");
+            log.debug("Extended error information getQuickTests: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -119,6 +119,7 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute createQuickTest.");
+            log.debug("Extended error information createQuickTest: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -155,6 +156,7 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
+            log.debug("Extended error information updateQuickTestStatus: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -184,6 +186,7 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
+            log.debug("Extended error information getDccConsent: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -219,9 +222,15 @@ public class QuickTestController {
             throw e;
         } catch (Exception e) {
             log.error("Couldn't execute updateQuickTestStatus.");
+            log.debug("Extended error information updateQuickTestStatus: ", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    private QuickTestResponse mapViewToResponse(QuicktestView quicktestView) {
+        QuickTestResponse response = new QuickTestResponse();
+        response.setShortHashedGuid(quicktestView.getShortHashedGuid());
+        return response;
+    }
 }

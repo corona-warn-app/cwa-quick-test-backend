@@ -32,6 +32,7 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -39,11 +40,11 @@ import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Slf4j
@@ -99,7 +100,7 @@ public class QuickTestService {
             log.debug("Created new QuickTest with hashedGUID {}", hashedGuid);
             log.info("Created new QuickTest with hashedGUID");
         } catch (Exception e) {
-            log.debug("Failed to insert new QuickTest, hashedGuid = {}", hashedGuid);
+            log.debug("Failed to insert new QuickTest, hashedGuid = {}, message=[{}]", hashedGuid, e.getMessage());
             log.error("Failed to insert new QuickTest");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -116,7 +117,7 @@ public class QuickTestService {
      * @param user                   user
      * @throws ResponseStatusException exception
      */
-    @Transactional(rollbackOn = ResponseStatusException.class)
+    @Transactional(rollbackFor = ResponseStatusException.class)
     public void updateQuickTest(Map<String, String> ids, String shortHash,
                                 QuickTestUpdateRequest quickTestUpdateRequest, List<String> pocInformation,
                                 String user) throws ResponseStatusException {
@@ -164,6 +165,7 @@ public class QuickTestService {
             pdf = createPdf(quicktest, pocInformation, user);
         } catch (IOException e) {
             log.error("generating PDF failed.");
+            log.debug("generating PDF failed, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
@@ -172,6 +174,7 @@ public class QuickTestService {
                 quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
             log.error("Could not save quickTestArchive. updateQuickTest failed.");
+            log.debug("Could not save quickTestArchive, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         try {
@@ -198,7 +201,7 @@ public class QuickTestService {
      * @param shortHash             the short-hash of the testresult to be updated
      * @param quickTestPersonalData the quick test personaldata.
      */
-    @Transactional(rollbackOn = ResponseStatusException.class)
+    @Transactional(rollbackFor = ResponseStatusException.class)
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
         throws ResponseStatusException {
@@ -229,6 +232,7 @@ public class QuickTestService {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
             log.error("Could not save. updateQuickTestWithPersonalData failed.");
+            log.debug("Could not save updateQuickTestWithPersonalData, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
@@ -311,8 +315,9 @@ public class QuickTestService {
      * @param ids Map with tenantId und pocId from token
      * @return List including found quicktests
      */
-    public List<QuickTest> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
-        return quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+    @Transactional(readOnly = true)
+    public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
+        return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
             ids.get(quickTestConfig.getTenantIdKey()),
             ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
             QuickTest.TEST_RESULT_PENDING,

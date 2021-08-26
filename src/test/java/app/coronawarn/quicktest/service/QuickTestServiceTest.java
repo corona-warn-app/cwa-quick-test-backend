@@ -40,6 +40,7 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.io.ByteArrayOutputStream;
@@ -335,15 +336,11 @@ public class QuickTestServiceTest {
     void findAllPendingQuickTestsByTenantIdAndPocIdTest() {
         Map<String, String> ids = new HashMap<>();
         List<QuickTest> quickTests = new ArrayList<>();
-        QuickTest quickTest = new QuickTest();
-        quickTest.setPrivacyAgreement(true);
-        quickTest.setShortHashedGuid("00000000");
-        quickTest.setDccConsent(true);
-        quickTests.add(quickTest);
-        when(quickTestRepository.findAllByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(any(), any(), any(), any()))
-                .thenReturn(quickTests);
-        List<QuickTest> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
-        assertEquals(quickTests1.get(0).getPrivacyAgreement(), true);
+        QuicktestView quicktestView = () -> "00000000";
+        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+          any(), any(), any(), any()))
+          .thenReturn(List.of(quicktestView));
+        List<QuicktestView> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
         assertEquals(quickTests1.get(0).getShortHashedGuid(), "00000000");
     }
 

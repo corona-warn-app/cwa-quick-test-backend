@@ -29,13 +29,14 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
-import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.model.quicktest.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
-import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
@@ -893,11 +894,9 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     }
 
     @Test
+
     void getPendingQuickTests() throws Exception {
-        QuickTest quickTest = new QuickTest();
-        quickTest.setShortHashedGuid("00000000");
-        quickTest.setPrivacyAgreement(true);
-        quickTest.setFirstName("firstName");
+        QuicktestView quickTest = () -> "00000000";
         when(quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(any()))
                 .thenReturn(Collections.singletonList(quickTest));
 

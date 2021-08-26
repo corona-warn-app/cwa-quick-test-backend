@@ -27,7 +27,6 @@ import app.coronawarn.quicktest.model.keycloak.KeycloakGroupId;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupResponse;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserId;
 import app.coronawarn.quicktest.service.KeycloakService;
-import feign.Param;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -89,8 +88,7 @@ public class GroupManagementController {
     @Secured(ROLE_ADMIN)
     public ResponseEntity<List<KeycloakGroupResponse>> getSubGroups(KeycloakAuthenticationToken token) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
-
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         List<KeycloakGroupResponse> groups = new ArrayList<>();
         utils.convertGroups(groups, userRootGroup.getSubGroups(), true);
 
@@ -126,7 +124,7 @@ public class GroupManagementController {
         @PathVariable("id") String id
     ) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         KeycloakGroupDetails groupDetails = keycloakService.getSubGroupDetails(id);
@@ -162,7 +160,7 @@ public class GroupManagementController {
         @Valid @RequestBody KeycloakGroupDetails body
     ) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         try {
             keycloakService.createGroup(body.getName(), body.getPocDetails(), body.getPocId(), userRootGroup.getId());
@@ -210,7 +208,7 @@ public class GroupManagementController {
         @Valid @RequestBody KeycloakGroupDetails body
     ) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {
@@ -261,7 +259,7 @@ public class GroupManagementController {
         @Valid @RequestBody KeycloakGroupId body
     ) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         if (!parentId.equals(userRootGroup.getId())) { // Allow to put group into root group
             utils.checkGroupIsInSubgroups(userRootGroup, parentId);
@@ -316,7 +314,7 @@ public class GroupManagementController {
         @Valid @RequestBody KeycloakUserId body
     ) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         if (!parentId.equals(userRootGroup.getId())) { // Allow to put group into root group
             utils.checkGroupIsInSubgroups(userRootGroup, parentId);
@@ -373,7 +371,7 @@ public class GroupManagementController {
         @PathVariable("id") String id
     ) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {

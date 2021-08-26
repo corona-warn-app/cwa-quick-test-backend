@@ -18,37 +18,21 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model.keycloak;
+package app.coronawarn.quicktest.datasource;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import lombok.Data;
+public class DatasourceContextHolder {
 
-@Schema(
-        description = "Response model for user."
-)
-@Data
-public class KeycloakUserResponse {
+    private static final ThreadLocal<DataSourceType> CONTEXT = ThreadLocal.withInitial(() -> DataSourceType.READ_WRITE);
 
-    private String id;
+    public static void set(DataSourceType dataSourceType) {
+        CONTEXT.set(dataSourceType);
+    }
 
-    @NotEmpty
-    @Size(max = 30)
-    private String lastName;
+    public static DataSourceType getDataSourceType() {
+        return CONTEXT.get();
+    }
 
-    @NotEmpty
-    @Size(max = 30)
-    private String firstName;
-
-    @NotEmpty
-    @Size(max = 50)
-    private String username;
-
-    private Boolean roleCounter;
-
-    private Boolean roleLab;
-
-    private String subGroup;
-
+    public static void reset() {
+        CONTEXT.set(DataSourceType.READ_WRITE);
+    }
 }

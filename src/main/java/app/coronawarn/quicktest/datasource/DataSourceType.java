@@ -18,37 +18,9 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model.keycloak;
+package app.coronawarn.quicktest.datasource;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import lombok.Data;
-
-@Schema(
-        description = "Response model for user."
-)
-@Data
-public class KeycloakUserResponse {
-
-    private String id;
-
-    @NotEmpty
-    @Size(max = 30)
-    private String lastName;
-
-    @NotEmpty
-    @Size(max = 30)
-    private String firstName;
-
-    @NotEmpty
-    @Size(max = 50)
-    private String username;
-
-    private Boolean roleCounter;
-
-    private Boolean roleLab;
-
-    private String subGroup;
-
+public enum DataSourceType {
+    READ_WRITE,
+    READ_ONLY
 }

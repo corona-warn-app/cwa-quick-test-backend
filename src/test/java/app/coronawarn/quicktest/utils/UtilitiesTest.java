@@ -108,6 +108,10 @@ class UtilitiesTest {
     public void testGetIdsFromTokenForSelfServiceRealm() {
         final String pocId = "testPOC";
         final String userId = "userId";
+        final String tokenGroupString = "[" +
+                "/rootGroup/NRW/Wuppertal/Barmen," +
+                "/rootGroup" +
+                "]";
         GroupRepresentation rootGroup = new GroupRepresentation();
         rootGroup.setName("rootGroup");
 
@@ -127,6 +131,7 @@ class UtilitiesTest {
         when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
         Map<String, Object> mockTokens = new HashMap<>();
         mockTokens.put(quickTestConfig.getPointOfCareIdName(), pocId);
+        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroupString);
         when(idToken.getOtherClaims()).thenReturn(mockTokens);
 
         KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);

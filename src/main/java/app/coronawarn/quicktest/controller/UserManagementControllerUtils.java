@@ -23,9 +23,11 @@ package app.coronawarn.quicktest.controller;
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupResponse;
 import app.coronawarn.quicktest.service.KeycloakService;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +47,8 @@ public class UserManagementControllerUtils {
 
     private final KeycloakService keycloakService;
 
+    private final Utilities utilities;
+
     protected void checkRealm(KeycloakAuthenticationToken token) throws ResponseStatusException {
         KeycloakSecurityContext securityContext = token.getAccount().getKeycloakSecurityContext();
 
@@ -53,17 +57,20 @@ public class UserManagementControllerUtils {
         }
     }
 
-    protected GroupRepresentation checkUserRootGroup(KeycloakAuthenticationToken token) throws ResponseStatusException {
-        String userId = token.getAccount().getKeycloakSecurityContext().getToken().getSubject();
-        List<GroupRepresentation> userRootGroups = keycloakService.getRootGroupsOfUser(userId);
+    protected GroupRepresentation checkUserRootGroup() throws ResponseStatusException {
+        List<String> userRootGroups = utilities.getRootGroupsFromTokenAsList();
 
         if (userRootGroups.size() > 1) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your user cannot be in more than one root group");
         } else if (userRootGroups.size() < 1) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your user is not assigned to a root group");
         }
+        Optional<GroupRepresentation> group = keycloakService.getGroup(userRootGroups.get(0));
 
-        return userRootGroups.get(0);
+        if (group.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Root GroupRepresentation not found");
+        }
+        return group.get();
     }
 
     /**

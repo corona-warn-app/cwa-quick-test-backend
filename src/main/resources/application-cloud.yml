@@ -1,10 +1,4 @@
 spring:
-  datasource:
-    driver-class-name: ${DB_DRIVER_CLASS_NAME}
-    url: ${DB_JDBC_URL}
-  archive-datasource:
-    driver-class-name: ${DB_ARCHIVE_DRIVER_CLASS_NAME}
-    url: ${DB_ARCHIVE_JDBC_URL}
   jpa:
     database-platform: ${DB_HIBERNATE_DIALECT}
   mail:
@@ -19,6 +13,16 @@ spring:
       "[mail.smtp.auth]": true
       "[mail.smtp.starttls.enable]": true
       "[mail.smtp.starttls.required]": true
+
+jdbc:
+  min-pool: 20
+  max-pool: 33
+  master:
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+    url: ${DB_JDBC_URL}
+  replica:
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+    url: ${DB_JDBC_URL_READ}
 
 management:
   server:

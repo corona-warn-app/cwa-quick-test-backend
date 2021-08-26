@@ -32,3 +32,9 @@ databaseChangeLog:
   - include:
       file: changelog/V011_change_testBrandName_column_size.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V012_add_more_indizes.yml
+      relativeToChangelogFile: true
+  - include:
+      file: changelog/V013_combine_index.yml
+      relativeToChangelogFile: true

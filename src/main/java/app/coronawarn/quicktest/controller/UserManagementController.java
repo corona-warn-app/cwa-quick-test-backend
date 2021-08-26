@@ -86,9 +86,50 @@ public class UserManagementController {
     @Secured(ROLE_ADMIN)
     public ResponseEntity<List<KeycloakUserResponse>> getUsers(KeycloakAuthenticationToken token) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
-        return ResponseEntity.ok(keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId()));
+        List<KeycloakUserResponse> extendedUserListForRootGroup =
+          keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId());
+        return ResponseEntity.ok(extendedUserListForRootGroup);
+    }
+
+    /**
+     * Endpoint to get details of a specific user.
+     */
+    @Operation(
+        tags = "User Management",
+        description = "Get user details."
+    )
+    @ApiResponses({
+      @ApiResponse(
+          responseCode = "200",
+          description = "Object containing details of user.",
+          content = @Content(schema = @Schema(implementation = KeycloakUserResponse.class)))
+    })
+    @GetMapping("/{id}")
+    @Secured(ROLE_ADMIN)
+    public ResponseEntity<KeycloakUserResponse> getUser(
+        KeycloakAuthenticationToken token, @PathVariable("id") String id) {
+        utils.checkRealm(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
+        List<String> rootGroupMembers = keycloakService.getGroupMembers(userRootGroup.getId()).stream()
+            .map(UserRepresentation::getId)
+            .collect(Collectors.toList());
+
+        if (!rootGroupMembers.contains(id)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not within your subgroup");
+        } else {
+            try {
+                return ResponseEntity.ok(keycloakService.getUserDetails(id, userRootGroup.getId()));
+            } catch (KeycloakService.KeycloakServiceException e) {
+                if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
+                    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+                } else {
+                    throw new ResponseStatusException(
+                        HttpStatus.INTERNAL_SERVER_ERROR, "Unexpected Error when requesting details of user.");
+                }
+            }
+        }
     }
 
     /**
@@ -116,7 +157,7 @@ public class UserManagementController {
     @Secured(ROLE_ADMIN)
     public ResponseEntity<Void> deleteUser(KeycloakAuthenticationToken token, @PathVariable("id") String id) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         List<String> rootGroupMembers = keycloakService.getGroupMembers(userRootGroup.getId()).stream()
             .map(UserRepresentation::getId)
             .collect(Collectors.toList());
@@ -171,7 +212,7 @@ public class UserManagementController {
         @RequestBody KeycloakUpdateUserRequest body) {
 
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         List<String> rootGroupMembers = keycloakService.getGroupMembers(userRootGroup.getId()).stream()
             .map(UserRepresentation::getId)
             .collect(Collectors.toList());
@@ -234,7 +275,7 @@ public class UserManagementController {
         KeycloakAuthenticationToken token, @Valid @RequestBody KeycloakCreateUserRequest body) {
 
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         String subgroupPath = body.getSubgroup() != null
             ? utils.checkGroupIsInSubgroups(userRootGroup, body.getSubgroup()).getPath()

@@ -57,15 +57,15 @@ public class UserManagementControllerUtils {
         }
     }
 
-    protected GroupRepresentation checkUserRootGroup(KeycloakAuthenticationToken token) throws ResponseStatusException {
-        List<String> s = utilities.getRootGroupsFromTokenAsList();
+    protected GroupRepresentation checkUserRootGroup() throws ResponseStatusException {
+        List<String> userRootGroups = utilities.getRootGroupsFromTokenAsList();
 
-        if (s.size() > 1) {
+        if (userRootGroups.size() > 1) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your user cannot be in more than one root group");
-        } else if (s.size() < 1) {
+        } else if (userRootGroups.size() < 1) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Your user is not assigned to a root group");
         }
-        Optional<GroupRepresentation> group = keycloakService.getGroup(s.get(0));
+        Optional<GroupRepresentation> group = keycloakService.getGroup(userRootGroups.get(0));
 
         if (group.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Root GroupRepresentation not found");

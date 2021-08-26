@@ -88,7 +88,7 @@ public class UserManagementController {
         Long startTime = System.currentTimeMillis();
 
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         List<KeycloakUserResponse> extendedUserListForRootGroup =
           keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId());
@@ -113,7 +113,7 @@ public class UserManagementController {
     public ResponseEntity<KeycloakUserResponse> getUser(
         KeycloakAuthenticationToken token, @PathVariable("id") String id) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         List<String> rootGroupMembers = keycloakService.getGroupMembers(userRootGroup.getId()).stream()
             .map(UserRepresentation::getId)
             .collect(Collectors.toList());
@@ -159,7 +159,7 @@ public class UserManagementController {
     @Secured(ROLE_ADMIN)
     public ResponseEntity<Void> deleteUser(KeycloakAuthenticationToken token, @PathVariable("id") String id) {
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         List<String> rootGroupMembers = keycloakService.getGroupMembers(userRootGroup.getId()).stream()
             .map(UserRepresentation::getId)
             .collect(Collectors.toList());
@@ -214,7 +214,7 @@ public class UserManagementController {
         @RequestBody KeycloakUpdateUserRequest body) {
 
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         List<String> rootGroupMembers = keycloakService.getGroupMembers(userRootGroup.getId()).stream()
             .map(UserRepresentation::getId)
             .collect(Collectors.toList());
@@ -277,7 +277,7 @@ public class UserManagementController {
         KeycloakAuthenticationToken token, @Valid @RequestBody KeycloakCreateUserRequest body) {
 
         utils.checkRealm(token);
-        GroupRepresentation userRootGroup = utils.checkUserRootGroup(token);
+        GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         String subgroupPath = body.getSubgroup() != null
             ? utils.checkGroupIsInSubgroups(userRootGroup, body.getSubgroup()).getPath()

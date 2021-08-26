@@ -1,7 +1,4 @@
 spring:
-#  archive-datasource:
-#    driver-class-name: ${DB_ARCHIVE_DRIVER_CLASS_NAME}
-#    url: ${DB_ARCHIVE_JDBC_URL}
   jpa:
     database-platform: ${DB_HIBERNATE_DIALECT}
   mail:

@@ -57,7 +57,7 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
             //Remove Bearer and split in three parts => take the second with the body information
             String jwtBody = request.getHeader("Authorization").split("Bearer ")[1].split("\\.")[1];
             //Decode and convert in Json
-            jwtBodyAsJson = objectMapper.readTree((new String(Base64.getDecoder().decode(jwtBody),
+            jwtBodyAsJson = objectMapper.readTree((new String(Base64.getUrlDecoder().decode(jwtBody),
                 StandardCharsets.UTF_8)));
         }
         if (

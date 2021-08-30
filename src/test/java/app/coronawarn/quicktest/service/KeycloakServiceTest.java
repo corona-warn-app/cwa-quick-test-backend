@@ -535,8 +535,8 @@ public class KeycloakServiceTest {
         Assertions.assertEquals(lastname, response.get(0).getLastName());
         Assertions.assertEquals(username, response.get(0).getUsername());
         Assertions.assertEquals(subgroup.getId(), response.get(0).getSubGroup());
-        Assertions.assertFalse(response.get(0).getRoleCounter());
-        Assertions.assertFalse(response.get(0).getRoleLab());
+        Assertions.assertNull(response.get(0).getRoleCounter());
+        Assertions.assertNull(response.get(0).getRoleLab());
     }
 
     @Test
@@ -553,8 +553,8 @@ public class KeycloakServiceTest {
         Assertions.assertEquals(lastname, response.get(0).getLastName());
         Assertions.assertEquals(username, response.get(0).getUsername());
         Assertions.assertNull(response.get(0).getSubGroup());
-        Assertions.assertFalse(response.get(0).getRoleCounter());
-        Assertions.assertFalse(response.get(0).getRoleLab());
+        Assertions.assertNull(response.get(0).getRoleCounter());
+        Assertions.assertNull(response.get(0).getRoleLab());
     }
 
     @Test

@@ -89,7 +89,7 @@ public class UserManagementController {
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         List<KeycloakUserResponse> extendedUserListForRootGroup =
-            keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId());
+          keycloakService.getExtendedUserListForRootGroup(userRootGroup.getId());
         return ResponseEntity.ok(extendedUserListForRootGroup);
     }
 

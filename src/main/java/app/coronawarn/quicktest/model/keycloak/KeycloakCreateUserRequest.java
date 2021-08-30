@@ -50,7 +50,7 @@ public class KeycloakCreateUserRequest {
 
     @Size(min = 36, max = 36)
     @Schema(description = "ID of a subgroup to put user into. If not provided user will just put into root group.")
-    private String subgroup;
+    private String subGroup;
 
     @NotNull
     private Boolean roleCounter;

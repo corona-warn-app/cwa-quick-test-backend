@@ -23,7 +23,6 @@ package app.coronawarn.quicktest.domain;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionBooleanConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionByteArrayConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
-import app.coronawarn.quicktest.dbencryption.DbEncryptionShortConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
@@ -147,4 +146,8 @@ public class QuickTestArchive {
     @Column(name = "dcc")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String dcc;
+
+    @Column(name = "additional_info")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String additionalInfo;
 }

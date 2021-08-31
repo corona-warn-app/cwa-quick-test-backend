@@ -228,6 +228,7 @@ public class QuickTestService {
         quicktest.setDiseaseAgentTargeted(quickTestPersonalData.getDiseaseAgentTargeted());
         quicktest.setTestResultServerHash(quickTestPersonalData.getTestResultServerHash());
         quicktest.setDccConsent(quickTestPersonalData.getDccConsent() != null && quickTestPersonalData.getDccConsent());
+        quicktest.setAdditionalInfo(quickTestPersonalData.getAdditionalInfo());
         try {
             quickTestRepository.saveAndFlush(quicktest);
         } catch (Exception e) {
@@ -295,6 +296,7 @@ public class QuickTestService {
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setPdf(pdf);
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setAdditionalInfo(quickTest.getAdditionalInfo());
         return quickTestArchive;
     }
 

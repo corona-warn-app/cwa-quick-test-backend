@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-additional-info-columns
+      author: bergmann-dierk
+      changes:
+        - addColumn:
+            tableName: quick_test
+            columns:
+              - column:
+                  name: additional_info
+                  type: varchar(400)
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              - column:
+                  name: additional_info
+                  type: varchar(400)
+
+

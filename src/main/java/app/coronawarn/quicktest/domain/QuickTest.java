@@ -186,6 +186,10 @@ public class QuickTest {
     @Column(name = "dcc_status")
     private DccStatus dccStatus;
 
+    @Column(name = "additional_info")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String additionalInfo;
+
     @PrePersist
     private void onCreate() {
         LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();

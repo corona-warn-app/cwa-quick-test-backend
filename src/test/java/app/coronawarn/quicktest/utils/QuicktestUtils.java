@@ -39,7 +39,8 @@ public class QuicktestUtils {
         quicktest.setTenantId("4711");
         quicktest.setPocId("4711-A");
         quicktest.setTestBrandId("AT116/21");
-        quicktest.setTestBrandName("Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal)");
+        quicktest.setTestBrandName("PerGrande BioTech Development Co., Ltd., SARS-CoV-2 Antigen Detection Kit " +
+          "(Colloidal Gold Immunochromatographic assay)");
         quicktest.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 11));
         quicktest.setUpdatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
         quicktest.setFirstName("Joe");
@@ -50,6 +51,9 @@ public class QuicktestUtils {
         quicktest.setSex(Sex.DIVERSE);
         quicktest.setBirthday("1911-11-11");
         quicktest.setDiseaseAgentTargeted("COVID-19");
+        quicktest.setAdditionalInfo("Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod " +
+          "tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et " +
+          "justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea tak");
         return quicktest;
     }
 }

@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.utils;
 
 import static app.coronawarn.quicktest.model.Sex.DIVERSE;
+import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
@@ -262,6 +263,16 @@ public class PdfGenerator {
             cos.showText(pdfConfig.getBirthDateDescriptionText() + datetime.format(formatterDate));
         } else {
             cos.showText(pdfConfig.getBirthDateDescriptionText() + "-");
+        }
+        cos.newLine();
+        if (quicktest.getAdditionalInfo() != null) {
+            cos.newLine();
+            cos.showText(pdfConfig.getAdditionalInfoDescriptionText());
+            cos.newLine();
+            for (String line : splitStringToParagraph(quicktest.getAdditionalInfo(), 80)) {
+                cos.showText(line);
+                cos.newLine();
+            }
         }
         cos.newLine();
         cos.newLine();

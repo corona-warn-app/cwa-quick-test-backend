@@ -72,6 +72,7 @@ public class PdfGeneratorTest {
         when(pdfConfig.getDiverseText()).thenReturn("divers");
         when(pdfConfig.getTestResultNegativeText()).thenReturn("NEGATIV");
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
+        when(pdfConfig.getAdditionalInfoDescriptionText()).thenReturn("Zusätzliche Informationen: ");
 
         List<String> pocInformation = new ArrayList();
         pocInformation.add("PoC Unittest");
@@ -104,7 +105,7 @@ public class PdfGeneratorTest {
             assertTrue(pdfText.contains("Mehr Informationen zum Test"));
             assertTrue(pdfText.contains("Durchgeführt von: Mr. Unittest"));
             assertTrue(pdfText.contains("Test ID: AT116/21"));
-            assertTrue(pdfText.contains("Test Marke: Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal)"));
+            assertTrue(pdfText.contains("Test Marke: PerGrande BioTech"));
             assertTrue(pdfText.contains("Sie sind nagativ getestet worden."));
             assertTrue(pdfText.contains("MFG"));
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());

@@ -20,6 +20,8 @@
 
 package app.coronawarn.quicktest.utils;
 
+import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
+
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import com.google.zxing.BarcodeFormat;
@@ -38,7 +40,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -564,18 +565,7 @@ public class DccPdfGenerator {
             float paragraphIndent = 150f;
             cos.newLineAtOffset(paragraphIndent, leftLines * -spacingText);
 
-            int limit = 25;
-            List<String> textParagraph = new ArrayList<>();
-            StringBuilder lineBuilder = new StringBuilder();
-            String[] split = value.split(" ");
-            for (int i = 0, splitLength = split.length; i < splitLength; i++) {
-                String word = split[i];
-                lineBuilder.append(word).append(" ");
-                if (lineBuilder.length() + word.length() > limit || i == splitLength - 1) {
-                    textParagraph.add(lineBuilder.toString());
-                    lineBuilder = new StringBuilder();
-                }
-            }
+            List<String> textParagraph = splitStringToParagraph(value, 25);
             int rightLines = 0;
             for (String n : textParagraph) {
                 cos.showText(n);

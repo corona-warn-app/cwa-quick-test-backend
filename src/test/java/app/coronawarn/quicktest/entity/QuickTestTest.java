@@ -60,6 +60,7 @@ public class QuickTestTest {
         quickTest.setHouseNumber("11");
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
+        quickTest.setAdditionalInfo("Hello");
         assertEquals(
             "QuickTest(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, " +
                     "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, " +
@@ -70,7 +71,8 @@ public class QuickTestTest {
                     "testBrandName=Panbio (TM) Covid-19 Ag Rapid Test Device (Nasal), " +
                     "birthday=null, standardisedFamilyName=null, standardisedGivenName=null, " +
                     "diseaseAgentTargeted=null, testResultServerHash=null, " +
-                    "dccSignData=null, dccUnsigned=null, dccConsent=null, publicKey=null, dccStatus=null)",
+                    "dccSignData=null, dccUnsigned=null, dccConsent=null, publicKey=null, dccStatus=null, " +
+                    "additionalInfo=Hello)",
             quickTest.toString());
     }
 

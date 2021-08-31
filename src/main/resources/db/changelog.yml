@@ -38,3 +38,6 @@ databaseChangeLog:
   - include:
       file: changelog/V013_combine_index.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V014_add_additional_info_column.yml
+      relativeToChangelogFile: true

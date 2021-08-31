@@ -91,7 +91,8 @@ public class PdfGeneratorTest {
             assertTrue(pdfText.contains("Unittest Way 15"));
             assertTrue(pdfText.contains("10101 Unittest City"));
             assertTrue(pdfText.contains("Call: 0123-7890-0"));
-            assertTrue(pdfText.contains("Joe Miller"));
+            // Test for unicode character ę
+            assertTrue(pdfText.contains("Joę Miller"));
             assertTrue(pdfText.contains("Boe 11"));
             assertTrue(pdfText.contains("12345 oyvkpigcga"));
             assertTrue(pdfText.contains("Telefon: 00491777777777777"));

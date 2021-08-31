@@ -43,7 +43,7 @@ public class QuicktestUtils {
           "(Colloidal Gold Immunochromatographic assay)");
         quicktest.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 11));
         quicktest.setUpdatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
-        quicktest.setFirstName("Joe");
+        quicktest.setFirstName("Joę");
         quicktest.setLastName("Miller");
         quicktest.setStreet("Boe");
         quicktest.setHouseNumber("11");

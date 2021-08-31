@@ -63,6 +63,7 @@ public class PdfConfig {
     private String birthDateDescriptionText = "Geburtstag: ";
     private String furtherDataAboutTestDescriptionText = "Weitere Angaben zum Test: ";
     private String executedFromDescriptionText = "Durchgeführt durch: ";
+    private String additionalInfoDescriptionText = "Zusätzliche Informationen: ";
 
     private String certFlagPath = "pdf/eu_flag.png";
     private String certCertlogoPath = "pdf/certificate.png";

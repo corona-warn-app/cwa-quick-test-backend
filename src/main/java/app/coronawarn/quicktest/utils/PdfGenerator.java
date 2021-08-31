@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.utils;
 
 import static app.coronawarn.quicktest.model.Sex.DIVERSE;
+import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
@@ -264,6 +265,16 @@ public class PdfGenerator {
             cos.showText(pdfConfig.getBirthDateDescriptionText() + "-");
         }
         cos.newLine();
+        if (quicktest.getAdditionalInfo() != null) {
+            cos.newLine();
+            cos.showText(pdfConfig.getAdditionalInfoDescriptionText());
+            cos.newLine();
+            for (String line : splitStringToParagraph(quicktest.getAdditionalInfo(), 80)) {
+                cos.showText(line);
+                cos.newLine();
+            }
+        }
+        cos.newLine();
         cos.newLine();
         cos.showText(pdfConfig.getFurtherDataAboutTestDescriptionText());
         cos.newLine();
@@ -274,9 +285,12 @@ public class PdfGenerator {
         if (quicktest.getTestBrandName() == null) {
             cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
         } else {
-            cos.showText(pdfConfig.getTestBrandNameDescriptionText() + quicktest.getTestBrandName());
+            cos.showText(pdfConfig.getTestBrandNameDescriptionText());
+            for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
+                cos.showText(line);
+                cos.newLine();
+            }
         }
-        cos.newLine();
         String useText = "";
         if (quicktest.getTestResult() != null && quicktest.getTestResult() == positive) {
             useText = pdfConfig.getPositiveInstructionText();

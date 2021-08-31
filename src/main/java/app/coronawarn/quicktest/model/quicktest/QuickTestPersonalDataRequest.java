@@ -107,4 +107,8 @@ public class QuickTestPersonalDataRequest {
     private String testResultServerHash;
 
     private Boolean dccConsent;
+
+    @ValidCommonCharAndNumber
+    @Size(min = 1, max = 250)
+    private String additionalInfo;
 }

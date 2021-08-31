@@ -565,7 +565,7 @@ public class DccPdfGenerator {
             float paragraphIndent = 150f;
             cos.newLineAtOffset(paragraphIndent, leftLines * -spacingText);
 
-            List<String> textParagraph = splitStringToParagraph(value, 25);
+            List<String> textParagraph = splitStringToParagraph(value, 30);
             int rightLines = 0;
             for (String n : textParagraph) {
                 cos.showText(n);

@@ -285,9 +285,12 @@ public class PdfGenerator {
         if (quicktest.getTestBrandName() == null) {
             cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
         } else {
-            cos.showText(pdfConfig.getTestBrandNameDescriptionText() + quicktest.getTestBrandName());
+            cos.showText(pdfConfig.getTestBrandNameDescriptionText());
+            for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
+                cos.showText(line);
+                cos.newLine();
+            }
         }
-        cos.newLine();
         String useText = "";
         if (quicktest.getTestResult() != null && quicktest.getTestResult() == positive) {
             useText = pdfConfig.getPositiveInstructionText();

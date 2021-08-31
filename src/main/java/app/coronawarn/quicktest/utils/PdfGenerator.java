@@ -44,6 +44,8 @@ import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.springframework.core.io.ClassPathResource;
@@ -65,7 +67,7 @@ public class PdfGenerator {
     private final int offsetX = 70;
     private final float leading = 14.5f;
     private final int fontSize = 12;
-    private final PDType1Font fontType = PDType1Font.HELVETICA;
+    private PDFont fontType;
 
     /**
      * Generates a PDF file for rapid test result to print.
@@ -91,6 +93,16 @@ public class PdfGenerator {
     }
 
     private void config(PDDocument document) {
+
+        final ClassPathResource cs = new ClassPathResource("pdf/fonts/arial.ttf");
+        try {
+            this.fontType = PDType0Font.load(document,
+              Objects.requireNonNull(cs.getClassLoader())
+                .getResourceAsStream("pdf/fonts/arial.ttf"));
+        } catch (IOException e) {
+            log.error("Could not load font");
+        }
+
         PDDocumentInformation pdd = document.getDocumentInformation();
         pdd.setAuthor(pdfConfig.getAuthorPdfPropertiesText());
         pdd.setTitle(pdfConfig.getQuickTestHeadlineText());

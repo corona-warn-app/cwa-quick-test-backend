@@ -53,8 +53,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDTrueTypeFont;
-import org.apache.pdfbox.pdmodel.font.encoding.WinAnsiEncoding;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
@@ -77,9 +77,9 @@ public class DccPdfGenerator {
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final float leading = 14.5f;
 
-    private PDTrueTypeFont fontArial;
-    private PDTrueTypeFont fontArialBold;
-    private PDTrueTypeFont fontArialItalic;
+    private PDFont fontArial;
+    private PDFont fontArialBold;
+    private PDFont fontArialItalic;
 
     private final Color pantoneReflexBlue = Color.decode("#003399");
     private final Color pantoneYellow = Color.decode("#FFCC00");
@@ -106,15 +106,15 @@ public class DccPdfGenerator {
         // Add Arial fonts to pdfbox
         final ClassPathResource cs = new ClassPathResource("pdf/fonts/arial.ttf");
         try {
-            this.fontArial = PDTrueTypeFont.load(document,
+            this.fontArial = PDType0Font.load(document,
               Objects.requireNonNull(cs.getClassLoader())
-                .getResourceAsStream("pdf/fonts/arial.ttf"), WinAnsiEncoding.INSTANCE);
-            this.fontArialBold = PDTrueTypeFont.load(document,
+                .getResourceAsStream("pdf/fonts/arial.ttf"));
+            this.fontArialBold = PDType0Font.load(document,
               Objects.requireNonNull(cs.getClassLoader())
-                .getResourceAsStream("pdf/fonts/arialbd.ttf"), WinAnsiEncoding.INSTANCE);
-            this.fontArialItalic = PDTrueTypeFont.load(document,
+                .getResourceAsStream("pdf/fonts/arialbd.ttf"));
+            this.fontArialItalic = PDType0Font.load(document,
               Objects.requireNonNull(cs.getClassLoader())
-                .getResourceAsStream("pdf/fonts/ariali.ttf"), WinAnsiEncoding.INSTANCE);
+                .getResourceAsStream("pdf/fonts/ariali.ttf"));
         } catch (IOException e) {
             log.error("Could not load font");
         }

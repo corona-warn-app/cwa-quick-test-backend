@@ -35,4 +35,7 @@ public class QuickTestContextFile {
     @JsonProperty("rules-server-url")
     private final String rulesServerUrl;
 
+    @JsonProperty("environment-name")
+    private final String environmentName;
+
 }

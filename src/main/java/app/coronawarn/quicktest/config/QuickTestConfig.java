@@ -49,6 +49,7 @@ public class QuickTestConfig {
     public static class FrontendContextConfig {
 
         private String rulesServerUrl;
+        private String environmentName;
     }
 
     @Getter

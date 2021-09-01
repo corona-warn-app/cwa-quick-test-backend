@@ -40,15 +40,23 @@ public class ConfigController {
 
     private final QuickTestConfig quickTestConfig;
 
+    /**
+     * Endpoint to get Keycloak-Config for Frontend.
+     */
     @GetMapping(value = "keycloak.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<KeyCloakConfigFile> getKeyCloakConfig() {
         return ResponseEntity.ok(
             new KeyCloakConfigFile(keycloakConfig.getAuthServerUrl()));
     }
 
+    /**
+     * Endpoint to get Context-Config for Frontend.
+     */
     @GetMapping(value = "context.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<QuickTestContextFile> getQuickTestContextFile() {
         return ResponseEntity.ok(
-            new QuickTestContextFile(quickTestConfig.getFrontendContextConfig().getRulesServerUrl()));
+            new QuickTestContextFile(
+                quickTestConfig.getFrontendContextConfig().getRulesServerUrl(),
+                quickTestConfig.getFrontendContextConfig().getEnvironmentName()));
     }
 }

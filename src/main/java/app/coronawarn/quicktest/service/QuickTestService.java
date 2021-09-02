@@ -34,6 +34,7 @@ import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
+import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -59,6 +60,7 @@ public class QuickTestService {
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
+    private final Utilities utilities;
 
     /**
      * Checks if an other quick test with given short hash already exists.
@@ -93,6 +95,7 @@ public class QuickTestService {
         newQuickTest.setTenantId(ids.get(quickTestConfig.getTenantIdKey()));
         newQuickTest.setPocId(ids.get(quickTestConfig.getTenantPointOfCareIdKey()));
         newQuickTest.setHashedGuid(hashedGuid);
+        newQuickTest.setGroupName(utilities.getSubGroupFromToken().orElse(""));
 
         log.debug("Persisting QuickTest in database");
         try {
@@ -297,6 +300,7 @@ public class QuickTestService {
         quickTestArchive.setPdf(pdf);
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
         quickTestArchive.setAdditionalInfo(quickTest.getAdditionalInfo());
+        quickTestArchive.setGroupName(quickTest.getGroupName());
         return quickTestArchive;
     }
 

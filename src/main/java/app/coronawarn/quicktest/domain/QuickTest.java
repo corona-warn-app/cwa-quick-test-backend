@@ -190,6 +190,10 @@ public class QuickTest {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String additionalInfo;
 
+    @Column(name = "group_name")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String groupName;
+
     @PrePersist
     private void onCreate() {
         LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();

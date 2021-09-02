@@ -61,6 +61,7 @@ public class QuickTestTest {
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         quickTest.setAdditionalInfo("Hello");
+        quickTest.setGroupName("Barmen");
         assertEquals(
             "QuickTest(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, " +
                     "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, " +
@@ -72,7 +73,7 @@ public class QuickTestTest {
                     "birthday=null, standardisedFamilyName=null, standardisedGivenName=null, " +
                     "diseaseAgentTargeted=null, testResultServerHash=null, " +
                     "dccSignData=null, dccUnsigned=null, dccConsent=null, publicKey=null, dccStatus=null, " +
-                    "additionalInfo=Hello)",
+                    "additionalInfo=Hello, groupName=Barmen)",
             quickTest.toString());
     }
 

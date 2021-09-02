@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -35,6 +36,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
@@ -274,6 +276,40 @@ class UtilitiesTest {
         assertEquals(ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
                 .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay()).withZoneSameInstant(ZoneId.of("UTC")),
             Utilities.getEndTimeForLocalDateInGermanyInUtc());
+    }
+
+    @Test
+    void testGetSubgroupFromToken() {
+        final String tokenGroupString = "[" +
+          "/rootGroup/NRW/Wuppertal/Barmen," +
+          "/rootGroup" +
+          "]";
+
+        SecurityContext springSecurityContext = SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.setContext(springSecurityContext);
+        Set<String> roles = Sets.newSet("user");
+
+        KeycloakPrincipal principal = mock(KeycloakPrincipal.class);
+        RefreshableKeycloakSecurityContext keycloakSecurityContext = mock(RefreshableKeycloakSecurityContext.class);
+        when(principal.getKeycloakSecurityContext()).thenReturn(keycloakSecurityContext);
+        when(principal.getKeycloakSecurityContext().getRealm()).thenReturn(keycloakAdminProperties.getRealm());
+
+        AccessToken idToken = mock(AccessToken.class);
+        when(idToken.getSubject()).thenReturn("userId");
+        when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
+        Map<String, Object> mockTokens = new HashMap<>();
+        mockTokens.put(quickTestConfig.getPointOfCareIdName(), "pocId");
+        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroupString);
+        when(idToken.getOtherClaims()).thenReturn(mockTokens);
+
+        KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);
+        KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
+        springSecurityContext.setAuthentication(token);
+
+        final Optional<String> subGroupFromToken = utilities.getSubGroupFromToken();
+
+        assertTrue(subGroupFromToken.isPresent());
+        assertEquals(subGroupFromToken.get(), "Barmen");
     }
 }
 

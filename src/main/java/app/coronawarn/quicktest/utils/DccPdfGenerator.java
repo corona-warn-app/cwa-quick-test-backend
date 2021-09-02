@@ -509,7 +509,7 @@ public class DccPdfGenerator {
             quickTest.getUpdatedAt().format(formatter)),
           List.of(pdfConfig.getCertTestResultDe(), pdfConfig.getCertTestResultEn(),
             getTestResultText(quickTest.getTestResult())),
-          List.of(pdfConfig.getCertTestingCentreDe(), pdfConfig.getCertTestingCentreEn(), quickTest.getPocId()),
+          List.of(pdfConfig.getCertTestingCentreDe(), pdfConfig.getCertTestingCentreEn(), quickTest.getGroupName()),
           List.of(pdfConfig.getCertStateOfTestDe(), pdfConfig.getCertStateOfTestEn(), pdfConfig.getCertIssuerState()),
           List.of(pdfConfig.getCertIssuerDe(), pdfConfig.getCertIssuerEn(), dccDecodeResult.getIssuer())
         );

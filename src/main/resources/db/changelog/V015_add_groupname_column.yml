@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-groupname-columns
+      author: bergmann-dierk
+      changes:
+        - addColumn:
+            tableName: quick_test
+            columns:
+              - column:
+                  name: group_name
+                  type: varchar(100)
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              - column:
+                  name: group_name
+                  type: varchar(100)

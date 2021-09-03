@@ -21,6 +21,8 @@
 package app.coronawarn.quicktest.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.Mockito.clearInvocations;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -70,6 +72,9 @@ public class KeycloakServiceTest {
 
     @MockBean
     Keycloak keycloakAdminMock;
+
+    @MockBean
+    QuickTestService quickTestServiceMock;
 
     @Autowired
     KeycloakService keycloakService;
@@ -162,6 +167,7 @@ public class KeycloakServiceTest {
             "poc_id", List.of(groupPocId),
             "poc_details", List.of(groupPocDetails)
         ));
+        groupRepresentation.setSubGroups(Collections.emptyList());
         groupResourceMock = mock(GroupResource.class);
         when(groupsResourceMock.group(groupid)).thenReturn(groupResourceMock);
         when(groupResourceMock.toRepresentation()).thenReturn(groupRepresentation);
@@ -586,16 +592,28 @@ public class KeycloakServiceTest {
 
     @Test
     void testDeleteGroup() throws KeycloakService.KeycloakServiceException {
-        keycloakService.deleteGroup(groupid);
+        when(quickTestServiceMock.pendingTestsForTenantAndPocsExists(any(), anyList())).thenReturn(false);
+        keycloakService.deleteGroup(rootGroupname, groupid);
         verify(groupResourceMock).remove();
+        verify(quickTestServiceMock).pendingTestsForTenantAndPocsExists(rootGroupname, List.of(groupPocId));
+
+        clearInvocations(groupResourceMock);
+        clearInvocations(quickTestServiceMock);
+
+        when(quickTestServiceMock.pendingTestsForTenantAndPocsExists(any(), anyList())).thenReturn(true);
+        KeycloakService.KeycloakServiceException e = Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.deleteGroup(rootGroupname, groupid));
+        Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.NOT_ALLOWED, e.getReason());
+        verify(groupResourceMock, never()).remove();
+        verify(quickTestServiceMock).pendingTestsForTenantAndPocsExists(rootGroupname, List.of(groupPocId));
+
+        when(quickTestServiceMock.pendingTestsForTenantAndPocsExists(any(), anyList())).thenReturn(false);
 
         doThrow(new NotFoundException()).when(groupResourceMock).remove();
-        KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.deleteGroup(groupid));
+        e = Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.deleteGroup(rootGroupname, groupid));
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.NOT_FOUND, e.getReason());
 
         doThrow(new WebApplicationException(Response.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).entity("").build())).when(groupResourceMock).remove();
-        e = Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.deleteGroup(groupid));
+        e = Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.deleteGroup(rootGroupname, groupid));
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR, e.getReason());
     }
 

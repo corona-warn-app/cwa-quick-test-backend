@@ -969,7 +969,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .delete("/api/usermanagement/groups/" + subGroupId))
             .andExpect(status().isNoContent());
 
-        verify(keycloakServiceMock).deleteGroup(subGroupId);
+        verify(keycloakServiceMock).deleteGroup(rootGroup.getName(), subGroupId);
     }
 
     @Test
@@ -982,7 +982,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .delete("/api/usermanagement/groups/randomGroupId"))
             .andExpect(status().isForbidden());
 
-        verify(keycloakServiceMock, never()).deleteGroup(subGroupId);
+        verify(keycloakServiceMock, never()).deleteGroup(rootGroup.getName(), subGroupId);
     }
 
     @Test
@@ -992,13 +992,13 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
     )
     void testDeleteGroup_GroupNotFound() throws Exception {
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.NOT_FOUND))
-            .when(keycloakServiceMock).deleteGroup(subGroupId);
+            .when(keycloakServiceMock).deleteGroup(rootGroup.getName(), subGroupId);
 
         mockMvc().perform(MockMvcRequestBuilders
                 .delete("/api/usermanagement/groups/" + subGroupId))
             .andExpect(status().isNotFound());
 
-        verify(keycloakServiceMock).deleteGroup(subGroupId);
+        verify(keycloakServiceMock).deleteGroup(rootGroup.getName(), subGroupId);
     }
 
     @Test
@@ -1008,13 +1008,13 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
     )
     void testDeleteGroup_ServerError() throws Exception {
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR))
-            .when(keycloakServiceMock).deleteGroup(subGroupId);
+            .when(keycloakServiceMock).deleteGroup(rootGroup.getName(), subGroupId);
 
         mockMvc().perform(MockMvcRequestBuilders
                 .delete("/api/usermanagement/groups/" + subGroupId))
             .andExpect(status().isInternalServerError());
 
-        verify(keycloakServiceMock).deleteGroup(subGroupId);
+        verify(keycloakServiceMock).deleteGroup(rootGroup.getName(), subGroupId);
     }
 
     @Test

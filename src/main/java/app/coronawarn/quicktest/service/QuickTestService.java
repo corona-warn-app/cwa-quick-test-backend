@@ -33,9 +33,7 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.repository.QuicktestView;
-import app.coronawarn.quicktest.utils.PdfGenerator;
 import app.coronawarn.quicktest.utils.Utilities;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -59,7 +57,6 @@ public class QuickTestService {
     private final TestResultService testResultService;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
-    private final PdfGenerator pdf;
     private final Utilities utilities;
 
     /**
@@ -163,16 +160,9 @@ public class QuickTestService {
             }
         }
         addStatistics(quicktest);
-        byte[] pdf;
+
         try {
-            pdf = createPdf(quicktest, pocInformation, user);
-        } catch (IOException e) {
-            log.error("generating PDF failed.");
-            log.debug("generating PDF failed, message=[{}]", e.getMessage());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-        try {
-            quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
+            quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pocInformation, user));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                 quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
@@ -274,7 +264,7 @@ public class QuickTestService {
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestArchive(
-        QuickTest quickTest, byte[] pdf) {
+      QuickTest quickTest, List<String> pocInformation, String user) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
         quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
@@ -297,10 +287,11 @@ public class QuickTestService {
         quickTestArchive.setCity(quickTest.getCity());
         quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
-        quickTestArchive.setPdf(pdf);
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
         quickTestArchive.setAdditionalInfo(quickTest.getAdditionalInfo());
         quickTestArchive.setGroupName(quickTest.getGroupName());
+        quickTestArchive.setPocUser(user);
+        quickTestArchive.setPocInformation(String.join("<br>", pocInformation));
         return quickTestArchive;
     }
 
@@ -344,9 +335,6 @@ public class QuickTestService {
         }
     }
 
-    protected byte[] createPdf(QuickTest quicktest, List<String> pocInformation, String user) throws IOException {
-        return pdf.generatePdf(pocInformation, quicktest, user).toByteArray();
-    }
 
     /**
      * get dcc consent.

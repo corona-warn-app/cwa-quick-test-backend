@@ -170,7 +170,8 @@ public class DccService {
                     quickTestArchive.get().setDcc(dcc);
                     try {
                         ByteArrayOutputStream pdf =
-                          dccPdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(), quickTest, dcc);
+                          dccPdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(),
+                            quickTestArchive.get(), dcc);
                         quickTestArchive.get().setPdf(pdf.toByteArray());
                     } catch (IOException exception) {
                         log.warn("Appending Certificate to PDF failed for quicktest hashedGuid=[{}]",

@@ -1,0 +1,14 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-poc-info-archive
+      author: bergmann-dierk
+      changes:
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              - column:
+                  name: poc_information
+                  type: varchar(1000)
+              - column:
+                  name: poc_user
+                  type: varchar(500)

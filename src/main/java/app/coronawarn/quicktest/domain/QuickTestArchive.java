@@ -154,4 +154,12 @@ public class QuickTestArchive {
     @Column(name = "group_name")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String groupName;
+
+    @Column(name = "poc_information")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String pocInformation;
+
+    @Column(name = "poc_user")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String pocUser;
 }

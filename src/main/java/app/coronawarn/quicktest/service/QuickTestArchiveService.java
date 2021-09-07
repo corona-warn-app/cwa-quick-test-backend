@@ -23,6 +23,8 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
+import app.coronawarn.quicktest.utils.PdfGenerator;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -41,6 +43,7 @@ public class QuickTestArchiveService {
 
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestConfig quickTestConfig;
+    private final PdfGenerator pdf;
 
     /**
      * Stores quicktest with pdf in archive table.
@@ -57,7 +60,13 @@ public class QuickTestArchiveService {
             log.info("Requested Quick Test with HashedGuid could not be found or wrong poc");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return quickTestArchive.get().getPdf();
+        try {
+            return createPdf(quickTestArchive.get(), "info", "user");
+        } catch (IOException e) {
+            log.error("generating PDF failed.");
+            log.debug("generating PDF failed, message=[{}]", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -87,6 +96,10 @@ public class QuickTestArchiveService {
                 dateTo);
         }
         return archives;
+    }
+
+    protected byte[] createPdf(QuickTestArchive quicktest, String pocInformation, String user) throws IOException {
+        return pdf.generatePdf(List.of(pocInformation.split("<br>")), quicktest, user).toByteArray();
     }
 
 }

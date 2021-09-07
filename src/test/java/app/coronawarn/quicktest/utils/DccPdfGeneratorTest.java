@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.PdfConfig;
-import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +94,7 @@ class DccPdfGeneratorTest {
         when(pdfConfig.getCertDiseaseAgentTargeted()).thenReturn(pdc.getCertDiseaseAgentTargeted());
 
 
-        QuickTest quicktest = getQuickTest();
+        QuickTestArchive quicktest = getQuickTest();
         String dcc = "HC1:6BF-606A0T9WTWGSLKC 4X7923S%CA.48Y+6TAB3XK2F310RT012F3LMQ1001JC X8Y50.FK8ZKO/EZKEZ967L6C56." +
           ".DU%DLPCG/DS2DHIA5Y8GY8JPCT3E5JDOA73467463W5207ZWERIL9WEQDD+Q6TW6FA7C464KCCWE6T9OF6:/6NA76W5." +
           "JC2EC+96-Q63KCZPCNF6OF63W59%6PF6.SA*479L61G73564KC*KETF6A46.96646B565WET.D6$CBWE3/DO341$CKWEY " +

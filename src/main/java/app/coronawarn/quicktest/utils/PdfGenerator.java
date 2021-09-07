@@ -24,7 +24,7 @@ import static app.coronawarn.quicktest.model.Sex.DIVERSE;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
-import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -73,11 +73,11 @@ public class PdfGenerator {
      * Generates a PDF file for rapid test result to print.
      *
      * @param pocInformation point of care data used in pdf
-     * @param quicktest      Quicktest
+     * @param quickTestArchive      Quicktest
      * @param user           carried out by user
      * @throws IOException when creating pdf went wrong
      */
-    public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTest quicktest,
+    public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTestArchive quickTestArchive,
                                              String user) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.A4);
@@ -86,7 +86,7 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
         PDRectangle rect1 = page1.getMediaBox();
-        write(document, cos, rect1, pocInformation, quicktest, user);
+        write(document, cos, rect1, pocInformation, quickTestArchive, user);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -114,7 +114,7 @@ public class PdfGenerator {
 
     private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect,
                        List<String> pocInformation,
-                       QuickTest quicktest,
+                       QuickTestArchive quicktest,
                        String user) throws IOException {
         generatePoCAddress(cos, rect, pocInformation);
         addCoronaAppIcon(document, cos, rect);
@@ -159,7 +159,7 @@ public class PdfGenerator {
         cos.endText();
     }
 
-    private void generatePersonAddress(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest)
+    private void generatePersonAddress(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
@@ -198,7 +198,8 @@ public class PdfGenerator {
         cos.newLine();
     }
 
-    private void generateSubject(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest) throws IOException {
+    private void generateSubject(PDPageContentStream cos, PDRectangle rect,
+                                 QuickTestArchive quicktest) throws IOException {
         cos.beginText();
         cos.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
         cos.setLeading(leading);
@@ -217,7 +218,7 @@ public class PdfGenerator {
 
     }
 
-    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest, String user)
+    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, String user)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);

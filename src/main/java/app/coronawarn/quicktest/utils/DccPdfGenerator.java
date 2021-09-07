@@ -23,7 +23,7 @@ package app.coronawarn.quicktest.utils;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
-import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -92,7 +92,8 @@ public class DccPdfGenerator {
      * @param dcc            certificate data
      * @throws IOException   when creating pdf went wrong
      */
-    public ByteArrayOutputStream appendCertificatePage(byte[] pdf, QuickTest quicktest, String dcc) throws IOException {
+    public ByteArrayOutputStream appendCertificatePage(byte[] pdf, QuickTestArchive quicktest, String dcc)
+      throws IOException {
         PDDocument document = PDDocument.load(pdf);
         configCertPage(document);
         generateCertPage(document, quicktest, dcc);
@@ -120,7 +121,7 @@ public class DccPdfGenerator {
         }
     }
 
-    private void generateCertPage(PDDocument document, QuickTest quicktest, String dcc)
+    private void generateCertPage(PDDocument document, QuickTestArchive quicktest, String dcc)
       throws IOException {
 
         PDPage page = new PDPage(PDRectangle.A4);
@@ -138,7 +139,7 @@ public class DccPdfGenerator {
         cos.close();
     }
 
-    private void generateCertPageFoldable(PDDocument document, QuickTest quicktest, String dcc)
+    private void generateCertPageFoldable(PDDocument document, QuickTestArchive quicktest, String dcc)
       throws IOException {
 
         PDPage page = new PDPage(PDRectangle.A4);
@@ -291,7 +292,7 @@ public class DccPdfGenerator {
     }
 
     private void generatePersonalInfoPage(PDDocument document, PDPageContentStream cos,
-                                          PDRectangle rect, QuickTest quicktest,
+                                          PDRectangle rect, QuickTestArchive quicktest,
                                           DccDecodeResult dccDecodeResult, boolean foldable)
       throws IOException {
         // Top right on single page, bottom left on foldable page
@@ -477,7 +478,7 @@ public class DccPdfGenerator {
         }
     }
 
-    private void generateCertificateInfoPage(PDPageContentStream cos, PDRectangle rect, QuickTest quickTest,
+    private void generateCertificateInfoPage(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quickTest,
                                              DccDecodeResult dccDecodeResult, boolean foldable) throws IOException {
         // If foldable, page is rotated by 180 degrees
         // Bottom right for single page, top left for foldable page

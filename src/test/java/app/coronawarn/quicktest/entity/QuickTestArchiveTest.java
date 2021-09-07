@@ -62,6 +62,8 @@ public class QuickTestArchiveTest {
         quickTestArchive.setPdf("Hello".getBytes());
         quickTestArchive.setAdditionalInfo("Hello");
         quickTestArchive.setGroupName("Barmen");
+        quickTestArchive.setPocInformation("test<br>tss");
+        quickTestArchive.setPocUser("pocuser");
         assertEquals("QuickTestArchive(hashedGuid=mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht, "
                         + "shortHashedGuid=cjfybkfn, tenantId=4711, pocId=4711-A, createdAt=2021-04-08T08:11:11, "
                         + "updatedAt=2021-04-08T08:11:12, version=null, confirmationCwa=true, testResult=5, "
@@ -69,7 +71,8 @@ public class QuickTestArchiveTest {
                         + "phoneNumber=00491777777777777, sex=DIVERSE, street=Boe, houseNumber=11, zipCode=12345, "
                         + "city=oyvkpigcga, testBrandId=AT116/21, testBrandName=Panbio (TM) Covid-19 Ag Rapid Test "
                         + "Device (Nasal), birthday=01.01.1954, pdf=[72, 101, 108, 108, 111], testResultServerHash=null," +
-                        " dcc=null, additionalInfo=Hello, groupName=Barmen)",
+                        " dcc=null, additionalInfo=Hello, groupName=Barmen, pocInformation=test<br>tss," +
+                        " pocUser=pocuser)",
                 quickTestArchive.toString());
     }
 

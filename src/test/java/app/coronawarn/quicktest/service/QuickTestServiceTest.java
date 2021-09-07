@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -133,7 +134,7 @@ public class QuickTestServiceTest {
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short)6);
+            quickTestUpdateRequest.setResult((short) 6);
             quickTestUpdateRequest.setTestBrandName("TestBrandName");
             qs.updateQuickTest(ids,
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
@@ -155,11 +156,11 @@ public class QuickTestServiceTest {
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short)6);
+            quickTestUpdateRequest.setResult((short) 6);
             quickTestUpdateRequest.setTestBrandName("TestBrandName");
             quickTestService.updateQuickTest(ids,
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                    quickTestUpdateRequest,
+                quickTestUpdateRequest,
                 new ArrayList<>(),
                 "User");
             fail("has to throw exception");
@@ -176,11 +177,11 @@ public class QuickTestServiceTest {
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short)6);
+            quickTestUpdateRequest.setResult((short) 6);
             quickTestUpdateRequest.setTestBrandName("TestBrandName");
             quickTestService.updateQuickTest(ids,
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                    quickTestUpdateRequest,
+                quickTestUpdateRequest,
                 new ArrayList<>(),
                 "User");
             fail("has to throw exception");
@@ -207,11 +208,11 @@ public class QuickTestServiceTest {
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short)6);
+            quickTestUpdateRequest.setResult((short) 6);
             quickTestUpdateRequest.setTestBrandName("TestBrandName");
             quickTestService.updateQuickTest(ids,
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                    quickTestUpdateRequest,
+                quickTestUpdateRequest,
                 new ArrayList<>(),
                 "User");
             fail("has to throw exception");
@@ -231,12 +232,12 @@ public class QuickTestServiceTest {
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short)8);
+            quickTestUpdateRequest.setResult((short) 8);
             quickTestUpdateRequest.setTestBrandName("TestBrandName");
             quickTestService.updateQuickTest(ids,
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
                 // 6 and 7 are still there because needed for dcc processing
-                    quickTestUpdateRequest,
+                quickTestUpdateRequest,
                 new ArrayList<>(),
                 "User");
             fail("has to throw exception");
@@ -259,11 +260,11 @@ public class QuickTestServiceTest {
             .thenReturn(new ByteArrayOutputStream());
         QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
         quickTestUpdateRequest.setTestBrandId("testBrandId");
-        quickTestUpdateRequest.setResult((short)6);
+        quickTestUpdateRequest.setResult((short) 6);
         quickTestUpdateRequest.setTestBrandName("TestBrandName");
         quickTestService.updateQuickTest(ids,
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                quickTestUpdateRequest,
+            quickTestUpdateRequest,
             new ArrayList<>(),
             "User");
         verify(testResultService, times(1)).createOrUpdateTestResult(any());
@@ -324,10 +325,15 @@ public class QuickTestServiceTest {
         quickTestResult.setResult(quickTest.getTestResult());
         quickTestResult.setSampleCollection(quickTest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC));
 
-        when(quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(now ,0))
+        QuickTestConfig.CleanUpSettings cleanUpSettings = new QuickTestConfig.CleanUpSettings();
+        cleanUpSettings.setChunkSize(1000);
+
+        when(quickTestRepository.countAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0))).thenReturn(2);
+        when(quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0), any()))
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
+        when(quickTestConfig.getCleanUpSettings()).thenReturn(cleanUpSettings);
         quickTestService.removeAllBefore(now);
-        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(now, 0);
+        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0), any());
         verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
         verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
@@ -338,8 +344,8 @@ public class QuickTestServiceTest {
         List<QuickTest> quickTests = new ArrayList<>();
         QuicktestView quicktestView = () -> "00000000";
         when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
-          any(), any(), any(), any()))
-          .thenReturn(List.of(quicktestView));
+            any(), any(), any(), any()))
+            .thenReturn(List.of(quicktestView));
         List<QuicktestView> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);
         assertEquals(quickTests1.get(0).getShortHashedGuid(), "00000000");
     }
@@ -351,9 +357,9 @@ public class QuickTestServiceTest {
         quickTest.setPrivacyAgreement(true);
         quickTest.setShortHashedGuid("00000000");
         quickTest.setDccConsent(true);
-        quickTest.setTestResult((short)5);
+        quickTest.setTestResult((short) 5);
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-                .thenReturn(quickTest);
+            .thenReturn(quickTest);
         QuickTestDccConsent dccContent = quickTestService.getDccConsent(ids, "00000000");
         assertNotNull(dccContent);
         assertTrue(dccContent.getDccConsent());
@@ -364,7 +370,7 @@ public class QuickTestServiceTest {
     void sanitiseInput() throws IOException, ResponseStatusException {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-          .thenReturn(createPendingTest());
+            .thenReturn(createPendingTest());
         when(pdf.generatePdf(any(), any(), any())).thenReturn(new ByteArrayOutputStream());
 
         // Wrong paranthesis block, Unicode Block FF00 to FFEF is not availabe in pdf font
@@ -373,13 +379,13 @@ public class QuickTestServiceTest {
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short)6);
+            quickTestUpdateRequest.setResult((short) 6);
             quickTestUpdateRequest.setTestBrandName(input);
             quickTestService.updateQuickTest(ids,
-              "6fa4dc",
-              quickTestUpdateRequest,
-              new ArrayList<>(),
-              "User");
+                "6fa4dc",
+                quickTestUpdateRequest,
+                new ArrayList<>(),
+                "User");
         } catch (NullPointerException e) {
         }
         ArgumentCaptor<QuickTestArchive> captor = ArgumentCaptor.forClass(QuickTestArchive.class);

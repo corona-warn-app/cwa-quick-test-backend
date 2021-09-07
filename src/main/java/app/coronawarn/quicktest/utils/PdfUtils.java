@@ -20,6 +20,10 @@
 
 package app.coronawarn.quicktest.utils;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,4 +52,23 @@ public final class PdfUtils {
         }
         return textParagraph;
     }
+
+    /**
+     * Return a formatted LocalDateTime with Timezone Berlin.
+     * @param ldt The LocaldateDatime
+     * @param formatter The formatter.
+     * @return Formatted String or hyphen
+     */
+    public static String getFormattedTime(LocalDateTime ldt, DateTimeFormatter formatter) {
+        String dateAndTimeInGermany;
+        if (ldt != null) {
+            dateAndTimeInGermany =
+              ZonedDateTime.of(ldt, ZoneId.of("UTC"))
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+        } else {
+            dateAndTimeInGermany = "-";
+        }
+        return dateAndTimeInGermany;
+    }
+
 }

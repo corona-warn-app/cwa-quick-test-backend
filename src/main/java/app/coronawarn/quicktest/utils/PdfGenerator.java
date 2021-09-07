@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.utils;
 
 import static app.coronawarn.quicktest.model.Sex.DIVERSE;
+import static app.coronawarn.quicktest.utils.PdfUtils.getFormattedTime;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
@@ -203,15 +204,7 @@ public class PdfGenerator {
         cos.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 340f);
-        String dateAndTimeInGermany;
-        if (quicktest.getUpdatedAt() != null) {
-            dateAndTimeInGermany =
-              ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
-                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
-        } else {
-            dateAndTimeInGermany = "-";
-        }
-        cos.showText(pdfConfig.getQuickTestOfDateText() + dateAndTimeInGermany);
+        cos.showText(pdfConfig.getQuickTestOfDateText() + getFormattedTime(quicktest.getUpdatedAt(), formatter));
         cos.newLine();
         cos.endText();
 

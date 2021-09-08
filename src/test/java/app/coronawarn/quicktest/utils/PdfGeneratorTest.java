@@ -57,22 +57,37 @@ public class PdfGeneratorTest {
         when(pdfConfig.getQuickTestHeadlineText()).thenReturn("Unittest");
         when(pdfConfig.getCreatorPdfPropertiesText()).thenReturn("Rapid Test");
         when(pdfConfig.getFurtherDataAboutThePersonText()).thenReturn("Mehr Informationen zur Person");
+        when(pdfConfig.getFurtherDataAboutThePersonTextEn()).thenReturn(pdc.getFurtherDataAboutThePersonTextEn());
         when(pdfConfig.getFurtherDataAboutTestDescriptionText()).thenReturn("Mehr Informationen zum Test");
+        when(pdfConfig.getFurtherDataAboutTestDescriptionTextEn())
+          .thenReturn(pdc.getFurtherDataAboutTestDescriptionTextEn());
         when(pdfConfig.getSignatureText()).thenReturn("MFG");
+        when(pdfConfig.getSignatureTextEn()).thenReturn(pdc.getSignatureTextEn());
         when(pdfConfig.getPersonEmailDescriptionText()).thenReturn("Email: ");
         when(pdfConfig.getPersonPhoneDescriptionText()).thenReturn("Telefon: ");
         when(pdfConfig.getQuickTestOfDateText()).thenReturn("Erstellt am: ");
+        when(pdfConfig.getQuickTestOfDateTextEn()).thenReturn(pdc.getQuickTestOfDateTextEn());
         when(pdfConfig.getTestResultDescriptionText()).thenReturn("Ergebnis: ");
+        when(pdfConfig.getTestResultDescriptionTextEn()).thenReturn(pdc.getTestResultDescriptionTextEn());
         when(pdfConfig.getNegativeInstructionText()).thenReturn("Sie sind nagativ getestet worden.");
+        when(pdfConfig.getNegativeInstructionTextEn()).thenReturn(pdc.getNegativeInstructionTextEn());
         when(pdfConfig.getExecutedByDescriptionText()).thenReturn("Ausgeführt am: ");
+        when(pdfConfig.getExecutedByDescriptionTextEn()).thenReturn(pdc.getExecutedByDescriptionTextEn());
         when(pdfConfig.getExecutedFromDescriptionText()).thenReturn("Durchgeführt von: ");
+        when(pdfConfig.getExecutedFromDescriptionTextEn()).thenReturn(pdc.getExecutedFromDescriptionTextEn());
         when(pdfConfig.getGenderDescriptionText()).thenReturn("Geschlecht: ");
+        when(pdfConfig.getGenderDescriptionTextEn()).thenReturn(pdc.getGenderDescriptionTextEn());
         when(pdfConfig.getTestBrandNameDescriptionText()).thenReturn("Test Marke: ");
+        when(pdfConfig.getTestBrandNameDescriptionTextEn()).thenReturn(pdc.getTestBrandNameDescriptionTextEn());
         when(pdfConfig.getTestBrandIdDescriptionText()).thenReturn("Test ID: ");
         when(pdfConfig.getDiverseText()).thenReturn("divers");
+        when(pdfConfig.getDiverseTextEn()).thenReturn(pdc.getDiverseTextEn());
         when(pdfConfig.getTestResultNegativeText()).thenReturn("NEGATIV");
+        when(pdfConfig.getTestResultNegativeTextEn()).thenReturn(pdc.getTestResultNegativeTextEn());
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
+        when(pdfConfig.getBirthDateDescriptionTextEn()).thenReturn(pdc.getBirthDateDescriptionTextEn());
         when(pdfConfig.getAdditionalInfoDescriptionText()).thenReturn("Zusätzliche Informationen: ");
+        when(pdfConfig.getAdditionalInfoDescriptionTextEn()).thenReturn(pdc.getAdditionalInfoDescriptionTextEn());
 
         List<String> pocInformation = new ArrayList();
         pocInformation.add("PoC Unittest");
@@ -112,6 +127,7 @@ public class PdfGeneratorTest {
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());
             assertEquals("Rapid Test", pdfDocument.getDocumentInformation().getCreator());
         } finally {
+            pdfDocument.save("C:\\tmp\\pdf\\a.pdf");
             pdfDocument.close();
         }
     }

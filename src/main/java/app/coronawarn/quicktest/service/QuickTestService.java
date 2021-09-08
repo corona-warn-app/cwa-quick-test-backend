@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -254,13 +255,37 @@ public class QuickTestService {
      * @param deleteTimestamp Timestamp before which everything will be deleted
      */
     public void removeAllBefore(LocalDateTime deleteTimestamp) {
-        quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(deleteTimestamp, 0)
-            .forEach(quickTest -> this.sendResultToTestResultServer(
+        log.info("Deleting QuickTests from DB");
+
+        int totalCount = quickTestRepository.countAllByCreatedAtBeforeAndVersionIsGreaterThan(deleteTimestamp, 0);
+        int chunkSize = quickTestConfig.getCleanUpSettings().getChunkSize();
+        int chunks = totalCount / chunkSize + 1;
+
+        log.info("Found {} QuickTests which need to set to failed on TRS in {} chunks", totalCount, chunks);
+
+        for (int i = 1; i <= chunks; i++) {
+            log.info("Deleting chunk {} of {}", i, chunks);
+
+            List<QuickTest> quickTestChunk = quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(
+                deleteTimestamp,
+                0,
+                PageRequest.of(i - 1, chunkSize));
+
+            quickTestChunk.forEach(quickTest -> sendResultToTestResultServer(
                 quickTest.getTestResultServerHash(),
                 TestResult.FAILED.getValue(),
                 deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
                 quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
 
+            log.info("Set Status of quicktests on TRS. Deleting QuickTests in DB");
+
+            quickTestRepository.deleteAll(quickTestChunk);
+            quickTestRepository.flush();
+
+            log.info("Processing of chunk {} of {} finished.", i, chunks);
+        }
+
+        log.info("Delete remaining QuickTests");
         quickTestRepository.deleteByCreatedAtBefore(deleteTimestamp);
     }
 

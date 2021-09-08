@@ -58,5 +58,6 @@ public class QuickTestConfig {
         private String cron;
         private int maxAgeInMinutes;
         private int locklimit;
+        private int chunkSize;
     }
 }

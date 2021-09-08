@@ -312,7 +312,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isCreated());
 
-        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), groupDetails.getPocId(), rootGroupId);
+        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), rootGroupId);
     }
 
     @Test
@@ -327,7 +327,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
         groupDetails.setPocId("pocId");
 
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.NOT_FOUND))
-            .when(keycloakServiceMock).createGroup(any(), any(), any(), any());
+            .when(keycloakServiceMock).createGroup(any(), any(), any());
 
         mockMvc().perform(MockMvcRequestBuilders
                 .post("/api/usermanagement/groups")
@@ -335,7 +335,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isNotFound());
 
-        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), groupDetails.getPocId(), rootGroupId);
+        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), rootGroupId);
     }
 
     @Test
@@ -350,7 +350,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
         groupDetails.setPocId("pocId");
 
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.ALREADY_EXISTS))
-            .when(keycloakServiceMock).createGroup(any(), any(), any(), any());
+            .when(keycloakServiceMock).createGroup(any(), any(), any());
 
         mockMvc().perform(MockMvcRequestBuilders
                 .post("/api/usermanagement/groups")
@@ -358,7 +358,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isConflict());
 
-        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), groupDetails.getPocId(), rootGroupId);
+        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), rootGroupId);
     }
 
     @Test
@@ -373,7 +373,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
         groupDetails.setPocId("pocId");
 
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR))
-            .when(keycloakServiceMock).createGroup(any(), any(), any(), any());
+            .when(keycloakServiceMock).createGroup(any(), any(), any());
 
         mockMvc().perform(MockMvcRequestBuilders
                 .post("/api/usermanagement/groups")
@@ -381,7 +381,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isInternalServerError());
 
-        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), groupDetails.getPocId(), rootGroupId);
+        verify(keycloakServiceMock).createGroup(groupDetails.getName(), groupDetails.getPocDetails(), rootGroupId);
     }
 
     @Test
@@ -479,7 +479,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isNoContent());
 
-        verify(keycloakServiceMock).updateGroup(subGroupId, groupDetails.getName(), groupDetails.getPocDetails(), groupDetails.getPocId());
+        verify(keycloakServiceMock).updateGroup(subGroupId, groupDetails.getName(), groupDetails.getPocDetails());
     }
 
     @Test
@@ -494,7 +494,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
         groupDetails.setPocId("pocId");
 
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.NOT_FOUND))
-            .when(keycloakServiceMock).updateGroup(any(), any(), any(), any());
+            .when(keycloakServiceMock).updateGroup(any(), any(), any());
 
         mockMvc().perform(MockMvcRequestBuilders
                 .put("/api/usermanagement/groups/" + subGroupId)
@@ -502,7 +502,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isNotFound());
 
-        verify(keycloakServiceMock).updateGroup(subGroupId, groupDetails.getName(), groupDetails.getPocDetails(), groupDetails.getPocId());
+        verify(keycloakServiceMock).updateGroup(subGroupId, groupDetails.getName(), groupDetails.getPocDetails());
     }
 
     @Test
@@ -517,7 +517,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
         groupDetails.setPocId("pocId");
 
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR))
-            .when(keycloakServiceMock).updateGroup(any(), any(), any(), any());
+            .when(keycloakServiceMock).updateGroup(any(), any(), any());
 
         mockMvc().perform(MockMvcRequestBuilders
                 .put("/api/usermanagement/groups/" + subGroupId)
@@ -525,7 +525,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isInternalServerError());
 
-        verify(keycloakServiceMock).updateGroup(subGroupId, groupDetails.getName(), groupDetails.getPocDetails(), groupDetails.getPocId());
+        verify(keycloakServiceMock).updateGroup(subGroupId, groupDetails.getName(), groupDetails.getPocDetails());
     }
 
     @Test

@@ -25,7 +25,11 @@ import app.coronawarn.quicktest.domain.QuickTest;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -36,19 +40,24 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
     Optional<QuickTest> findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(String tenantId, String pocId,
                                                                              String shortHash, String hashedGuid);
 
-    List<QuickTest> findAllByTenantIdAndPocIdAndVersionIsGreaterThan(String tenantId, String pocId, Integer version);
-
 
     List<QuicktestView> getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(String tenantId,
                                                                                                  String pocId,
                                                                                                  Short testResult,
                                                                                                  Integer version);
 
-    List<QuickTest> findAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time, Integer version);
+    int countAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time,
+                                                         Integer version);
+
+    List<QuickTest> findAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time,
+                                                                    Integer version,
+                                                                    Pageable pageable);
 
     List<QuickTest> findAllByDccStatus(DccStatus dccStatus);
 
-    void deleteByCreatedAtBefore(LocalDateTime time);
+    @Query("DELETE FROM QuickTest q WHERE q.createdAt < :time")
+    @Modifying
+    void deleteByCreatedAtBefore(@Param("time") LocalDateTime time);
 
     int countAllByTenantIdIsAndPocIdIsIn(String tenantId, List<String> pocIds);
 

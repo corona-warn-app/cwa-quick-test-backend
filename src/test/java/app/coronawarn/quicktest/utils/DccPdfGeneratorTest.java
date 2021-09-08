@@ -67,8 +67,6 @@ class DccPdfGeneratorTest {
         when(pdfConfig.getCertFoldingInstruction()).thenReturn(pdc.getCertFoldingInstruction());
         when(pdfConfig.getCertHeaderTestEn()).thenReturn(pdc.getCertHeaderTestEn());
         when(pdfConfig.getCertHeaderTestDe()).thenReturn(pdc.getCertHeaderTestDe());
-        when(pdfConfig.getCertTestNameEn()).thenReturn(pdc.getCertTestNameEn());
-        when(pdfConfig.getCertTestNameDe()).thenReturn(pdc.getCertTestNameDe());
         when(pdfConfig.getCertDateSampleCollectionEn()).thenReturn(pdc.getCertDateSampleCollectionEn());
         when(pdfConfig.getCertDateSampleCollectionDe()).thenReturn(pdc.getCertDateSampleCollectionDe());
         when(pdfConfig.getCertTestManufacturerEn()).thenReturn(pdc.getCertTestManufacturerEn());
@@ -118,6 +116,7 @@ class DccPdfGeneratorTest {
             assertTrue(pdfText.contains(quicktest.getFirstName()));
             assertTrue(pdfText.contains(quicktest.getLastName()));
             assertTrue(pdfText.contains(pdc.getCertDiseaseAgentTargeted()));
+            assertTrue(pdfText.contains("08.04.2021 10:11:12 (UTC +02)"));
         } finally {
             pdfDocument.close();
         }

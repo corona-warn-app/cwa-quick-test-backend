@@ -62,6 +62,7 @@ quicktest:
     cron: "0 0 0 29 2 ?"
     max-age-in-minutes: 2
     locklimit: 1800000
+    chunk-size: 1000
 
 cwa-dcc-server:
   url: http://localhost:8080

@@ -462,9 +462,8 @@ public class KeycloakService {
      * @param id         ID of the group to be updated.
      * @param name       New name
      * @param pocDetails new POC Details
-     * @param pocId      new POC ID
      */
-    public void updateGroup(String id, String name, String pocDetails, String pocId) throws KeycloakServiceException {
+    public void updateGroup(String id, String name, String pocDetails) throws KeycloakServiceException {
         log.info("Updating group with id {}", id);
         GroupResource groupResource = realm().groups().group(id);
         GroupRepresentation group;
@@ -475,7 +474,8 @@ public class KeycloakService {
         }
 
         group.setName(name);
-        group.setAttributes(getGroupAttributes(pocDetails, pocId));
+        // do not update POC ID
+        group.setAttributes(getGroupAttributes(pocDetails, getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
 
         try {
             groupResource.update(group);
@@ -484,8 +484,13 @@ public class KeycloakService {
             log.error("Failed to update group: BAD REQUEST {}", e.getResponse().readEntity(String.class));
             throw new KeycloakServiceException(KeycloakServiceException.Reason.BAD_REQUEST);
         } catch (WebApplicationException e) {
-            log.error("Failed to update group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
-            throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
+            if (e.getResponse().getStatus() == HttpStatus.CONFLICT.value()) {
+                log.error("Failed to update group: CONFLICT {}", e.getResponse().readEntity(String.class));
+                throw new KeycloakServiceException(KeycloakServiceException.Reason.ALREADY_EXISTS);
+            } else {
+                log.error("Failed to update group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
+                throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
+            }
         }
     }
 
@@ -494,24 +499,27 @@ public class KeycloakService {
      *
      * @param name       Name of the new group
      * @param pocDetails POC Details of the new group
-     * @param pocId      POC ID of the new group
      * @param parent     ID of the parent group
      */
-    public void createGroup(String name, String pocDetails, String pocId, String parent)
+    public void createGroup(String name, String pocDetails, String parent)
         throws KeycloakServiceException {
         log.info("Creating new group");
         GroupRepresentation newGroup = new GroupRepresentation();
         newGroup.setName(name);
-        newGroup.setAttributes(getGroupAttributes(pocDetails, pocId));
 
         try {
             Response response = realm().groups().group(parent).subGroup(newGroup);
-
             if (response.getStatus() == HttpStatus.CONFLICT.value()) {
                 log.error("Failed to create group: CONFLICT");
                 throw new KeycloakServiceException(KeycloakServiceException.Reason.ALREADY_EXISTS);
             }
             log.info("created group");
+
+            // setting group properties with Grup Details and POC ID
+            newGroup = response.readEntity(GroupRepresentation.class);
+            newGroup.setAttributes(getGroupAttributes(pocDetails, newGroup.getId()));
+            realm().groups().group(newGroup.getId()).update(newGroup);
+
         } catch (BadRequestException e) {
             log.error("Failed to create group: BAD REQUEST {}", e.getResponse().readEntity(String.class));
             throw new KeycloakServiceException(KeycloakServiceException.Reason.BAD_REQUEST);

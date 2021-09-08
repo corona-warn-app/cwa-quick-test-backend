@@ -27,6 +27,7 @@ import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -37,11 +38,15 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(SecurityAuditListenerQuickTestArchive.class)
@@ -154,4 +159,22 @@ public class QuickTestArchive {
     @Column(name = "group_name")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String groupName;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        QuickTestArchive that = (QuickTestArchive) o;
+
+        return Objects.equals(hashedGuid, that.hashedGuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hashedGuid);
+    }
 }

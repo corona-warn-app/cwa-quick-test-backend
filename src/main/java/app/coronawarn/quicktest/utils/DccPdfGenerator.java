@@ -72,7 +72,7 @@ public class DccPdfGenerator {
     private final int pending = 5;
     private final int negative = 6;
     private final int positive = 7;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss '(UTC' X')'");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final float leading = 14.5f;
@@ -502,11 +502,10 @@ public class DccPdfGenerator {
           List.of(pdfConfig.getCertDiseaseAgentDe(), pdfConfig.getCertDiseaseAgentEn(),
             pdfConfig.getCertDiseaseAgentTargeted()),
           List.of(pdfConfig.getCertTestTypeDe(), pdfConfig.getCertTestTypeEn(), pdfConfig.getCertTestType()),
-          List.of(pdfConfig.getCertTestNameDe(), pdfConfig.getCertTestNameEn(), quickTest.getTestBrandId()),
           List.of(pdfConfig.getCertTestManufacturerDe(), pdfConfig.getCertTestManufacturerEn(),
             quickTest.getTestBrandName()),
           List.of(pdfConfig.getCertDateSampleCollectionDe(), pdfConfig.getCertDateSampleCollectionEn(),
-            quickTest.getUpdatedAt().format(formatter)),
+            PdfUtils.getFormattedTime(quickTest.getUpdatedAt(), formatter)),
           List.of(pdfConfig.getCertTestResultDe(), pdfConfig.getCertTestResultEn(),
             getTestResultText(quickTest.getTestResult())),
           List.of(pdfConfig.getCertTestingCentreDe(), pdfConfig.getCertTestingCentreEn(), quickTest.getGroupName()),

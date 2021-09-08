@@ -72,7 +72,7 @@ public class DccPdfGenerator {
     private final int pending = 5;
     private final int negative = 6;
     private final int positive = 7;
-    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss '(UTC' X')'");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final float leading = 14.5f;

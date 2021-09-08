@@ -116,7 +116,7 @@ class DccPdfGeneratorTest {
             assertTrue(pdfText.contains(quicktest.getFirstName()));
             assertTrue(pdfText.contains(quicktest.getLastName()));
             assertTrue(pdfText.contains(pdc.getCertDiseaseAgentTargeted()));
-            assertTrue(pdfText.contains("08.04.2021 10:11:12"));
+            assertTrue(pdfText.contains("08.04.2021 10:11:12 (UTC +02)"));
         } finally {
             pdfDocument.close();
         }

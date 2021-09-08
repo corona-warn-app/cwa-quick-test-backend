@@ -27,6 +27,7 @@ import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTest;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
@@ -38,11 +39,15 @@ import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+import org.hibernate.Hibernate;
 
-@Data
+@Getter
+@Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EntityListeners(SecurityAuditListenerQuickTest.class)
@@ -211,4 +216,21 @@ public class QuickTest {
         updatedAt = Utilities.getCurrentLocalDateTimeUtc();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) {
+            return false;
+        }
+        QuickTest quickTest = (QuickTest) o;
+
+        return Objects.equals(hashedGuid, quickTest.hashedGuid);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hashedGuid);
+    }
 }

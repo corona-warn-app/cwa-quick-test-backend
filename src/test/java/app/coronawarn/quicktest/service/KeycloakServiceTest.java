@@ -717,12 +717,12 @@ public class KeycloakServiceTest {
         ArgumentCaptor<GroupRepresentation> captor = ArgumentCaptor.forClass(GroupRepresentation.class);
         doNothing().when(groupResourceMock).update(captor.capture());
 
-        keycloakService.updateGroup(groupid, "newName", "newPocDetails", "newPocId");
+        keycloakService.updateGroup(groupid, "newName", "newPocDetails");
 
         Assertions.assertEquals("newName", captor.getValue().getName());
         Assertions.assertEquals(2, captor.getValue().getAttributes().size());
         Assertions.assertEquals(1, captor.getValue().getAttributes().get("poc_id").size());
-        Assertions.assertEquals("newPocId", captor.getValue().getAttributes().get("poc_id").get(0));
+        Assertions.assertEquals(groupid, captor.getValue().getAttributes().get("poc_id").get(0));
         Assertions.assertEquals(1, captor.getValue().getAttributes().get("poc_details").size());
         Assertions.assertEquals("newPocDetails", captor.getValue().getAttributes().get("poc_details").get(0));
 
@@ -733,7 +733,7 @@ public class KeycloakServiceTest {
         doThrow(new BadRequestException(Response.status(HttpStatus.BAD_REQUEST.value()).entity("").build())).when(groupResourceMock).update(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupid, "newName", "newPocDetails", "newPocId"));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupid, "newName", "newPocDetails"));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.BAD_REQUEST, e.getReason());
     }
@@ -743,26 +743,39 @@ public class KeycloakServiceTest {
         doThrow(new WebApplicationException(Response.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).entity("").build())).when(groupResourceMock).update(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupid, "newName", "newPocDetails", "newPocId"));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupid, "newName", "newPocDetails"));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR, e.getReason());
     }
 
     @Test
     void testCreateGroup() throws KeycloakService.KeycloakServiceException {
+        String newSubGroupId = "subgroupid";
 
-        ArgumentCaptor<GroupRepresentation> captor = ArgumentCaptor.forClass(GroupRepresentation.class);
-        when(groupResourceMock.subGroup(captor.capture())).thenReturn(Response.status(HttpStatus.OK.value()).build());
+        when(groupResourceMock.subGroup(any())).thenAnswer(invocationOnMock -> {
+            GroupRepresentation g = invocationOnMock.getArgument(0, GroupRepresentation.class);
+            g.setId(newSubGroupId);
+            return Response
+                .status(HttpStatus.OK.value())
+                .entity(g)
+                .build();
+        });
 
-        keycloakService.createGroup("newGroupName", "newPocDetails", "newPocId", groupid);
+        when(groupsResourceMock.group(newSubGroupId)).thenReturn(groupResourceMock);
 
-        verify(groupResourceMock).subGroup(any());
-        Assertions.assertEquals("newGroupName", captor.getValue().getName());
-        Assertions.assertEquals(2, captor.getValue().getAttributes().size());
-        Assertions.assertEquals(1, captor.getValue().getAttributes().get("poc_id").size());
-        Assertions.assertEquals("newPocId", captor.getValue().getAttributes().get("poc_id").get(0));
-        Assertions.assertEquals(1, captor.getValue().getAttributes().get("poc_details").size());
-        Assertions.assertEquals("newPocDetails", captor.getValue().getAttributes().get("poc_details").get(0));
+        keycloakService.createGroup("newGroupName", "newPocDetails", groupid);
+
+        ArgumentCaptor<GroupRepresentation> createCaptor = ArgumentCaptor.forClass(GroupRepresentation.class);
+        verify(groupResourceMock).subGroup(createCaptor.capture());
+        Assertions.assertEquals("newGroupName", createCaptor.getValue().getName());
+
+        ArgumentCaptor<GroupRepresentation> updateCaptor = ArgumentCaptor.forClass(GroupRepresentation.class);
+        verify(groupResourceMock).update(updateCaptor.capture());
+        Assertions.assertEquals(2, updateCaptor.getValue().getAttributes().size());
+        Assertions.assertEquals(1, updateCaptor.getValue().getAttributes().get("poc_details").size());
+        Assertions.assertEquals("newPocDetails", updateCaptor.getValue().getAttributes().get("poc_details").get(0));
+        Assertions.assertEquals(1, updateCaptor.getValue().getAttributes().get("poc_id").size());
+        Assertions.assertEquals(newSubGroupId, updateCaptor.getValue().getAttributes().get("poc_id").get(0));
     }
 
     @Test
@@ -771,7 +784,7 @@ public class KeycloakServiceTest {
         when(groupResourceMock.subGroup(captor.capture())).thenReturn(Response.status(HttpStatus.CONFLICT.value()).build());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", "newPocId", groupid));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", groupid));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.ALREADY_EXISTS, e.getReason());
     }
@@ -781,7 +794,7 @@ public class KeycloakServiceTest {
         doThrow(new BadRequestException(Response.status(HttpStatus.BAD_REQUEST.value()).entity("").build())).when(groupResourceMock).subGroup(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", "newPocId", groupid));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", groupid));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.BAD_REQUEST, e.getReason());
     }
@@ -791,7 +804,7 @@ public class KeycloakServiceTest {
         doThrow(new WebApplicationException(Response.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).entity("").build())).when(groupResourceMock).subGroup(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", "newPocId", groupid));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", groupid));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR, e.getReason());
     }

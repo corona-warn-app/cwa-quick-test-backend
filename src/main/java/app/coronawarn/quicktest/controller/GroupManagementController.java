@@ -163,7 +163,7 @@ public class GroupManagementController {
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         try {
-            keycloakService.createGroup(body.getName(), body.getPocDetails(), body.getPocId(), userRootGroup.getId());
+            keycloakService.createGroup(body.getName(), body.getPocDetails(), userRootGroup.getId());
         } catch (KeycloakService.KeycloakServiceException e) {
             if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
@@ -212,10 +212,12 @@ public class GroupManagementController {
         utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {
-            keycloakService.updateGroup(id, body.getName(), body.getPocDetails(), body.getPocId());
+            keycloakService.updateGroup(id, body.getName(), body.getPocDetails());
         } catch (KeycloakService.KeycloakServiceException e) {
             if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
+            } else if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.ALREADY_EXISTS) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Group with this name already exists");
             } else {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to update group");
             }

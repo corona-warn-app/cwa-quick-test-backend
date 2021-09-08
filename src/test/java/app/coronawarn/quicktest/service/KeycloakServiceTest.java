@@ -722,7 +722,7 @@ public class KeycloakServiceTest {
         Assertions.assertEquals("newName", captor.getValue().getName());
         Assertions.assertEquals(2, captor.getValue().getAttributes().size());
         Assertions.assertEquals(1, captor.getValue().getAttributes().get("poc_id").size());
-        Assertions.assertEquals(groupid, captor.getValue().getAttributes().get("poc_id").get(0));
+        Assertions.assertEquals(groupPocId, captor.getValue().getAttributes().get("poc_id").get(0));
         Assertions.assertEquals(1, captor.getValue().getAttributes().get("poc_details").size());
         Assertions.assertEquals("newPocDetails", captor.getValue().getAttributes().get("poc_details").get(0));
 

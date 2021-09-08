@@ -442,7 +442,7 @@ public class KeycloakService {
 
         group.setName(name);
         // do not update POC ID
-        group.setAttributes(getGroupAttributes(pocDetails, group.getId()));
+        group.setAttributes(getGroupAttributes(pocDetails, getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
 
         try {
             groupResource.update(group);

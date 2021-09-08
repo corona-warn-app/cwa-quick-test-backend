@@ -80,6 +80,7 @@ quicktest:
     cron: 0 * * * * *
     max-age-in-minutes: 1440
     locklimit: 1800000
+    chunkSize: 1000
   frontend-context-config:
     rules-server-url: https://distribution-6155b8d7d3c6.dcc-rules.de
     environment-name: local

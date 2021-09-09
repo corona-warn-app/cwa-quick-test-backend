@@ -47,7 +47,7 @@ public class PdfConfig {
     private String negativeInstructionTextEn = "Please note, that a negative test result can not exclude an infection "
       + "completely and represents only a snapshot.";
     private String testBrandNameDescriptionText = "Handelsname: ";
-    private String testBrandNameDescriptionTextEn = "Trade name: ";
+    private String testBrandNameDescriptionTextEn = "Brand name: ";
     private String tradeNameEmptyText = "nicht angegeben";
     private String tradeNameEmptyTextEn = "not available";
     private String testBrandIdDescriptionText = "Test-ID: ";
@@ -64,9 +64,9 @@ public class PdfConfig {
     private String testResultPendingText = "ausstehend";
     private String testResultPendingTextEn = "pending";
     private String testResultNegativeText = "negativ";
-    private String testResultNegativeTextEn = "negative";
+    private String testResultNegativeTextEn = "not detected";
     private String testResultPositiveText = "positiv";
-    private String testResultPositiveTextEn = "positive";
+    private String testResultPositiveTextEn = "detected";
     private String testResultDefaultText = "fehlgeschlagen";
     private String testResultDefaultTextEn = "failed";
     private String executedByDescriptionText = "Durchgeführt: ";

@@ -124,10 +124,13 @@ public class PdfGeneratorTest {
             assertTrue(pdfText.contains("Test Marke: PerGrande BioTech"));
             assertTrue(pdfText.contains("Sie sind nagativ getestet worden."));
             assertTrue(pdfText.contains("MFG"));
+
+            assertTrue(pdfText.contains(pdc.getTestResultNegativeTextEn()));
+            assertTrue(pdfText.contains(pdc.getDiverseTextEn()));
+            assertTrue(pdfText.contains(pdc.getExecutedFromDescriptionTextEn()));
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());
             assertEquals("Rapid Test", pdfDocument.getDocumentInformation().getCreator());
         } finally {
-            pdfDocument.save("C:\\tmp\\pdf\\a.pdf");
             pdfDocument.close();
         }
     }

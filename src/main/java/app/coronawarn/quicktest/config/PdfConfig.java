@@ -70,7 +70,7 @@ public class PdfConfig {
     private String testResultDefaultText = "fehlgeschlagen";
     private String testResultDefaultTextEn = "failed";
     private String executedByDescriptionText = "Durchgeführt: ";
-    private String executedByDescriptionTextEn = "Administered: ";
+    private String executedByDescriptionTextEn = "Carried out: ";
     private String furtherDataAboutThePersonText = "Weitere Angaben zu der Person: ";
     private String furtherDataAboutThePersonTextEn = "Further data about the person: ";
     private String genderDescriptionText = "Geschlecht: ";
@@ -86,7 +86,7 @@ public class PdfConfig {
     private String furtherDataAboutTestDescriptionText = "Weitere Angaben zum Test: ";
     private String furtherDataAboutTestDescriptionTextEn = "Further data of the test: ";
     private String executedFromDescriptionText = "Durchgeführt durch: ";
-    private String executedFromDescriptionTextEn = "Administered by: ";
+    private String executedFromDescriptionTextEn = "Carried out by: ";
     private String additionalInfoDescriptionText = "Zusätzliche Informationen: ";
     private String additionalInfoDescriptionTextEn = "Additional Information: ";
 

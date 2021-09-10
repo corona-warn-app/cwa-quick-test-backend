@@ -219,8 +219,7 @@ public class PdfGenerator {
 
     }
 
-    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, String user,
-                              boolean english)
+    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, boolean english)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);

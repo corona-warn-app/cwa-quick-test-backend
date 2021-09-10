@@ -40,8 +40,6 @@ import eu.europa.ec.dgc.DgcGenerator;
 import eu.europa.ec.dgc.dto.DgcData;
 import eu.europa.ec.dgc.dto.DgcInitData;
 import feign.FeignException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
@@ -168,18 +166,6 @@ public class DccService {
                 if (quickTestArchive.isPresent()) {
                     String dcc = dgcGenerator.coseToQrCode(coseSigned);
                     quickTestArchive.get().setDcc(dcc);
-                    try {
-                        ByteArrayOutputStream pdf =
-                          dccPdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(),
-                            quickTestArchive.get(), dcc);
-                        quickTestArchive.get().setPdf(pdf.toByteArray());
-                    } catch (IOException exception) {
-                        log.warn("Appending Certificate to PDF failed for quicktest hashedGuid=[{}]",
-                          quickTest.getHashedGuid());
-                    } catch (Exception exception) {
-                        log.warn("General Exception while appending certificate to PDF for quicktest hashedGuid=[{}]",
-                          quickTest.getHashedGuid());
-                    }
                     quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
                 } else {
                     log.warn("can not find quick test archive {}",quickTest.getHashedGuid());

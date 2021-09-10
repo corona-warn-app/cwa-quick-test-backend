@@ -23,10 +23,18 @@ package app.coronawarn.quicktest.utils;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class QuicktestUtils {
 
     public static QuickTestArchive getQuickTest() {
+        List<String> pocInformation = new ArrayList();
+        pocInformation.add("PoC Unittest");
+        pocInformation.add("Unittest Way 15");
+        pocInformation.add("10101 Unittest City");
+        pocInformation.add("Call: 0123-7890-0");
+
         QuickTestArchive quicktest = new QuickTestArchive();
         quicktest.setZipCode("12345");
         quicktest.setTestResult(Short.parseShort("6"));
@@ -54,6 +62,8 @@ public class QuicktestUtils {
           "tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et " +
           "justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea tak");
         quicktest.setGroupName("Mein Testcenter mit fünfzig Zeichen Testzertifikat");
+        quicktest.setPocInformation(String.join("<br>", pocInformation));
+        quicktest.setPocUser("Mr. Unittest");
         return quicktest;
     }
 }

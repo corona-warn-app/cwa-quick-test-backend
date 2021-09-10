@@ -125,8 +125,6 @@ class DccServiceTest {
 
         QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quickTest);
         quickTestArchiveRepository.saveAndFlush(quickTestArchive);
-        byte[] pdfFirstPage = pdfGenerator.generatePdf(
-          List.of("PoC Address"), quickTestArchive, "IT-Test User").toByteArray();
 
         initDccMockPublicKey(quickTest);
 
@@ -202,6 +200,8 @@ class DccServiceTest {
         quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setPocInformation("PoC Address");
+        quickTestArchive.setPocUser("IT-Test User");
 
         return quickTestArchive;
     }

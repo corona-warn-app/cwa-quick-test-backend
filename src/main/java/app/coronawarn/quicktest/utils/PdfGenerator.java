@@ -72,13 +72,10 @@ public class PdfGenerator {
     /**
      * Generates a PDF file for rapid test result to print.
      *
-     * @param pocInformation point of care data used in pdf
      * @param quickTestArchive      Quicktest
-     * @param user           carried out by user
      * @throws IOException when creating pdf went wrong
      */
-    public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTestArchive quickTestArchive,
-                                             String user) throws IOException {
+    public ByteArrayOutputStream generatePdf(QuickTestArchive quickTestArchive) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
@@ -86,7 +83,7 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
         PDRectangle rect1 = page1.getMediaBox();
-        write(document, cos, rect1, pocInformation, quickTestArchive, user);
+        write(document, cos, rect1, quickTestArchive);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -112,25 +109,24 @@ public class PdfGenerator {
         pdd.setCreationDate(gcal);
     }
 
-    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect,
-                       List<String> pocInformation,
-                       QuickTestArchive quicktest,
-                       String user) throws IOException {
-        generatePoCAddress(cos, rect, pocInformation);
+    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest)
+      throws IOException {
+        generatePoCAddress(cos, rect, quicktest);
         addCoronaAppIcon(document, cos, rect);
         generatePersonAddress(cos, rect, quicktest);
         generateSubject(cos, rect, quicktest);
-        generateText(cos, rect, quicktest, user);
+        generateText(cos, rect, quicktest);
         generateEnd(cos, rect);
         cos.close();
     }
 
-    private void generatePoCAddress(PDPageContentStream cos, PDRectangle rect, List<String> pocInformation)
+    private void generatePoCAddress(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quickTestArchive)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(0, rect.getHeight() - 110);
+        List<String> pocInformation = List.of(quickTestArchive.getPocInformation().split("<br>"));
         pocInformation.forEach(s -> {
             try {
                 rightAlignment(cos, rect, s);
@@ -218,7 +214,7 @@ public class PdfGenerator {
 
     }
 
-    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, String user)
+    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
@@ -291,7 +287,7 @@ public class PdfGenerator {
         cos.newLine();
         cos.showText(pdfConfig.getFurtherDataAboutTestDescriptionText());
         cos.newLine();
-        cos.showText(pdfConfig.getExecutedFromDescriptionText() + user);
+        cos.showText(pdfConfig.getExecutedFromDescriptionText() + quicktest.getPocUser());
         cos.newLine();
         cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
         cos.newLine();

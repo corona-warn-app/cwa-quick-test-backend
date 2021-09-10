@@ -43,7 +43,6 @@ import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
 import app.coronawarn.quicktest.utils.Utilities;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -55,7 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -147,30 +145,6 @@ public class QuickTestServiceTest {
     }
 
     @Test
-    @Disabled
-    void createPdfInUpdateQuickTestIoExceptionTest() throws IOException {
-        Map<String, String> ids = new HashMap<>();
-        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-            .thenReturn(createPendingTest());
-        when(pdf.generatePdf(any(), any(), any()))
-            .thenThrow(new IOException());
-        try {
-            QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
-            quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short)6);
-            quickTestUpdateRequest.setTestBrandName("TestBrandName");
-            quickTestService.updateQuickTest(ids,
-                "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                    quickTestUpdateRequest,
-                new ArrayList<>(),
-                "User");
-            fail("has to throw exception");
-        } catch (ResponseStatusException e) {
-            assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
-        }
-    }
-
-    @Test
     void UpdateNotFoundTest() throws IOException {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
@@ -202,8 +176,6 @@ public class QuickTestServiceTest {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(createPendingTest());
-        when(pdf.generatePdf(any(), any(), any()))
-            .thenReturn(new ByteArrayOutputStream());
         when(quickTestArchiveRepository.save(any()))
             .thenThrow(new NullPointerException());
         try {
@@ -227,8 +199,6 @@ public class QuickTestServiceTest {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(createPendingTest());
-        when(pdf.generatePdf(any(), any(), any()))
-            .thenReturn(new ByteArrayOutputStream());
         doThrow(new NullPointerException()).when(quickTestRepository).deleteById(any());
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
@@ -257,8 +227,6 @@ public class QuickTestServiceTest {
         quickTest.setUpdatedAt(now);
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
-        when(pdf.generatePdf(any(), any(), any()))
-            .thenReturn(new ByteArrayOutputStream());
         QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
         quickTestUpdateRequest.setTestBrandId("testBrandId");
         quickTestUpdateRequest.setResult((short)6);
@@ -367,7 +335,6 @@ public class QuickTestServiceTest {
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
           .thenReturn(createPendingTest());
-        when(pdf.generatePdf(any(), any(), any())).thenReturn(new ByteArrayOutputStream());
 
         // Wrong paranthesis block, Unicode Block FF00 to FFEF is not availabe in pdf font
         String input = "COVID-19 Antigen Rapid Test Device（Colloidal Gold）";

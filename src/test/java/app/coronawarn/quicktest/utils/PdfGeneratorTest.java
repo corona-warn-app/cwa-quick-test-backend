@@ -29,8 +29,6 @@ import app.coronawarn.quicktest.config.PdfConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -74,14 +72,9 @@ public class PdfGeneratorTest {
         when(pdfConfig.getBirthDateDescriptionText()).thenReturn("Geburtsdatum: ");
         when(pdfConfig.getAdditionalInfoDescriptionText()).thenReturn("Zusätzliche Informationen: ");
 
-        List<String> pocInformation = new ArrayList();
-        pocInformation.add("PoC Unittest");
-        pocInformation.add("Unittest Way 15");
-        pocInformation.add("10101 Unittest City");
-        pocInformation.add("Call: 0123-7890-0");
+
         QuickTestArchive quicktest = getQuickTest();
-        String user = "Mr. Unittest";
-        ByteArrayOutputStream file1 = pdfGenerator.generatePdf(pocInformation, quicktest, user);
+        ByteArrayOutputStream file1 = pdfGenerator.generatePdf(quicktest);
 
         PDDocument pdfDocument = PDDocument.load(file1.toByteArray());
         try {

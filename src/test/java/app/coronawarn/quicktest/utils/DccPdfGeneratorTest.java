@@ -101,9 +101,10 @@ class DccPdfGeneratorTest {
           "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
           "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
           "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D";
+        quicktest.setDcc(dcc);
 
         ByteArrayOutputStream pdf = createFirstPagePdf();
-        ByteArrayOutputStream file = pdfGenerator.appendCertificatePage(pdf.toByteArray(), quicktest, dcc);
+        ByteArrayOutputStream file = pdfGenerator.appendCertificatePage(pdf.toByteArray(), quicktest);
 
         PDDocument pdfDocument = PDDocument.load(file.toByteArray());
         try {

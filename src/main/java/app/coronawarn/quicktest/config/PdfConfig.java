@@ -32,15 +32,24 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties("pdf")
 public class PdfConfig {
     private String signatureText = "Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift.";
+    private String signatureTextEn = "This letter was created automatically and is valid without a signature.";
     private String positiveInstructionText = "Ihr Antigen-Schnelltests ist positiv ausgefallen, begeben Sie sich "
       + "bitte unverzüglich in die häusliche Quarantäne und informieren Sie Hausstandsangehörige und "
       + "weitere nahe Kontaktpersonen. Kontaktieren Sie umgehend Ihren Hausarzt oder die Leitstelle des "
       + "Ärztlichen Bereitschaftsdienstes unter der Nummern 116117 für weitere Verhaltensregeln und zur nun"
       + " benötigten Durchführung eines PCR-Tests. ";
+    private String positiveInstructionTextEn = "Your Antigen-Rapidtest is positive. Please enter quarantine "
+      + "immediately and inform household members as well as further close contact persons. Contact your family "
+      + "doctor or the Ärtzlicher Bereitschaftsdienst (phone 116117) as soon as possible for further instructions and "
+      + "for acquiring the necessary PCR test. ";
     private String negativeInstructionText = "Bitte beachten Sie, dass ein negatives Ergebnis eine mögliche "
       + "Infektion nicht vollständig ausschließen kann und lediglich eine Momentaufnahme darstellt.";
+    private String negativeInstructionTextEn = "Please note, that a negative test result can not exclude an infection "
+      + "completely and represents only a snapshot.";
     private String testBrandNameDescriptionText = "Handelsname: ";
+    private String testBrandNameDescriptionTextEn = "Brand name: ";
     private String tradeNameEmptyText = "nicht angegeben";
+    private String tradeNameEmptyTextEn = "not available";
     private String testBrandIdDescriptionText = "Test-ID: ";
     private String quickTestHeadlineText = "Corona-Antigen-Schnelltest";
     private String authorPdfPropertiesText = "Schnelltestportal";
@@ -48,22 +57,38 @@ public class PdfConfig {
     private String personPhoneDescriptionText = "Tel.: ";
     private String logoPath = "logo.png";
     private String quickTestOfDateText = "Schnelltestergebnis vom ";
+    private String quickTestOfDateTextEn = "Test result from ";
     private String personEmailDescriptionText = "E-mail: ";
     private String testResultDescriptionText = "Testergebnis: ";
+    private String testResultDescriptionTextEn = "Test result: ";
     private String testResultPendingText = "ausstehend";
+    private String testResultPendingTextEn = "pending";
     private String testResultNegativeText = "negativ";
+    private String testResultNegativeTextEn = "not detected";
     private String testResultPositiveText = "positiv";
+    private String testResultPositiveTextEn = "detected";
     private String testResultDefaultText = "fehlgeschlagen";
+    private String testResultDefaultTextEn = "failed";
     private String executedByDescriptionText = "Durchgeführt: ";
+    private String executedByDescriptionTextEn = "Carried out: ";
     private String furtherDataAboutThePersonText = "Weitere Angaben zu der Person: ";
+    private String furtherDataAboutThePersonTextEn = "Further data about the person: ";
     private String genderDescriptionText = "Geschlecht: ";
+    private String genderDescriptionTextEn = "Sex: ";
     private String maleText = "männlich";
+    private String maleTextEn = "male";
     private String femaleText = "weiblich";
+    private String femaleTextEn = "female";
     private String diverseText = "divers";
+    private String diverseTextEn = "diverse";
     private String birthDateDescriptionText = "Geburtstag: ";
+    private String birthDateDescriptionTextEn = "Birthday: ";
     private String furtherDataAboutTestDescriptionText = "Weitere Angaben zum Test: ";
+    private String furtherDataAboutTestDescriptionTextEn = "Further data of the test: ";
     private String executedFromDescriptionText = "Durchgeführt durch: ";
+    private String executedFromDescriptionTextEn = "Carried out by: ";
     private String additionalInfoDescriptionText = "Zusätzliche Informationen: ";
+    private String additionalInfoDescriptionTextEn = "Additional Information: ";
 
     private String certFlagPath = "pdf/eu_flag.png";
     private String certCertlogoPath = "pdf/certificate.png";

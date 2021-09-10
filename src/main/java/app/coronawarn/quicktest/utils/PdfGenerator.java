@@ -63,6 +63,7 @@ public class PdfGenerator {
     private final int negative = 6;
     private final int positive = 7;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss");
+    private final DateTimeFormatter formatterEn = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final int offsetX = 70;
@@ -84,7 +85,13 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
         PDRectangle rect1 = page1.getMediaBox();
-        write(document, cos, rect1, quickTestArchive);
+        write(document, cos, rect1, quickTestArchive, false);
+
+        PDPage page2 = new PDPage(PDRectangle.A4);
+        document.addPage(page2);
+        page2.setMediaBox(PDRectangle.A4);
+        PDPageContentStream cos2 = new PDPageContentStream(document, page2);
+        write(document, cos2, page2.getMediaBox(), quickTestArchive, true);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -110,14 +117,14 @@ public class PdfGenerator {
         pdd.setCreationDate(gcal);
     }
 
-    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest)
-      throws IOException {
+    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest,
+                       boolean english) throws IOException {
         generatePoCAddress(cos, rect, quicktest);
         addCoronaAppIcon(document, cos, rect);
         generatePersonAddress(cos, rect, quicktest);
-        generateSubject(cos, rect, quicktest);
-        generateText(cos, rect, quicktest);
-        generateEnd(cos, rect);
+        generateSubject(cos, rect, quicktest, english);
+        generateText(cos, rect, quicktest, english);
+        generateEnd(cos, rect, english);
         cos.close();
     }
 
@@ -195,39 +202,62 @@ public class PdfGenerator {
         cos.newLine();
     }
 
-    private void generateSubject(PDPageContentStream cos, PDRectangle rect,
-                                 QuickTestArchive quicktest) throws IOException {
+    private void generateSubject(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, boolean english)
+      throws IOException {
         cos.beginText();
         cos.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 340f);
-        cos.showText(pdfConfig.getQuickTestOfDateText() + getFormattedTime(quicktest.getUpdatedAt(), formatter));
+        if (english) {
+            cos.showText(pdfConfig.getQuickTestOfDateTextEn() + getFormattedTime(quicktest.getUpdatedAt(),
+              formatterEn));
+        } else {
+            cos.showText(pdfConfig.getQuickTestOfDateText() + getFormattedTime(quicktest.getUpdatedAt(), formatter));
+        }
         cos.newLine();
         cos.endText();
 
     }
 
-    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest)
+    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, String user,
+                              boolean english)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 380);
+
         switch (quicktest.getTestResult() != null ? quicktest.getTestResult() : -1) {
           case pending:
-              cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultPendingText());
+              if (english) {
+                  cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultPendingTextEn());
+              } else {
+                  cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultPendingText());
+              }
               cos.newLine();
               break;
           case negative:
-              cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultNegativeText());
+              if (english) {
+                  cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultNegativeTextEn());
+              } else {
+                  cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultNegativeText());
+              }
               cos.newLine();
               break;
           case positive:
-              cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultPositiveText());
+              if (english) {
+                  cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultPositiveTextEn());
+              } else {
+                  cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultPositiveText());
+              }
               cos.newLine();
               break;
           default:
-              cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultDefaultText());
+              if (english) {
+                  cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultDefaultTextEn());
+              } else {
+                  cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultDefaultText());
+              }
               cos.newLine();
               break;
         }
@@ -236,40 +266,66 @@ public class PdfGenerator {
         if (quicktest.getUpdatedAt() != null) {
             dateAndTimeInGermany =
               ZonedDateTime.of(quicktest.getUpdatedAt(), ZoneId.of("UTC"))
-                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(formatter);
+                .withZoneSameInstant(ZoneId.of("Europe/Berlin")).format(english ? formatterEn : formatter);
         } else {
             dateAndTimeInGermany = "-";
         }
-        cos.showText(pdfConfig.getExecutedByDescriptionText() + dateAndTimeInGermany);
+        if (english) {
+            cos.showText(pdfConfig.getExecutedByDescriptionTextEn() + dateAndTimeInGermany);
+        } else {
+            cos.showText(pdfConfig.getExecutedByDescriptionText() + dateAndTimeInGermany);
+        }
         cos.newLine();
         cos.newLine();
-        cos.showText(pdfConfig.getFurtherDataAboutThePersonText());
+        if (english) {
+            cos.showText(pdfConfig.getFurtherDataAboutThePersonTextEn());
+        } else {
+            cos.showText(pdfConfig.getFurtherDataAboutThePersonText());
+        }
         cos.newLine();
 
         switch (quicktest.getSex() != null ? quicktest.getSex() : DIVERSE) {
           case MALE:
-              cos.showText(pdfConfig.getGenderDescriptionText() + pdfConfig.getMaleText());
+              if (english) {
+                  cos.showText(pdfConfig.getGenderDescriptionTextEn() + pdfConfig.getMaleTextEn());
+              } else {
+                  cos.showText(pdfConfig.getGenderDescriptionText()  + pdfConfig.getMaleText());
+              }
               cos.newLine();
               break;
           case FEMALE:
-              cos.showText(pdfConfig.getGenderDescriptionText() + pdfConfig.getFemaleText());
+              if (english) {
+                  cos.showText(pdfConfig.getGenderDescriptionTextEn() + pdfConfig.getFemaleTextEn());
+              } else {
+                  cos.showText(pdfConfig.getGenderDescriptionText()  + pdfConfig.getFemaleText());
+              }
               cos.newLine();
               break;
           default:
-              cos.showText(pdfConfig.getGenderDescriptionText() + pdfConfig.getDiverseText());
+              if (english) {
+                  cos.showText(pdfConfig.getGenderDescriptionTextEn() + pdfConfig.getDiverseTextEn());
+              } else {
+                  cos.showText(pdfConfig.getGenderDescriptionText() + pdfConfig.getDiverseText());
+              }
               cos.newLine();
               break;
         }
+        String birthdayDescText =
+          english ? pdfConfig.getBirthDateDescriptionTextEn() : pdfConfig.getBirthDateDescriptionText();
         if (quicktest.getBirthday() != null) {
             LocalDate datetime = LocalDate.parse(quicktest.getBirthday(), dtf);
-            cos.showText(pdfConfig.getBirthDateDescriptionText() + datetime.format(formatterDate));
+            cos.showText(birthdayDescText + datetime.format(english ? dtf : formatterDate));
         } else {
-            cos.showText(pdfConfig.getBirthDateDescriptionText() + "-");
+            cos.showText(birthdayDescText + "-");
         }
         cos.newLine();
         if (quicktest.getAdditionalInfo() != null) {
             cos.newLine();
-            cos.showText(pdfConfig.getAdditionalInfoDescriptionText());
+            if (english) {
+                cos.showText(pdfConfig.getAdditionalInfoDescriptionTextEn());
+            } else {
+                cos.showText(pdfConfig.getAdditionalInfoDescriptionText());
+            }
             cos.newLine();
             for (String line : splitStringToParagraph(quicktest.getAdditionalInfo(), 80)) {
                 cos.showText(line);
@@ -278,16 +334,32 @@ public class PdfGenerator {
         }
         cos.newLine();
         cos.newLine();
-        cos.showText(pdfConfig.getFurtherDataAboutTestDescriptionText());
+        if (english) {
+            cos.showText(pdfConfig.getFurtherDataAboutTestDescriptionTextEn());
+        } else {
+            cos.showText(pdfConfig.getFurtherDataAboutTestDescriptionText());
+        }
         cos.newLine();
-        cos.showText(pdfConfig.getExecutedFromDescriptionText() + quicktest.getPocUser());
+        if (english) {
+            cos.showText(pdfConfig.getExecutedFromDescriptionTextEn() + quicktest.getPocUser());
+        } else {
+            cos.showText(pdfConfig.getExecutedFromDescriptionText() + quicktest.getPocUser());
+        }
         cos.newLine();
         cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
         cos.newLine();
         if (quicktest.getTestBrandName() == null) {
-            cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
+            if (english) {
+                cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn() + pdfConfig.getTradeNameEmptyTextEn());
+            } else {
+                cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
+            }
         } else {
-            cos.showText(pdfConfig.getTestBrandNameDescriptionText());
+            if (english) {
+                cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn());
+            } else {
+                cos.showText(pdfConfig.getTestBrandNameDescriptionText());
+            }
             for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
                 cos.showText(line);
                 cos.newLine();
@@ -295,9 +367,9 @@ public class PdfGenerator {
         }
         String useText = "";
         if (quicktest.getTestResult() != null && quicktest.getTestResult() == positive) {
-            useText = pdfConfig.getPositiveInstructionText();
+            useText = english ? pdfConfig.getPositiveInstructionTextEn() : pdfConfig.getPositiveInstructionText();
         } else if (quicktest.getTestResult() != null && quicktest.getTestResult() == negative) {
-            useText = pdfConfig.getNegativeInstructionText();
+            useText = english ? pdfConfig.getNegativeInstructionTextEn() : pdfConfig.getNegativeInstructionText();
         }
         cos.newLine();
         cos.newLine();
@@ -335,12 +407,16 @@ public class PdfGenerator {
 
     }
 
-    private void generateEnd(PDPageContentStream cos, PDRectangle rect) throws IOException {
+    private void generateEnd(PDPageContentStream cos, PDRectangle rect, boolean english) throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 800);
-        cos.showText(pdfConfig.getSignatureText());
+        if (english) {
+            cos.showText(pdfConfig.getSignatureTextEn());
+        } else {
+            cos.showText(pdfConfig.getSignatureText());
+        }
         cos.newLine();
         cos.endText();
 

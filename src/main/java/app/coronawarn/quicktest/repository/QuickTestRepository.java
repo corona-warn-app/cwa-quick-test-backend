@@ -59,4 +59,6 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
     @Modifying
     void deleteByCreatedAtBefore(@Param("time") LocalDateTime time);
 
+    int countAllByTenantIdIsAndPocIdIsIn(String tenantId, List<String> pocIds);
+
 }

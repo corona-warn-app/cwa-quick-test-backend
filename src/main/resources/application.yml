@@ -105,7 +105,7 @@ auditlogs:
 
 pdf:
   signatureText: "Dieses Schreiben wurde maschinell erstellt und bedarf keiner Unterschrift."
-  positiveInstructionText: "Ihr Antigen-Schnelltests ist positiv ausgefallen, begeben Sie sich bitte unverzüglich in die häusliche Quarantäne und informieren Sie Hausstandsangehörige und weitere nahe Kontaktpersonen. Kontaktieren Sie umgehend Ihren Hausarzt oder die Leitstelle des Ärztlichen Bereitschaftsdienstes unter der Nummern 116117 für weitere Verhaltensregeln und zur nun benötigten Durchführung eines PCR-Tests."
+  positiveInstructionText: "Sie sind mit hoher Wahrscheinlichkeit mit dem SARS-CoV-2 Virus infiziert. Begeben Sie sich bitte unverzüglich in die häusliche Quarantäne und informieren Sie Hausstandsangehörige und weitere nahe Kontaktpersonen. Kontaktieren Sie umgehend Ihren Hausarzt oder die Leitstelle des Ärztlichen Bereitschaftsdienstes unter der Nummern 116117 für weitere Verhaltensregeln und zur nun benötigten Durchführung eines PCR-Tests."
   negativeInstructionText: "Bitte beachten Sie, dass ein negatives Ergebnis eine mögliche Infektion nicht vollständig ausschließen kann und lediglich eine Momentaufnahme darstellt."
   testBrandNameDescriptionText: "Handelsname: "
   tradeNameEmptyText: "nicht angegeben"
@@ -119,11 +119,11 @@ pdf:
   personEmailDescriptionText: "E-mail: "
   testResultDescriptionText: "Testergebnis: "
   testResultPendingText: "ausstehend"
-  testResultNegativeText: "negativ"
+  testResultNegativeText: "negativ (Zum Zeitpunkt des Tests wurde keine Infektion mit dem SARS-CoV-2 Virus festgestellt)."
   testResultPositiveText: "positiv"
   testResultDefaultText: "fehlgeschlagen"
   executedByDescriptionText: "Durchgeführt: "
-  furtherDataAboutThePersonText: "Weitere Angaben zu der Person: "
+  furtherDataAboutThePersonText: "Weitere Angaben zur Person: "
   genderDescriptionText: "Geschlecht: "
   maleText: "männlich"
   femaleText: "weiblich"

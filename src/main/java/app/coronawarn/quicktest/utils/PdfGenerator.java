@@ -244,10 +244,14 @@ public class PdfGenerator {
           case negative:
               if (english) {
                   cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultNegativeTextEn());
+                  cos.newLine();
               } else {
-                  cos.showText(pdfConfig.getTestResultDescriptionText() + pdfConfig.getTestResultNegativeText());
+                  cos.showText(pdfConfig.getTestResultDescriptionText());
+                  for (String line : splitStringToParagraph(pdfConfig.getTestResultNegativeText(), 70)) {
+                      cos.showText(line);
+                      cos.newLine();
+                  }
               }
-              cos.newLine();
               break;
           case positive:
               if (english) {

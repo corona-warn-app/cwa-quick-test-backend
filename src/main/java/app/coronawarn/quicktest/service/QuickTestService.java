@@ -398,4 +398,15 @@ public class QuickTestService {
         // Replace with whitespace
         return input != null ? input.replaceAll("[\\uFF00-\\uFFEF]", " ") : null;
     }
+
+    /**
+     * Checks whether pending Quick Tests for a given Tenant ID and a given List of Poc Ids exists.
+     *
+     * @param tenantId ID of the tenant
+     * @param pocIds List with the Poc IDs
+     * @return true is at least one test exists, false otherwise.
+     */
+    public boolean pendingTestsForTenantAndPocsExists(String tenantId, List<String> pocIds) {
+        return quickTestRepository.countAllByTenantIdIsAndPocIdIsIn(tenantId, pocIds) > 0;
+    }
 }

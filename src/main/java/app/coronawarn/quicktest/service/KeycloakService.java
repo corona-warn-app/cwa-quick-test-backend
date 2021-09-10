@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -62,6 +63,8 @@ public class KeycloakService {
     private final Keycloak keycloak;
 
     private final KeycloakAdminProperties config;
+
+    private final QuickTestService quickTestService;
 
     private static final String POC_ID_ATTRIBUTE = "poc_id";
     private static final String POC_DETAILS_ATTRIBUTE = "poc_details";
@@ -332,7 +335,22 @@ public class KeycloakService {
      * @param groupId ID opf the group
      * @throws KeycloakServiceException if something went wrong.
      */
-    public void deleteGroup(String groupId) throws KeycloakServiceException {
+    public void deleteGroup(String rootGroupName, String groupId) throws KeycloakServiceException {
+
+        GroupRepresentation group = realm().groups().group(groupId).toRepresentation();
+
+        List<String> subGroupPocIds = getSubGroupIds(group).stream()
+            .map(this::getSubGroupDetails)
+            .filter(Objects::nonNull)
+            .map(KeycloakGroupDetails::getPocId)
+            .filter(Objects::nonNull)
+            .collect(Collectors.toList());
+
+        if (quickTestService.pendingTestsForTenantAndPocsExists(rootGroupName, subGroupPocIds)) {
+            log.info("User tried to delete a group with pending quick tests");
+            throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_ALLOWED);
+        }
+
         try {
             realm().groups().group(groupId).remove();
             log.info("Deleted group with id {}", groupId);
@@ -343,6 +361,21 @@ public class KeycloakService {
             log.error("Failed to delete group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
             throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
         }
+    }
+
+    private List<String> getSubGroupIds(GroupRepresentation group) {
+        List<String> groupIds = new ArrayList<>();
+        getSubGroupIdsRecursion(groupIds, group);
+
+        return groupIds;
+
+    }
+
+    private void getSubGroupIdsRecursion(List<String> ids, GroupRepresentation group) {
+        ids.add(group.getId());
+
+        group.getSubGroups()
+            .forEach(g -> getSubGroupIdsRecursion(ids, g));
     }
 
     /**
@@ -498,6 +531,7 @@ public class KeycloakService {
 
     /**
      * get group by name.
+     *
      * @param name the name of the group
      * @return the representation of the group.
      */
@@ -505,9 +539,9 @@ public class KeycloakService {
         String path = name.startsWith("/") ? name : "/" + name;
         log.debug("Getting group: [{}]", path);
         return realm().groups().groups(name, 0, Integer.MAX_VALUE)
-          .stream()
-          .filter(group -> group.getPath().equals(path))
-          .findFirst();
+            .stream()
+            .filter(group -> group.getPath().equals(path))
+            .findFirst();
     }
 
     /**
@@ -602,7 +636,8 @@ public class KeycloakService {
             ALREADY_EXISTS,
             NOT_FOUND,
             SERVER_ERROR,
-            BAD_REQUEST
+            BAD_REQUEST,
+            NOT_ALLOWED
         }
     }
 

@@ -377,10 +377,13 @@ public class GroupManagementController {
         utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {
-            keycloakService.deleteGroup(id);
+            keycloakService.deleteGroup(userRootGroup.getName(), id);
         } catch (KeycloakService.KeycloakServiceException e) {
             if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
+            } else if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_ALLOWED) {
+                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED,
+                    "Group or one of its subgroups has assigned pending quick tests");
             } else {
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete group");
             }

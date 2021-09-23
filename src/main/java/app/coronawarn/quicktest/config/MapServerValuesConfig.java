@@ -18,34 +18,26 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model.keycloak;
+package app.coronawarn.quicktest.config;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.List;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Schema(
-        description = "Request/Response model for group details."
-)
-@Data
-public class KeycloakGroupDetails {
+@Getter
+@Setter
+@Configuration
+@ConfigurationProperties("mapserver")
+public class MapServerValuesConfig {
 
-    @Schema(description = "Ignored when used for updating the group details")
-    private String id;
-
-    @NotEmpty
-    @Size(max = 50)
-    private String name;
-
-    @Size(max = 300)
-    private String pocDetails;
-
-    @Size(max = 50)
-    private String pocId;
-
-    private Boolean searchPortalConsent;
+    private boolean enabled;
+    private boolean oneWay;
+    private boolean twoWay;
+    private boolean hostnameVerify;
+    private String keyStorePath;
+    private char[] keyStorePassword;
+    private String trustStorePath;
+    private char[] trustStorePassword;
 
 }

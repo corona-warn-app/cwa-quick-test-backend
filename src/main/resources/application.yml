@@ -58,6 +58,14 @@ keycloak-admin:
   credentials:
     secret:
 
+keycloak-map:
+  auth-server-url: http://localhost:8080
+  realm: dummy
+  resource: dummy
+  credentials:
+    username: dummy
+    password: dummy
+
 server:
   port: 8093
   error:
@@ -86,6 +94,16 @@ quicktest:
     environment-name: local
 
 testresultserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePath: classpath:keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: classpath:truststore.jks
+  trustStorePassword: changeit
+
+mapserver:
   enabled: false
   oneWay: false
   twoWay: false
@@ -141,6 +159,9 @@ dccserver:
   keyStorePassword: changeit
   trustStorePath: classpath:truststore.jks
   trustStorePassword: changeit
+
+quicktest-map-server:
+  url: http://localhost:9999
 
 cwa-dcc-server:
   url: http://localhost:8080

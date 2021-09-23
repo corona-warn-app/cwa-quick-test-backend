@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.3</version>
+        <version>2.5.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>app.coronawarn</groupId>
@@ -18,7 +18,7 @@
     </organization>
     <properties>
         <java.version>11</java.version>
-        <spring-cloud.version>2020.0.1</spring-cloud.version>
+        <spring-cloud.version>2020.0.4</spring-cloud.version>
         <keycloak.version>14.0.0</keycloak.version>
         <springdoc.version>1.5.9</springdoc.version>
         <liquibase.version>4.4.1</liquibase.version>

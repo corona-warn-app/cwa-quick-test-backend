@@ -42,7 +42,6 @@ public class QuicktestMapClientConfig {
         }
         return new ApacheHttpClient(HttpClientBuilder.create()
                 .setSSLHostnameVerifier(getSslHostnameVerifier())
-                .setProxy(new HttpHost("sia-lb.telekom.de",8080))
                 .build());
     }
 

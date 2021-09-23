@@ -60,6 +60,13 @@ keycloak-admin:
   resource: ${KEYCLOAK_ADMIN_RESOURCE}
   credentials:
     secret: ${KEYCLOAK_ADMIN_SECRET}
+keycloak-map:
+  auth-server-url: ${KEYCLOAK_MAP_AUTH-SERVER-URL}
+  realm: ${KEYCLOAK_MAP_REALM}
+  resource: ${KEYCLOAK_MAP_RESOURCE}
+  credentials:
+    username: ${KEYCLOAK_MAP_USERNAME}
+    password: ${KEYCLOAK_MAP_PASSWORD}
 
 server:
   ssl:
@@ -86,6 +93,17 @@ testresultserver:
   hostnameVerify: false
   keyStorePassword: ${QUICK_TEST_KEYSTORE_TRS_PASSWORD}
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
+
+mapserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePassword: ${QUICK_TEST_KEYSTORE_MAP_PASSWORD}
+  trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
+
+quicktest-map-server:
+  url: ${QUICK_TEST_MAP_SERVER_URL}
 
 dccserver:
   enabled: false

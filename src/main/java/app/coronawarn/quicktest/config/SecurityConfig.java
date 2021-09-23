@@ -51,7 +51,7 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     public static final String ROLE_TENANT_COUNTER = "ROLE_c19_quick_tenant_test_counter";
 
     private static final String API_ROUTE = "/api/**";
-    private static final String CONFIG_ROUTE = "/api/config/*.json";
+    private static final String CONFIG_ROUTE = "/api/config/*";
     private static final String SAMESITE_LAX = "Lax";
     private static final String OAUTH_TOKEN_REQUEST_STATE_COOKIE = "OAuth_Token_Request_State";
 

@@ -8,11 +8,9 @@ import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.client.Client;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.keycloak.admin.client.Config;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.token.TokenManager;
 import org.keycloak.representations.AccessTokenResponse;
@@ -21,6 +19,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.Assert;
 
 @Slf4j
 @SpringBootTest
@@ -56,14 +55,15 @@ public class MapEntryServiceTest {
 
     @Test
     void testCreateMapEntry() throws Exception {
-        when(mapClient.createMapEntry(anyString(),any())).thenReturn(response);
-        mapEntryService.createMapEntry("ref", "address", "name");
+        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
+        mapEntryService.createOrUpdateMapEntry("ref", "address", "name");
     }
 
     @Test
     void testUpdateMapEntry() throws Exception {
-        when(mapClient.updateMapEntry(anyString(),any())).thenReturn(response);
-        mapEntryService.updateMapEntry("ref", "addressNew", "name");
+        response.getBody().get(0).setAddress("addressNew");
+        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
+        mapEntryService.createOrUpdateMapEntry("ref", "addressNew", "name");
     }
 
     @Test

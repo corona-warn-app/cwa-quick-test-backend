@@ -488,7 +488,7 @@ public class KeycloakService {
         try {
             groupResource.update(group);
             if (addMapEntry) {
-                mapEntryService.updateMapEntry(group.getId(), pocDetails,name);
+                mapEntryService.createOrUpdateMapEntry(group.getId(), pocDetails,name);
             }
             log.info("updated group");
         } catch (BadRequestException e) {
@@ -532,7 +532,7 @@ public class KeycloakService {
             newGroup.setAttributes(getGroupAttributes(pocDetails, newGroup.getId()));
             realm().groups().group(newGroup.getId()).update(newGroup);
             if (addMapEntry) {
-                mapEntryService.createMapEntry(newGroup.getId(), pocDetails, name);
+                mapEntryService.createOrUpdateMapEntry(newGroup.getId(), pocDetails, name);
                 log.info("created mapEntry for Group");
             }
         } catch (BadRequestException e) {

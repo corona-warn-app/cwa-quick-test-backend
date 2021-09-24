@@ -466,14 +466,12 @@ public class KeycloakService {
     /**
      * Updates details of a Group.
      *
-     * @param id         ID of the group to be updated.
-     * @param name       New name
-     * @param pocDetails new POC Details
+     * @param details          The KeycloakGroupDetails object
      */
-    public void updateGroup(String id, String name, String pocDetails,Boolean addMapEntry)
+    public void updateGroup(KeycloakGroupDetails details)
             throws KeycloakServiceException {
-        log.info("Updating group with id {}", id);
-        GroupResource groupResource = realm().groups().group(id);
+        log.info("Updating group with id {}", details.getId());
+        GroupResource groupResource = realm().groups().group(details.getId());
         GroupRepresentation group;
         try {
             group = groupResource.toRepresentation();
@@ -481,14 +479,15 @@ public class KeycloakService {
             throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
         }
 
-        group.setName(name);
+        group.setName(details.getName());
         // do not update POC ID
-        group.setAttributes(getGroupAttributes(pocDetails, getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
+        group.setAttributes(getGroupAttributes(details.getPocDetails()
+                , getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
 
         try {
             groupResource.update(group);
-            if (addMapEntry) {
-                mapEntryService.createOrUpdateMapEntry(group.getId(), pocDetails,name);
+            if (details.getSearchPortalConsent()) {
+                mapEntryService.createOrUpdateMapEntry(details);
             }
             log.info("updated group");
         } catch (BadRequestException e) {
@@ -508,16 +507,13 @@ public class KeycloakService {
     /**
      * Create a new subgroup.
      *
-     * @param name          Name of the new group
-     * @param pocDetails    POC Details of the new group
-     * @param parent        ID of the parent group
-     * @param addMapEntry   If an Enrty should be created for the Suchportal
+     * @param details          The KeycloakGroupDetails object
      */
-    public void createGroup(String name, String pocDetails, String parent, Boolean addMapEntry)
+    public void createGroup(KeycloakGroupDetails details, String parent)
         throws KeycloakServiceException {
         log.info("Creating new group");
         GroupRepresentation newGroup = new GroupRepresentation();
-        newGroup.setName(name);
+        newGroup.setName(details.getName());
 
         try {
             Response response = realm().groups().group(parent).subGroup(newGroup);
@@ -526,13 +522,12 @@ public class KeycloakService {
                 throw new KeycloakServiceException(KeycloakServiceException.Reason.ALREADY_EXISTS);
             }
             log.info("created group");
-
             // setting group properties with Group Details and POC ID
             newGroup = response.readEntity(GroupRepresentation.class);
-            newGroup.setAttributes(getGroupAttributes(pocDetails, newGroup.getId()));
+            newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId()));
             realm().groups().group(newGroup.getId()).update(newGroup);
-            if (addMapEntry) {
-                mapEntryService.createOrUpdateMapEntry(newGroup.getId(), pocDetails, name);
+            if (details.getSearchPortalConsent()) {
+                mapEntryService.createOrUpdateMapEntry(details);
                 log.info("created mapEntry for Group");
             }
         } catch (BadRequestException e) {

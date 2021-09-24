@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import app.coronawarn.quicktest.client.QuicktestMapClient;
+import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ public class MapEntryServiceTest {
     ResponseEntity<List< MapEntryResponse >> response;
     MapEntryResponse mapEntryResponse = new MapEntryResponse();
     ResponseEntity<MapEntryResponse> get;
+    private KeycloakGroupDetails groupDetails;
+
     @BeforeEach
     void setupMocks() {
         mapEntryResponse.setAddress("address");
@@ -51,19 +54,24 @@ public class MapEntryServiceTest {
         accessTokenResponse.setToken("");
         when(mapKeycloak.tokenManager()).thenReturn(tokenManager);
         when(mapKeycloak.tokenManager().grantToken()).thenReturn(accessTokenResponse);
+        groupDetails = new KeycloakGroupDetails();
+        groupDetails.setName("newGroupName");
+        groupDetails.setPocDetails("newPocDetails");
+        groupDetails.setPocId("pocId");
+        groupDetails.setSearchPortalConsent(false);
     }
 
     @Test
     void testCreateMapEntry() throws Exception {
         when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
-        mapEntryService.createOrUpdateMapEntry("ref", "address", "name");
+        mapEntryService.createOrUpdateMapEntry(groupDetails);
     }
 
     @Test
     void testUpdateMapEntry() throws Exception {
         response.getBody().get(0).setAddress("addressNew");
         when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
-        mapEntryService.createOrUpdateMapEntry("ref", "addressNew", "name");
+        mapEntryService.createOrUpdateMapEntry(groupDetails);
     }
 
     @Test

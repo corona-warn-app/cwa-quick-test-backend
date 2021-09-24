@@ -6,8 +6,10 @@ import lombok.Data;
 public class MapEntryUploadData {
     String userReference;
     String name;
-    String website;
     String address;
     String[] testKinds;
     Boolean dcc;
+    String website;
+    String[] openingHours;
+    String appointment;
 }

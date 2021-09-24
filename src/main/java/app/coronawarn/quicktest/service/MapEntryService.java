@@ -2,6 +2,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.config.KeycloakMapProperties;
+import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.map.MapCenterList;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import app.coronawarn.quicktest.model.map.MapEntryUploadData;
@@ -23,6 +24,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class MapEntryService {
     private static String[] OFFERED_TESTS = {"Antigen"};
+    private static String APPOINTMENT_REQUIRED = "Required";
+    private static String APPOINTMENT_NOT_REQUIRED = "NotRequired";
 
     private final QuicktestMapClient quicktestMapClient;
 
@@ -33,13 +36,12 @@ public class MapEntryService {
     /**
      * create map entry .
      *
-     * @param reference the group id
-     * @param address the address string
+     * @param details the group id
      */
-    public void createOrUpdateMapEntry(String reference, String address,String name) {
+    public void createOrUpdateMapEntry(KeycloakGroupDetails details) {
         MapCenterList mapCenterList = new MapCenterList();
         ArrayList<MapEntryUploadData> centers = new ArrayList<>();
-        centers.add(buildUploadData(address,reference,name));
+        centers.add(buildUploadData(details));
         mapCenterList.setCenters(centers);
         ResponseEntity<List<MapEntryResponse>>  response =
                 quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
@@ -70,13 +72,21 @@ public class MapEntryService {
 
     }
 
-    private MapEntryUploadData buildUploadData(String address, String reference, String name) {
+    private MapEntryUploadData buildUploadData(KeycloakGroupDetails details) {
         MapEntryUploadData mapEntryUploadData = new MapEntryUploadData();
-        mapEntryUploadData.setAddress(address);
-        mapEntryUploadData.setUserReference(reference);
+        mapEntryUploadData.setAddress(details.getPocDetails());
+        mapEntryUploadData.setUserReference(details.getId());
         mapEntryUploadData.setTestKinds(OFFERED_TESTS);
         mapEntryUploadData.setDcc(true);
-        mapEntryUploadData.setName(name);
+        mapEntryUploadData.setName(details.getName());
+        mapEntryUploadData.setWebsite(details.getWebsite());
+        String[] openingHours = {details.getOpeningHours()};
+        mapEntryUploadData.setOpeningHours(openingHours);
+        if ((details.getAppointmentRequired() != null) && (details.getAppointmentRequired())) {
+            mapEntryUploadData.setAppointment(APPOINTMENT_REQUIRED);
+        } else {
+            mapEntryUploadData.setAppointment(APPOINTMENT_NOT_REQUIRED);
+        }
         return mapEntryUploadData;
     }
 

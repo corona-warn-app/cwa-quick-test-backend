@@ -22,7 +22,7 @@ import org.springframework.web.server.ResponseStatusException;
 @Transactional
 @RequiredArgsConstructor
 public class MapEntryService {
-    private static String[] OFFERED_TESTS = {"antigen"};
+    private static String[] OFFERED_TESTS = {"Antigen"};
 
     private final QuicktestMapClient quicktestMapClient;
 

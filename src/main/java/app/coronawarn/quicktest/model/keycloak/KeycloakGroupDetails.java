@@ -48,4 +48,10 @@ public class KeycloakGroupDetails {
 
     private Boolean searchPortalConsent;
 
+    private String website;
+
+    private String openingHours;
+
+    private Boolean appointmentRequired;
+
 }

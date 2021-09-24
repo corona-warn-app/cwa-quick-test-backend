@@ -56,7 +56,7 @@ public class MapEntryService {
      * @return True if MapEntry exists.
      */
     public Boolean doesMapEntryExists(String reference) {
-        try{
+        try {
             ResponseEntity<MapEntryResponse> response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
             if (response.getStatusCode() == HttpStatus.OK) {
                 return true;

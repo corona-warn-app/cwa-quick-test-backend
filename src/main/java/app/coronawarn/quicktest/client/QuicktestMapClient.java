@@ -26,7 +26,7 @@ public interface QuicktestMapClient {
             produces = MediaType.APPLICATION_JSON_VALUE
     )
     ResponseEntity<List<MapEntryResponse>> createOrUpdateMapEntry(@RequestHeader(AUTH_TOKEN) String bearerToken,
-                                                                  @RequestBody @NotNull @Valid MapCenterList mapCenterList);
+                                                             @RequestBody @NotNull @Valid MapCenterList mapCenterList);
 
     @GetMapping(value = "/api/centers/reference/{userReference}",
             produces = MediaType.APPLICATION_JSON_VALUE

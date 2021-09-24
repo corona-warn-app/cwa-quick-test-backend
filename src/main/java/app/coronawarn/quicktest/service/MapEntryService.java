@@ -5,6 +5,7 @@ import app.coronawarn.quicktest.config.KeycloakMapProperties;
 import app.coronawarn.quicktest.model.map.MapCenterList;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import app.coronawarn.quicktest.model.map.MapEntryUploadData;
+import feign.FeignException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -35,31 +36,15 @@ public class MapEntryService {
      * @param reference the group id
      * @param address the address string
      */
-    public void createMapEntry(String reference, String address,String name) {
+    public void createOrUpdateMapEntry(String reference, String address,String name) {
         MapCenterList mapCenterList = new MapCenterList();
         ArrayList<MapEntryUploadData> centers = new ArrayList<>();
         centers.add(buildUploadData(address,reference,name));
         mapCenterList.setCenters(centers);
         ResponseEntity<List<MapEntryResponse>>  response =
-                quicktestMapClient.createMapEntry(getBearerToken(), mapCenterList);
+                quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.error("Failed to add Map Entry response: " + response.getStatusCode());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    /**
-     * updates map entry .
-     *
-     * @param reference the group id
-     * @param address the address string
-     */
-    public void updateMapEntry(String reference, String address, String name) {
-        MapEntryUploadData mapEntryUploadData = buildUploadData(address,reference,name);
-        ResponseEntity<List<MapEntryResponse>>  response =
-                quicktestMapClient.updateMapEntry(getBearerToken(), mapEntryUploadData);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            log.error("Failed to update Map Entry response: " + response.getStatusCode());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -71,10 +56,17 @@ public class MapEntryService {
      * @return True if MapEntry exists.
      */
     public Boolean doesMapEntryExists(String reference) {
-        if (quicktestMapClient.getMapEntry(getBearerToken(), reference).getStatusCode() == HttpStatus.OK) {
-            return true;
+        try{
+            ResponseEntity<MapEntryResponse> response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
+            if (response.getStatusCode() == HttpStatus.OK) {
+                return true;
+            }
+            return false;
+        } catch (FeignException e) {
+            log.debug("Failed to connect to MapService with Code {}", e.status());
+            return false;
         }
-        return false;
+
 
     }
 

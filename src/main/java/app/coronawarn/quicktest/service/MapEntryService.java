@@ -55,21 +55,46 @@ public class MapEntryService {
      * queries Service if MapEntry exists .
      *
      * @param reference the group id
-     * @return True if MapEntry exists.
+     * @return ResponseEntity MapEntryResponse from the MapEntry Service
      */
-    public Boolean doesMapEntryExists(String reference) {
+    public  ResponseEntity<MapEntryResponse> getMapEntry(String reference) {
         try {
             ResponseEntity<MapEntryResponse> response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
             if (response.getStatusCode() == HttpStatus.OK) {
-                return true;
+                return response;
             }
-            return false;
         } catch (FeignException e) {
             log.debug("Failed to connect to MapService with Code {}", e.status());
+        }
+        return (ResponseEntity<MapEntryResponse>) ResponseEntity.notFound();
+    }
+
+    /**
+     * converts Boolean to String for the MapEntryService .
+     *
+     * @param appointmentRequired the Boolean
+     * @return The String value for the Boolean
+     */
+    public String convertAppointmentToString(Boolean appointmentRequired) {
+        if ((appointmentRequired != null) && (appointmentRequired)) {
+            return APPOINTMENT_REQUIRED;
+        } else {
+            return APPOINTMENT_NOT_REQUIRED;
+        }
+    }
+
+    /**
+     * converts Boolean to String for the MapEntryService .
+     *
+     * @param appointmentRequired the String
+     * @return The Boolean value for the supplied String
+     */
+    public Boolean convertAppointmentToBoolean(String appointmentRequired) {
+        if (appointmentRequired.equals(APPOINTMENT_REQUIRED)) {
+            return true;
+        } else {
             return false;
         }
-
-
     }
 
     private MapEntryUploadData buildUploadData(KeycloakGroupDetails details) {
@@ -79,14 +104,11 @@ public class MapEntryService {
         mapEntryUploadData.setTestKinds(OFFERED_TESTS);
         mapEntryUploadData.setDcc(true);
         mapEntryUploadData.setName(details.getName());
+        mapEntryUploadData.setAppointment(convertAppointmentToString(details.getAppointmentRequired()));
         mapEntryUploadData.setWebsite(details.getWebsite());
         String[] openingHours = {details.getOpeningHours()};
         mapEntryUploadData.setOpeningHours(openingHours);
-        if ((details.getAppointmentRequired() != null) && (details.getAppointmentRequired())) {
-            mapEntryUploadData.setAppointment(APPOINTMENT_REQUIRED);
-        } else {
-            mapEntryUploadData.setAppointment(APPOINTMENT_NOT_REQUIRED);
-        }
+
         return mapEntryUploadData;
     }
 

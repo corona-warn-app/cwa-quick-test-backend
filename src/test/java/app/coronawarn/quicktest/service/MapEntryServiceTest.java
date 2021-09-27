@@ -77,6 +77,6 @@ public class MapEntryServiceTest {
     @Test
     void testDoesMapEntryExists() throws Exception {
         when(mapClient.getMapEntry(any(),any())).thenReturn(get);
-        mapEntryService.doesMapEntryExists("ref");
+        mapEntryService.getMapEntry("ref");
     }
 }

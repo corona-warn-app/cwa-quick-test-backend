@@ -202,7 +202,7 @@ public class KeycloakServiceTest {
         mapEntryResponse.setName("name");
         mapEntryResponse.setAddress("addr");
         QuicktestMapClient quicktestMapClient = mock(QuicktestMapClient.class);
-        when(quicktestMapClient.getMapEntry(any(),any())).thenReturn(ResponseEntity.ok(mapEntryResponse));
+        when(quicktestMapClient.getMapEntry(any(),any())).thenReturn(mapEntryResponse);
 
         groupDetails = new KeycloakGroupDetails();
         groupDetails.setId(groupid);
@@ -532,7 +532,7 @@ public class KeycloakServiceTest {
 
     @Test
     void testUpdateSubGroupDetails() {
-        when(mapEntryService.getMapEntry(any())).thenReturn( ResponseEntity.status(404).body(new MapEntryResponse()));
+        when(mapEntryService.getMapEntry(any())).thenReturn(null);
 
         KeycloakGroupDetails groupDetails = keycloakService.getSubGroupDetails(groupid);
 
@@ -617,7 +617,7 @@ public class KeycloakServiceTest {
     @Test
     void testDeleteGroup() throws KeycloakService.KeycloakServiceException {
         when(quickTestServiceMock.pendingTestsForTenantAndPocsExists(any(), anyList())).thenReturn(false);
-        when(mapEntryService.getMapEntry(any())).thenReturn( ResponseEntity.status(404).body(new MapEntryResponse()));
+        when(mapEntryService.getMapEntry(any())).thenReturn(null);
         keycloakService.deleteGroup(rootGroupname, groupid);
         verify(groupResourceMock).remove();
         verify(quickTestServiceMock).pendingTestsForTenantAndPocsExists(rootGroupname, List.of(groupPocId));

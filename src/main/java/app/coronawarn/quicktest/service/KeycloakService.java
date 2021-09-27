@@ -238,17 +238,17 @@ public class KeycloakService {
         groupDetails.setName(group.getName());
         groupDetails.setPocDetails(getFromAttributes(group.getAttributes(), POC_DETAILS_ATTRIBUTE));
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
-        ResponseEntity<MapEntryResponse> mapEntry = mapEntryService.getMapEntry(groupId);
-        if (mapEntry.getStatusCode() == HttpStatus.OK) {
-            MapEntryResponse re = mapEntry.getBody();
-            log.info(re.toString());
+        MapEntryResponse mapEntry = mapEntryService.getMapEntry(groupId);
+        if (mapEntry != null) {
+            log.info(mapEntry.toString());
             groupDetails.setSearchPortalConsent(true);
             groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
-                    re.getAppointment()));
-            if (re.getOpeningHours() != null) {
-                groupDetails.setOpeningHours(re.getOpeningHours().length > 0 ? re.getOpeningHours()[0] : null);
+                    mapEntry.getAppointment()));
+            if (mapEntry.getOpeningHours() != null) {
+                groupDetails.setOpeningHours(
+                        mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours()[0] : null);
             }
-            groupDetails.setWebsite(re.getWebsite());
+            groupDetails.setWebsite(mapEntry.getWebsite());
         } else {
             groupDetails.setSearchPortalConsent(false);
         }

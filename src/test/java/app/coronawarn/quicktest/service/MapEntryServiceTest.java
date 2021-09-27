@@ -35,19 +35,18 @@ public class MapEntryServiceTest {
     @Qualifier(value = "mapKeycloak")
     Keycloak mapKeycloak;
 
-    ResponseEntity<List< MapEntryResponse >> response;
+
     MapEntryResponse mapEntryResponse = new MapEntryResponse();
     ResponseEntity<MapEntryResponse> get;
     private KeycloakGroupDetails groupDetails;
+    List<MapEntryResponse> list = new ArrayList<>();
 
     @BeforeEach
     void setupMocks() {
         mapEntryResponse.setAddress("address");
         mapEntryResponse.setUserReference("ref");
         mapEntryResponse.setName("name");
-        List<MapEntryResponse> list = new ArrayList<>();
         list.add(mapEntryResponse);
-        response = ResponseEntity.ok(list);
         get = ResponseEntity.ok(mapEntryResponse);
         TokenManager tokenManager = mock(TokenManager.class);
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
@@ -63,20 +62,20 @@ public class MapEntryServiceTest {
 
     @Test
     void testCreateMapEntry() throws Exception {
-        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
+        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(list);
         mapEntryService.createOrUpdateMapEntry(groupDetails);
     }
 
     @Test
     void testUpdateMapEntry() throws Exception {
-        response.getBody().get(0).setAddress("addressNew");
-        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
+        list.get(0).setAddress("addressNew");
+        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(list);
         mapEntryService.createOrUpdateMapEntry(groupDetails);
     }
 
     @Test
     void testDoesMapEntryExists() throws Exception {
-        when(mapClient.getMapEntry(any(),any())).thenReturn(get);
+        when(mapClient.getMapEntry(any(),any())).thenReturn(mapEntryResponse);
         mapEntryService.getMapEntry("ref");
     }
 }

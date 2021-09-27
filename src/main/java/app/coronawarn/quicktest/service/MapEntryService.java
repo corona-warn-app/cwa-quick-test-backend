@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,10 +42,10 @@ public class MapEntryService {
         ArrayList<MapEntryUploadData> centers = new ArrayList<>();
         centers.add(buildUploadData(details));
         mapCenterList.setCenters(centers);
-        ResponseEntity<List<MapEntryResponse>>  response =
+        List<MapEntryResponse>  response =
                 quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            log.error("Failed to add Map Entry response: " + response.getStatusCode());
+        if (response.isEmpty()) {
+            log.error("Failed to add Map Entry response: " + response.toString());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -57,10 +56,10 @@ public class MapEntryService {
      * @param reference the group id
      * @return ResponseEntity MapEntryResponse from the MapEntry Service
      */
-    public  ResponseEntity<MapEntryResponse> getMapEntry(String reference) {
+    public  MapEntryResponse getMapEntry(String reference) {
         try {
-            ResponseEntity<MapEntryResponse> response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
-            if (response.getStatusCode() == HttpStatus.OK) {
+            MapEntryResponse response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
+            if (response != null) {
                 log.info(reference);
                 log.info(response.toString());
                 return response;
@@ -68,7 +67,7 @@ public class MapEntryService {
         } catch (FeignException e) {
             log.debug("Failed to connect to MapService with Code {}", e.status());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return null;
     }
 
     /**

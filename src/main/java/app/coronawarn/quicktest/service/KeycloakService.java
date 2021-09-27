@@ -246,7 +246,9 @@ public class KeycloakService {
             groupDetails.setSearchPortalConsent(true);
             groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
                     re.getAppointment()));
-            groupDetails.setOpeningHours(re.getOpeningHours().length > 0 ? re.getOpeningHours()[0] : null);
+            if (re.getOpeningHours() != null) {
+                groupDetails.setOpeningHours(re.getOpeningHours().length > 0 ? re.getOpeningHours()[0] : null);
+            }
             groupDetails.setWebsite(re.getWebsite());
         } else {
             groupDetails.setSearchPortalConsent(false);

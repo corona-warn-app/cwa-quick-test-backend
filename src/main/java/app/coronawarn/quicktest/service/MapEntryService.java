@@ -66,7 +66,7 @@ public class MapEntryService {
         } catch (FeignException e) {
             log.debug("Failed to connect to MapService with Code {}", e.status());
         }
-        return (ResponseEntity<MapEntryResponse>) ResponseEntity.notFound();
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MapEntryResponse());
     }
 
     /**

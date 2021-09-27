@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
+import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -66,6 +67,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Slf4j
 @SpringBootTest(properties = "keycloak-admin.realm=REALM")
@@ -197,7 +199,8 @@ public class KeycloakServiceTest {
 
         //MapEntryService
         mapEntryService = mock(MapEntryService.class);
-        when(mapEntryService.doesMapEntryExists(any())).thenReturn(false);
+        ResponseEntity<MapEntryResponse> getMapEntry = ResponseEntity.ok(new MapEntryResponse());
+        when(mapEntryService.getMapEntry(any())).thenReturn(getMapEntry);
 
         groupDetails = new KeycloakGroupDetails();
         groupDetails.setId(groupid);

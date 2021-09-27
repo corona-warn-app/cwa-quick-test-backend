@@ -27,7 +27,9 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_PREFIX;
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
+import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,6 +54,7 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -236,8 +239,14 @@ public class KeycloakService {
         groupDetails.setName(group.getName());
         groupDetails.setPocDetails(getFromAttributes(group.getAttributes(), POC_DETAILS_ATTRIBUTE));
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
-        if (mapEntryService.doesMapEntryExists(groupId)) {
+        ResponseEntity<MapEntryResponse> mapEntry = mapEntryService.getMapEntry(groupId);
+        if (mapEntry.getStatusCode() == HttpStatus.OK) {
+            MapEntryResponse response = mapEntry.getBody();
             groupDetails.setSearchPortalConsent(true);
+            groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
+                    response.getAppointment()));
+            groupDetails.setOpeningHours(Arrays.stream(response.getOpeningHours()).findFirst().get());
+            groupDetails.setWebsite(response.getWebsite());
         } else {
             groupDetails.setSearchPortalConsent(false);
         }

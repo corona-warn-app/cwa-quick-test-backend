@@ -90,7 +90,7 @@ public class MapEntryService {
      * @return The Boolean value for the supplied String
      */
     public Boolean convertAppointmentToBoolean(String appointmentRequired) {
-        if (appointmentRequired.equals(APPOINTMENT_REQUIRED)) {
+        if ((appointmentRequired != null) && (appointmentRequired.equals(APPOINTMENT_REQUIRED))) {
             return true;
         } else {
             return false;

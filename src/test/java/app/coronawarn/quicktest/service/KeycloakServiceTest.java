@@ -22,22 +22,20 @@ package app.coronawarn.quicktest.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.ResponseEntity.ok;
 
+import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import java.net.DatagramPacket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
@@ -198,9 +196,13 @@ public class KeycloakServiceTest {
         when(realmResourceMock.groups()).thenReturn(groupsResourceMock);
 
         //MapEntryService
-        mapEntryService = mock(MapEntryService.class);
-        ResponseEntity<MapEntryResponse> getMapEntry = ResponseEntity.ok(new MapEntryResponse());
-        when(mapEntryService.getMapEntry(any())).thenReturn(getMapEntry);
+        MapEntryResponse mapEntryResponse = new MapEntryResponse();
+        mapEntryResponse.setAddress("address");
+        mapEntryResponse.setUserReference("ref");
+        mapEntryResponse.setName("name");
+        mapEntryResponse.setAddress("addr");
+        QuicktestMapClient quicktestMapClient = mock(QuicktestMapClient.class);
+        when(quicktestMapClient.getMapEntry(any(),any())).thenReturn(ResponseEntity.ok(mapEntryResponse));
 
         groupDetails = new KeycloakGroupDetails();
         groupDetails.setId(groupid);
@@ -530,6 +532,8 @@ public class KeycloakServiceTest {
 
     @Test
     void testUpdateSubGroupDetails() {
+        when(mapEntryService.getMapEntry(any())).thenReturn( ResponseEntity.status(404).body(new MapEntryResponse()));
+
         KeycloakGroupDetails groupDetails = keycloakService.getSubGroupDetails(groupid);
 
         Assertions.assertEquals(groupid, groupDetails.getId());
@@ -613,6 +617,7 @@ public class KeycloakServiceTest {
     @Test
     void testDeleteGroup() throws KeycloakService.KeycloakServiceException {
         when(quickTestServiceMock.pendingTestsForTenantAndPocsExists(any(), anyList())).thenReturn(false);
+        when(mapEntryService.getMapEntry(any())).thenReturn( ResponseEntity.status(404).body(new MapEntryResponse()));
         keycloakService.deleteGroup(rootGroupname, groupid);
         verify(groupResourceMock).remove();
         verify(quickTestServiceMock).pendingTestsForTenantAndPocsExists(rootGroupname, List.of(groupPocId));

@@ -241,12 +241,12 @@ public class KeycloakService {
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
         ResponseEntity<MapEntryResponse> mapEntry = mapEntryService.getMapEntry(groupId);
         if (mapEntry.getStatusCode() == HttpStatus.OK) {
-            MapEntryResponse response = mapEntry.getBody();
+            MapEntryResponse re = mapEntry.getBody();
             groupDetails.setSearchPortalConsent(true);
             groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
-                    response.getAppointment()));
-            groupDetails.setOpeningHours(Arrays.stream(response.getOpeningHours()).findFirst().get());
-            groupDetails.setWebsite(response.getWebsite());
+                    re.getAppointment()));
+            groupDetails.setOpeningHours(Arrays.stream(re.getOpeningHours()).findFirst().get());
+            groupDetails.setWebsite(re.getWebsite());
         } else {
             groupDetails.setSearchPortalConsent(false);
         }

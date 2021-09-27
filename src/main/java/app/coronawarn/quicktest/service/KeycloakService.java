@@ -242,10 +242,11 @@ public class KeycloakService {
         ResponseEntity<MapEntryResponse> mapEntry = mapEntryService.getMapEntry(groupId);
         if (mapEntry.getStatusCode() == HttpStatus.OK) {
             MapEntryResponse re = mapEntry.getBody();
+            log.info(re.toString());
             groupDetails.setSearchPortalConsent(true);
             groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
                     re.getAppointment()));
-            groupDetails.setOpeningHours(Arrays.stream(re.getOpeningHours()).findFirst().get());
+            groupDetails.setOpeningHours(re.getOpeningHours().length>0?re.getOpeningHours()[0]:null);
             groupDetails.setWebsite(re.getWebsite());
         } else {
             groupDetails.setSearchPortalConsent(false);

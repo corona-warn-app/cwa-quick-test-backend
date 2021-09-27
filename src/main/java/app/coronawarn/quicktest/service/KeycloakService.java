@@ -29,7 +29,6 @@ import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

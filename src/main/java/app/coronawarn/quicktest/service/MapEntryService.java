@@ -61,12 +61,14 @@ public class MapEntryService {
         try {
             ResponseEntity<MapEntryResponse> response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
             if (response.getStatusCode() == HttpStatus.OK) {
+                log.info(reference);
+                log.info(response.toString());
                 return response;
             }
         } catch (FeignException e) {
             log.debug("Failed to connect to MapService with Code {}", e.status());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MapEntryResponse());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
     }
 
     /**

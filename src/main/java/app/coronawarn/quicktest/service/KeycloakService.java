@@ -539,6 +539,7 @@ public class KeycloakService {
             newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId()));
             realm().groups().group(newGroup.getId()).update(newGroup);
             if (details.getSearchPortalConsent()) {
+                details.setId(newGroup.getId());
                 mapEntryService.createOrUpdateMapEntry(details);
                 log.info("created mapEntry for Group");
             }

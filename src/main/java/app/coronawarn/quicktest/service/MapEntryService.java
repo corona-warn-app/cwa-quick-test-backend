@@ -46,7 +46,7 @@ public class MapEntryService {
 
         List<MapEntryResponse>  response = null;
         try {
-            quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
+            response = quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
         } catch (FeignException e) {
             log.error("Failed to connect to Map Portal Service with Message {}", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());

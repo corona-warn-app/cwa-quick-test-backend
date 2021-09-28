@@ -21,11 +21,12 @@
 package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.ArrayList;
-import java.util.List;
+
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 @Schema(
         description = "Request/Response model for group details."
@@ -48,8 +49,11 @@ public class KeycloakGroupDetails {
 
     private Boolean searchPortalConsent;
 
+    @Nullable
+    @Pattern(regexp = "^(http|https)://*", message = "Doesn't begin with http")
     private String website;
 
+    @Size(max = 25)
     private String openingHours;
 
     private Boolean appointmentRequired;

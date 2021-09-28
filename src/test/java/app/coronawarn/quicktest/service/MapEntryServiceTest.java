@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 
 @Slf4j
 @SpringBootTest
@@ -35,19 +35,23 @@ public class MapEntryServiceTest {
     @Qualifier(value = "mapKeycloak")
     Keycloak mapKeycloak;
 
-    ResponseEntity<List< MapEntryResponse >> response;
+
     MapEntryResponse mapEntryResponse = new MapEntryResponse();
+    MapEntrySingleResponse mapEntrySingleResponse = new MapEntrySingleResponse();
     ResponseEntity<MapEntryResponse> get;
     private KeycloakGroupDetails groupDetails;
+    List<MapEntryResponse> list = new ArrayList<>();
 
     @BeforeEach
     void setupMocks() {
         mapEntryResponse.setAddress("address");
         mapEntryResponse.setUserReference("ref");
         mapEntryResponse.setName("name");
-        List<MapEntryResponse> list = new ArrayList<>();
+
+        mapEntrySingleResponse.setAddress("address");
+        mapEntrySingleResponse.setUserReference("ref");
+        mapEntrySingleResponse.setName("name");
         list.add(mapEntryResponse);
-        response = ResponseEntity.ok(list);
         get = ResponseEntity.ok(mapEntryResponse);
         TokenManager tokenManager = mock(TokenManager.class);
         AccessTokenResponse accessTokenResponse = new AccessTokenResponse();
@@ -63,20 +67,20 @@ public class MapEntryServiceTest {
 
     @Test
     void testCreateMapEntry() throws Exception {
-        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
+        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(list);
         mapEntryService.createOrUpdateMapEntry(groupDetails);
     }
 
     @Test
     void testUpdateMapEntry() throws Exception {
-        response.getBody().get(0).setAddress("addressNew");
-        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(response);
+        list.get(0).setAddress("addressNew");
+        when(mapClient.createOrUpdateMapEntry(anyString(),any())).thenReturn(list);
         mapEntryService.createOrUpdateMapEntry(groupDetails);
     }
 
     @Test
     void testDoesMapEntryExists() throws Exception {
-        when(mapClient.getMapEntry(any(),any())).thenReturn(get);
+        when(mapClient.getMapEntry(any(),any())).thenReturn(mapEntrySingleResponse);
         mapEntryService.getMapEntry("ref");
     }
 }

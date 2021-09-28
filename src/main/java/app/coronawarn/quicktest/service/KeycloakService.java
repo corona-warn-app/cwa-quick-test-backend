@@ -28,8 +28,8 @@ import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -239,14 +239,17 @@ public class KeycloakService {
         groupDetails.setName(group.getName());
         groupDetails.setPocDetails(getFromAttributes(group.getAttributes(), POC_DETAILS_ATTRIBUTE));
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
-        ResponseEntity<MapEntryResponse> mapEntry = mapEntryService.getMapEntry(groupId);
-        if (mapEntry.getStatusCode() == HttpStatus.OK) {
-            MapEntryResponse re = mapEntry.getBody();
+        MapEntrySingleResponse mapEntry = mapEntryService.getMapEntry(groupId);
+        if (mapEntry != null) {
+            log.info(mapEntry.toString());
             groupDetails.setSearchPortalConsent(true);
             groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
-                    re.getAppointment()));
-            groupDetails.setOpeningHours(Arrays.stream(re.getOpeningHours()).findFirst().get());
-            groupDetails.setWebsite(re.getWebsite());
+                    mapEntry.getAppointment()));
+            if (mapEntry.getOpeningHours() != null) {
+                groupDetails.setOpeningHours(
+                        mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours()[0] : null);
+            }
+            groupDetails.setWebsite(mapEntry.getWebsite());
         } else {
             groupDetails.setSearchPortalConsent(false);
         }
@@ -536,6 +539,7 @@ public class KeycloakService {
             newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId()));
             realm().groups().group(newGroup.getId()).update(newGroup);
             if (details.getSearchPortalConsent()) {
+                details.setId(newGroup.getId());
                 mapEntryService.createOrUpdateMapEntry(details);
                 log.info("created mapEntry for Group");
             }

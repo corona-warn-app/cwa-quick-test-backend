@@ -5,6 +5,7 @@ import app.coronawarn.quicktest.config.KeycloakMapProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.map.MapCenterList;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import app.coronawarn.quicktest.model.map.MapEntryUploadData;
 import feign.FeignException;
 import java.util.ArrayList;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -43,11 +43,17 @@ public class MapEntryService {
         ArrayList<MapEntryUploadData> centers = new ArrayList<>();
         centers.add(buildUploadData(details));
         mapCenterList.setCenters(centers);
-        ResponseEntity<List<MapEntryResponse>>  response =
-                quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
-        if (response.getStatusCode() != HttpStatus.OK) {
-            log.error("Failed to add Map Entry response: " + response.getStatusCode());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        List<MapEntryResponse>  response = null;
+        try {
+            response = quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
+        } catch (FeignException e) {
+            log.error("Failed to connect to Map Portal Service with Message {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+        if (response.isEmpty()) {
+            log.error("Failed to add Map Entry response: " + response.toString());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Response from MapService is Empty");
         }
     }
 
@@ -57,16 +63,16 @@ public class MapEntryService {
      * @param reference the group id
      * @return ResponseEntity MapEntryResponse from the MapEntry Service
      */
-    public  ResponseEntity<MapEntryResponse> getMapEntry(String reference) {
+    public  MapEntrySingleResponse getMapEntry(String reference) {
         try {
-            ResponseEntity<MapEntryResponse> response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
-            if (response.getStatusCode() == HttpStatus.OK) {
+            MapEntrySingleResponse response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
+            if (response != null) {
                 return response;
             }
         } catch (FeignException e) {
-            log.debug("Failed to connect to MapService with Code {}", e.status());
+            log.debug("Failed to connect to MapService with Code {}", e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new MapEntryResponse());
+        return null;
     }
 
     /**
@@ -90,7 +96,7 @@ public class MapEntryService {
      * @return The Boolean value for the supplied String
      */
     public Boolean convertAppointmentToBoolean(String appointmentRequired) {
-        if (appointmentRequired.equals(APPOINTMENT_REQUIRED)) {
+        if ((appointmentRequired != null) && (appointmentRequired.equals(APPOINTMENT_REQUIRED))) {
             return true;
         } else {
             return false;

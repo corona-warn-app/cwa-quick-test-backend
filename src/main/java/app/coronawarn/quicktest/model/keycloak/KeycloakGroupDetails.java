@@ -49,7 +49,7 @@ public class KeycloakGroupDetails {
     private Boolean searchPortalConsent;
 
     @Nullable
-    @Pattern(regexp = "^(?:http(s)?:\\/\\/)*", message = "Doesn't begin with http")
+    @Pattern(regexp = "^(?:http(s)?:\/\/)*", message = "Doesn't begin with http")
     private String website;
 
     @Size(max = 50)

@@ -43,11 +43,17 @@ public class MapEntryService {
         ArrayList<MapEntryUploadData> centers = new ArrayList<>();
         centers.add(buildUploadData(details));
         mapCenterList.setCenters(centers);
-        List<MapEntryResponse>  response =
-                quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
+
+        List<MapEntryResponse>  response = null;
+        try {
+            quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
+        } catch (FeignException e) {
+            log.error("Failed to connect to Map Portal Service with Message {}", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
         if (response.isEmpty()) {
             log.error("Failed to add Map Entry response: " + response.toString());
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Response from MapService is Empty");
         }
     }
 
@@ -61,12 +67,10 @@ public class MapEntryService {
         try {
             MapEntrySingleResponse response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
             if (response != null) {
-                log.info(reference);
-                log.info(response.toString());
                 return response;
             }
         } catch (FeignException e) {
-            log.debug("Failed to connect to MapService with Code {}", e.status());
+            log.debug("Failed to connect to MapService with Code {}", e.getMessage());
         }
         return null;
     }

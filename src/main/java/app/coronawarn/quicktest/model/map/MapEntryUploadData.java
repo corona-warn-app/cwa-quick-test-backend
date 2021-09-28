@@ -1,8 +1,10 @@
 package app.coronawarn.quicktest.model.map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MapEntryUploadData {
     String userReference;
     String name;

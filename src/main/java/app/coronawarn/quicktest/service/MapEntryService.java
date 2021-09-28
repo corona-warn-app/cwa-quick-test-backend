@@ -5,6 +5,7 @@ import app.coronawarn.quicktest.config.KeycloakMapProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.map.MapCenterList;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import app.coronawarn.quicktest.model.map.MapEntryUploadData;
 import feign.FeignException;
 import java.util.ArrayList;
@@ -56,9 +57,9 @@ public class MapEntryService {
      * @param reference the group id
      * @return ResponseEntity MapEntryResponse from the MapEntry Service
      */
-    public  MapEntryResponse getMapEntry(String reference) {
+    public  MapEntrySingleResponse getMapEntry(String reference) {
         try {
-            MapEntryResponse response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
+            MapEntrySingleResponse response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
             if (response != null) {
                 log.info(reference);
                 log.info(response.toString());

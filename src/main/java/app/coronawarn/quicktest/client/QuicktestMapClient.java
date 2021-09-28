@@ -2,6 +2,7 @@ package app.coronawarn.quicktest.client;
 
 import app.coronawarn.quicktest.model.map.MapCenterList;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -30,6 +31,6 @@ public interface QuicktestMapClient {
     @GetMapping(value = "/api/centers/reference/{userReference}",
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    MapEntryResponse getMapEntry(@RequestHeader(AUTH_TOKEN) String bearerToken,
-                                                 @PathVariable String userReference);
+    MapEntrySingleResponse getMapEntry(@RequestHeader(AUTH_TOKEN) String bearerToken,
+                                                @PathVariable String userReference);
 }

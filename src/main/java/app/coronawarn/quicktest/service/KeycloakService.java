@@ -28,6 +28,7 @@ import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -238,7 +239,7 @@ public class KeycloakService {
         groupDetails.setName(group.getName());
         groupDetails.setPocDetails(getFromAttributes(group.getAttributes(), POC_DETAILS_ATTRIBUTE));
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
-        MapEntryResponse mapEntry = mapEntryService.getMapEntry(groupId);
+        MapEntrySingleResponse mapEntry = mapEntryService.getMapEntry(groupId);
         if (mapEntry != null) {
             log.info(mapEntry.toString());
             groupDetails.setSearchPortalConsent(true);

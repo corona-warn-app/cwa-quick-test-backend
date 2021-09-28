@@ -1,9 +1,8 @@
 package app.coronawarn.quicktest.model.map;
 
 import lombok.Data;
-import lombok.Value;
 
-@Value
+@Data
 public class MapEntryResponse {
     String uuid;
     String name;

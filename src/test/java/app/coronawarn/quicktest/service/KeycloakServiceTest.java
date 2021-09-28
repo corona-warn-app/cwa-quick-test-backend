@@ -29,6 +29,7 @@ import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.net.DatagramPacket;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -201,8 +202,13 @@ public class KeycloakServiceTest {
         mapEntryResponse.setUserReference("ref");
         mapEntryResponse.setName("name");
         mapEntryResponse.setAddress("addr");
+        MapEntrySingleResponse mapEntrySingleResponse = new MapEntrySingleResponse();
+        mapEntrySingleResponse.setAddress("address");
+        mapEntrySingleResponse.setUserReference("ref");
+        mapEntrySingleResponse.setName("name");
+        mapEntrySingleResponse.setAddress("addr");
         QuicktestMapClient quicktestMapClient = mock(QuicktestMapClient.class);
-        when(quicktestMapClient.getMapEntry(any(),any())).thenReturn(mapEntryResponse);
+        when(quicktestMapClient.getMapEntry(any(),any())).thenReturn(mapEntrySingleResponse);
 
         groupDetails = new KeycloakGroupDetails();
         groupDetails.setId(groupid);

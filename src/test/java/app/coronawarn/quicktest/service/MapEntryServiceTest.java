@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.Assert;
 
 @Slf4j
 @SpringBootTest
@@ -37,6 +37,7 @@ public class MapEntryServiceTest {
 
 
     MapEntryResponse mapEntryResponse = new MapEntryResponse();
+    MapEntrySingleResponse mapEntrySingleResponse = new MapEntrySingleResponse();
     ResponseEntity<MapEntryResponse> get;
     private KeycloakGroupDetails groupDetails;
     List<MapEntryResponse> list = new ArrayList<>();
@@ -46,6 +47,10 @@ public class MapEntryServiceTest {
         mapEntryResponse.setAddress("address");
         mapEntryResponse.setUserReference("ref");
         mapEntryResponse.setName("name");
+
+        mapEntrySingleResponse.setAddress("address");
+        mapEntrySingleResponse.setUserReference("ref");
+        mapEntrySingleResponse.setName("name");
         list.add(mapEntryResponse);
         get = ResponseEntity.ok(mapEntryResponse);
         TokenManager tokenManager = mock(TokenManager.class);
@@ -75,7 +80,7 @@ public class MapEntryServiceTest {
 
     @Test
     void testDoesMapEntryExists() throws Exception {
-        when(mapClient.getMapEntry(any(),any())).thenReturn(mapEntryResponse);
+        when(mapClient.getMapEntry(any(),any())).thenReturn(mapEntrySingleResponse);
         mapEntryService.getMapEntry("ref");
     }
 }

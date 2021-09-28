@@ -49,10 +49,10 @@ public class KeycloakGroupDetails {
     private Boolean searchPortalConsent;
 
     @Nullable
-    @Pattern(regexp = "^(http|https):*", message = "Doesn't begin with http")
+    @Pattern(regexp = "^(?:http(s)?:\\/\\/)*", message = "Doesn't begin with http")
     private String website;
 
-    @Size(max = 25)
+    @Size(max = 50)
     private String openingHours;
 
     private Boolean appointmentRequired;

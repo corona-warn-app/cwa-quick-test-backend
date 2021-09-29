@@ -44,7 +44,7 @@ public class MapEntryService {
         centers.add(buildUploadData(details));
         mapCenterList.setCenters(centers);
 
-        List<MapEntryResponse>  response = null;
+        List<MapEntryResponse> response = null;
         try {
             response = quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
         } catch (FeignException e) {
@@ -63,7 +63,7 @@ public class MapEntryService {
      * @param reference the group id
      * @return ResponseEntity MapEntryResponse from the MapEntry Service
      */
-    public  MapEntrySingleResponse getMapEntry(String reference) {
+    public MapEntrySingleResponse getMapEntry(String reference) {
         try {
             MapEntrySingleResponse response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
             if (response != null) {
@@ -100,6 +100,21 @@ public class MapEntryService {
             return true;
         } else {
             return false;
+        }
+    }
+
+    /**
+     * queries Service if MapEntry exists .
+     * Deletes a MapEntry at MapEntryService if an entry exists for given reference.
+     *
+     * @param reference the reference of the map entry (QT Group ID)
+     */
+    public void deleteIfExists(String reference) {
+        MapEntrySingleResponse mapEntry = getMapEntry(reference);
+
+        if (mapEntry != null) {
+            log.info("Deleting Map Entry for Reference = {}, UUID = {}", reference, mapEntry.getUuid());
+            quicktestMapClient.deleteMapEntry(getBearerToken(), mapEntry.getUuid());
         }
     }
 

@@ -27,7 +27,6 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_PREFIX;
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
-import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -54,7 +53,6 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -500,6 +498,8 @@ public class KeycloakService {
             groupResource.update(group);
             if (details.getSearchPortalConsent()) {
                 mapEntryService.createOrUpdateMapEntry(details);
+            } else {
+                mapEntryService.deleteIfExists(group.getId());
             }
             log.info("updated group");
         } catch (BadRequestException e) {

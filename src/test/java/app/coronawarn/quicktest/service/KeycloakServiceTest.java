@@ -196,7 +196,7 @@ public class KeycloakServiceTest {
 
         //MapEntryService
         mapEntryService = mock(MapEntryService.class);
-        when(mapEntryService.doesMapEntryExists(any())).thenReturn(false);
+        when(mapEntryService.getMapEntryUuid(any())).thenReturn(null);
     }
 
     @Test

@@ -2,17 +2,16 @@ package app.coronawarn.quicktest.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.model.map.MapEntryResponse;
 import java.util.ArrayList;
 import java.util.List;
-import javax.ws.rs.client.Client;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.keycloak.admin.client.Config;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.token.TokenManager;
 import org.keycloak.representations.AccessTokenResponse;
@@ -69,6 +68,6 @@ public class MapEntryServiceTest {
     @Test
     void testDoesMapEntryExists() throws Exception {
         when(mapClient.getMapEntry(any(),any())).thenReturn(get);
-        mapEntryService.doesMapEntryExists("ref");
+        mapEntryService.getMapEntryUuid("ref");
     }
 }

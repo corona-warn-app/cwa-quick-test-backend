@@ -164,7 +164,7 @@ public class GroupManagementController {
 
         try {
             keycloakService.createGroup(body.getName(), body.getPocDetails(), userRootGroup.getId(),
-                    body.getSearchPortalConsent());
+                body.getSearchPortalConsent());
         } catch (KeycloakService.KeycloakServiceException e) {
             if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
@@ -213,7 +213,7 @@ public class GroupManagementController {
         utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {
-            keycloakService.updateGroup(id, body.getName(), body.getPocDetails(),body.getSearchPortalConsent());
+            keycloakService.updateGroup(id, body.getName(), body.getPocDetails(), body.getSearchPortalConsent());
         } catch (KeycloakService.KeycloakServiceException e) {
             if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");

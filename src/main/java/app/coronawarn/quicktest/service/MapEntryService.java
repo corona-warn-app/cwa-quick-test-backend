@@ -33,15 +33,15 @@ public class MapEntryService {
      * create map entry .
      *
      * @param reference the group id
-     * @param address the address string
+     * @param address   the address string
      */
-    public void createMapEntry(String reference, String address,String name) {
+    public void createMapEntry(String reference, String address, String name) {
         MapCenterList mapCenterList = new MapCenterList();
         ArrayList<MapEntryUploadData> centers = new ArrayList<>();
-        centers.add(buildUploadData(address,reference,name));
+        centers.add(buildUploadData(address, reference, name));
         mapCenterList.setCenters(centers);
-        ResponseEntity<List<MapEntryResponse>>  response =
-                quicktestMapClient.createMapEntry(getBearerToken(), mapCenterList);
+        ResponseEntity<List<MapEntryResponse>> response =
+            quicktestMapClient.createMapEntry(getBearerToken(), mapCenterList);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.error("Failed to add Map Entry response: " + response.getStatusCode());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -52,12 +52,12 @@ public class MapEntryService {
      * updates map entry .
      *
      * @param reference the group id
-     * @param address the address string
+     * @param address   the address string
      */
     public void updateMapEntry(String reference, String address, String name) {
-        MapEntryUploadData mapEntryUploadData = buildUploadData(address,reference,name);
-        ResponseEntity<List<MapEntryResponse>>  response =
-                quicktestMapClient.updateMapEntry(getBearerToken(), mapEntryUploadData);
+        MapEntryUploadData mapEntryUploadData = buildUploadData(address, reference, name);
+        ResponseEntity<List<MapEntryResponse>> response =
+            quicktestMapClient.updateMapEntry(getBearerToken(), mapEntryUploadData);
         if (response.getStatusCode() != HttpStatus.OK) {
             log.error("Failed to update Map Entry response: " + response.getStatusCode());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -65,17 +65,43 @@ public class MapEntryService {
     }
 
     /**
-     * queries Service if MapEntry exists .
+     * Deletes a MapEntry at MapEntryService if an entry exists for given reference.
+     *
+     * @param reference the reference of the map entry (QT Group ID)
+     */
+    public void deleteIfExists(String reference) {
+        String uuid = getMapEntryUuid(reference);
+
+        if (uuid != null) {
+            log.info("Deleting Map Entry for Reference = {}, UUID = {}", reference, uuid);
+            quicktestMapClient.deleteMapEntry(getBearerToken(), uuid);
+        }
+    }
+
+    /**
+     * Queries Service if MapEntry exists.
      *
      * @param reference the group id
-     * @return True if MapEntry exists.
+     * @return UUID if MapEntry exists.
      */
-    public Boolean doesMapEntryExists(String reference) {
-        if (quicktestMapClient.getMapEntry(getBearerToken(), reference).getStatusCode() == HttpStatus.OK) {
-            return true;
-        }
-        return false;
+    public String getMapEntryUuid(String reference) {
+        ResponseEntity<MapEntryResponse> response;
 
+        try {
+            response = quicktestMapClient.getMapEntry(getBearerToken(), reference);
+        } catch (ResponseStatusException e) {
+            if (e.getStatus() != HttpStatus.NOT_FOUND) {
+                log.error("Failed to check existence of Map Entry");
+            }
+            return null;
+        }
+
+        if (response.getBody() != null) {
+            return response.getBody().getUuid();
+        } else {
+            log.error("Response has no body.");
+            return null;
+        }
     }
 
     private MapEntryUploadData buildUploadData(String address, String reference, String name) {

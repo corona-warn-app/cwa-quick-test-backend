@@ -370,6 +370,7 @@ public class KeycloakService {
 
         try {
             realm().groups().group(groupId).remove();
+            mapEntryService.deleteIfExists(groupId);
             log.info("Deleted group with id {}", groupId);
         } catch (NotFoundException e) {
             log.error("Failed to delete group: NOT FOUND");

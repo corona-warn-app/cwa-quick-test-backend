@@ -371,6 +371,9 @@ public class KeycloakService {
         try {
             realm().groups().group(groupId).remove();
             mapEntryService.deleteIfExists(groupId);
+            for (String subGroupId:subGroupPocIds) {
+                mapEntryService.deleteIfExists(subGroupId);
+            }
             log.info("Deleted group with id {}", groupId);
         } catch (NotFoundException e) {
             log.error("Failed to delete group: NOT FOUND");

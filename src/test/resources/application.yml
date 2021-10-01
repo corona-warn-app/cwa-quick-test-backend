@@ -45,7 +45,13 @@ keycloak-admin:
   resource: dummy
   credentials:
     secret: dummy
-
+keycloak-map:
+  auth-server-url: http://localhost:8080
+  realm: dummy
+  resource: dummy
+  credentials:
+    username: dummy
+    password: dummy
 server:
   port: 8093
 
@@ -66,7 +72,8 @@ quicktest:
 
 cwa-dcc-server:
   url: http://localhost:8080
-
+quicktest-map-server:
+  url: http://localhost:8099
 dcc:
   country: DE
   issuer: RKI

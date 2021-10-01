@@ -22,21 +22,21 @@ package app.coronawarn.quicktest.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
-import static org.mockito.Mockito.clearInvocations;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.http.ResponseEntity.ok;
 
+import app.coronawarn.quicktest.client.QuicktestMapClient;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
+import app.coronawarn.quicktest.model.map.MapEntryResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
+import java.net.DatagramPacket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ClientErrorException;
 import javax.ws.rs.NotFoundException;
@@ -62,19 +62,25 @@ import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @Slf4j
 @SpringBootTest(properties = "keycloak-admin.realm=REALM")
 public class KeycloakServiceTest {
 
     @MockBean
+    @Qualifier(value = "keycloak")
     Keycloak keycloakAdminMock;
 
     @MockBean
     QuickTestService quickTestServiceMock;
+
+    @MockBean
+    MapEntryService mapEntryService;
 
     @Autowired
     KeycloakService keycloakService;
@@ -119,6 +125,7 @@ public class KeycloakServiceTest {
     private RoleResource roleLabResourceMock;
     private RoleRepresentation roleLab;
     private RolesResource rolesResourceMock;
+    private KeycloakGroupDetails groupDetails;
 
     @BeforeEach
     void setupMocks() {
@@ -188,6 +195,27 @@ public class KeycloakServiceTest {
         when(realmResourceMock.users()).thenReturn(usersResourceMock);
         when(realmResourceMock.roles()).thenReturn(rolesResourceMock);
         when(realmResourceMock.groups()).thenReturn(groupsResourceMock);
+
+        //MapEntryService
+        MapEntryResponse mapEntryResponse = new MapEntryResponse();
+        mapEntryResponse.setAddress("address");
+        mapEntryResponse.setUserReference("ref");
+        mapEntryResponse.setName("name");
+        mapEntryResponse.setAddress("addr");
+        MapEntrySingleResponse mapEntrySingleResponse = new MapEntrySingleResponse();
+        mapEntrySingleResponse.setAddress("address");
+        mapEntrySingleResponse.setUserReference("ref");
+        mapEntrySingleResponse.setName("name");
+        mapEntrySingleResponse.setAddress("addr");
+        QuicktestMapClient quicktestMapClient = mock(QuicktestMapClient.class);
+        when(quicktestMapClient.getMapEntry(any(),any())).thenReturn(mapEntrySingleResponse);
+
+        groupDetails = new KeycloakGroupDetails();
+        groupDetails.setId(groupid);
+        groupDetails.setName("newGroupName");
+        groupDetails.setPocDetails("newPocDetails");
+        groupDetails.setPocId("pocId");
+        groupDetails.setSearchPortalConsent(false);
     }
 
     @Test
@@ -510,6 +538,8 @@ public class KeycloakServiceTest {
 
     @Test
     void testUpdateSubGroupDetails() {
+        when(mapEntryService.getMapEntry(any())).thenReturn(null);
+
         KeycloakGroupDetails groupDetails = keycloakService.getSubGroupDetails(groupid);
 
         Assertions.assertEquals(groupid, groupDetails.getId());
@@ -593,6 +623,7 @@ public class KeycloakServiceTest {
     @Test
     void testDeleteGroup() throws KeycloakService.KeycloakServiceException {
         when(quickTestServiceMock.pendingTestsForTenantAndPocsExists(any(), anyList())).thenReturn(false);
+        when(mapEntryService.getMapEntry(any())).thenReturn(null);
         keycloakService.deleteGroup(rootGroupname, groupid);
         verify(groupResourceMock).remove();
         verify(quickTestServiceMock).pendingTestsForTenantAndPocsExists(rootGroupname, List.of(groupPocId));
@@ -734,10 +765,9 @@ public class KeycloakServiceTest {
 
         ArgumentCaptor<GroupRepresentation> captor = ArgumentCaptor.forClass(GroupRepresentation.class);
         doNothing().when(groupResourceMock).update(captor.capture());
+        keycloakService.updateGroup(groupDetails);
 
-        keycloakService.updateGroup(groupid, "newName", "newPocDetails");
-
-        Assertions.assertEquals("newName", captor.getValue().getName());
+        Assertions.assertEquals("newGroupName", captor.getValue().getName());
         Assertions.assertEquals(2, captor.getValue().getAttributes().size());
         Assertions.assertEquals(1, captor.getValue().getAttributes().get("poc_id").size());
         Assertions.assertEquals(groupPocId, captor.getValue().getAttributes().get("poc_id").get(0));
@@ -751,7 +781,7 @@ public class KeycloakServiceTest {
         doThrow(new BadRequestException(Response.status(HttpStatus.BAD_REQUEST.value()).entity("").build())).when(groupResourceMock).update(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupid, "newName", "newPocDetails"));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupDetails));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.BAD_REQUEST, e.getReason());
     }
@@ -761,7 +791,7 @@ public class KeycloakServiceTest {
         doThrow(new WebApplicationException(Response.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).entity("").build())).when(groupResourceMock).update(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupid, "newName", "newPocDetails"));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.updateGroup(groupDetails));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR, e.getReason());
     }
@@ -780,8 +810,8 @@ public class KeycloakServiceTest {
         });
 
         when(groupsResourceMock.group(newSubGroupId)).thenReturn(groupResourceMock);
-
-        keycloakService.createGroup("newGroupName", "newPocDetails", groupid);
+        groupDetails.setId(newSubGroupId);
+        keycloakService.createGroup(groupDetails, "groupid");
 
         ArgumentCaptor<GroupRepresentation> createCaptor = ArgumentCaptor.forClass(GroupRepresentation.class);
         verify(groupResourceMock).subGroup(createCaptor.capture());
@@ -801,8 +831,9 @@ public class KeycloakServiceTest {
         ArgumentCaptor<GroupRepresentation> captor = ArgumentCaptor.forClass(GroupRepresentation.class);
         when(groupResourceMock.subGroup(captor.capture())).thenReturn(Response.status(HttpStatus.CONFLICT.value()).build());
 
+        groupDetails.setId(groupid);
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", groupid));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup(groupDetails, "groupid"));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.ALREADY_EXISTS, e.getReason());
     }
@@ -812,7 +843,7 @@ public class KeycloakServiceTest {
         doThrow(new BadRequestException(Response.status(HttpStatus.BAD_REQUEST.value()).entity("").build())).when(groupResourceMock).subGroup(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", groupid));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup(groupDetails, "groupid"));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.BAD_REQUEST, e.getReason());
     }
@@ -822,7 +853,7 @@ public class KeycloakServiceTest {
         doThrow(new WebApplicationException(Response.status(HttpStatus.INTERNAL_SERVER_ERROR.value()).entity("").build())).when(groupResourceMock).subGroup(any());
 
         KeycloakService.KeycloakServiceException e =
-            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup("newGroupName", "newPocDetails", groupid));
+            Assertions.assertThrows(KeycloakService.KeycloakServiceException.class, () -> keycloakService.createGroup(groupDetails, "groupid"));
 
         Assertions.assertEquals(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR, e.getReason());
     }

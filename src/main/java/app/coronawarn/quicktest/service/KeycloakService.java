@@ -27,6 +27,7 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_PREFIX;
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
+import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,6 +66,8 @@ public class KeycloakService {
     private final KeycloakAdminProperties config;
 
     private final QuickTestService quickTestService;
+
+    private final MapEntryService mapEntryService;
 
     private static final String POC_ID_ATTRIBUTE = "poc_id";
     private static final String POC_DETAILS_ATTRIBUTE = "poc_details";
@@ -234,6 +237,20 @@ public class KeycloakService {
         groupDetails.setName(group.getName());
         groupDetails.setPocDetails(getFromAttributes(group.getAttributes(), POC_DETAILS_ATTRIBUTE));
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
+        MapEntrySingleResponse mapEntry = mapEntryService.getMapEntry(groupId);
+        if (mapEntry != null) {
+            log.info(mapEntry.toString());
+            groupDetails.setSearchPortalConsent(true);
+            groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
+                    mapEntry.getAppointment()));
+            if (mapEntry.getOpeningHours() != null) {
+                groupDetails.setOpeningHours(
+                        mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours()[0] : null);
+            }
+            groupDetails.setWebsite(mapEntry.getWebsite());
+        } else {
+            groupDetails.setSearchPortalConsent(false);
+        }
 
         return groupDetails;
     }
@@ -353,6 +370,10 @@ public class KeycloakService {
 
         try {
             realm().groups().group(groupId).remove();
+            mapEntryService.deleteIfExists(groupId);
+            for (String subGroupId:subGroupPocIds) {
+                mapEntryService.deleteIfExists(subGroupId);
+            }
             log.info("Deleted group with id {}", groupId);
         } catch (NotFoundException e) {
             log.error("Failed to delete group: NOT FOUND");
@@ -459,13 +480,12 @@ public class KeycloakService {
     /**
      * Updates details of a Group.
      *
-     * @param id         ID of the group to be updated.
-     * @param name       New name
-     * @param pocDetails new POC Details
+     * @param details          The KeycloakGroupDetails object
      */
-    public void updateGroup(String id, String name, String pocDetails) throws KeycloakServiceException {
-        log.info("Updating group with id {}", id);
-        GroupResource groupResource = realm().groups().group(id);
+    public void updateGroup(KeycloakGroupDetails details)
+            throws KeycloakServiceException {
+        log.info("Updating group with id {}", details.getId());
+        GroupResource groupResource = realm().groups().group(details.getId());
         GroupRepresentation group;
         try {
             group = groupResource.toRepresentation();
@@ -473,12 +493,18 @@ public class KeycloakService {
             throw new KeycloakServiceException(KeycloakServiceException.Reason.NOT_FOUND);
         }
 
-        group.setName(name);
+        group.setName(details.getName());
         // do not update POC ID
-        group.setAttributes(getGroupAttributes(pocDetails, getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
+        group.setAttributes(getGroupAttributes(details.getPocDetails(),
+                getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
 
         try {
             groupResource.update(group);
+            if (details.getSearchPortalConsent()) {
+                mapEntryService.createOrUpdateMapEntry(details);
+            } else {
+                mapEntryService.deleteIfExists(group.getId());
+            }
             log.info("updated group");
         } catch (BadRequestException e) {
             log.error("Failed to update group: BAD REQUEST {}", e.getResponse().readEntity(String.class));
@@ -497,15 +523,13 @@ public class KeycloakService {
     /**
      * Create a new subgroup.
      *
-     * @param name       Name of the new group
-     * @param pocDetails POC Details of the new group
-     * @param parent     ID of the parent group
+     * @param details          The KeycloakGroupDetails object
      */
-    public void createGroup(String name, String pocDetails, String parent)
+    public void createGroup(KeycloakGroupDetails details, String parent)
         throws KeycloakServiceException {
         log.info("Creating new group");
         GroupRepresentation newGroup = new GroupRepresentation();
-        newGroup.setName(name);
+        newGroup.setName(details.getName());
 
         try {
             Response response = realm().groups().group(parent).subGroup(newGroup);
@@ -514,12 +538,15 @@ public class KeycloakService {
                 throw new KeycloakServiceException(KeycloakServiceException.Reason.ALREADY_EXISTS);
             }
             log.info("created group");
-
-            // setting group properties with Grup Details and POC ID
+            // setting group properties with Group Details and POC ID
             newGroup = response.readEntity(GroupRepresentation.class);
-            newGroup.setAttributes(getGroupAttributes(pocDetails, newGroup.getId()));
+            newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId()));
             realm().groups().group(newGroup.getId()).update(newGroup);
-
+            if (details.getSearchPortalConsent()) {
+                details.setId(newGroup.getId());
+                mapEntryService.createOrUpdateMapEntry(details);
+                log.info("created mapEntry for Group");
+            }
         } catch (BadRequestException e) {
             log.error("Failed to create group: BAD REQUEST {}", e.getResponse().readEntity(String.class));
             throw new KeycloakServiceException(KeycloakServiceException.Reason.BAD_REQUEST);

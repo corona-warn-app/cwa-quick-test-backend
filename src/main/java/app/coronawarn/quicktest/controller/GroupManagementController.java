@@ -163,7 +163,7 @@ public class GroupManagementController {
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
         try {
-            keycloakService.createGroup(body.getName(), body.getPocDetails(), userRootGroup.getId());
+            keycloakService.createGroup(body, userRootGroup.getId());
         } catch (KeycloakService.KeycloakServiceException e) {
             if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");
@@ -212,7 +212,7 @@ public class GroupManagementController {
         utils.checkGroupIsInSubgroups(userRootGroup, id);
 
         try {
-            keycloakService.updateGroup(id, body.getName(), body.getPocDetails());
+            keycloakService.updateGroup(body);
         } catch (KeycloakService.KeycloakServiceException e) {
             if (e.getReason() == KeycloakService.KeycloakServiceException.Reason.NOT_FOUND) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Group not found");

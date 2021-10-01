@@ -48,6 +48,8 @@ public class KeycloakGroupDetails {
 
     private String website;
 
+    private String email;
+
     @Size(max = 50)
     private String openingHours;
 

@@ -36,6 +36,6 @@ public class MapEntrySingleResponse {
     String enterDate;
     @JsonProperty("LeaveDate")
     String leaveDate;
-
-
+    @JsonProperty("Email")
+    String email;
 }

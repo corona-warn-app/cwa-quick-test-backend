@@ -14,4 +14,5 @@ public class MapEntryUploadData {
     String website;
     String[] openingHours;
     String appointment;
+    String email;
 }

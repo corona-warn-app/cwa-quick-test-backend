@@ -44,7 +44,7 @@ public class MapEntryService {
         centers.add(buildUploadData(details));
         mapCenterList.setCenters(centers);
 
-        List<MapEntryResponse> response = null;
+        List<MapEntryResponse> response;
         try {
             response = quicktestMapClient.createOrUpdateMapEntry(getBearerToken(), mapCenterList);
         } catch (FeignException e) {
@@ -52,7 +52,7 @@ public class MapEntryService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
         if (response.isEmpty()) {
-            log.error("Failed to add Map Entry response: " + response.toString());
+            log.error("Failed to add Map Entry response: " + details.getId());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Response from MapService is Empty");
         }
     }
@@ -96,11 +96,7 @@ public class MapEntryService {
      * @return The Boolean value for the supplied String
      */
     public Boolean convertAppointmentToBoolean(String appointmentRequired) {
-        if ((appointmentRequired != null) && (appointmentRequired.equals(APPOINTMENT_REQUIRED))) {
-            return true;
-        } else {
-            return false;
-        }
+        return (appointmentRequired != null) && (appointmentRequired.equals(APPOINTMENT_REQUIRED));
     }
 
     /**
@@ -125,6 +121,7 @@ public class MapEntryService {
         mapEntryUploadData.setTestKinds(OFFERED_TESTS);
         mapEntryUploadData.setDcc(true);
         mapEntryUploadData.setName(details.getName());
+        mapEntryUploadData.setEmail(details.getEmail());
         mapEntryUploadData.setAppointment(convertAppointmentToString(details.getAppointmentRequired()));
         mapEntryUploadData.setWebsite(details.getWebsite());
         String[] openingHours = {details.getOpeningHours()};

@@ -241,13 +241,14 @@ public class KeycloakService {
         if (mapEntry != null) {
             log.info(mapEntry.toString());
             groupDetails.setSearchPortalConsent(true);
+            groupDetails.setEmail(mapEntry.getEmail());
+            groupDetails.setWebsite(mapEntry.getWebsite());
             groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
                     mapEntry.getAppointment()));
             if (mapEntry.getOpeningHours() != null) {
                 groupDetails.setOpeningHours(
                         mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours()[0] : null);
             }
-            groupDetails.setWebsite(mapEntry.getWebsite());
         } else {
             groupDetails.setSearchPortalConsent(false);
         }

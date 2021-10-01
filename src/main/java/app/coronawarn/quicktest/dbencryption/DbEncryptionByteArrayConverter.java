@@ -32,7 +32,7 @@ public class DbEncryptionByteArrayConverter implements AttributeConverter<byte[]
     @Override
     public String convertToDatabaseColumn(byte[] s) {
         try {
-            return DbEncryptionService.getInstance().encryptByteArray(s);
+            return s != null ? DbEncryptionService.getInstance().encryptByteArray(s) : null;
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
@@ -42,7 +42,7 @@ public class DbEncryptionByteArrayConverter implements AttributeConverter<byte[]
     @Override
     public byte[] convertToEntityAttribute(String s) {
         try {
-            return DbEncryptionService.getInstance().decryptByteArray(s);
+            return s != null ? DbEncryptionService.getInstance().decryptByteArray(s) : null;
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
             | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);

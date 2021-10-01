@@ -85,11 +85,6 @@ public class QuickTestArchiveServiceTest {
         quickTestArchive.setPdf("test output".getBytes());
     }
 
-    @Test
-    void createNewQuickTestArchiveQuickTest() {
-        when(quickTestArchiveRepository.findByHashedGuid(any())).thenReturn(Optional.of(quickTestArchive));
-        assertEquals(quickTestArchive.getPdf(), quickTestArchiveService.getPdf("sgserh"));
-    }
 
     @Test
     void createNewQuickTestArchiveQuickTestNotFound() {

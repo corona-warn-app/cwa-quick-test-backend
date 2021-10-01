@@ -21,7 +21,6 @@
 package app.coronawarn.quicktest.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -124,10 +123,7 @@ class DccServiceTest {
 
         var quickTest = prepareQuicktest();
 
-        byte[] pdfFirstPage = pdfGenerator.generatePdf(
-          List.of("PoC Address"), quickTest, "IT-Test User").toByteArray();
-
-        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quickTest, pdfFirstPage);
+        QuickTestArchive quickTestArchive = mappingQuickTestToQuickTestArchive(quickTest);
         quickTestArchiveRepository.saveAndFlush(quickTestArchive);
 
         initDccMockPublicKey(quickTest);
@@ -154,8 +150,6 @@ class DccServiceTest {
         assertTrue(quickTestArchiveOptional.isPresent());
         QuickTestArchive quickTestArchiveFromDb = quickTestArchiveOptional.get();
         assertNotNull(quickTestArchiveFromDb.getDcc());
-        System.out.println(quickTestArchiveFromDb.getDcc());
-        assertNotEquals(pdfFirstPage, quickTestArchiveFromDb.getPdf());
     }
 
 
@@ -182,7 +176,7 @@ class DccServiceTest {
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestArchive(
-            QuickTest quickTest, byte[] pdf) {
+            QuickTest quickTest) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
         quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
@@ -206,8 +200,9 @@ class DccServiceTest {
         quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setPocInformation("PoC Address");
+        quickTestArchive.setPocUser("IT-Test User");
 
-        quickTestArchive.setPdf(pdf);
         return quickTestArchive;
     }
 

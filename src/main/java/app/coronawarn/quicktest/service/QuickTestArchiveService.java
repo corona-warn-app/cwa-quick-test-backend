@@ -23,12 +23,16 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
+import app.coronawarn.quicktest.utils.DccPdfGenerator;
+import app.coronawarn.quicktest.utils.PdfGenerator;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +45,8 @@ public class QuickTestArchiveService {
 
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestConfig quickTestConfig;
+    private final PdfGenerator pdfGenerator;
+    private final DccPdfGenerator dccPdfGenerator;
 
     /**
      * Stores quicktest with pdf in archive table.
@@ -57,7 +63,16 @@ public class QuickTestArchiveService {
             log.info("Requested Quick Test with HashedGuid could not be found or wrong poc");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return quickTestArchive.get().getPdf();
+        if (quickTestArchive.get().getPdf() != null) {
+            return quickTestArchive.get().getPdf();
+        }
+        try {
+            return createPdf(quickTestArchive.get());
+        } catch (IOException e) {
+            log.error("generating PDF failed.");
+            log.debug("generating PDF failed, message=[{}]", e.getMessage());
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     /**
@@ -87,6 +102,13 @@ public class QuickTestArchiveService {
                 dateTo);
         }
         return archives;
+    }
+
+    protected byte[] createPdf(QuickTestArchive quicktest) throws IOException {
+        byte[] pdf = pdfGenerator.generatePdf(quicktest).toByteArray();
+        return StringUtils.isBlank(quicktest.getDcc())
+            ? pdf
+            : dccPdfGenerator.appendCertificatePage(pdf, quicktest).toByteArray();
     }
 
 }

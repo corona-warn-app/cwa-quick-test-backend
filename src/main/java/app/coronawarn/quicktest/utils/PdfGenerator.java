@@ -25,7 +25,7 @@ import static app.coronawarn.quicktest.utils.PdfUtils.getFormattedTime;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
-import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -74,13 +74,10 @@ public class PdfGenerator {
     /**
      * Generates a PDF file for rapid test result to print.
      *
-     * @param pocInformation point of care data used in pdf
-     * @param quicktest      Quicktest
-     * @param user           carried out by user
+     * @param quickTestArchive      Quicktest
      * @throws IOException when creating pdf went wrong
      */
-    public ByteArrayOutputStream generatePdf(List<String> pocInformation, QuickTest quicktest,
-                                             String user) throws IOException {
+    public ByteArrayOutputStream generatePdf(QuickTestArchive quickTestArchive) throws IOException {
         PDDocument document = new PDDocument();
         PDPage page1 = new PDPage(PDRectangle.A4);
         document.addPage(page1);
@@ -88,13 +85,13 @@ public class PdfGenerator {
         PDPageContentStream cos = new PDPageContentStream(document, page1);
         config(document);
         PDRectangle rect1 = page1.getMediaBox();
-        write(document, cos, rect1, pocInformation, quicktest, user, false);
+        write(document, cos, rect1, quickTestArchive, false);
 
         PDPage page2 = new PDPage(PDRectangle.A4);
         document.addPage(page2);
         page2.setMediaBox(PDRectangle.A4);
         PDPageContentStream cos2 = new PDPageContentStream(document, page2);
-        write(document, cos2, page2.getMediaBox(), pocInformation, quicktest, user, true);
+        write(document, cos2, page2.getMediaBox(), quickTestArchive, true);
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
@@ -120,26 +117,24 @@ public class PdfGenerator {
         pdd.setCreationDate(gcal);
     }
 
-    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect,
-                       List<String> pocInformation,
-                       QuickTest quicktest,
-                       String user,
+    private void write(PDDocument document, PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest,
                        boolean english) throws IOException {
-        generatePoCAddress(cos, rect, pocInformation);
+        generatePoCAddress(cos, rect, quicktest);
         addCoronaAppIcon(document, cos, rect);
         generatePersonAddress(cos, rect, quicktest);
         generateSubject(cos, rect, quicktest, english);
-        generateText(cos, rect, quicktest, user, english);
+        generateText(cos, rect, quicktest, english);
         generateEnd(cos, rect, english);
         cos.close();
     }
 
-    private void generatePoCAddress(PDPageContentStream cos, PDRectangle rect, List<String> pocInformation)
+    private void generatePoCAddress(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quickTestArchive)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(0, rect.getHeight() - 110);
+        List<String> pocInformation = List.of(quickTestArchive.getPocInformation().split("<br>"));
         pocInformation.forEach(s -> {
             try {
                 rightAlignment(cos, rect, s);
@@ -168,7 +163,7 @@ public class PdfGenerator {
         cos.endText();
     }
 
-    private void generatePersonAddress(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest)
+    private void generatePersonAddress(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
@@ -207,7 +202,7 @@ public class PdfGenerator {
         cos.newLine();
     }
 
-    private void generateSubject(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest, boolean english)
+    private void generateSubject(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, boolean english)
       throws IOException {
         cos.beginText();
         cos.setFont(PDType1Font.HELVETICA_BOLD, fontSize);
@@ -224,8 +219,7 @@ public class PdfGenerator {
 
     }
 
-    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTest quicktest, String user,
-                              boolean english)
+    private void generateText(PDPageContentStream cos, PDRectangle rect, QuickTestArchive quicktest, boolean english)
       throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
@@ -350,9 +344,9 @@ public class PdfGenerator {
         }
         cos.newLine();
         if (english) {
-            cos.showText(pdfConfig.getExecutedFromDescriptionTextEn() + user);
+            cos.showText(pdfConfig.getExecutedFromDescriptionTextEn() + quicktest.getPocUser());
         } else {
-            cos.showText(pdfConfig.getExecutedFromDescriptionText() + user);
+            cos.showText(pdfConfig.getExecutedFromDescriptionText() + quicktest.getPocUser());
         }
         cos.newLine();
         cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());

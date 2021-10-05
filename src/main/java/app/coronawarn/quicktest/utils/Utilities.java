@@ -83,7 +83,7 @@ public class Utilities {
      * Get tenantID and pocID from Token.
      *
      * @return Map with tokens from keycloak (tenantID and pocID)
-     * @throws ResponseStatusException 500 if Ids not found in User-Token
+     * @throws ResponseStatusException 412 if Ids not found in User-Token
      */
     public Map<String, String> getIdsFromToken() throws ResponseStatusException {
 
@@ -113,7 +113,7 @@ public class Utilities {
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
             || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
             log.warn("Ids not found in User-Token");
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "User has no Group assigned");
         }
         return ids;
     }

@@ -172,7 +172,7 @@ class UtilitiesTest {
         springSecurityContext.setAuthentication(token);
 
         ResponseStatusException e = Assertions.assertThrows(ResponseStatusException.class, () -> utilities.getIdsFromToken());
-        assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
+        assertEquals(e.getStatus(), HttpStatus.PRECONDITION_FAILED, "wrong status");
     }
 
     @Test

@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -894,7 +895,6 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     }
 
     @Test
-
     void getPendingQuickTests() throws Exception {
         QuicktestView quickTest = () -> "00000000";
         when(quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(any()))
@@ -933,6 +933,15 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 .get(API_BASE_PATH)
                 .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void deleteQuickTest() throws Exception {
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+                        .delete(API_BASE_PATH+"/6fa4dcec")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk());
     }
 
     class LocalDateAdapter implements JsonSerializer<LocalDate> {

@@ -138,6 +138,8 @@ public class QuickTestArchiveController {
             response.setQuickTestArchives(quickTestArchiveResponses);
             log.info("quicktest found successfully.");
             return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             log.debug("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."
                     + " Message: {}", e.getMessage());

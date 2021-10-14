@@ -89,6 +89,9 @@ public class QuickTestController {
             QuickTestResponseList response = new QuickTestResponseList();
             response.setQuickTests(quickTests);
             return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            log.debug("Respondstatus error information getQuickTests: ", e);
+            throw e;
         } catch (Exception e) {
             log.error("Failed to find pending quicktests");
             log.debug("Extended error information getQuickTests: ", e);

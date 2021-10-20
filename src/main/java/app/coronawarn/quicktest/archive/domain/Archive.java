@@ -32,7 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Data
-@ToString(exclude = { "key", "ciphertext", "publicKey" })
+@ToString(exclude = { "secret", "ciphertext", "publicKey" })
 @Entity
 @Table(name = "archive")
 public class Archive {

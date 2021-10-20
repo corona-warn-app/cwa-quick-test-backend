@@ -38,6 +38,7 @@ import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -73,17 +74,17 @@ public class QuickTestService {
      * @throws ResponseStatusException with status CONFLICT if a QuickTest with short hash already exists.
      */
     public void createNewQuickTest(Map<String, String> ids, String hashedGuid)
-        throws ResponseStatusException {
+            throws ResponseStatusException {
         String shortHash = hashedGuid.substring(0, 8);
         log.debug("Searching for existing QuickTests with shortHash {}", shortHash);
 
         Optional<QuickTest> conflictingQuickTestByHashed =
-            quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(
-                ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                shortHash, hashedGuid);
+                quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuidOrHashedGuid(
+                        ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                        shortHash, hashedGuid);
 
         Optional<QuickTestArchive> conflictingQuickTestArchiveByHashed =
-            quickTestArchiveRepository.findByHashedGuid(hashedGuid);
+                quickTestArchiveRepository.findByHashedGuid(hashedGuid);
 
         if (conflictingQuickTestByHashed.isPresent() || conflictingQuickTestArchiveByHashed.isPresent()) {
             log.debug("QuickTest with Guid {} already exists", shortHash);
@@ -126,9 +127,9 @@ public class QuickTestService {
                                 QuickTestUpdateRequest quickTestUpdateRequest, List<String> pocInformation,
                                 String user) throws ResponseStatusException {
         QuickTest quicktest = getQuickTest(
-            ids.get(quickTestConfig.getTenantIdKey()),
-            ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-            shortHash
+                ids.get(quickTestConfig.getTenantIdKey()),
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                shortHash
         );
 
         if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING) {
@@ -142,7 +143,7 @@ public class QuickTestService {
         if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
             if (quickTestUpdateRequest.getDccTestManufacturerId() == null) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "DccTestManufacturerId must be set for DCC Tests");
+                        "DccTestManufacturerId must be set for DCC Tests");
             }
 
             quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
@@ -155,9 +156,9 @@ public class QuickTestService {
         quicktest.setUpdatedAt(LocalDateTime.now());
 
         if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
-            && quicktest.getDccStatus() == null) {
+                && quicktest.getDccStatus() == null) {
             if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()
-                && quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
+                    && quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
                 quicktest.setDccStatus(DccStatus.pendingPublicKey);
             } else {
                 quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
@@ -175,7 +176,7 @@ public class QuickTestService {
         try {
             quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
-                quicktest.getPocId(), quicktest.getShortHashedGuid());
+                    quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
             log.error("Could not save quickTestArchive. updateQuickTest failed.");
             log.debug("Could not save quickTestArchive, message=[{}]", e.getMessage());
@@ -185,18 +186,45 @@ public class QuickTestService {
             if (quicktest.getDccStatus() == null) {
                 quickTestRepository.deleteById(quicktest.getHashedGuid());
                 log.debug("QuickTest moved to QuickTestArchive for poc {} and shortHashedGuid {}",
-                    quicktest.getPocId(), quicktest.getShortHashedGuid());
+                        quicktest.getPocId(), quicktest.getShortHashedGuid());
             }
         } catch (Exception e) {
             log.error("Could not delete QuickTest. updateQuickTest failed.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quickTestUpdateRequest.getResult(),
-            quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
-            quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
+                quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
+                quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
-            quickTestUpdateRequest.getResult());
+                quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
+    }
+
+    /**
+     * Deletes a QuickTest entity if it is in its inital state.
+     *
+     * @param shortHash the short-hash of the testresult to be updated
+     * @param ids       ids
+     * @param user      User
+     */
+    public void deleteQuicktest(Map<String, String> ids, String shortHash, String user)
+            throws ResponseStatusException {
+        try {
+            QuickTest quicktest = getQuickTest(
+                    ids.get(quickTestConfig.getTenantIdKey()),
+                    ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                    shortHash);
+            if (quicktest.getVersion() > 0) {
+                log.warn("User {} tried to delete QT with version > 0", user);
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                        "Deletion of filled Quicktests not permitted");
+            }
+            quickTestRepository.deleteById(quicktest.getHashedGuid());
+        } catch (ResponseStatusException e) {
+            log.error("Failed to delete Quicktest");
+            throw e;
+        }
+
     }
 
     /**
@@ -208,11 +236,11 @@ public class QuickTestService {
     @Transactional(rollbackFor = ResponseStatusException.class)
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
-        throws ResponseStatusException {
+            throws ResponseStatusException {
         QuickTest quicktest = getQuickTest(
-            ids.get(quickTestConfig.getTenantIdKey()),
-            ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-            shortHash
+                ids.get(quickTestConfig.getTenantIdKey()),
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                shortHash
         );
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
@@ -241,8 +269,8 @@ public class QuickTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
-            quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
-            quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
+              quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
+              quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
 
@@ -267,15 +295,15 @@ public class QuickTestService {
             log.info("Deleting chunk {} of {}", i, chunks);
 
             List<QuickTest> quickTestChunk = quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(
-                deleteTimestamp,
-                0,
-                PageRequest.of(i - 1, chunkSize));
+                    deleteTimestamp,
+                    0,
+                    PageRequest.of(i - 1, chunkSize));
 
             quickTestChunk.forEach(quickTest -> sendResultToTestResultServer(
-                quickTest.getTestResultServerHash(),
-                TestResult.FAILED.getValue(),
-                deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
-                quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
+                    quickTest.getTestResultServerHash(),
+                    TestResult.FAILED.getValue(),
+                    deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
+                    quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
 
             log.info("Set Status of quicktests on TRS. Deleting QuickTests in DB");
 
@@ -299,7 +327,7 @@ public class QuickTestService {
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestArchive(
-        QuickTest quickTest, byte[] pdf) {
+            QuickTest quickTest, byte[] pdf) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
         quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
@@ -349,10 +377,10 @@ public class QuickTestService {
     @Transactional(readOnly = true)
     public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
         return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
-            ids.get(quickTestConfig.getTenantIdKey()),
-            ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-            QuickTest.TEST_RESULT_PENDING,
-            0
+                ids.get(quickTestConfig.getTenantIdKey()),
+                ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+                QuickTest.TEST_RESULT_PENDING,
+                0
         );
     }
 
@@ -403,7 +431,7 @@ public class QuickTestService {
      * Checks whether pending Quick Tests for a given Tenant ID and a given List of Poc Ids exists.
      *
      * @param tenantId ID of the tenant
-     * @param pocIds List with the Poc IDs
+     * @param pocIds   List with the Poc IDs
      * @return true is at least one test exists, false otherwise.
      */
     public boolean pendingTestsForTenantAndPocsExists(String tenantId, List<String> pocIds) {

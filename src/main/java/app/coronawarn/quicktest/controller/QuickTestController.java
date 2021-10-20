@@ -46,6 +46,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -88,6 +89,9 @@ public class QuickTestController {
             QuickTestResponseList response = new QuickTestResponseList();
             response.setQuickTests(quickTests);
             return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            log.debug("Respondstatus error information getQuickTests: ", e);
+            throw e;
         } catch (Exception e) {
             log.error("Failed to find pending quicktests");
             log.debug("Extended error information getQuickTests: ", e);
@@ -124,6 +128,28 @@ public class QuickTestController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
+
+    /**
+     * Endpoint for deleting a Quicktest result.
+     *
+     * @param shortHash contains the the new test value for the quicktest.
+     * @return ResponseEntity with status code.
+     */
+    @Operation(
+            summary = "Deletes a quicktest",
+            description = "Deletes a quicktest"
+    )
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200 ", description = "Deletion successful."),
+      @ApiResponse(responseCode = "403", description = "Deletion of updated Quicktests not allowed."),
+      @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
+    @DeleteMapping(value = "/{shortHash}")
+    @Secured(ROLE_COUNTER)
+    public ResponseEntity<Void> deleteEmptyQuickTest(@Valid @PathVariable String shortHash) {
+        quickTestService.deleteQuicktest(utilities.getIdsFromToken(), shortHash, utilities.getUserNameFromToken());
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 
     /**
      * Endpoint for updating a Quicktest result.

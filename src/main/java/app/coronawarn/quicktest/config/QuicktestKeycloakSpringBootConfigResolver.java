@@ -24,6 +24,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.adapters.KeycloakDeployment;
@@ -36,10 +38,15 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBootConfigResolver {
+
     private final AdapterConfig adapterConfig;
+
+    private final Map<String, KeycloakDeployment> deploymentMap = new HashMap<>();
+    private final KeycloakDeployment defaultDeployment;
 
     public QuicktestKeycloakSpringBootConfigResolver(KeycloakSpringBootProperties properties) {
         this.adapterConfig = properties;
+        this.defaultDeployment = KeycloakDeploymentBuilder.build(properties);
     }
 
     @SneakyThrows
@@ -49,6 +56,7 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
         AdapterConfig tenantConfig = this.adapterConfig;
         JsonNode jwtBodyAsJson = null;
         String realm = null;
+
         if (
             request.getHeader("Authorization") != null
                 && request.getHeader("Authorization").split("Bearer ").length > 1
@@ -60,6 +68,7 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
             jwtBodyAsJson = objectMapper.readTree((new String(Base64.getUrlDecoder().decode(jwtBody),
                 StandardCharsets.UTF_8)));
         }
+
         if (
             jwtBodyAsJson != null
                 && jwtBodyAsJson.get("iss") != null
@@ -69,10 +78,15 @@ public class QuicktestKeycloakSpringBootConfigResolver extends KeycloakSpringBoo
             //get last element from issuerUriElements => realm name
             realm = StringUtils.strip(issuerUriElements[issuerUriElements.length - 1], "\"");
         }
-        if (realm != null) {
-            tenantConfig.setRealm(realm);
+
+        if (realm == null) {
+            return defaultDeployment;
+        } else {
+            return deploymentMap.computeIfAbsent(realm, r -> {
+                tenantConfig.setRealm(r);
+                return KeycloakDeploymentBuilder.build(tenantConfig);
+            });
         }
-        return KeycloakDeploymentBuilder.build(tenantConfig);
     }
 
 }

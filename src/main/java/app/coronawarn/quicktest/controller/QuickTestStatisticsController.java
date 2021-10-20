@@ -95,6 +95,8 @@ public class QuickTestStatisticsController {
                 quickTestStatisticsService.getStatistics(utilities.getIdsFromToken(), utcDateFrom, utcDateTo),
                 QuickTestStatisticsResponse.class);
             return ResponseEntity.ok(quickTestStatisticsResponse);
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
             log.error("Couldn't execute getQuicktestStatistics.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

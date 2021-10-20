@@ -24,7 +24,9 @@ import app.coronawarn.quicktest.domain.QuickTestArchive;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 
 public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchive, String> {
 
@@ -45,4 +47,6 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
             LocalDateTime dateTo
     );
 
+    Stream<QuickTestArchive> findAllByUpdatedAtBefore(
+            @Param("updatedAt") LocalDateTime updatedAtBefore);
 }

@@ -32,12 +32,11 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
-import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
+import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
@@ -53,7 +52,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.mockito.InjectMocks;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -65,7 +65,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.NestedServletException;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(QuickTestArchiveController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
 class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 

@@ -32,3 +32,5 @@ build/
 
 build.sh
 trusted.key
+.checkstyle
+src/main/resources/application-local.yml

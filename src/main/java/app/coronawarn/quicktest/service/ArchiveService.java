@@ -23,7 +23,7 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.archive.domain.Archive;
 import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
 import app.coronawarn.quicktest.archive.repository.ArchiveRepository;
-import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.config.ArchiveProperties;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.exception.UncheckedJsonProcessingException;
 import app.coronawarn.quicktest.exception.UncheckedNoSuchAlgorithmException;
@@ -58,7 +58,7 @@ public class ArchiveService {
 
     private static final DateTimeFormatter IDENTIFIER_FORMATTER = DateTimeFormatter.ofPattern("ddMM");
 
-    private final QuickTestConfig properties;
+    private final ArchiveProperties properties;
 
     private final KeyProvider keyProvider;
 
@@ -73,9 +73,9 @@ public class ArchiveService {
     private final CryptionService cryptionService;
 
     @Transactional
-    @Scheduled(cron = "${quicktest.archive.moveToArchiveJob.cron}")
+    @Scheduled(cron = "${archive.moveToArchiveJob.cron}")
     @SchedulerLock(name = "MoveToArchiveJob", lockAtLeastFor = "PT0S", 
-        lockAtMostFor = "${quicktest.archive.moveToArchiveJob.locklimit}")
+        lockAtMostFor = "${archive.moveToArchiveJob.locklimit}")
     public void moveToArchiveJob() {
         log.debug("Starting Job: moveToArchiveJob");
         this.moveToArchive();
@@ -86,7 +86,7 @@ public class ArchiveService {
      */
     @Transactional
     public void moveToArchive() {
-        final long olderThanInSeconds = this.properties.getArchive().getMoveToArchiveJob().getOlderThanInSeconds();
+        final long olderThanInSeconds = this.properties.getMoveToArchiveJob().getOlderThanInSeconds();
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
             this.quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime)
@@ -96,7 +96,7 @@ public class ArchiveService {
                     .map(archive -> archive.getHashedGuid())
                     .forEach(this.quickTestArchiveRepository::deleteById);
         } else {
-            log.error("Property 'quicktest.archive.moveToArchiveJob.older-than-in-seconds' not set.");
+            log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
         }
     }
 
@@ -144,7 +144,7 @@ public class ArchiveService {
                 LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
                 lastname.substring(0, 2).toUpperCase());
 
-        final MessageDigest digest = buildMessageDigest(this.properties.getArchive().getHash().getAlgorithm());
+        final MessageDigest digest = buildMessageDigest(this.properties.getHash().getAlgorithm());
         digest.reset();
         digest.update(this.keyProvider.getPepper());
         byte[] identifierHashed = digest.digest(identifier.getBytes(StandardCharsets.UTF_8));

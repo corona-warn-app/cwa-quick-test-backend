@@ -20,7 +20,7 @@
 
 package app.coronawarn.quicktest.service.cryption;
 
-import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.config.ArchiveProperties;
 import app.coronawarn.quicktest.exception.DccException;
 import java.security.SecureRandom;
 import java.util.List;
@@ -33,16 +33,16 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CryptionService {
 
-    private final QuickTestConfig properties;
+    private final ArchiveProperties properties;
 
     private final List<Cryption> cryptions;
 
     public AesCryption getAesCryption() {
-        return (AesCryption) this.getByAlgorithm(this.properties.getArchive().getCrypt().getDefaultAes());
+        return (AesCryption) this.getByAlgorithm(this.properties.getCrypt().getDefaultAes());
     }
 
     public RsaCryption getRsaCryption() {
-        return (RsaCryption) this.getByAlgorithm(this.properties.getArchive().getCrypt().getDefaultRsa());
+        return (RsaCryption) this.getByAlgorithm(this.properties.getCrypt().getDefaultRsa());
     }
 
     /**
@@ -65,9 +65,9 @@ public class CryptionService {
      * @return {@link String}
      */
     public String generateRandomSecret() {
-        final int length = this.properties.getArchive().getCrypt().getSecretLength();
-        final boolean letters = this.properties.getArchive().getCrypt().isSecretLetters();
-        final boolean numbers = this.properties.getArchive().getCrypt().isSecretNumbers();
+        final int length = this.properties.getCrypt().getSecretLength();
+        final boolean letters = this.properties.getCrypt().isSecretLetters();
+        final boolean numbers = this.properties.getCrypt().isSecretNumbers();
         return RandomStringUtils.random(length, 33, 126, letters, numbers, null, new SecureRandom());
     }
 }

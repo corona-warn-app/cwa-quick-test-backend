@@ -102,7 +102,7 @@ public class ArchiveServiceTest {
         // AND DTO (Ciphertext)
         final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
         assertThat(dto).isNotNull();
-        assertThat(dto.getClazz()).isEqualTo(ArchiveCipherDtoV1.class.getSimpleName());
+        assertThat(dto.getClassName()).isEqualTo(ArchiveCipherDtoV1.class.getSimpleName());
         assertThat(dto.getHashedGuid()).isEqualTo(test.getHashedGuid());
         assertThat(dto.getShortHashedGuid()).isEqualTo(test.getShortHashedGuid());
         assertThat(dto.getTenantId()).isEqualTo(test.getTenantId());

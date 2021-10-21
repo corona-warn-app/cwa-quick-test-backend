@@ -21,7 +21,6 @@
 package app.coronawarn.quicktest.config;
 
 import app.coronawarn.quicktest.archive.repository.ArchiveRepository;
-import java.util.Arrays;
 import java.util.Properties;
 import javax.persistence.EntityManager;
 import javax.sql.DataSource;
@@ -30,9 +29,9 @@ import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -43,16 +42,19 @@ public class ArchiveEntityManagerConfig {
 
     private static final String[] ENTITY_PACKAGES = { "app.coronawarn.quicktest.archive.domain" };
 
+    @Value("${spring.profiles.active:}")
+    private String activeProfile;
+
     private final DataSource archiveDataSource;
 
-    private Environment env;
+    private final JpaHibernateProperties jpaHibernateProperties;
 
     @Autowired
     public ArchiveEntityManagerConfig(
             @Qualifier("archiveDataSource") final DataSource archiveDataSource,
-            final Environment env) {
+            final JpaHibernateProperties jpaHibernateProperties) {
         this.archiveDataSource = archiveDataSource;
-        this.env = env;
+        this.jpaHibernateProperties = jpaHibernateProperties;
     }
 
     @Bean
@@ -82,7 +84,7 @@ public class ArchiveEntityManagerConfig {
         emFactory.setDataSource(this.archiveDataSource);
         emFactory.setPersistenceProviderClass(HibernatePersistenceProvider.class);
         emFactory.setPackagesToScan(ENTITY_PACKAGES);
-        emFactory.setJpaProperties(this.jpaHibernateProperties());
+        emFactory.setJpaProperties(this.buildJpaHibernateProperties());
         emFactory.afterPropertiesSet();
         return emFactory;
     }
@@ -94,37 +96,32 @@ public class ArchiveEntityManagerConfig {
         return vendorAdapter;
     }
 
-    private Properties jpaHibernateProperties() {
+    private Properties buildJpaHibernateProperties() {
         log.debug("Creating Archive Properties (JPA Hibernate)");
         final Properties properties = new Properties();
-
-        final String dialect = env.getProperty("spring.jpa.properties.hibernate.dialect");
-        if (dialect != null) {
-            properties.put(AvailableSettings.DIALECT, dialect);
+        if (this.jpaHibernateProperties.getDialect() != null) {
+            properties.put(AvailableSettings.DIALECT, jpaHibernateProperties.getDialect());
         }
-        final String maxFetchDepth = env.getProperty("spring.jpa.properties.hibernate.max_fetch_depth");
-        if (maxFetchDepth != null) {
-            properties.put(AvailableSettings.MAX_FETCH_DEPTH, maxFetchDepth);
+        if (this.jpaHibernateProperties.getMaxFetchDepth() != null) {
+            properties.put(AvailableSettings.MAX_FETCH_DEPTH, this.jpaHibernateProperties.getMaxFetchDepth());
         }
-        final String fetchSize = env.getProperty("spring.jpa.properties.hibernate.jdbc.fetch_size");
-        if (fetchSize != null) {
-            properties.put(AvailableSettings.STATEMENT_FETCH_SIZE, fetchSize);
+        if (this.jpaHibernateProperties.getJdbc().getFetchSize() != null) {
+            properties.put(AvailableSettings.STATEMENT_FETCH_SIZE,
+                    this.jpaHibernateProperties.getJdbc().getFetchSize());
         }
-        final String batchSize = env.getProperty("spring.jpa.properties.hibernate.jdbc.batch_size");
-        if (batchSize != null) {
-            properties.put(AvailableSettings.STATEMENT_BATCH_SIZE, batchSize);
+        if (this.jpaHibernateProperties.getJdbc().getBatchSize() != null) {
+            properties.put(AvailableSettings.STATEMENT_BATCH_SIZE,
+                    this.jpaHibernateProperties.getJdbc().getBatchSize());
         }
-        final String showSql = env.getProperty("spring.jpa.properties.hibernate.show_sql");
-        if (showSql != null) {
-            properties.put(AvailableSettings.SHOW_SQL, showSql);
+        if (this.jpaHibernateProperties.getShowSql() != null) {
+            properties.put(AvailableSettings.SHOW_SQL, this.jpaHibernateProperties.getShowSql());
         }
-
         // disable validation for testing (H2 DB)
-        if (Arrays.stream(this.env.getActiveProfiles()).anyMatch(profile -> (!profile.equalsIgnoreCase("test")))) {
-            properties.put(AvailableSettings.HBM2DDL_DATABASE_ACTION,
-                    env.getProperty("spring.jpa.hibernate.ddl-auto", "none"));
+        if (this.activeProfile.contains("test")) {
+            properties.put(AvailableSettings.HBM2DDL_DATABASE_ACTION, "none");
+        } else {
+            properties.put(AvailableSettings.HBM2DDL_DATABASE_ACTION, jpaHibernateProperties.getDdlAuto());
         }
-
         return properties;
     }
 }

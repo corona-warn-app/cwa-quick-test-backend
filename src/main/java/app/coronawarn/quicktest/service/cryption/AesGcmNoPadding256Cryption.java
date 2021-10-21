@@ -61,7 +61,7 @@ public class AesGcmNoPadding256Cryption implements AesCryption {
 
     private static final int AES_KEY_BIT = 256;
 
-    @Value("${quicktest.archive.crypt.AesGcmNoPadding256.iterations:12345}")
+    @Value("${archive.crypt.AesGcmNoPadding256.iterations:12345}")
     private int iterations;
 
     @Override

@@ -20,7 +20,7 @@
 
 package app.coronawarn.quicktest.service;
 
-import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.config.ArchiveProperties;
 import app.coronawarn.quicktest.exception.DccException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -55,7 +55,7 @@ public class JksKeyProvider implements KeyProvider {
 
     private static final String ALIAS_KEY_PREFIX = "archive_key_";
 
-    private final QuickTestConfig properties;
+    private final ArchiveProperties properties;
 
     private final List<PrivateKeyEntry> entries = new ArrayList<>();
 
@@ -67,12 +67,12 @@ public class JksKeyProvider implements KeyProvider {
      */
     @PostConstruct
     public void init() throws IOException, GeneralSecurityException {
-        final String filePath = this.properties.getArchive().getJks().getPath();
+        final String filePath = this.properties.getJks().getPath();
         final File jksFile = ResourceUtils.getFile(filePath);
 
         try (final InputStream jksStream = new FileInputStream(jksFile)) {
             final KeyStore jks = KeyStore.getInstance("JKS");
-            final char[] jksPassword = this.properties.getArchive().getJks().getPassword().toCharArray();
+            final char[] jksPassword = this.properties.getJks().getPassword().toCharArray();
             jks.load(jksStream, jksPassword);
 
             final PasswordProtection entryPassword = new PasswordProtection("".toCharArray());
@@ -100,7 +100,7 @@ public class JksKeyProvider implements KeyProvider {
 
     @Override
     public byte[] getPepper() {
-        return this.properties.getArchive().getHash().getPepper().getBytes(StandardCharsets.UTF_8);
+        return this.properties.getHash().getPepper().getBytes(StandardCharsets.UTF_8);
     }
 
     @Override

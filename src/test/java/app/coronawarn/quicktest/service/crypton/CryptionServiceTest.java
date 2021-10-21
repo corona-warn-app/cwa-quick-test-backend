@@ -22,7 +22,7 @@ package app.coronawarn.quicktest.service.crypton;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.config.ArchiveProperties;
 import app.coronawarn.quicktest.exception.DccException;
 import app.coronawarn.quicktest.service.cryption.AesCryption;
 import app.coronawarn.quicktest.service.cryption.Cryption;
@@ -43,7 +43,7 @@ class CryptionServiceTest {
     private CryptionService cryptionService;
 
     @Autowired
-    private QuickTestConfig properties;
+    private ArchiveProperties properties;
 
     @Test
     void getAesCryption() {
@@ -66,9 +66,9 @@ class CryptionServiceTest {
     @RepeatedTest(name = RepeatedTest.LONG_DISPLAY_NAME, value = 10)
     void generateRandomSecret() {
         // GIVEN
-        final int length = this.properties.getArchive().getCrypt().getSecretLength();
-        final boolean letters = this.properties.getArchive().getCrypt().isSecretLetters();
-        final boolean numbers = this.properties.getArchive().getCrypt().isSecretNumbers();
+        final int length = this.properties.getCrypt().getSecretLength();
+        final boolean letters = this.properties.getCrypt().isSecretLetters();
+        final boolean numbers = this.properties.getCrypt().isSecretNumbers();
         // WHEN
         final String result = this.cryptionService.generateRandomSecret();
         // THEN

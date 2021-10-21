@@ -18,18 +18,32 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.archive.domain;
+package app.coronawarn.quicktest.config;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Getter
-@Setter
-@ToString(callSuper = true)
-@EqualsAndHashCode(callSuper = true)
-public class ArchiveCipherDtoV1 extends ArchiveCipherDto {
+@Data
+@Configuration
+@ConfigurationProperties(prefix = "spring.jpa.hibernate")
+public class JpaHibernateProperties {
 
-    private final String className = ArchiveCipherDtoV1.class.getSimpleName();
+    private String dialect;
+    
+    private String maxFetchDepth;
+    
+    private String showSql;
+    
+    private String ddlAuto = "none";
+    
+    private Jdbc jdbc = new Jdbc();
+    
+    @Data
+    public static final class Jdbc {
+        
+        private String fetchSize;
+        
+        private String batchSize;
+    }
 }

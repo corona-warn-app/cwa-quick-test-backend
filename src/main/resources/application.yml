@@ -99,26 +99,27 @@ quicktest:
   frontend-context-config:
     rules-server-url: https://distribution-6155b8d7d3c6.dcc-rules.de
     environment-name: local
-  archive:
-    jks:
-      path: classpath:archive/dev.jks
-      password: changeMe
-    moveToArchiveJob:
-      cron: "-"
-      locklimit: 1800000
-      #### 1209600 = 2 weeks
-      older-than-in-seconds: 5000
-    hash:
-      algorithm: SHA-256
-      pepper: APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn
-    crypt:
-      secretLength: 50
-      secretLetters: true
-      secretNumbers: true
-      defaultRsa: RSA/ECB/OAEPwithSHA-512andMGF1Padding
-      defaultAes: AES/GCM/NoPadding
-      AesGcmNoPadding256:
-        iterations: 12345
+
+archive:
+  jks:
+    path: classpath:archive/dev.jks
+    password: changeMe
+  moveToArchiveJob:
+    cron: "-"
+    locklimit: 1800000
+    #### 1209600 = 2 weeks
+    older-than-in-seconds: 5000
+  hash:
+    algorithm: SHA-256
+    pepper: APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn
+  crypt:
+    secretLength: 50
+    secretLetters: true
+    secretNumbers: true
+    defaultRsa: RSA/ECB/OAEPwithSHA-512andMGF1Padding
+    defaultAes: AES/GCM/NoPadding
+    AesGcmNoPadding256:
+      iterations: 12345
 
 testresultserver:
   enabled: false

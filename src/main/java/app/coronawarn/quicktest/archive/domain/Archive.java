@@ -32,7 +32,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Data
-@ToString(exclude = { "secret", "ciphertext", "publicKey" })
+@ToString(exclude = { "secret", "ciphertext" })
 @Entity
 @Table(name = "archive")
 public class Archive {
@@ -50,14 +50,8 @@ public class Archive {
     @Column(name = "ciphertext", columnDefinition = "longtext", nullable = false)
     private String ciphertext;
 
-    @Column(name = "public_key", columnDefinition = "longtext", nullable = false)
-    private String publicKey;
-
     @Column(name = "algorithm_aes", columnDefinition = "varchar(255)", nullable = false)
     private String algorithmAes;
-    
-    @Column(name = "algorithm_rsa", columnDefinition = "varchar(255)", nullable = false)
-    private String algorithmRsa;
 
     @Column(name = "created_at", columnDefinition = "datetime", nullable = false)
     private LocalDateTime createdAt;

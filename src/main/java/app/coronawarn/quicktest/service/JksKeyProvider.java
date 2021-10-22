@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.ArchiveProperties;
 import app.coronawarn.quicktest.exception.DccException;
+import app.coronawarn.quicktest.service.cryption.RsaCryption;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -59,6 +60,8 @@ public class JksKeyProvider implements KeyProvider {
 
     private final List<PrivateKeyEntry> entries = new ArrayList<>();
 
+    private final RsaCryption cryption;
+
     /**
      * Reads all keys from the JKS.
      * 
@@ -94,8 +97,11 @@ public class JksKeyProvider implements KeyProvider {
      */
     @Override
     public PublicKey getPublicKey() {
-        int random = (int) (Math.random() * this.entries.size());
-        return this.entries.get(random).getCertificate().getPublicKey();
+        return this.entries.stream()
+                .findFirst()
+                .orElseThrow(() -> new DccException(HttpStatus.NOT_FOUND, "Public key not found"))
+                .getCertificate()
+                .getPublicKey();
     }
 
     @Override
@@ -104,7 +110,11 @@ public class JksKeyProvider implements KeyProvider {
     }
 
     @Override
-    public PrivateKey getPrivateKey(PublicKey publicKey) {
+    public String decrypt(String encrypted) {
+        return this.cryption.decrypt(this.getPrivateKey(this.getPublicKey()), encrypted);
+    }
+
+    private PrivateKey getPrivateKey(PublicKey publicKey) {
         return this.entries.stream()
                 .filter(key -> key.getCertificate().getPublicKey().equals(publicKey))
                 .findFirst()

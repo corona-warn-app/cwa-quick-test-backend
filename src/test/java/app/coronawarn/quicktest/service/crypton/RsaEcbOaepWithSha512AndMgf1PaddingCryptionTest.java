@@ -23,9 +23,8 @@ package app.coronawarn.quicktest.service.crypton;
 import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.quicktest.service.KeyProvider;
 import app.coronawarn.quicktest.service.cryption.RsaEcbOaepWithSha512AndMgf1PaddingCryption;
-import java.security.PrivateKey;
 import java.security.PublicKey;
-import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -42,15 +41,14 @@ class RsaEcbOaepWithSha512AndMgf1PaddingCryptionTest {
      * There are several public keys, which is why the test is carried out several times. It is likely that different
      * keys are used.
      */
-    @RepeatedTest(name = RepeatedTest.LONG_DISPLAY_NAME, value = 10)
+    @Test
     void encryptAndDecript() {
         // GIVEN
         final String plain = "B5hCYqxtkHtSkkhZcEEfVyL48zWEn8vqhJJxAQhr4eQTtHZZEHrVsNnbc4kKT2TPqLWKJ25A4VydVavp";
         final PublicKey publicKey = this.keyProvider.getPublicKey();
-        final PrivateKey privateKey = this.keyProvider.getPrivateKey(publicKey);
         // WHEN 
         final String encrypted = this.cryption.encrypt(publicKey, plain);
-        final String decrypted = this.cryption.decrypt(privateKey, encrypted);
+        final String decrypted = this.keyProvider.decrypt(encrypted);
         // THEN 
         assertThat(encrypted).isNotNull();
         assertThat(decrypted).isNotNull().isEqualTo(plain);

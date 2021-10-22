@@ -29,17 +29,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
-                  name: public_key
-                  type: clob
-                  constraints:
-                    nullable: false
-              - column:
                   name: algorithm_aes
-                  type: varchar(255)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: algorithm_rsa
                   type: varchar(255)
                   constraints:
                     nullable: false

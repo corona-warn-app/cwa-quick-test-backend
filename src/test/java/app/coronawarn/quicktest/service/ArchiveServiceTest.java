@@ -29,12 +29,7 @@ import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.cryption.AesCryption;
 import app.coronawarn.quicktest.service.cryption.CryptionService;
-import app.coronawarn.quicktest.service.cryption.RsaCryption;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.security.KeyFactory;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.spec.X509EncodedKeySpec;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
@@ -85,14 +80,8 @@ public class ArchiveServiceTest {
         assertThat(result.getVersion()).isNotNull().isNotNegative();
         // AND RSA encryption
         assertThat(result.getSecret()).isNotNull();
-        assertThat(result.getPublicKey()).isNotNull();
-        final PublicKey publicKey = KeyFactory.getInstance("RSA")
-                .generatePublic(new X509EncodedKeySpec(Base64.getDecoder().decode(result.getPublicKey())));
-        final PrivateKey privateKey = this.keyProvider.getPrivateKey(publicKey);
-        final RsaCryption rsaCryption = this.cryptionService.getRsaCryption();
-        final String secret = rsaCryption.decrypt(privateKey, result.getSecret());
+        final String secret = this.keyProvider.decrypt(result.getSecret());
         assertThat(secret).isNotBlank();
-        assertThat(result.getAlgorithmRsa()).isEqualTo(rsaCryption.getAlgorithm());
         // AND AES encryption
         assertThat(result.getCiphertext()).isNotNull();
         final AesCryption aesCryption = this.cryptionService.getAesCryption();

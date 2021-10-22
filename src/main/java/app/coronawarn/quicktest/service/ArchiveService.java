@@ -38,7 +38,6 @@ import java.security.PublicKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
@@ -48,13 +47,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class ArchiveService {
 
-    private static final  DateTimeFormatter BIRTHDAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    private static final DateTimeFormatter BIRTHDAY_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private static final DateTimeFormatter IDENTIFIER_FORMATTER = DateTimeFormatter.ofPattern("ddMM");
 
@@ -80,7 +78,7 @@ public class ArchiveService {
         log.debug("Starting Job: moveToArchiveJob");
         this.moveToArchive();
     }
-    
+
     /**
      * Moves the entries to the archive.
      */
@@ -106,23 +104,21 @@ public class ArchiveService {
 
     private Archive buildArchive(final ArchiveCipherDtoV1 dto) {
         final LocalDateTime now = LocalDateTime.now();
-        final PublicKey publicKey = this.keyProvider.getPublicKey();
         final String secret = cryptionService.generateRandomSecret();
 
         final Archive archive = new Archive();
         archive.setHashedGuid(dto.getHashedGuid());
         archive.setIdentifier(this.buildIdentifier(dto));
         archive.setCiphertext(this.buildCiphertext(secret, dto));
-        archive.setSecret(this.encryptSecret(publicKey, secret));
-        archive.setPublicKey(Base64.getEncoder().encodeToString(publicKey.getEncoded()));
+        archive.setSecret(this.encryptSecret(secret));
         archive.setAlgorithmAes(this.cryptionService.getAesCryption().getAlgorithm());
-        archive.setAlgorithmRsa(this.cryptionService.getRsaCryption().getAlgorithm());
         archive.setCreatedAt(now);
         archive.setUpdatedAt(now);
         return archive;
     }
 
-    private String encryptSecret(final PublicKey publicKey, final String secret) {
+    private String encryptSecret(final String secret) {
+        final PublicKey publicKey = this.keyProvider.getPublicKey();
         return this.cryptionService.getRsaCryption().encrypt(publicKey, secret);
     }
 
@@ -138,7 +134,7 @@ public class ArchiveService {
     private String buildIdentifier(final ArchiveCipherDtoV1 dto) {
         return this.buildIdentifier(dto.getBirthday(), dto.getLastName());
     }
-    
+
     String buildIdentifier(final String birthday, final String lastname) {
         final String identifier = String.format("%s%s",
                 LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),

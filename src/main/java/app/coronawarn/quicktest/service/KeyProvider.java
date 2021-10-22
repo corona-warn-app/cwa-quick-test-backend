@@ -20,8 +20,6 @@
 
 package app.coronawarn.quicktest.service;
 
-import app.coronawarn.quicktest.exception.DccException;
-import java.security.PrivateKey;
 import java.security.PublicKey;
 
 public interface KeyProvider {
@@ -41,11 +39,10 @@ public interface KeyProvider {
     byte[] getPepper();
 
     /**
-     * Returns the private key to the public key, if this function is supported.
+     * Decrypts the content.
      * 
-     * @param publicKey {@link PublicKey}
-     * @return {@link PrivateKey}
-     * @throws DccException if this function is supported or key not found
+     * @param encrypted content
+     * @return decrypted content
      */
-    PrivateKey getPrivateKey(PublicKey publicKey);
+    String decrypt(String encrypted);
 }

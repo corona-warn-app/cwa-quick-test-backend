@@ -43,6 +43,12 @@ public class Archive {
 
     @Column(name = "identifier", columnDefinition = "varchar(255)", nullable = false)
     private String identifier;
+    
+    @Column(name = "tenant_id", columnDefinition = "varchar(255)", nullable = false)
+    private String tenantId;
+
+    @Column(name = "poc_id", columnDefinition = "varchar(255)", nullable = false)
+    private String pocId;
 
     @Column(name = "secret", columnDefinition = "longtext", nullable = false)
     private String secret;

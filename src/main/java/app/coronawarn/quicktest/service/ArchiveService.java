@@ -109,6 +109,8 @@ public class ArchiveService {
         final Archive archive = new Archive();
         archive.setHashedGuid(dto.getHashedGuid());
         archive.setIdentifier(this.buildIdentifier(dto));
+        archive.setTenantId(this.createHash(dto.getTenantId()));
+        archive.setPocId(this.createHash(dto.getPocId()));
         archive.setCiphertext(this.buildCiphertext(secret, dto));
         archive.setSecret(this.encryptSecret(secret));
         archive.setAlgorithmAes(this.cryptionService.getAesCryption().getAlgorithm());
@@ -139,11 +141,14 @@ public class ArchiveService {
         final String identifier = String.format("%s%s",
                 LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
                 lastname.substring(0, 2).toUpperCase());
-
+        return this.createHash(identifier);
+    }
+    
+    String createHash(String in) {
         final MessageDigest digest = buildMessageDigest(this.properties.getHash().getAlgorithm());
         digest.reset();
         digest.update(this.keyProvider.getPepper());
-        byte[] identifierHashed = digest.digest(identifier.getBytes(StandardCharsets.UTF_8));
+        byte[] identifierHashed = digest.digest(in.getBytes(StandardCharsets.UTF_8));
         return Hex.toHexString(identifierHashed);
     }
 

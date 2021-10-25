@@ -19,6 +19,18 @@ databaseChangeLog:
                   constraints:
                     nullable: false
               - column:
+                  # test provider identifier
+                  name: tenant_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  # test spot identifier
+                  name: poc_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
                   name: secret
                   type: clob
                   constraints:

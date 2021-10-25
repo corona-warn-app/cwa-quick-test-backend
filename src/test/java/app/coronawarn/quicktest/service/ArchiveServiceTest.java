@@ -75,6 +75,8 @@ public class ArchiveServiceTest {
         assertThat(result.getHashedGuid()).isEqualTo(test.getHashedGuid());
         assertThat(result.getIdentifier()).isEqualTo(this.archiveService
                 .buildIdentifier(test.getBirthday(), test.getLastName()));
+        assertThat(result.getTenantId()).isEqualTo(this.archiveService.createHash(test.getTenantId()));
+        assertThat(result.getPocId()).isEqualTo(this.archiveService.createHash(test.getPocId()));
         assertThat(result.getCreatedAt()).isAfterOrEqualTo(LocalDateTime.now().minusMinutes(5));
         assertThat(result.getUpdatedAt()).isAfterOrEqualTo(LocalDateTime.now().minusMinutes(5));
         assertThat(result.getVersion()).isNotNull().isNotNegative();

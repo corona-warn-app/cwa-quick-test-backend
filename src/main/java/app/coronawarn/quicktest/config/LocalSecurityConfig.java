@@ -42,7 +42,7 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+public class LocalSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String ROLE_LAB = "ROLE_c19_quick_test_lab";

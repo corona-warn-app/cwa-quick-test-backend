@@ -20,9 +20,9 @@
 
 package app.coronawarn.quicktest.service;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_PREFIX;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_PREFIX;
 
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;

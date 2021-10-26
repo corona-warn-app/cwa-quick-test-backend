@@ -20,7 +20,7 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.AntigenTest;
 import app.coronawarn.quicktest.service.AntigenTestService;

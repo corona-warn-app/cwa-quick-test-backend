@@ -122,4 +122,5 @@ quicktest:
   frontend-context-config:
     rules-server-url: ${QUICK_TEST_DCC_RULES_SERVER_URL}
     environment-name: ${QUICK_TEST_ENVIRONMENT_NAME:unknown}
+  allowed-client-certificates: ${QUICKTEST_ALLOWEDCLIENTCERTIFICATES}
 

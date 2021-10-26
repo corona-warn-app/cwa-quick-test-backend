@@ -59,9 +59,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_TENANT_COUNTER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;

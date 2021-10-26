@@ -20,8 +20,8 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_ADMIN;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_LAB;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;

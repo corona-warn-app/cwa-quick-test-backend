@@ -20,7 +20,7 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_ADMIN;
 
 import app.coronawarn.quicktest.model.keycloak.KeycloakCreateUserRequest;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUpdateUserRequest;

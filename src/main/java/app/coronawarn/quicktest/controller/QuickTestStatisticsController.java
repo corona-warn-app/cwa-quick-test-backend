@@ -20,9 +20,9 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.MtlsSecurityConfig.ROLE_TENANT_COUNTER;
 
 import app.coronawarn.quicktest.model.Aggregation;
 import app.coronawarn.quicktest.model.quicktest.QuickTestStatisticsResponse;

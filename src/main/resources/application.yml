@@ -92,6 +92,7 @@ quicktest:
   frontend-context-config:
     rules-server-url: https://distribution-6155b8d7d3c6.dcc-rules.de
     environment-name: local
+  allowed-client-certificates:
 
 testresultserver:
   enabled: false

@@ -71,6 +71,7 @@ public class KeycloakService {
 
     private static final String POC_ID_ATTRIBUTE = "poc_id";
     private static final String POC_DETAILS_ATTRIBUTE = "poc_details";
+    private static final String BSNR_ATTRIBUTE = "bsnr";
 
     /**
      * Creates a new Keycloak User in the Main Realm and sets roles and the root group.
@@ -237,6 +238,7 @@ public class KeycloakService {
         groupDetails.setName(group.getName());
         groupDetails.setPocDetails(getFromAttributes(group.getAttributes(), POC_DETAILS_ATTRIBUTE));
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
+        groupDetails.setBsnr(getFromAttributes(group.getAttributes(), BSNR_ATTRIBUTE));
         MapEntrySingleResponse mapEntry = mapEntryService.getMapEntry(groupId);
         if (mapEntry != null) {
             log.info(mapEntry.toString());
@@ -497,7 +499,7 @@ public class KeycloakService {
         group.setName(details.getName());
         // do not update POC ID
         group.setAttributes(getGroupAttributes(details.getPocDetails(),
-                getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
+                getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE), details.getBsnr()));
 
         try {
             groupResource.update(group);
@@ -541,7 +543,7 @@ public class KeycloakService {
             log.info("created group");
             // setting group properties with Group Details and POC ID
             newGroup = response.readEntity(GroupRepresentation.class);
-            newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId()));
+            newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId(), details.getBsnr()));
             realm().groups().group(newGroup.getId()).update(newGroup);
             if (details.getSearchPortalConsent()) {
                 details.setId(newGroup.getId());
@@ -634,7 +636,7 @@ public class KeycloakService {
         }
     }
 
-    private Map<String, List<String>> getGroupAttributes(String pocDetails, String pocId) {
+    private Map<String, List<String>> getGroupAttributes(String pocDetails, String pocId, String bsnr) {
         Map<String, List<String>> attributes = new HashMap<>();
         if (pocDetails != null) {
             attributes.put(POC_DETAILS_ATTRIBUTE, List.of(pocDetails));
@@ -642,6 +644,10 @@ public class KeycloakService {
 
         if (pocId != null) {
             attributes.put(POC_ID_ATTRIBUTE, List.of(pocId));
+        }
+
+        if (bsnr != null) {
+            attributes.put(BSNR_ATTRIBUTE, List.of(bsnr));
         }
 
         return attributes;

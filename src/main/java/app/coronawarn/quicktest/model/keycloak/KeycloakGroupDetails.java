@@ -55,4 +55,7 @@ public class KeycloakGroupDetails {
 
     private Boolean appointmentRequired;
 
+    // Optional Betriebsstaettennummer of a poc
+    @Size(min = 9, max = 9)
+    private String bsnr;
 }

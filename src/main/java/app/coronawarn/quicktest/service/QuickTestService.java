@@ -38,7 +38,6 @@ import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -59,6 +58,7 @@ public class QuickTestService {
     private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
+    private final DemisService demisService;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
@@ -198,6 +198,12 @@ public class QuickTestService {
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
                 quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
+
+        // Send positive result to Demis
+        if (quicktest.getTestResult() == 7) {
+            //TODO use bsnr
+            demisService.handlePositiveTest(quicktest, pocInformation);
+        }
     }
 
     /**
@@ -273,7 +279,6 @@ public class QuickTestService {
               quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
-
     }
 
     /**

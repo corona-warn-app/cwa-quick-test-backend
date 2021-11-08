@@ -161,11 +161,27 @@ dccserver:
   trustStorePath: classpath:truststore.jks
   trustStorePassword: changeit
 
+demisserver:
+  enabled: false
+  hostnameVerify: false
+  keyStorePath:
+  keyStorePassword:
+  trustStorePath:
+  trustStorePassword:
+  authUrl: https://localhost:7543/auth/realms/LAB/protocol/openid-connect/token
+  fhirBasepath: https://localhost:7543/notification-api/fhir/
+  clientId:
+  clientSecret:
+  username:
+
 quicktest-map-server:
   url: http://localhost:9999
 
 cwa-dcc-server:
   url: http://localhost:8080
+
+demis-server:
+  url: http://localhost:8091
 
 dcc:
   algId: -7

@@ -74,6 +74,10 @@ cwa-dcc-server:
   url: http://localhost:8080
 quicktest-map-server:
   url: http://localhost:8099
+
+demis-server:
+  url: http://localhost:8091
+
 dcc:
   country: DE
   issuer: RKI

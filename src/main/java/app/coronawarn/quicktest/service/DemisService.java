@@ -2,6 +2,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.DemisServerClient;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.model.demis.DiagnoseSarsCoV2;
 import app.coronawarn.quicktest.model.demis.NotificationBundleLaboratory;
 import app.coronawarn.quicktest.model.demis.NotificationResponse;
@@ -16,6 +17,7 @@ import app.coronawarn.quicktest.model.demis.SubmittingRole;
 import app.coronawarn.quicktest.utils.DemisUtils;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Address;
@@ -23,6 +25,7 @@ import org.hl7.fhir.r4.model.Composition;
 import org.hl7.fhir.r4.model.Condition;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Observation;
+import org.hl7.fhir.r4.model.Organization;
 import org.hl7.fhir.r4.model.Patient;
 import org.springframework.stereotype.Component;
 
@@ -49,8 +52,8 @@ public class DemisService {
 
         NotificationBundleLaboratory payloadBundle = createPayload(quickTest, pocAddress, pocInformation.get(0));
 
-        //TODO result
         NotificationResponse response = demisServerClient.sendNotification(payloadBundle);
+        logResponse(response, quickTest);
     }
 
     private NotificationBundleLaboratory createPayload(QuickTest quickTest, Address pocAddress, String pocName) {
@@ -83,6 +86,23 @@ public class DemisService {
         payloadBundle.addEntry().setResource(observation).setFullUrl(URN_UUID + observation.getId());
         payloadBundle.addEntry().setResource(specimen).setFullUrl(URN_UUID + specimen.getId());
         return payloadBundle;
+    }
+
+    private void logResponse(NotificationResponse response, QuickTest quickTest) {
+        if (response.getStatus() == DemisStatus.ZIP_NOT_SUPPORTED) {
+            log.info("Zipcode {} of the concernedPerson is not supported yet for Demis", quickTest.getZipCode());
+        } else if (response.getStatus() == DemisStatus.SENDING_FAILED) {
+            log.warn("Notification could not be sent to Demis");
+        } else if (response.getStatus() == DemisStatus.OK) {
+            log.info("Notification successfully sent and acknowledged: {}", getReceiverInformation(response));
+        }
+    }
+
+    private String getReceiverInformation(NotificationResponse response) {
+        return response.getResultBundle().getEntry().stream()
+          .filter(it -> it.getResource() instanceof Organization)
+          .map(it -> ((Organization) it.getResource()).getName())
+          .collect(Collectors.joining(" - "));
     }
 
 }

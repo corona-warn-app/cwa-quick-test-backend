@@ -4,6 +4,7 @@ import app.coronawarn.quicktest.domain.QuickTest;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -11,6 +12,7 @@ import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Meta;
+import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 
@@ -107,5 +109,34 @@ public class DemisUtils {
             log.error("Can not parse birthday: {}", birthday);
         }
         return result;
+    }
+
+    /**
+     * Get Parameter by name.
+     * @param params the parameters
+     * @param name the name of the parameter to retrieve
+     * @return the Parameter
+     */
+    public static Parameters.ParametersParameterComponent retrieveParameter(Parameters params, String name) {
+        Iterator<Parameters.ParametersParameterComponent> it = params.getParameter().iterator();
+        Parameters.ParametersParameterComponent match = null;
+
+        while (it.hasNext()) {
+            Parameters.ParametersParameterComponent p = it.next();
+            if (p.getName().equals(name)) {
+                match = p;
+                break;
+            }
+        }
+
+        if (match == null) {
+            log.error("did not find a parameter with name {}", name);
+            return null;
+        } else if (match.isEmpty()) {
+            log.error("ParameterComponent {} with empty value, returning null", name);
+            return null;
+        } else {
+            return match;
+        }
     }
 }

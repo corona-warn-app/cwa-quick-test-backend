@@ -1,24 +1,28 @@
 package app.coronawarn.quicktest.client;
 
 import app.coronawarn.quicktest.config.DemisServerValuesConfig;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.model.demis.NotificationResponse;
 import app.coronawarn.quicktest.model.demis.TokenEndpointResponse;
+import app.coronawarn.quicktest.utils.DemisUtils;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.OperationOutcome;
 import org.hl7.fhir.r4.model.Parameters;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -29,15 +33,12 @@ public class DemisServerClientImpl implements DemisServerClient {
     private final DemisServerValuesConfig demisConfig;
     private final RestTemplate restTemplate;
     private final FhirContext context = FhirContext.forR4();
-    private IGenericClient fhirClient;
 
     private String token;
 
     @PostConstruct
     private void initialize() {
         if (demisConfig.isEnabled()) {
-            this.fhirClient = this.context.newRestfulGenericClient(demisConfig.getFhirBasepath());
-
             HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(getAuth(), getHttpHeaders());
 
             try {
@@ -80,12 +81,46 @@ public class DemisServerClientImpl implements DemisServerClient {
         headers.add("Authorization", "Bearer " + this.token);
 
         HttpEntity<String> request = new HttpEntity<>(paramJson, headers);
+        ResponseEntity<String> response;
+        try {
+            response = this.restTemplate.postForEntity(
+              demisConfig.getFhirBasepath() + "$process-notification", request, String.class);
+        } catch (HttpStatusCodeException ex) {
+            response = new ResponseEntity<>(ex.getResponseBodyAsString(), ex.getResponseHeaders(), ex.getStatusCode());
+        }
 
-        String s = this.restTemplate.postForObject(demisConfig.getFhirBasepath() + "$process-notification", request,
-          String.class);
-        // TODO Map to NotificationResponse
+        return processResponse(response);
+    }
+
+    private NotificationResponse processResponse(ResponseEntity<String> response) {
+        NotificationResponse notificationResponse = new NotificationResponse();
+        HttpStatus statusCode = response.getStatusCode();
+        if (statusCode.isError()) {
+            log.error("Sending Demis notification failed with code: {}", statusCode);
+            if (statusCode.is4xxClientError()) {
+                notificationResponse.setStatus(DemisStatus.SENDING_FAILED);
+            } else {
+                notificationResponse.setStatus(DemisStatus.ZIP_NOT_SUPPORTED);
+            }
+            return notificationResponse;
+        }
+
         IParser parser = context.newJsonParser();
-        Parameters para = parser.parseResource(Parameters.class, s);
-        return new NotificationResponse();
+        Parameters parameters = parser.parseResource(Parameters.class, response.getBody());
+        Parameters.ParametersParameterComponent component = DemisUtils.retrieveParameter(parameters, "bundle");
+        if (component  == null) {
+            notificationResponse.setStatus(DemisStatus.INVALID_RESPONSE_BODY);
+        } else {
+            notificationResponse.setResultBundle((Bundle) component.getResource());
+            component = DemisUtils.retrieveParameter(parameters, "operationOutcome");
+            if (component == null) {
+                notificationResponse.setStatus(DemisStatus.INVALID_RESPONSE_BODY);
+            } else {
+                notificationResponse.setStatus(DemisStatus.OK);
+                notificationResponse.setOperationOutcome((OperationOutcome) component.getResource());
+            }
+        }
+
+        return notificationResponse;
     }
 }

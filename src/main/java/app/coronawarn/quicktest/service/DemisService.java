@@ -17,6 +17,7 @@ import app.coronawarn.quicktest.model.demis.SubmittingRole;
 import app.coronawarn.quicktest.utils.DemisUtils;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -42,7 +43,7 @@ public class DemisService {
      * Handle a positive test and send it to Demis.
      * @param quickTest the test
      */
-    public void handlePositiveTest(QuickTest quickTest, List<String> pocInformation) {
+    public void handlePositiveTest(QuickTest quickTest, List<String> pocInformation, Optional<String> bsnr) {
         if (quickTest.getTestResult() != 7) {
             throw new IllegalArgumentException("Can not create Notification for non-positive test.");
         }
@@ -50,19 +51,20 @@ public class DemisService {
         Address pocAddress = DemisUtils.createAddress(pocInformation)
           .orElseThrow(() -> new IllegalArgumentException("Could not create Address from poc information"));
 
-        NotificationBundleLaboratory payloadBundle = createPayload(quickTest, pocAddress, pocInformation.get(0));
+        NotificationBundleLaboratory payloadBundle = createPayload(quickTest, pocAddress, pocInformation.get(0), bsnr);
 
         NotificationResponse response = demisServerClient.sendNotification(payloadBundle);
         logResponse(response, quickTest);
     }
 
-    private NotificationBundleLaboratory createPayload(QuickTest quickTest, Address pocAddress, String pocName) {
+    private NotificationBundleLaboratory createPayload(QuickTest quickTest, Address pocAddress, String pocName,
+                                                       Optional<String> bsnr) {
         final Patient patient = new PersonConcerned().fromQuicktest(quickTest);
         final NotifierFacility notifierFacility = new NotifierFacility().withName(pocName)
-          .withAddress(pocAddress).withContact("https://schnelltestportal.de/");
+          .withAddress(pocAddress).withContact("https://schnelltestportal.de/").withOptionalIdentifier(bsnr);
         final NotifierRole notifierRole = new NotifierRole().withOrganization(notifierFacility);
         final SubmittingFacility submittingFacility = new SubmittingFacility().withName(pocName)
-          .withAddress(pocAddress).withContact("https://schnelltestportal.de/");
+          .withAddress(pocAddress).withContact("https://schnelltestportal.de/").withOptionalIdentifier(bsnr);
         final Condition condition = new DiagnoseSarsCoV2().withSubject(patient);
         final SubmittingRole submittingRole = new SubmittingRole().withOrganization(submittingFacility);
         final SpecimenSarsCoV2 specimen = new SpecimenSarsCoV2().withSubject(patient).withCollector(submittingRole);

@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -297,7 +296,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName(null);
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
-            .when(quickTestService).updateQuickTest(any(), any(), any(QuickTestUpdateRequest.class), any(), any());
+            .when(quickTestService).updateQuickTest(any(), any(), any(QuickTestUpdateRequest.class), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -309,7 +308,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
                 result.getResolvedException().getMessage()));
 
         doThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR))
-            .when(quickTestService).updateQuickTest(any(), any(), any(QuickTestUpdateRequest.class), any(), any());
+            .when(quickTestService).updateQuickTest(any(), any(), any(QuickTestUpdateRequest.class), any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
             .put(API_BASE_PATH + "/6fa4dcec/testResult")
             .accept(MediaType.APPLICATION_JSON_VALUE)

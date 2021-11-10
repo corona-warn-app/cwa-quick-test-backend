@@ -140,7 +140,8 @@ public class QuickTestServiceTest {
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
                 quickTestUpdateRequest,
                 new ArrayList<>(),
-                "User");
+                "User",
+              Optional.empty());
         } catch (NullPointerException e) {
         }
         verify(qs, times(1)).addStatistics(any());
@@ -162,7 +163,8 @@ public class QuickTestServiceTest {
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
                 quickTestUpdateRequest,
                 new ArrayList<>(),
-                "User");
+                "User",
+              Optional.empty());
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
@@ -183,7 +185,8 @@ public class QuickTestServiceTest {
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
                 quickTestUpdateRequest,
                 new ArrayList<>(),
-                "User");
+                "User",
+                Optional.empty());
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(), HttpStatus.NOT_FOUND, "wrong status");
@@ -214,7 +217,8 @@ public class QuickTestServiceTest {
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
                 quickTestUpdateRequest,
                 new ArrayList<>(),
-                "User");
+                "User",
+                Optional.empty());
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
@@ -239,7 +243,8 @@ public class QuickTestServiceTest {
                 // 6 and 7 are still there because needed for dcc processing
                 quickTestUpdateRequest,
                 new ArrayList<>(),
-                "User");
+                "User",
+                Optional.empty());
             fail("has to throw exception");
         } catch (ResponseStatusException e) {
             assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
@@ -266,7 +271,8 @@ public class QuickTestServiceTest {
             "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
             quickTestUpdateRequest,
             new ArrayList<>(),
-            "User");
+            "User",
+            Optional.empty());
         verify(testResultService, times(1)).createOrUpdateTestResult(any());
     }
 
@@ -385,7 +391,8 @@ public class QuickTestServiceTest {
                 "6fa4dc",
                 quickTestUpdateRequest,
                 new ArrayList<>(),
-                "User");
+                "User",
+                Optional.empty());
         } catch (NullPointerException e) {
         }
         ArgumentCaptor<QuickTestArchive> captor = ArgumentCaptor.forClass(QuickTestArchive.class);

@@ -176,7 +176,8 @@ public class QuickTestController {
                 shortHash,
                 quickTestUpdateRequest,
                 utilities.getPocInformationFromToken(),
-                utilities.getUserNameFromToken()
+                utilities.getUserNameFromToken(),
+                utilities.getBsnrFromToken()
             );
         } catch (ResponseStatusException e) {
             throw e;

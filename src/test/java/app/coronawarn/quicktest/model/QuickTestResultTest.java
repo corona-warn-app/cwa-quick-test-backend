@@ -20,24 +20,32 @@
 
 package app.coronawarn.quicktest.model;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import app.coronawarn.quicktest.client.TestResultServerClient;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResultList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.service.QuickTestService;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.util.*;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 
 
 @SpringBootTest
@@ -75,7 +83,7 @@ public class QuickTestResultTest{
                 "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
                 quickTestUpdateRequest,
                 new ArrayList<>(),
-                "User");
+                "User", Optional.empty());
         when(testResultServerClient.results(resultList)).thenReturn(responseEntity);
         assertEquals(responseEntity, testResultServerClient.results(resultList));
         verify(testResultServerClient, times(1)).results(resultList);

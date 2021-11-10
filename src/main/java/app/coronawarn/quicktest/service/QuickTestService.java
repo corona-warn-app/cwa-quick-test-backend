@@ -125,7 +125,7 @@ public class QuickTestService {
     @Transactional(rollbackFor = ResponseStatusException.class)
     public void updateQuickTest(Map<String, String> ids, String shortHash,
                                 QuickTestUpdateRequest quickTestUpdateRequest, List<String> pocInformation,
-                                String user) throws ResponseStatusException {
+                                String user, Optional<String> bsnr) throws ResponseStatusException {
         QuickTest quicktest = getQuickTest(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
@@ -201,8 +201,7 @@ public class QuickTestService {
 
         // Send positive result to Demis
         if (quicktest.getTestResult() == 7) {
-            //TODO use bsnr
-            demisService.handlePositiveTest(quicktest, pocInformation);
+            demisService.handlePositiveTest(quicktest, pocInformation, bsnr);
         }
     }
 

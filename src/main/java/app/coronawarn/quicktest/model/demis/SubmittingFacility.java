@@ -4,6 +4,7 @@ import static app.coronawarn.quicktest.utils.DemisUtils.BSNR_SYSTEM;
 
 import app.coronawarn.quicktest.utils.DemisUtils;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
+import java.util.Optional;
 import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.Identifier;
@@ -31,6 +32,15 @@ public class SubmittingFacility extends Organization {
     public SubmittingFacility withIdentifier(final String value) {
         this.addIdentifier(new Identifier().setSystem(BSNR_SYSTEM).setValue(value));
         return this;
+    }
+
+    /**
+     * create SubmittingFacility with bsnr.
+     * @param value the id
+     * @return notifier facility
+     */
+    public SubmittingFacility withOptionalIdentifier(final Optional<String> value) {
+        return value.isPresent() ? withIdentifier(value.get()) : this;
     }
 
     public SubmittingFacility withAddress(final Address address) {

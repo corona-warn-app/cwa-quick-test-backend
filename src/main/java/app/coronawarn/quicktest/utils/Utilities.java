@@ -216,6 +216,25 @@ public class Utilities {
         return name;
     }
 
+    /**
+     * Get optional BSNR from token.
+     * @return The Betriebsstaettennummer
+     */
+    public Optional<String> getBsnrFromToken() {
+        Principal principal = getPrincipal();
+        String bsnr = null;
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            Map<String, Object> customClaims = token.getOtherClaims();
+
+            if (customClaims.containsKey(quickTestConfig.getBsnrKey())) {
+                bsnr = String.valueOf(customClaims.get(quickTestConfig.getBsnrKey()));
+            }
+        }
+        return Optional.ofNullable(bsnr);
+    }
+
     private Principal getPrincipal() {
         KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
             SecurityContextHolder.getContext().getAuthentication();

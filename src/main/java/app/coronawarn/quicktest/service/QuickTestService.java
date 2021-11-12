@@ -26,6 +26,8 @@ import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.domain.QuickTestLog;
 import app.coronawarn.quicktest.model.TestResult;
+import app.coronawarn.quicktest.model.demis.DemisResult;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
@@ -123,9 +125,9 @@ public class QuickTestService {
      * @throws ResponseStatusException exception
      */
     @Transactional(rollbackFor = ResponseStatusException.class)
-    public void updateQuickTest(Map<String, String> ids, String shortHash,
-                                QuickTestUpdateRequest quickTestUpdateRequest, List<String> pocInformation,
-                                String user, Optional<String> bsnr) throws ResponseStatusException {
+    public DemisResult updateQuickTest(Map<String, String> ids, String shortHash,
+                                       QuickTestUpdateRequest quickTestUpdateRequest, List<String> pocInformation,
+                                       String user, Optional<String> bsnr) throws ResponseStatusException {
         QuickTest quicktest = getQuickTest(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
@@ -200,9 +202,10 @@ public class QuickTestService {
         log.info("Updated TestResult for hashedGuid with TestResult");
 
         // Send positive result to Demis
-        if (quicktest.getTestResult() == 7) {
-            demisService.handlePositiveTest(quicktest, pocInformation, bsnr);
+        if (quickTestConfig.isDemisEnabled() && quicktest.getTestResult() == 7) {
+            return demisService.handlePositiveTest(quicktest, pocInformation, bsnr);
         }
+        return DemisResult.builder().demisStatus(DemisStatus.NONE).build();
     }
 
     /**

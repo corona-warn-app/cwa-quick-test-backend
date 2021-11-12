@@ -68,6 +68,8 @@ public class DemisServerClientImpl implements DemisServerClient {
                       .refreshToken(tokenEndpointResponse.getRefreshToken())
                       .refreshTokenExpiresAt(now.plus(tokenEndpointResponse.getRefreshExpiresIn(), ChronoUnit.SECONDS))
                       .build();
+
+                    log.info("Demis authentication successful.");
                 }
                 return true;
             } catch (Exception e) {
@@ -108,6 +110,7 @@ public class DemisServerClientImpl implements DemisServerClient {
             this.authenticated = authenticate();
         }
         if (this.authenticated) {
+            final long start = System.currentTimeMillis();
             final Parameters parameters = new Parameters();
             parameters.addParameter().setName("content").setResource(notification);
             String paramJson = context.newJsonParser().encodeResourceToString(parameters);
@@ -121,6 +124,7 @@ public class DemisServerClientImpl implements DemisServerClient {
                 response =
                   new ResponseEntity<>(ex.getResponseBodyAsString(), ex.getResponseHeaders(), ex.getStatusCode());
             }
+            log.info("Sending to Demis took {} ms", System.currentTimeMillis() - start);
 
             return processResponse(response);
         } else {

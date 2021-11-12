@@ -5,7 +5,9 @@ import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.utils.DemisUtils;
 import ca.uhn.fhir.model.api.annotation.ResourceDef;
 import java.util.Date;
+import org.apache.commons.lang3.StringUtils;
 import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.Enumerations;
 import org.hl7.fhir.r4.model.Patient;
 
@@ -40,6 +42,36 @@ public class PersonConcerned extends Patient {
     }
 
     /**
+     * Set mobile phone if present.
+     * @param phone the phone number
+     * @return the patient
+     */
+    public PersonConcerned withPhone(String phone) {
+        if (StringUtils.isNotBlank(phone)) {
+            this.addTelecom()
+              .setSystem(ContactPoint.ContactPointSystem.PHONE)
+              .setUse(ContactPoint.ContactPointUse.MOBILE)
+              .setValue(phone);
+        }
+        return this;
+    }
+
+    /**
+     * Set email address is present.
+     * @param mail the mail address
+     * @return the patient
+     */
+    public PersonConcerned withMail(String mail) {
+        if (StringUtils.isNotBlank(mail)) {
+            this.addTelecom()
+              .setSystem(ContactPoint.ContactPointSystem.EMAIL)
+              .setUse(ContactPoint.ContactPointUse.HOME)
+              .setValue(mail);
+        }
+        return this;
+    }
+
+    /**
      * Create a PersonConcerned from Quickest information.
      * @param quickTest the quicktest
      * @return the PersonConcerned
@@ -49,7 +81,9 @@ public class PersonConcerned extends Patient {
           .withName(quickTest.getFirstName(), quickTest.getLastName())
           .withGender(quickTest.getSex())
           .withBirthday(DemisUtils.parseBirthday(quickTest.getBirthday()))
-          .withAddress(DemisUtils.createAddress(quickTest));
+          .withAddress(DemisUtils.createAddress(quickTest))
+          .withPhone(quickTest.getPhoneNumber())
+          .withMail(quickTest.getEmail());
     }
 
     private Enumerations.AdministrativeGender getGender(Sex sex) {

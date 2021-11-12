@@ -2,6 +2,7 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.DemisServerClient;
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.model.demis.DemisResult;
 import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.model.demis.DiagnoseSarsCoV2;
 import app.coronawarn.quicktest.model.demis.NotificationBundleLaboratory;
@@ -43,7 +44,7 @@ public class DemisService {
      * Handle a positive test and send it to Demis.
      * @param quickTest the test
      */
-    public void handlePositiveTest(QuickTest quickTest, List<String> pocInformation, Optional<String> bsnr) {
+    public DemisResult handlePositiveTest(QuickTest quickTest, List<String> pocInformation, Optional<String> bsnr) {
         if (quickTest.getTestResult() != 7) {
             throw new IllegalArgumentException("Can not create Notification for non-positive test.");
         }
@@ -54,7 +55,7 @@ public class DemisService {
         NotificationBundleLaboratory payloadBundle = createPayload(quickTest, pocAddress, pocInformation.get(0), bsnr);
 
         NotificationResponse response = demisServerClient.sendNotification(payloadBundle);
-        logResponse(response, quickTest);
+        return handleResponse(response, quickTest);
     }
 
     private NotificationBundleLaboratory createPayload(QuickTest quickTest, Address pocAddress, String pocName,
@@ -90,14 +91,29 @@ public class DemisService {
         return payloadBundle;
     }
 
-    private void logResponse(NotificationResponse response, QuickTest quickTest) {
-        if (response.getStatus() == DemisStatus.ZIP_NOT_SUPPORTED) {
-            log.info("Zipcode {} of the concernedPerson is not supported yet for Demis", quickTest.getZipCode());
-        } else if (response.getStatus() == DemisStatus.SENDING_FAILED) {
-            log.warn("Notification could not be sent to Demis");
-        } else if (response.getStatus() == DemisStatus.OK) {
-            log.info("Notification successfully sent and acknowledged: {}", getReceiverInformation(response));
+    private DemisResult handleResponse(NotificationResponse response, QuickTest quickTest) {
+        String message = "";
+        final DemisStatus status = response.getStatus();
+        switch (status) {
+          case ZIP_NOT_SUPPORTED:
+              message = String.format(
+                "Zipcode %s of the concernedPerson is not supported yet for Demis", quickTest.getZipCode());
+              break;
+          case INVALID_RESPONSE_BODY:
+          case SENDING_FAILED:
+              message = "Notification could not be sent to Demis";
+              break;
+          case OK:
+              message = String.format(
+                "Notification successfully sent and acknowledged: %s", getReceiverInformation(response));
+              break;
+          case NONE:
+              break;
+          default:
+              throw new IllegalStateException("Unexpected value: " + status);
         }
+        log.info(message);
+        return DemisResult.builder().demisStatus(status).details(message).build();
     }
 
     private String getReceiverInformation(NotificationResponse response) {

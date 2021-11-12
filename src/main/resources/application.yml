@@ -85,6 +85,7 @@ quicktest:
   groupInformationDelimiter: \,
   db-encryption-key: abcdefghjklmnopq
   labId: labId4711
+  demisEnabled: false
   clean-up-settings:
     cron: 0 * * * * *
     max-age-in-minutes: 1440
@@ -162,17 +163,22 @@ dccserver:
   trustStorePassword: changeit
 
 demisserver:
-  enabled: false
+  enabled: true
   hostnameVerify: false
-  keyStorePath:
-  keyStorePassword:
-  trustStorePath:
-  trustStorePassword:
+  keyStorePath: C:\Development\Projects\CWA\cwa-quick-test-backend\src\main\resources\demis\DEMIS-test-lab999_CSM026304641.p12
+  keyStorePassword: W7JDGJOVJ7
+  #keyStorePath: C:\Development\Projects\CWA\cwa-quick-test-backend\src\main\resources\demis\DEMIS-test-lab137_CSM026305589.p12
+  #keyStorePassword: AG4OFDJ6GS
+  trustStorePath: C:\Development\Projects\CWA\cwa-quick-test-backend\src\main\resources\demis\nginx.truststore
+  trustStorePassword: secret
   authUrl: https://localhost:7543/auth/realms/LAB/protocol/openid-connect/token
   fhirBasepath: https://localhost:7543/notification-api/fhir/
-  clientId:
-  clientSecret:
-  username:
+  #authUrl: https://demis-test.rki.de/auth/realms/LAB/protocol/openid-connect/token
+  #fhirBasepath: https://demis-test.rki.de/notification-api/fhir/
+  clientId: demis-adapter
+  clientSecret: secret_client_secret
+  username: test-lab999
+  #username: test-lab137
 
 quicktest-map-server:
   url: http://localhost:9999

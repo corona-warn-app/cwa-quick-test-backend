@@ -113,6 +113,19 @@ dccserver:
   keyStorePassword: ${DCC_KEYSTORE_PASSWORD}
   trustStorePassword: ${DCC_TRUSTSTORE_PASSWORD}
 
+demisserver:
+  enabled: false
+  hostnameVerify: false
+  keyStorePath: ${DEMIS_KEYSTORE_PATH}
+  keyStorePassword: ${DEMIS_KEYSTORE_PASSWORD}
+  trustStorePath: ${DEMIS_TRUSTSTORE_PATH}
+  trustStorePassword: ${DEMIS_TRUSTSTORE_PASSWORD}
+  authUrl: ${DEMIS_SERVER_AUTH_URL}
+  fhirBasepath: ${DEMIS_SERVER_FHIR_BASE_PATH}
+  clientId: ${DEMIS_CLIENT_ID}
+  clientSecret: ${DEMIS_CLIENT_SECRET}
+  username: ${DEMIS_USERNAME}
+
 quicktest:
   db-encryption-key: ${QUICK_TEST_DB_ENCRYPTION_PASSWORD}
   clean-up-settings:

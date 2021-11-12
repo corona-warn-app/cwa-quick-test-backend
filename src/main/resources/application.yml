@@ -85,7 +85,7 @@ quicktest:
   groupInformationDelimiter: \,
   db-encryption-key: abcdefghjklmnopq
   labId: labId4711
-  demisEnabled: false
+  demisEnabled: true
   clean-up-settings:
     cron: 0 * * * * *
     max-age-in-minutes: 1440

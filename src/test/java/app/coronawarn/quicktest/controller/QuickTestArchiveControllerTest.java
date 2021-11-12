@@ -34,16 +34,13 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
-import app.coronawarn.quicktest.domain.QuickTestArchive;
-import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
-import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
+import app.coronawarn.quicktest.repository.QuickTestArchiveView;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.google.gson.Gson;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -131,28 +128,8 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
     @Test
     void findArchivesByTestResultAndUpdatedAtBetween() throws Exception {
 
-        QuickTestArchive quickTestArchive = new QuickTestArchive();
-        quickTestArchive.setHashedGuid("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
-        quickTestArchive.setShortHashedGuid("6fa4dcec");
-        quickTestArchive.setTenantId("tenant");
-        quickTestArchive.setCreatedAt(LocalDateTime.now());
-        quickTestArchive.setUpdatedAt(LocalDateTime.now());
-        quickTestArchive.setConfirmationCwa(true);
-        quickTestArchive.setTestResult((short) 6);
-        quickTestArchive.setPrivacyAgreement(true);
-        quickTestArchive.setLastName("1");
-        quickTestArchive.setFirstName("1");
-        quickTestArchive.setEmail("v@e.o");
-        quickTestArchive.setPhoneNumber("+490000");
-        quickTestArchive.setSex(Sex.DIVERSE);
-        quickTestArchive.setStreet("f");
-        quickTestArchive.setHouseNumber("a");
-        quickTestArchive.setZipCode("11111");
-        quickTestArchive.setCity("f");
-        quickTestArchive.setTestBrandId("testbrand");
-        quickTestArchive.setTestBrandName("brandname");
-        quickTestArchive.setBirthday(LocalDate.now().toString());
-        quickTestArchive.setPdf("test output".getBytes());
+        QuickTestArchiveView quickTestArchive =
+          () -> "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4";
         when(quickTestArchiveService.findByTestResultAndUpdatedAtBetween(any(), anyShort(), any(), any())).thenReturn(
             Collections.singletonList(quickTestArchive));
 
@@ -296,18 +273,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
 
     }
 
-    private void checkResponse(QuickTestArchiveResponse response, QuickTestArchive quickTestArchive) {
+    private void checkResponse(QuickTestArchiveResponse response, QuickTestArchiveView quickTestArchive) {
         assertEquals(quickTestArchive.getHashedGuid(), response.getHashedGuid());
-        assertEquals(quickTestArchive.getLastName(), response.getLastName());
-        assertEquals(quickTestArchive.getFirstName(), response.getFirstName());
-        assertEquals(quickTestArchive.getEmail(), response.getEmail());
-        assertEquals(quickTestArchive.getPhoneNumber(), response.getPhoneNumber());
-        assertEquals(quickTestArchive.getSex(), response.getSex());
-        assertEquals(quickTestArchive.getStreet(), response.getStreet());
-        assertEquals(quickTestArchive.getHouseNumber(), response.getHouseNumber());
-        assertEquals(quickTestArchive.getZipCode(), response.getZipCode());
-        assertEquals(quickTestArchive.getCity(), response.getCity());
-        assertEquals(quickTestArchive.getBirthday(), response.getBirthday());
-        assertEquals(quickTestArchive.getTestResult().toString(), response.getTestResult());
     }
 }

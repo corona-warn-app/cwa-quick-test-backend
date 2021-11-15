@@ -23,9 +23,9 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
-import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
+import app.coronawarn.quicktest.repository.QuickTestArchiveView;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
@@ -124,7 +124,7 @@ public class QuickTestArchiveController {
         try {
             LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
             LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
-            List<QuickTestArchive> archives = quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
+            List<QuickTestArchiveView> archives = quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
                 utilities.getIdsFromToken(),
                 testResult,
                 utcDateFrom,

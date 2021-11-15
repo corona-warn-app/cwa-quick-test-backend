@@ -1,5 +1,7 @@
 package app.coronawarn.quicktest.service;
 
+import static app.coronawarn.quicktest.utils.DemisUtils.URN;
+
 import app.coronawarn.quicktest.client.DemisServerClient;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.demis.DemisResult;
@@ -36,8 +38,6 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DemisService {
 
-    public static final String URN_UUID = "urn:uuid:";
-
     private final DemisServerClient demisServerClient;
 
     /**
@@ -50,7 +50,7 @@ public class DemisService {
         }
 
         Address pocAddress = DemisUtils.createAddress(pocInformation)
-          .orElseThrow(() -> new IllegalArgumentException("Could not create Address from poc information"));
+          .orElseThrow(() -> new IllegalArgumentException("Can not create Address from poc information."));
 
         NotificationBundleLaboratory payloadBundle = createPayload(quickTest, pocAddress, pocInformation.get(0), bsnr);
 
@@ -79,15 +79,15 @@ public class DemisService {
           new Identifier().setSystem("http://demis.rki.de/fhir/todo/bundleIdentifier").setValue(DemisUtils.createId()));
         payloadBundle.setTimestamp(new Date());
         payloadBundle.getMeta().setLastUpdated(new Date());
-        payloadBundle.addEntry().setResource(composition).setFullUrl(URN_UUID + composition.getId());
-        payloadBundle.addEntry().setResource(patient).setFullUrl(URN_UUID + patient.getId());
-        payloadBundle.addEntry().setResource(notifierRole).setFullUrl(URN_UUID + notifierRole.getId());
-        payloadBundle.addEntry().setResource(notifierFacility).setFullUrl(URN_UUID + notifierFacility.getId());
-        payloadBundle.addEntry().setResource(submittingRole).setFullUrl(URN_UUID + submittingRole.getId());
-        payloadBundle.addEntry().setResource(submittingFacility).setFullUrl(URN_UUID + submittingFacility.getId());
-        payloadBundle.addEntry().setResource(condition).setFullUrl(URN_UUID + condition.getId());
-        payloadBundle.addEntry().setResource(observation).setFullUrl(URN_UUID + observation.getId());
-        payloadBundle.addEntry().setResource(specimen).setFullUrl(URN_UUID + specimen.getId());
+        payloadBundle.addEntry().setResource(composition).setFullUrl(URN + composition.getId());
+        payloadBundle.addEntry().setResource(patient).setFullUrl(URN + patient.getId());
+        payloadBundle.addEntry().setResource(notifierRole).setFullUrl(URN + notifierRole.getId());
+        payloadBundle.addEntry().setResource(notifierFacility).setFullUrl(URN + notifierFacility.getId());
+        payloadBundle.addEntry().setResource(submittingRole).setFullUrl(URN + submittingRole.getId());
+        payloadBundle.addEntry().setResource(submittingFacility).setFullUrl(URN + submittingFacility.getId());
+        payloadBundle.addEntry().setResource(condition).setFullUrl(URN + condition.getId());
+        payloadBundle.addEntry().setResource(observation).setFullUrl(URN + observation.getId());
+        payloadBundle.addEntry().setResource(specimen).setFullUrl(URN + specimen.getId());
         return payloadBundle;
     }
 

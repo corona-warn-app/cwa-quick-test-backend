@@ -19,7 +19,7 @@ import org.hl7.fhir.r4.model.Resource;
 @Slf4j
 public class DemisUtils {
 
-    private static final String URN = "urn:uuid:";
+    public static final String URN = "urn:uuid:";
     public static final String COUNTRY_DE = "20422";
     public static final String BSNR_SYSTEM = "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR";
 

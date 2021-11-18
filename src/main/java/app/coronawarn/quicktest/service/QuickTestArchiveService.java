@@ -23,6 +23,7 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
+import app.coronawarn.quicktest.repository.QuickTestArchiveView;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -69,9 +70,9 @@ public class QuickTestArchiveService {
      * @return quickTestArchives List of all found quickTestArchives
      */
     @Transactional(readOnly = true)
-    public List<QuickTestArchive> findByTestResultAndUpdatedAtBetween(
+    public List<QuickTestArchiveView> findByTestResultAndUpdatedAtBetween(
         Map<String, String> ids, Short testResult, LocalDateTime dateFrom, LocalDateTime dateTo) {
-        List<QuickTestArchive> archives;
+        List<QuickTestArchiveView> archives;
         if (testResult == null) {
             archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndUpdatedAtBetween(
                 ids.get(quickTestConfig.getTenantIdKey()),

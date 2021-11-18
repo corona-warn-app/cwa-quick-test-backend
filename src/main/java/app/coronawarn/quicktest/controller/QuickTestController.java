@@ -24,12 +24,15 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
 import app.coronawarn.quicktest.domain.QuickTest;
+import app.coronawarn.quicktest.model.demis.DemisResult;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.model.quicktest.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
 import app.coronawarn.quicktest.model.quicktest.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
+import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateResponse;
 import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.utils.Utilities;
@@ -162,16 +165,17 @@ public class QuickTestController {
         description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
+      @ApiResponse(responseCode = "200 ", description = "Update successful with Demis Error"),
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
       @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists"),
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @PutMapping(value = "/{shortHash}/testResult", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
-    public ResponseEntity<Void> updateQuickTestStatus(
+    public ResponseEntity<QuickTestUpdateResponse> updateQuickTestStatus(
         @PathVariable String shortHash,
         @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
         try {
-            quickTestService.updateQuickTest(
+            DemisResult demisResult = quickTestService.updateQuickTest(
                 utilities.getIdsFromToken(),
                 shortHash,
                 quickTestUpdateRequest,
@@ -179,6 +183,10 @@ public class QuickTestController {
                 utilities.getUserNameFromToken(),
                 utilities.getBsnrFromToken()
             );
+            if (DemisStatus.getErrors().contains(demisResult.getDemisStatus())) {
+                return ResponseEntity.ok(
+                  new QuickTestUpdateResponse(demisResult.getDemisStatus(), demisResult.getDetails()));
+            }
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {

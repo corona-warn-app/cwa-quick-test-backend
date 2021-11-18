@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.model.demis.DemisResult;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.model.quicktest.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
@@ -199,6 +201,9 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName("brandName");
+
+        when(quickTestService.updateQuickTest(any(), any(), any(), any(), any(), any())).thenReturn(
+          DemisResult.builder().demisStatus(DemisStatus.NONE).build());
 
         for (short result = 0; result <= 10; result++) {
             quickTestUpdateRequest.setResult((short) result);

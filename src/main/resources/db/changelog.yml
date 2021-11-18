@@ -44,3 +44,6 @@ databaseChangeLog:
   - include:
       file: changelog/V015_add_groupname_column.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V016_add_demis_data.yml
+      relativeToChangelogFile: true

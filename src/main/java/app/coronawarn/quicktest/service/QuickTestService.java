@@ -166,7 +166,6 @@ public class QuickTestService {
                 quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);
             }
         }
-        addStatistics(quicktest);
         byte[] pdf;
         try {
             pdf = createPdf(quicktest, pocInformation, user);
@@ -175,8 +174,16 @@ public class QuickTestService {
             log.debug("generating PDF failed, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        // Send positive result to Demis
+        DemisResult demisResult = DemisResult.builder().demisStatus(DemisStatus.NONE).build();
+        if (quickTestConfig.isDemisEnabled() && quicktest.getTestResult() == 7) {
+            demisResult = demisService.handlePositiveTest(quicktest, pocInformation, bsnr);
+        }
+
+        addStatistics(quicktest, demisResult.getDemisStatus());
         try {
-            quickTestArchiveRepository.save(mappingQuickTestToQuickTestArchive(quicktest, pdf));
+            quickTestArchiveRepository.save(
+              mappingQuickTestToQuickTestArchive(quicktest, pdf, demisResult.getDemisStatus()));
             log.debug("New QuickTestArchive created for poc {} and shortHashedGuid {}",
                     quicktest.getPocId(), quicktest.getShortHashedGuid());
         } catch (Exception e) {
@@ -201,11 +208,8 @@ public class QuickTestService {
                 quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
 
-        // Send positive result to Demis
-        if (quickTestConfig.isDemisEnabled() && quicktest.getTestResult() == 7) {
-            return demisService.handlePositiveTest(quicktest, pocInformation, bsnr);
-        }
-        return DemisResult.builder().demisStatus(DemisStatus.NONE).build();
+
+        return demisResult;
     }
 
     /**
@@ -324,17 +328,20 @@ public class QuickTestService {
         quickTestRepository.deleteByCreatedAtBefore(deleteTimestamp);
     }
 
-    protected void addStatistics(QuickTest quickTest) {
+    protected void addStatistics(QuickTest quickTest, DemisStatus demisStatus) {
         QuickTestLog quickTestLog = new QuickTestLog();
         quickTestLog.setCreatedAt(quickTest.getCreatedAt());
         quickTestLog.setPocId(quickTest.getPocId());
         quickTestLog.setPositiveTestResult(quickTest.getTestResult() == TestResult.fromName("positive").getValue());
         quickTestLog.setTenantId(quickTest.getTenantId());
+        if (quickTest.getTestResult() == TestResult.fromName("positive").getValue()) {
+            quickTestLog.setSentToDemisIfPositive(DemisStatus.OK == demisStatus);
+        }
         quickTestLogRepository.save(quickTestLog);
     }
 
     private QuickTestArchive mappingQuickTestToQuickTestArchive(
-            QuickTest quickTest, byte[] pdf) {
+            QuickTest quickTest, byte[] pdf, DemisStatus demisStatus) {
         QuickTestArchive quickTestArchive = new QuickTestArchive();
         quickTestArchive.setShortHashedGuid(quickTest.getShortHashedGuid());
         quickTestArchive.setHashedGuid(quickTest.getHashedGuid());
@@ -361,6 +368,7 @@ public class QuickTestService {
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
         quickTestArchive.setAdditionalInfo(quickTest.getAdditionalInfo());
         quickTestArchive.setGroupName(quickTest.getGroupName());
+        quickTestArchive.setDemisStatus(demisStatus);
         return quickTestArchive;
     }
 

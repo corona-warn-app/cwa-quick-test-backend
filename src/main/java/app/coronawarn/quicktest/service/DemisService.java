@@ -49,10 +49,16 @@ public class DemisService {
             throw new IllegalArgumentException("Can not create Notification for non-positive test.");
         }
 
-        Address pocAddress = DemisUtils.createAddress(pocInformation)
-          .orElseThrow(() -> new IllegalArgumentException("Can not create Address from poc information."));
+        Optional<Address> pocAddress = DemisUtils.createAddress(pocInformation);
+        if (pocAddress.isEmpty()) {
+            return DemisResult.builder()
+              .demisStatus(DemisStatus.INVALID_INPUT)
+              .details("Could not create valid address from token.")
+              .build();
+        }
 
-        NotificationBundleLaboratory payloadBundle = createPayload(quickTest, pocAddress, pocInformation.get(0), bsnr);
+        final NotificationBundleLaboratory payloadBundle =
+          createPayload(quickTest, pocAddress.get(), pocInformation.get(0), bsnr);
 
         NotificationResponse response = demisServerClient.sendNotification(payloadBundle);
         return handleResponse(response, quickTest);

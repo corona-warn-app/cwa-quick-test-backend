@@ -26,6 +26,7 @@ import app.coronawarn.quicktest.dbencryption.DbEncryptionSexTypeConverter;
 import app.coronawarn.quicktest.dbencryption.DbEncryptionStringConverter;
 import app.coronawarn.quicktest.model.SecurityAuditListenerQuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import javax.persistence.Column;
@@ -159,6 +160,9 @@ public class QuickTestArchive {
     @Column(name = "group_name")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String groupName;
+
+    @Column(name = "demis_status")
+    private DemisStatus demisStatus;
 
     @Override
     public boolean equals(Object o) {

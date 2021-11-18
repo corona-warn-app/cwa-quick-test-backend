@@ -60,10 +60,12 @@ class DemisServiceTest {
     @Test
     void failOnMalformedPocInformation() {
 
-        assertThatThrownBy(() -> underTest.handlePositiveTest(
+        assertThat(underTest.handlePositiveTest(
           getQuickTest(7), getPocInformation(false), Optional.empty()))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessageContaining("Can not create Address from poc information.");
+          .satisfies(result -> {
+             assertThat(result.getDemisStatus()).isEqualTo(DemisStatus.INVALID_INPUT);
+             assertThat(result.getDetails()).contains("Could not create valid address from token.");
+          });
     }
 
     @Test

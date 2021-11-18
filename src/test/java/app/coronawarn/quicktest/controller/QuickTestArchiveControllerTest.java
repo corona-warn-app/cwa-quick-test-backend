@@ -34,6 +34,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
 import app.coronawarn.quicktest.repository.QuickTestArchiveView;
@@ -128,8 +129,17 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
     @Test
     void findArchivesByTestResultAndUpdatedAtBetween() throws Exception {
 
-        QuickTestArchiveView quickTestArchive =
-          () -> "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4";
+        QuickTestArchiveView quickTestArchive = new QuickTestArchiveView() {
+            @Override
+            public String getHashedGuid() {
+                return "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4";
+            }
+
+            @Override
+            public DemisStatus getDemisStatus() {
+                return DemisStatus.NONE;
+            }
+        };
         when(quickTestArchiveService.findByTestResultAndUpdatedAtBetween(any(), anyShort(), any(), any())).thenReturn(
             Collections.singletonList(quickTestArchive));
 

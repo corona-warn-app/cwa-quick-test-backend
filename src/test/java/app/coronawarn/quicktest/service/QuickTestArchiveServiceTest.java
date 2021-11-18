@@ -31,6 +31,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestArchiveView;
 import java.time.LocalDate;
@@ -107,9 +108,9 @@ public class QuickTestArchiveServiceTest {
     void findByTestResultAndUpdatedAtBetweenTest() {
         String hashedGuid = quickTestArchive.getHashedGuid();
         when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndUpdatedAtBetween(any(), any(), any(), any()))
-            .thenReturn(Collections.singletonList(() -> hashedGuid));
+            .thenReturn(Collections.singletonList(getProjection()));
         when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(any(),
-            any(), anyShort(), any(), any())).thenReturn(Collections.singletonList(() -> hashedGuid));
+            any(), anyShort(), any(), any())).thenReturn(Collections.singletonList(getProjection()));
         List<QuickTestArchiveView> quickTestArchives =
             quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
                 new HashMap<>(),
@@ -145,6 +146,20 @@ public class QuickTestArchiveServiceTest {
 
     private void checkResponse(QuickTestArchive expected, QuickTestArchiveView act) {
         assertEquals(expected.getHashedGuid(), act.getHashedGuid());
+    }
+
+    private QuickTestArchiveView getProjection() {
+        return new QuickTestArchiveView() {
+            @Override
+            public String getHashedGuid() {
+                return "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4";
+            }
+
+            @Override
+            public DemisStatus getDemisStatus() {
+                return DemisStatus.NONE;
+            }
+        };
     }
 }
 

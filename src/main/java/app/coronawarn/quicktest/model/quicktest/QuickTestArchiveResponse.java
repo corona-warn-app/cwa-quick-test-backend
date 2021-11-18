@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.model.quicktest;
 
+import app.coronawarn.quicktest.model.demis.DemisStatus;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -30,5 +31,7 @@ import lombok.Data;
 public class QuickTestArchiveResponse {
 
     private String hashedGuid;
+
+    private DemisStatus demisStatus;
 
 }

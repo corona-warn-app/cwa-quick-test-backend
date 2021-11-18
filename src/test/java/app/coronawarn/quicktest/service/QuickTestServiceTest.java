@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
@@ -79,6 +80,8 @@ public class QuickTestServiceTest {
     private QuickTestLogRepository quickTestLogRepository;
     @Mock
     private TestResultService testResultService;
+    @Mock
+    private DemisService demisService;
 
     @Mock
     private PdfGenerator pdf;
@@ -126,11 +129,12 @@ public class QuickTestServiceTest {
     }
 
     @Test
-    void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException {
+    void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException, IOException {
         QuickTestService qs = spy(quickTestService);
         Map<String, String> ids = new HashMap<>();
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(createPendingTest());
+        when(pdf.generatePdf(anyList(), any(), any())).thenReturn(new ByteArrayOutputStream());
         try {
             QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
             quickTestUpdateRequest.setTestBrandId("testBrandId");
@@ -144,7 +148,7 @@ public class QuickTestServiceTest {
               Optional.empty());
         } catch (NullPointerException e) {
         }
-        verify(qs, times(1)).addStatistics(any());
+        verify(qs, times(1)).addStatistics(any(), any());
     }
 
     @Test

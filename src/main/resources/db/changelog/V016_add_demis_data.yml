@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-demis-data
+      author: bergmann-dierk
+      changes:
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              - column:
+                  name: demis_status
+                  type: int
+        - addColumn:
+            tableName: quick_test_log
+            columns:
+              - column:
+                  name: demis
+                  type: boolean
+                  constraints:
+                    nullable: true

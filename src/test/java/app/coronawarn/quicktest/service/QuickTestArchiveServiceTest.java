@@ -32,8 +32,10 @@ import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.model.demis.DemisStatus;
+import app.coronawarn.quicktest.repository.DemisReceiptRepository;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestArchiveView;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -58,6 +60,9 @@ public class QuickTestArchiveServiceTest {
     private QuickTestConfig quickTestConfig;
     @Mock
     private QuickTestArchiveRepository quickTestArchiveRepository;
+    @Mock
+    private DemisReceiptRepository demisReceiptRepository;
+
     @InjectMocks
     private QuickTestArchiveService quickTestArchiveService;
 
@@ -88,13 +93,14 @@ public class QuickTestArchiveServiceTest {
     }
 
     @Test
-    void createNewQuickTestArchiveQuickTest() {
+    void createNewQuickTestArchiveQuickTest() throws IOException {
         when(quickTestArchiveRepository.findByHashedGuid(any())).thenReturn(Optional.of(quickTestArchive));
+        when(demisReceiptRepository.findByHashedGuid(any())).thenReturn(Optional.empty());
         assertEquals(quickTestArchive.getPdf(), quickTestArchiveService.getPdf("sgserh"));
     }
 
     @Test
-    void createNewQuickTestArchiveQuickTestNotFound() {
+    void createNewQuickTestArchiveQuickTestNotFound() throws IOException {
         when(quickTestArchiveRepository.findByHashedGuid(any())).thenReturn(Optional.empty());
         try {
             quickTestArchiveService.getPdf("sgserh");

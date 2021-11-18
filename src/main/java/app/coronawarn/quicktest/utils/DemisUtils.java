@@ -11,6 +11,8 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.hl7.fhir.r4.model.Address;
+import org.hl7.fhir.r4.model.Binary;
+import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Meta;
 import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Reference;
@@ -138,5 +140,18 @@ public class DemisUtils {
         } else {
             return match;
         }
+    }
+
+    /**
+     * Get the pdf data from result bundle.
+     * @param bundle the result bundle
+     * @return optional
+     */
+    public static Optional<byte[]> retrievePdfFromBundle(Bundle bundle) {
+        return bundle.getEntry().stream()
+          .filter(entry -> entry.getResource() instanceof Binary)
+          .filter(entry -> entry.hasFullUrl() && entry.getFullUrl().contains("Binary"))
+          .findFirst()
+          .map(bin -> ((Binary) bin.getResource()).getContent());
     }
 }

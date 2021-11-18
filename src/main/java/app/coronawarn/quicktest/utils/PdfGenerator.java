@@ -40,6 +40,7 @@ import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDDocumentInformation;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -98,6 +99,24 @@ public class PdfGenerator {
         ByteArrayOutputStream pdf = new ByteArrayOutputStream();
         close(document, pdf);
         return pdf;
+    }
+
+    /**
+     * Append the Demis receipt to the existing pdf.
+     * @param pdf existing
+     * @param demisReceipt the receipt.
+     * @return Combined byteArrayOutputStream
+     * @throws IOException if it fails
+     */
+    public ByteArrayOutputStream appendDemisReceipt(byte[] pdf, byte[] demisReceipt) throws IOException {
+        PDDocument document = PDDocument.load(pdf);
+        PDDocument receipt = PDDocument.load(demisReceipt);
+        PDFMergerUtility mergerUtility = new PDFMergerUtility();
+        mergerUtility.appendDocument(document, receipt);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        close(document, out);
+        receipt.close();
+        return out;
     }
 
     private void config(PDDocument document) {

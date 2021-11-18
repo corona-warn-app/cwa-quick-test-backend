@@ -3,6 +3,7 @@ package app.coronawarn.quicktest.service;
 import static app.coronawarn.quicktest.utils.DemisUtils.URN;
 
 import app.coronawarn.quicktest.client.DemisServerClient;
+import app.coronawarn.quicktest.domain.DemisReceipt;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.demis.DemisResult;
 import app.coronawarn.quicktest.model.demis.DemisStatus;
@@ -17,6 +18,7 @@ import app.coronawarn.quicktest.model.demis.PersonConcerned;
 import app.coronawarn.quicktest.model.demis.SpecimenSarsCoV2;
 import app.coronawarn.quicktest.model.demis.SubmittingFacility;
 import app.coronawarn.quicktest.model.demis.SubmittingRole;
+import app.coronawarn.quicktest.repository.DemisReceiptRepository;
 import app.coronawarn.quicktest.utils.DemisUtils;
 import java.util.Date;
 import java.util.List;
@@ -38,6 +40,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class DemisService {
 
+    private final DemisReceiptRepository demisReceiptRepository;
     private final DemisServerClient demisServerClient;
 
     /**
@@ -110,6 +113,7 @@ public class DemisService {
               message = "Notification could not be sent to Demis";
               break;
           case OK:
+              saveReceipt(quickTest.getHashedGuid(), response);
               message = String.format(
                 "Notification successfully sent and acknowledged: %s", getReceiverInformation(response));
               break;
@@ -120,6 +124,14 @@ public class DemisService {
         }
         log.info(message);
         return DemisResult.builder().demisStatus(status).details(message).build();
+    }
+
+    private void saveReceipt(String hashedGuid, NotificationResponse response) {
+        Optional<byte[]> bytes = DemisUtils.retrievePdfFromBundle(response.getResultBundle());
+        bytes.ifPresentOrElse(
+          pdf -> demisReceiptRepository.save(new DemisReceipt(hashedGuid, pdf)),
+          () -> log.warn("Could not find pdf receipt.")
+        );
     }
 
     private String getReceiverInformation(NotificationResponse response) {

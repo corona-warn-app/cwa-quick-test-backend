@@ -47,3 +47,6 @@ databaseChangeLog:
   - include:
       file: changelog/V016_add_demis_data.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V017_create_demis_receipt_table.yml
+      relativeToChangelogFile: true

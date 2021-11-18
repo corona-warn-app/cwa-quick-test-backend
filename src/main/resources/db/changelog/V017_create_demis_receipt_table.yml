@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-demis-receipt-table
+      author: bergmann-dierk
+      changes:
+        - createTable:
+            tableName: quick_test_demis_receipt
+            columns:
+              - column:
+                  name: hashed_guid
+                  type: varchar(108)
+                  constraints:
+                    primaryKeyName: pk_quick_test_demis_receipt
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: pdf_receipt
+                  type: blob

@@ -21,9 +21,13 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.domain.DemisReceipt;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.repository.DemisReceiptRepository;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestArchiveView;
+import app.coronawarn.quicktest.utils.PdfGenerator;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -40,8 +44,10 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class QuickTestArchiveService {
 
+    private final DemisReceiptRepository demisReceiptRepository;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestConfig quickTestConfig;
+    private final PdfGenerator pdfGenerator;
 
     /**
      * Stores quicktest with pdf in archive table.
@@ -51,14 +57,21 @@ public class QuickTestArchiveService {
      * @throws ResponseStatusException if quicktest not found.
      */
     public byte[] getPdf(String hashedGuid)
-        throws ResponseStatusException {
+      throws ResponseStatusException, IOException {
         Optional<QuickTestArchive> quickTestArchive = quickTestArchiveRepository.findByHashedGuid(hashedGuid);
         if (quickTestArchive.isEmpty()) {
             log.debug("Requested Quick Test with HashedGuid {} could not be found or wrong poc", hashedGuid);
             log.info("Requested Quick Test with HashedGuid could not be found or wrong poc");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
-        return quickTestArchive.get().getPdf();
+        byte[] pdf = quickTestArchive.get().getPdf();
+        if (quickTestArchive.get().getTestResult() == 7) {
+            Optional<DemisReceipt> demisReceipt = demisReceiptRepository.findByHashedGuid(hashedGuid);
+            if (demisReceipt.isPresent()) {
+                return pdfGenerator.appendDemisReceipt(pdf, demisReceipt.get().getPdfReceipt()).toByteArray();
+            }
+        }
+        return pdf;
     }
 
     /**

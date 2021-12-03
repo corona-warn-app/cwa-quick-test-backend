@@ -452,6 +452,7 @@ public class QuickTestService {
         QuickTestDccConsent quickTestDccConsent = new QuickTestDccConsent();
         quickTestDccConsent.setDccConsent(quicktest.getDccConsent());
         quickTestDccConsent.setTestResult(quicktest.getTestResult());
+        quickTestDccConsent.setTestType(quicktest.getTestType());
         return quickTestDccConsent;
     }
 

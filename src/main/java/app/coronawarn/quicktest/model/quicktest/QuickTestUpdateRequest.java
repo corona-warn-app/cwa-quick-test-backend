@@ -25,7 +25,6 @@ import app.coronawarn.quicktest.validation.ValidTestUpdate;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -47,7 +46,7 @@ public class QuickTestUpdateRequest {
      * 8: Invalid
      * 9: Redeemed
      */
-    @Min(6)
+    @Min(1)
     @Max(8)
     private short result;
 
@@ -66,5 +65,9 @@ public class QuickTestUpdateRequest {
     @ValidCommonCharAndNumber
     @Size(min = 1, max = 128)
     private String dccTestManufacturerDescription;
+
+    @ValidCommonCharAndNumber
+    @Size(min = 1, max = 128)
+    private String pcrTestName;
 
 }

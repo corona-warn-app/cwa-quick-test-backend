@@ -34,16 +34,17 @@ import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
+import app.coronawarn.quicktest.utils.TestTypeUtils;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -132,7 +133,8 @@ public class QuickTestService {
                 shortHash
         );
 
-        if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING) {
+        if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING
+            && quicktest.getTestResult() != QuickTest.TEST_RESULT_PCR_PENDING) {
             log.info("Requested Quick Test with shortHash is not pending.");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not pending");
         }
@@ -141,13 +143,24 @@ public class QuickTestService {
         quicktest.setTestResult(quickTestUpdateRequest.getResult());
 
         if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
-            if (quickTestUpdateRequest.getDccTestManufacturerId() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "DccTestManufacturerId must be set for DCC Tests");
-            }
+            if (TestTypeUtils.isRat(quicktest.getTestType())) {
+                if (StringUtils.isBlank(quickTestUpdateRequest.getDccTestManufacturerId())) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                      "DccTestManufacturerId must be set for DCC Tests");
+                }
 
-            quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
-            quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getDccTestManufacturerDescription()));
+                quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
+                quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getDccTestManufacturerDescription()));
+            } else {
+                if (StringUtils.isBlank(quickTestUpdateRequest.getPcrTestName())) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                      "PcrTestName must be set for NAAT Tests");
+                }
+
+                //TODO set both to name?
+                quicktest.setTestBrandId(quickTestUpdateRequest.getPcrTestName());
+                quicktest.setTestBrandName(quickTestUpdateRequest.getPcrTestName());
+            }
         } else {
             quicktest.setTestBrandId(quickTestUpdateRequest.getTestBrandId());
             quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getTestBrandName()));
@@ -155,7 +168,10 @@ public class QuickTestService {
 
         quicktest.setUpdatedAt(LocalDateTime.now());
 
-        if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
+        if ((quicktest.getTestResult() == QuickTest.TEST_RESULT_PCR_NEGATIVE
+            || quicktest.getTestResult() == QuickTest.TEST_RESULT_PCR_POSITIVE
+            || quicktest.getTestResult() == QuickTest.TEST_RESULT_NEGATIVE
+            || quicktest.getTestResult() == QuickTest.TEST_RESULT_POSITIVE)
                 && quicktest.getDccStatus() == null) {
             if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()
                     && quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
@@ -167,6 +183,7 @@ public class QuickTestService {
         addStatistics(quicktest);
         byte[] pdf;
         try {
+            // TODO PDF change
             pdf = createPdf(quicktest, pocInformation, user);
         } catch (IOException e) {
             log.error("generating PDF failed.");
@@ -237,11 +254,27 @@ public class QuickTestService {
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
             throws ResponseStatusException {
+
         QuickTest quicktest = getQuickTest(
-                ids.get(quickTestConfig.getTenantIdKey()),
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                shortHash
+          ids.get(quickTestConfig.getTenantIdKey()),
+          ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+          shortHash
         );
+
+        final String testType = StringUtils.isBlank(quickTestPersonalData.getTestType())
+          ? TestTypeUtils.getDefaultType() : quickTestPersonalData.getTestType();
+        switch (TestTypeUtils.getTestType(testType)) {
+          case INVALID:
+              log.warn("TestType {} not supported.", testType);
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          case NAAT:
+              quicktest.setTestResult((short) 0);
+              quicktest.setTestType(testType);
+              break;
+          default:
+              quicktest.setTestType(testType);
+              break;
+        }
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
         quicktest.setPrivacyAgreement(quickTestPersonalData.getPrivacyAgreement());
@@ -376,6 +409,7 @@ public class QuickTestService {
      */
     @Transactional(readOnly = true)
     public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
+        //TODO Add
         return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),

@@ -26,6 +26,7 @@ import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.domain.QuickTestLog;
 import app.coronawarn.quicktest.model.TestResult;
+import app.coronawarn.quicktest.model.quicktest.PcrTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
@@ -211,7 +212,8 @@ public class QuickTestService {
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quickTestUpdateRequest.getResult(),
                 quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
-                quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
+                quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false,
+                TestTypeUtils.isPcr(quicktest.getTestType()));
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
                 quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
@@ -303,7 +305,8 @@ public class QuickTestService {
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
               quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
-              quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
+              quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false,
+              TestTypeUtils.isPcr(quicktest.getTestType()));
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
 
@@ -336,7 +339,8 @@ public class QuickTestService {
                     quickTest.getTestResultServerHash(),
                     TestResult.FAILED.getValue(),
                     deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
-                    quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
+                    quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false,
+                    TestTypeUtils.isPcr(quickTest.getTestType())));
 
             log.info("Set Status of quicktests on TRS. Deleting QuickTests in DB");
 
@@ -419,15 +423,25 @@ public class QuickTestService {
     }
 
     private void sendResultToTestResultServer(String testResultServerHash, short result, Long sc,
-                                              boolean confirmationCwa) throws ResponseStatusException {
+                                              boolean confirmationCwa, boolean isPcr) throws ResponseStatusException {
         if (confirmationCwa && testResultServerHash != null) {
-            log.info("Sending TestResult to TestResult-Server");
-            QuickTestResult quickTestResult = new QuickTestResult();
-            quickTestResult.setId(testResultServerHash);
-            quickTestResult.setResult(result);
-            quickTestResult.setSampleCollection(sc);
-            testResultService.createOrUpdateTestResult(quickTestResult);
-            log.info("Update TestResult on TestResult-Server successfully.");
+            if (isPcr) {
+                log.info("Sending PCR TestResult to TestResult-Server");
+                PcrTestResult pcrTestResult = new PcrTestResult();
+                pcrTestResult.setId(testResultServerHash);
+                pcrTestResult.setResult(result);
+                pcrTestResult.setSampleCollection(sc);
+                testResultService.createOrUpdatePcrTestResult(pcrTestResult);
+                log.info("Update PCR TestResult on TestResult-Server successfully.");
+            } else {
+                log.info("Sending TestResult to TestResult-Server");
+                QuickTestResult quickTestResult = new QuickTestResult();
+                quickTestResult.setId(testResultServerHash);
+                quickTestResult.setResult(result);
+                quickTestResult.setSampleCollection(sc);
+                testResultService.createOrUpdateTestResult(quickTestResult);
+                log.info("Update TestResult on TestResult-Server successfully.");
+            }
         }
     }
 

@@ -254,6 +254,7 @@ public class QuickTestServiceTest {
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         quickTest.setUpdatedAt(now);
+        quickTest.setTestType("LP217198-3");
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(pdf.generatePdf(any(), any(), any()))
@@ -312,12 +313,14 @@ public class QuickTestServiceTest {
         quickTest.setTestResultServerHash("");
         quickTest.setTestResult((short) 8);
         quickTest.setUpdatedAt(now);
+        quickTest.setTestType("LP217198-3");
 
         QuickTest quickTest1 = new QuickTest();
         quickTest1.setConfirmationCwa(false);
         quickTest1.setTestResultServerHash("");
         quickTest1.setTestResult((short) 8);
         quickTest1.setUpdatedAt(now);
+        quickTest1.setTestType("LP217198-3");
 
 
         QuickTestResult quickTestResult = new QuickTestResult();

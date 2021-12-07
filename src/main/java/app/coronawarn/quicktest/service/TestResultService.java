@@ -22,10 +22,13 @@ package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
 import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.model.quicktest.PcrTestResult;
+import app.coronawarn.quicktest.model.quicktest.PcrTestResultList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResultList;
 import feign.FeignException;
 import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -58,6 +61,27 @@ public class TestResultService {
             }
         } catch (FeignException e) {
             log.error("Failed to update testresult", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Creates or updates a Pcr Test in TestResult Server.
+     *
+     * @param pcrTestResult comment.
+     */
+    public void createOrUpdatePcrTestResult(PcrTestResult pcrTestResult) throws ResponseStatusException {
+        try {
+            PcrTestResultList resultList = new PcrTestResultList();
+            resultList.setLabId(quickTestConfig.getLabId());
+            resultList.setTestResults(List.of(pcrTestResult));
+            ResponseEntity<Void> response = testResultServerClient.pcrResults(resultList);
+            if (response.getStatusCode() != HttpStatus.NO_CONTENT) {
+                log.error("Failed to update pcr testresult response: " + response.getStatusCode());
+                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        } catch (FeignException e) {
+            log.error("Failed to update pcr testresult", e);
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

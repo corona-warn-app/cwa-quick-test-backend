@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.client;
 
+import app.coronawarn.quicktest.model.quicktest.PcrTestResultList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResultList;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -45,5 +46,15 @@ public interface TestResultServerClient {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     ResponseEntity<Void> results(@RequestBody @NotNull @Valid QuickTestResultList quickTestResults);
+
+    /**
+     * Insert or update the pcr test results.
+     *
+     * @param testResults for TestResults
+     */
+    @PostMapping(value = "/api/v1/lab/results",
+      consumes = MediaType.APPLICATION_JSON_VALUE
+    )
+    ResponseEntity<Void> pcrResults(@RequestBody @NotNull @Valid PcrTestResultList testResults);
 
 }

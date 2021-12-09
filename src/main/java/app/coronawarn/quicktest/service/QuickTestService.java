@@ -143,29 +143,7 @@ public class QuickTestService {
         log.info("Updating TestResult on TestResult-Server for hash");
         quicktest.setTestResult(quickTestUpdateRequest.getResult());
 
-        if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
-            if (TestTypeUtils.isRat(quicktest.getTestType())) {
-                if (StringUtils.isBlank(quickTestUpdateRequest.getDccTestManufacturerId())) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                      "DccTestManufacturerId must be set for DCC Tests");
-                }
-
-                quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
-                quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getDccTestManufacturerDescription()));
-            } else {
-                if (StringUtils.isBlank(quickTestUpdateRequest.getPcrTestName())) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                      "PcrTestName must be set for NAAT Tests");
-                }
-
-                //TODO set both to name?
-                quicktest.setTestBrandId(quickTestUpdateRequest.getPcrTestName());
-                quicktest.setTestBrandName(quickTestUpdateRequest.getPcrTestName());
-            }
-        } else {
-            quicktest.setTestBrandId(quickTestUpdateRequest.getTestBrandId());
-            quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getTestBrandName()));
-        }
+        validateTestType(quickTestUpdateRequest, quicktest);
 
         quicktest.setUpdatedAt(LocalDateTime.now());
 
@@ -217,6 +195,41 @@ public class QuickTestService {
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
                 quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
+    }
+
+    private void validateTestType(QuickTestUpdateRequest quickTestUpdateRequest, QuickTest quicktest) {
+        if (TestTypeUtils.isPcr(quicktest.getTestType())) {
+            if (StringUtils.isBlank(quickTestUpdateRequest.getPcrTestName())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "PcrTestName must be set for NAAT Tests");
+            }
+
+            if (quicktest.getTestResult() > 4) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "TestResult not allowed for NAAT Tests");
+            }
+
+            //TODO set both to name?
+            quicktest.setTestBrandId(quickTestUpdateRequest.getPcrTestName());
+            quicktest.setTestBrandName(quickTestUpdateRequest.getPcrTestName());
+        } else {
+            if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
+                if (StringUtils.isBlank(quickTestUpdateRequest.getDccTestManufacturerId())) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                      "DccTestManufacturerId must be set for DCC Tests");
+                }
+                if (quicktest.getTestResult() < 5) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                      "TestResult not allowed for RAT Tests");
+                }
+
+                quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
+                quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getDccTestManufacturerDescription()));
+            } else {
+                quicktest.setTestBrandId(quickTestUpdateRequest.getTestBrandId());
+                quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getTestBrandName()));
+            }
+        }
     }
 
     /**
@@ -431,6 +444,7 @@ public class QuickTestService {
                 pcrTestResult.setId(testResultServerHash);
                 pcrTestResult.setResult(result);
                 pcrTestResult.setSampleCollection(sc);
+                pcrTestResult.setLabId(quickTestConfig.getLabId());
                 testResultService.createOrUpdatePcrTestResult(pcrTestResult);
                 log.info("Update PCR TestResult on TestResult-Server successfully.");
             } else {

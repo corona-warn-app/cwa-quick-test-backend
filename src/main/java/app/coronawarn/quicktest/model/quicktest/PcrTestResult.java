@@ -70,4 +70,9 @@ public class PcrTestResult {
         this.sc = sc;
         return this;
     }
+
+    public PcrTestResult setLabId(String labId) {
+        this.labId = labId;
+        return this;
+    }
 }

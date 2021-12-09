@@ -60,6 +60,8 @@ public class PdfConfig {
     private String logoPath = "logo.png";
     private String quickTestOfDateText = "Schnelltestergebnis vom ";
     private String quickTestOfDateTextEn = "Test result from ";
+    private String pcrTestOfDateText = "PCR-Testergebnis vom ";
+    private String pcrTestOfDateTextEn = "PCR Test result from ";
     private String personEmailDescriptionText = "E-mail: ";
     private String testResultDescriptionText = "Testergebnis: ";
     private String testResultDescriptionTextEn = "Test result: ";

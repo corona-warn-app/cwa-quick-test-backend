@@ -32,6 +32,7 @@ import app.coronawarn.quicktest.model.dcc.DccUploadResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.utils.DccPdfGenerator;
+import app.coronawarn.quicktest.utils.TestTypeUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import eu.europa.ec.dgc.DccTestBuilder;
@@ -223,9 +224,11 @@ public class DccService {
         dccTestBuilder.dob(quickTest.getBirthday());
         boolean covidDetected;
         switch (quickTest.getTestResult()) {
+          case 2:
           case 7:
               covidDetected = true;
               break;
+          case 1:
           case 6:
               covidDetected = false;
               break;
@@ -234,13 +237,17 @@ public class DccService {
                         + " to positive or negative");
         }
         dccTestBuilder.detected(covidDetected)
-                .testTypeRapid(true)
+                .testType(quickTest.getTestType())
                 .dgci(dgci)
                 .countryOfTest(dccConfig.getCountry())
                 .testingCentre(quickTest.getPocId())
-                .testIdentifier(quickTest.getTestBrandId())
                 .sampleCollection(quickTest.getUpdatedAt())
                 .certificateIssuer(dccConfig.getIssuer());
+        if (TestTypeUtils.isRat(quickTest.getTestType())) {
+            dccTestBuilder.testIdentifier(quickTest.getTestBrandId());
+        } else {
+            dccTestBuilder.testIdentifierPcr(quickTest.getTestBrandName());
+        }
         return dccTestBuilder.toJsonString();
     }
 

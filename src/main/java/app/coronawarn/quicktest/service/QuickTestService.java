@@ -404,6 +404,7 @@ public class QuickTestService {
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
         quickTestArchive.setAdditionalInfo(quickTest.getAdditionalInfo());
         quickTestArchive.setGroupName(quickTest.getGroupName());
+        quickTestArchive.setTestType(quickTest.getTestType());
         return quickTestArchive;
     }
 

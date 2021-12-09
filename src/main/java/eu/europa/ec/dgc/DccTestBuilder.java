@@ -158,6 +158,16 @@ public class DccTestBuilder {
 
     /**
      * test type.
+     * @param testType testType as string
+     * @return builder
+     */
+    public DccTestBuilder testType(String testType) {
+        testObject.set("tt", jsonNodeFactory.textNode(testType));
+        return this;
+    }
+
+    /**
+     * test type.
      * @param isRapidTest true if rapid
      * @return builder
      */
@@ -207,6 +217,18 @@ public class DccTestBuilder {
     public DccTestBuilder testIdentifier(String ma) {
         testObject.set("ma", jsonNodeFactory.textNode(ma));
         assertNotNullMax("ma",ma,0);
+        return this;
+    }
+
+    /**
+     * test identifier for pcr tests.
+     * Is required if test type is pcr test.
+     * @param nm test identifier
+     * @return builder
+     */
+    public DccTestBuilder testIdentifierPcr(String nm) {
+        testObject.set("nm", jsonNodeFactory.textNode(nm));
+        assertNotNullMax("nm",nm,0);
         return this;
     }
 

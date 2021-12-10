@@ -427,11 +427,10 @@ public class QuickTestService {
      */
     @Transactional(readOnly = true)
     public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
-        //TODO Add
-        return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+        return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                QuickTest.TEST_RESULT_PENDING,
+                List.of(QuickTest.TEST_RESULT_PENDING, QuickTest.TEST_RESULT_PCR_PENDING),
                 0
         );
     }

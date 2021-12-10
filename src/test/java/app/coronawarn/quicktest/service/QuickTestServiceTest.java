@@ -346,7 +346,7 @@ public class QuickTestServiceTest {
         Map<String, String> ids = new HashMap<>();
         List<QuickTest> quickTests = new ArrayList<>();
         QuicktestView quicktestView = () -> "00000000";
-        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
             any(), any(), any(), any()))
             .thenReturn(List.of(quicktestView));
         List<QuicktestView> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);

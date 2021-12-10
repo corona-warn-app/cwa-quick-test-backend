@@ -374,21 +374,23 @@ public class PdfGenerator {
         cos.newLine();
         cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
         cos.newLine();
-        if (quicktest.getTestBrandName() == null) {
-            if (english) {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn() + pdfConfig.getTradeNameEmptyTextEn());
+        if (TestTypeUtils.isRat(quicktest.getTestType())) {
+            if (quicktest.getTestBrandName() == null) {
+                if (english) {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn() + pdfConfig.getTradeNameEmptyTextEn());
+                } else {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
+                }
             } else {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
-            }
-        } else {
-            if (english) {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn());
-            } else {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionText());
-            }
-            for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
-                cos.showText(line);
-                cos.newLine();
+                if (english) {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn());
+                } else {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionText());
+                }
+                for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
+                    cos.showText(line);
+                    cos.newLine();
+                }
             }
         }
         String useText = "";

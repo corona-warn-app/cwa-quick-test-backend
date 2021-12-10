@@ -41,9 +41,9 @@ public interface QuickTestRepository extends JpaRepository<QuickTest, String> {
                                                                              String shortHash, String hashedGuid);
 
 
-    List<QuicktestView> getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(String tenantId,
+    List<QuicktestView> getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(String tenantId,
                                                                                                  String pocId,
-                                                                                                 Short testResult,
+                                                                                                 List<Short> testResult,
                                                                                                  Integer version);
 
     int countAllByCreatedAtBeforeAndVersionIsGreaterThan(LocalDateTime time,

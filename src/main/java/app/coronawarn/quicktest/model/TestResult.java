@@ -29,7 +29,8 @@ public enum TestResult {
     PENDING("pending", (short) 5),
     NEGATIVE("negative", (short) 6),
     POSITIVE("positive",  (short) 7),
-    FAILED("failed",  (short) 8);
+    FAILED("failed",  (short) 8),
+    REDEEMED("redeemed",  (short) 9);
 
     static final Map<String, TestResult> names = Arrays.stream(TestResult.values())
             .collect(Collectors.toMap(TestResult::getName, Function.identity()));

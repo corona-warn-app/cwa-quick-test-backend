@@ -60,13 +60,13 @@ class QuickTestDeletionServiceTest {
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("");
-        quickTest.setTestResult((short) 8);
+        quickTest.setTestResult((short) 9);
         quickTest.setUpdatedAt(now);
 
         QuickTest quickTest1 = new QuickTest();
         quickTest1.setConfirmationCwa(false);
         quickTest1.setTestResultServerHash("");
-        quickTest1.setTestResult((short) 8);
+        quickTest1.setTestResult((short) 9);
         quickTest1.setUpdatedAt(now);
 
 

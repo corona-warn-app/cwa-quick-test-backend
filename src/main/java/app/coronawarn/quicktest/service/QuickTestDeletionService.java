@@ -63,7 +63,7 @@ public class QuickTestDeletionService {
 
         quickTestChunk.forEach(quickTest -> sendResultToTestResultServer(
           quickTest.getTestResultServerHash(),
-          TestResult.FAILED.getValue(),
+          TestResult.REDEEMED.getValue(),
           deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
           quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
 

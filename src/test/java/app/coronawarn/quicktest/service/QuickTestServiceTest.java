@@ -79,6 +79,8 @@ public class QuickTestServiceTest {
     private QuickTestLogRepository quickTestLogRepository;
     @Mock
     private TestResultService testResultService;
+    @Mock
+    private QuickTestDeletionService quickTestDeletionService;
 
     @Mock
     private PdfGenerator pdf;
@@ -333,8 +335,7 @@ public class QuickTestServiceTest {
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
         when(quickTestConfig.getCleanUpSettings()).thenReturn(cleanUpSettings);
         quickTestService.removeAllBefore(now);
-        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0), any());
-        verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
+        verify(quickTestDeletionService, times(1)).handleChunk(eq(now), eq(1000), eq(1), eq(1));
         verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 

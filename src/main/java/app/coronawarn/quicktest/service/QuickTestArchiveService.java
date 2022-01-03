@@ -64,7 +64,7 @@ public class QuickTestArchiveService {
     /**
      * Finds all quicktests in archive table by test result and time range.
      *
-     * @param testResult test result value (5...9) or null
+     * @param testResult test result value (0...9) or null
      * @param dateFrom   Start date
      * @param dateTo     End date
      * @return quickTestArchives List of all found quickTestArchives

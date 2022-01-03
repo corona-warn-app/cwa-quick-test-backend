@@ -216,21 +216,6 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             .contentType(MediaType.APPLICATION_PDF_VALUE))
             .andExpect(status().isBadRequest());
 
-
-        assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> {
-            mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-                .get("/api/quicktestarchive/")
-                .param("testResult", "4")
-                .param("dateFrom",
-                    ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .contentType(MediaType.APPLICATION_PDF_VALUE))
-                .andExpect(status().isBadRequest());
-        }).matches(e ->
-            e.getRootCause().getMessage().equals("findArchivesByTestResultAndUpdatedAtBetween.testResult: " +
-                "must be greater than or equal to 5")
-        );
-
         assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> {
             mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
                 .get("/api/quicktestarchive/")

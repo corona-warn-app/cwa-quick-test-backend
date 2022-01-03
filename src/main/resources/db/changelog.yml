@@ -47,3 +47,6 @@ databaseChangeLog:
   - include:
       file: changelog/V016_add_testType_column.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V017_add_testType_statistics_column.yml
+      relativeToChangelogFile: true

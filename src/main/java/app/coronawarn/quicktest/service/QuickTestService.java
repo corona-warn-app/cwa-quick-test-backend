@@ -374,8 +374,11 @@ public class QuickTestService {
         QuickTestLog quickTestLog = new QuickTestLog();
         quickTestLog.setCreatedAt(quickTest.getCreatedAt());
         quickTestLog.setPocId(quickTest.getPocId());
-        quickTestLog.setPositiveTestResult(quickTest.getTestResult() == TestResult.fromName("positive").getValue());
+        quickTestLog.setPositiveTestResult(
+                quickTest.getTestResult() == TestResult.fromName("positive").getValue()
+                        || quickTest.getTestResult() == TestResult.fromName("positive_pcr").getValue());
         quickTestLog.setTenantId(quickTest.getTenantId());
+        quickTestLog.setTestType(quickTest.getTestType());
         quickTestLogRepository.save(quickTestLog);
     }
 

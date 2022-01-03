@@ -316,10 +316,13 @@ public class QuickTestService {
             log.debug("Could not save updateQuickTestWithPersonalData, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
-              quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
-              quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false,
-              TestTypeUtils.isPcr(quicktest.getTestType()));
+        // only create entry in TR if rat, TR only accepts results 1-3
+        if (TestTypeUtils.isRat(quicktest.getTestType())) {
+            sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
+                    quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
+                    quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false,
+                    false);
+        }
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
 

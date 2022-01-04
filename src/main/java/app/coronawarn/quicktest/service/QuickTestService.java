@@ -300,7 +300,7 @@ public class QuickTestService {
 
     protected void addStatistics(QuickTest quickTest) {
         QuickTestLog quickTestLog = new QuickTestLog();
-        quickTestLog.setCreatedAt(quickTest.getCreatedAt());
+        quickTestLog.setCreatedAt(quickTest.getUpdatedAt());
         quickTestLog.setPocId(quickTest.getPocId());
         quickTestLog.setPositiveTestResult(quickTest.getTestResult() == TestResult.fromName("positive").getValue());
         quickTestLog.setTenantId(quickTest.getTenantId());

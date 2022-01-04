@@ -128,7 +128,8 @@ public class PdfConfig {
     private String certStateOfTestDe = "Mitgliedstaat";
     private String certIssuerEn = "Certificate issuer";
     private String certIssuerDe = "Zertifikataussteller";
-    private String certTestType = "Rapid immunoassay";
+    private String certTestTypeRat = "Rapid immunoassay";
+    private String certTestTypePcr = "Nucleic acid amplification";
     private String certIssuerState = "DE";
 
     private String certQrDescription = "Scannen Sie den <br> nebenstehenden <br> QR-Code mit der <br> "

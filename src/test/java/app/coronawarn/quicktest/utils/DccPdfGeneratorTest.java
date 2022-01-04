@@ -35,6 +35,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -50,10 +51,10 @@ class DccPdfGeneratorTest {
     @Mock
     private PdfConfig pdfConfig;
 
-    @Test
-    void appendDccPageTest() throws IOException {
-        PdfConfig pdc = new PdfConfig();
+    private PdfConfig pdc = new PdfConfig();
 
+    @BeforeEach
+    void setUp() {
         when(pdfConfig.getCertQrDescription()).thenReturn(pdc.getCertQrDescription());
         when(pdfConfig.getCertMemberStateDescriptionDe()).thenReturn(pdc.getCertMemberStateDescriptionDe());
         when(pdfConfig.getCertMemberStateDescriptionEn()).thenReturn(pdc.getCertMemberStateDescriptionEn());
@@ -87,10 +88,13 @@ class DccPdfGeneratorTest {
         when(pdfConfig.getCertNameEn()).thenReturn(pdc.getCertNameEn());
         when(pdfConfig.getCertBirthdayDe()).thenReturn(pdc.getCertBirthdayDe());
         when(pdfConfig.getCertBirthdayEn()).thenReturn(pdc.getCertBirthdayEn());
-        when(pdfConfig.getCertTestType()).thenReturn(pdc.getCertTestType());
         when(pdfConfig.getCertIssuerState()).thenReturn(pdc.getCertIssuerState());
         when(pdfConfig.getCertDiseaseAgentTargeted()).thenReturn(pdc.getCertDiseaseAgentTargeted());
+    }
 
+    @Test
+    void appendDccPageTest() throws IOException {
+        when(pdfConfig.getCertTestTypeRat()).thenReturn(pdc.getCertTestTypeRat());
 
         QuickTest quicktest = getQuickTest();
         String dcc = "HC1:6BF-606A0T9WTWGSLKC 4X7923S%CA.48Y+6TAB3XK2F310RT012F3LMQ1001JC X8Y50.FK8ZKO/EZKEZ967L6C56." +
@@ -103,8 +107,7 @@ class DccPdfGeneratorTest {
         ByteArrayOutputStream pdf = createFirstPagePdf();
         ByteArrayOutputStream file = pdfGenerator.appendCertificatePage(pdf.toByteArray(), quicktest, dcc);
 
-        PDDocument pdfDocument = PDDocument.load(file.toByteArray());
-        try {
+        try (PDDocument pdfDocument = PDDocument.load(file.toByteArray())) {
             String pdfText = new PDFTextStripper().getText(pdfDocument);
             assertTrue(pdfText.contains(pdc.getCertDiseaseAgentDe()));
             assertTrue(pdfText.contains(pdc.getCertDiseaseAgentEn()));
@@ -117,8 +120,41 @@ class DccPdfGeneratorTest {
             assertTrue(pdfText.contains(quicktest.getLastName()));
             assertTrue(pdfText.contains(pdc.getCertDiseaseAgentTargeted()));
             assertTrue(pdfText.contains("08.04.2021 10:11:12 (UTC +02)"));
-        } finally {
-            pdfDocument.close();
+            assertTrue(pdfText.contains(pdc.getCertTestTypeRat()));
+        }
+    }
+
+    @Test
+    void appendPcrDccPageTest() throws IOException {
+        when(pdfConfig.getCertTestTypePcr()).thenReturn(pdc.getCertTestTypePcr());
+
+        QuickTest quicktest = getQuickTest("LP6464-4", 1);
+        quicktest.setTestBrandId("PCR TEST ID");
+        quicktest.setTestBrandName("ELITechGroup, SARS-CoV-2 ELITe MGB® Kit");
+        String dcc = "HC1:6BF-606A0T9WTWGSLKC 4X7923S%CA.48Y+6TAB3XK2F310RT012F3LMQ1001JC X8Y50.FK8ZKO/EZKEZ967L6C56." +
+                ".DU%DLPCG/DS2DHIA5Y8GY8JPCT3E5JDOA73467463W5207ZWERIL9WEQDD+Q6TW6FA7C464KCCWE6T9OF6:/6NA76W5." +
+                "JC2EC+96-Q63KCZPCNF6OF63W59%6PF6.SA*479L61G73564KC*KETF6A46.96646B565WET.D6$CBWE3/DO341$CKWEY " +
+                "CUPC1JC%N9+EDIPDCECRTCWH8.KEZEDWJC0FD6A5AIA%G7X+AQB9F+ALG7$X85G6+%6UB8AY8VS8VNAJ*8A1A*" +
+                "CBYB9UY9UB8%6A27BT3DC6CRHQ:FQSBG6X2MQE PIUIJ+Q83%3.KBJD7N5T+GUIIJT-MFWT*$0CQ7P5C4UQHF8F." +
+                "EC4D78J.2K$KQDIDIQRVS8A4KF5QM:D";
+
+        ByteArrayOutputStream pdf = createFirstPagePdf();
+        ByteArrayOutputStream file = pdfGenerator.appendCertificatePage(pdf.toByteArray(), quicktest, dcc);
+
+        try (PDDocument pdfDocument = PDDocument.load(file.toByteArray())) {
+            String pdfText = new PDFTextStripper().getText(pdfDocument);
+            assertTrue(pdfText.contains(pdc.getCertDiseaseAgentDe()));
+            assertTrue(pdfText.contains(pdc.getCertDiseaseAgentEn()));
+            assertTrue(pdfText.contains(pdc.getCertHeaderTestEn()));
+            assertTrue(pdfText.contains(pdc.getCertNameDe()));
+            assertTrue(pdfText.contains(pdc.getCertNameEn()));
+            assertTrue(pdfText.contains(pdc.getCertIssuerEn()));
+            assertTrue(pdfText.contains(pdc.getCertIssuerDe()));
+            assertTrue(pdfText.contains(quicktest.getFirstName()));
+            assertTrue(pdfText.contains(quicktest.getLastName()));
+            assertTrue(pdfText.contains(pdc.getCertDiseaseAgentTargeted()));
+            assertTrue(pdfText.contains("08.04.2021 10:11:12 (UTC +02)"));
+            assertTrue(pdfText.contains(pdc.getCertTestTypePcr()));
         }
     }
 

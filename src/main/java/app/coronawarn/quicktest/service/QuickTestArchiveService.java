@@ -80,14 +80,18 @@ public class QuickTestArchiveService {
                 dateFrom,
                 dateTo);
         } else {
-            archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(
+            archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                testResult,
+                getPcrAndRatValues(testResult),
                 dateFrom,
                 dateTo);
         }
         return archives;
     }
 
+    // Add Pcr test values to lookup. Pcr values are alwasy 5 less than rat values
+    private List<Short> getPcrAndRatValues(Short testResult) {
+        return List.of(testResult, (short) (testResult - 5));
+    }
 }

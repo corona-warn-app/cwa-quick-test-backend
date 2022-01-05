@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.5.7</version>
+        <version>2.5.8</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>app.coronawarn</groupId>
@@ -18,21 +18,21 @@
     </organization>
     <properties>
         <java.version>11</java.version>
-        <spring-cloud.version>2020.0.4</spring-cloud.version>
+        <spring-cloud.version>2020.0.5</spring-cloud.version>
         <keycloak.version>14.0.0</keycloak.version>
         <springdoc.version>1.5.9</springdoc.version>
         <liquibase.version>4.4.1</liquibase.version>
         <pdfbox.version>2.0.24</pdfbox.version>
         <google-zxing.version>3.4.1</google-zxing.version>
         <opencsv.version>5.5</opencsv.version>
-        <springTestAddons.version>2.5.4</springTestAddons.version>
+        <springTestAddons.version>2.5.6</springTestAddons.version>
         <shedlock.version>4.25.0</shedlock.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
         <license.projectName>Corona-Warn-App / cwa-quick-test-backend</license.projectName>
-        <license.inceptionYear>2021</license.inceptionYear>
+        <license.inceptionYear>2022</license.inceptionYear>
         <license.licenseName>apache_v2</license.licenseName>
-        <log4j2.version>2.17.0</log4j2.version>
+        <log4j2.version>2.17.1</log4j2.version>
     </properties>
     <dependencies>
         <dependency>

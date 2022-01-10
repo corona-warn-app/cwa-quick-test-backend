@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.client.TestResultServerClient;
+import app.coronawarn.quicktest.client.TestResultServerPcrClient;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.model.quicktest.PcrTestResult;
 import app.coronawarn.quicktest.model.quicktest.PcrTestResultList;
@@ -42,6 +43,7 @@ import org.springframework.web.server.ResponseStatusException;
 public class TestResultService {
 
     private final TestResultServerClient testResultServerClient;
+    private final TestResultServerPcrClient testResultServerPcrClient;
     private final QuickTestConfig quickTestConfig;
 
     /**
@@ -75,7 +77,7 @@ public class TestResultService {
             PcrTestResultList resultList = new PcrTestResultList();
             resultList.setLabId(quickTestConfig.getLabId());
             resultList.setTestResults(List.of(pcrTestResult));
-            ResponseEntity<Void> response = testResultServerClient.pcrResults(resultList);
+            ResponseEntity<Void> response = testResultServerPcrClient.pcrResults(resultList);
             if (response.getStatusCode() != HttpStatus.NO_CONTENT) {
                 log.error("Failed to update pcr testresult response: " + response.getStatusCode());
                 throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

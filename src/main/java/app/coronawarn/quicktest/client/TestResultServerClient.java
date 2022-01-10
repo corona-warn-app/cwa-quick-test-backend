@@ -46,15 +46,4 @@ public interface TestResultServerClient {
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
     ResponseEntity<Void> results(@RequestBody @NotNull @Valid QuickTestResultList quickTestResults);
-
-    /**
-     * Insert or update the pcr test results.
-     *
-     * @param testResults for TestResults
-     */
-    @PostMapping(value = "/api/v1/lab/results",
-      consumes = MediaType.APPLICATION_JSON_VALUE
-    )
-    ResponseEntity<Void> pcrResults(@RequestBody @NotNull @Valid PcrTestResultList testResults);
-
 }

@@ -23,12 +23,12 @@ jobs:
         echo "VERSION=${VERSION}" >> ${GITHUB_ENV};
     - name: docker build
       run: |
-        docker build \
-        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest \
-        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION} \
-        --tag ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-quick-test-backend:${VERSION} \
-        --build-arg MAVEN_PASSWORD=${APP_PACKAGES_PASSWORD} \
-        --build-arg MAVEN_USER=${APP_PACKAGES_USERNAME} \
+        docker build
+        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest
+        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION}
+        --tag ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-quick-test-backend:${VERSION}
+        --build-arg MAVEN_PASSWORD=${APP_PACKAGES_PASSWORD}
+        --build-arg MAVEN_USER=${APP_PACKAGES_USERNAME}
         .
       env:
         TRUSTED_URL: ${{ secrets.TRUSTED_URL }}

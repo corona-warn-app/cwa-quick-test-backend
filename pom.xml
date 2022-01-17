@@ -29,7 +29,7 @@
         <spring-cloud.version>2021.0.0</spring-cloud.version>
         <keycloak.version>14.0.0</keycloak.version>
         <springdoc.version>1.5.9</springdoc.version>
-        <liquibase.version>4.4.1</liquibase.version>
+        <liquibase.version>4.6.2</liquibase.version>
         <pdfbox.version>2.0.24</pdfbox.version>
         <google-zxing.version>3.4.1</google-zxing.version>
         <opencsv.version>5.5.2</opencsv.version>

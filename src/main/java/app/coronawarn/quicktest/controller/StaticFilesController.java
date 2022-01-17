@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class StaticFilesController {
 
-    @GetMapping(value = "/**/{[path:[^.]*}")
+    @GetMapping(value = "/*/**")
     public String redirect() {
         return "forward:/";
     }

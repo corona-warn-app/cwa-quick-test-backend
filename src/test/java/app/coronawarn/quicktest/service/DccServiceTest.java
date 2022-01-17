@@ -281,6 +281,6 @@ class DccServiceTest {
     private FeignException.FeignClientException createFeignException(int status) {
         Request request = Request.create(Request.HttpMethod.POST, "url", Map.of(), "body".getBytes(),
           Charset.defaultCharset(), null);
-        return new FeignException.FeignClientException(status, "Conflict", request, "body".getBytes());
+        return new FeignException.FeignClientException(status, "Conflict", request, "body".getBytes(), null);
     }
 }

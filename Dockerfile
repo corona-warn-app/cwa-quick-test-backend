@@ -3,8 +3,9 @@ FROM maven:3-openjdk-11 as build
 ARG MAVEN_PASSWORD
 ARG MAVEN_USERNAME
 
+WORKDIR /
+
 COPY . .
-RUN echo ${MAVEN_USERNAME}
 
 RUN mvn clean install \
     --settings ./settings.xml \

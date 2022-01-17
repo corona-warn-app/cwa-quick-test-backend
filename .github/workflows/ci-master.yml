@@ -33,6 +33,8 @@ jobs:
       env:
         TRUSTED_URL: ${{ secrets.TRUSTED_URL }}
         TRUSTED_REPOSITORY: ${{ secrets.TRUSTED_REPOSITORY }}
+        APP_PACKAGES_USERNAME: ${{ github.actor }}
+        APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     - name: docker push github
       run: |
         echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY_OWNER} --password-stdin

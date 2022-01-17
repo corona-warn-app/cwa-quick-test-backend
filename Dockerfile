@@ -4,10 +4,12 @@ ARG MAVEN_PASSWORD
 ARG MAVEN_USERNAME
 
 COPY . .
+RUN echo ${MAVEN_USERNAME}
+
 RUN mvn clean install \
     --settings ./settings.xml \
-    --define app.packages.username=$MAVEN_USERNAME \
-    --define app.packages.password=$MAVEN_PASSWORD
+    --define app.packages.username=${MAVEN_USERNAME} \
+    --define app.packages.password=${MAVEN_PASSWORD}
 
 FROM gcr.io/distroless/java-debian10:11 as run
 

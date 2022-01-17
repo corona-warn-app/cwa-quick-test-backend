@@ -11,4 +11,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: docker build
-      run: docker build .
+      run: docker build \
+        --build-arg MAVEN_PASSWORD=${APP_PACKAGES_PASSWORD} \
+        --build-arg MAVEN_USER=${APP_PACKAGES_USERNAME} \
+        .

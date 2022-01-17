@@ -20,25 +20,21 @@
 
 package eu.europa.ec.dgc;
 
-import java.time.LocalDateTime;
+import eu.europa.ec.dgc.generation.DccTestBuilder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class DccTestBuilderTest {
     @Test
-    void requiredFieldsFormat() throws Exception {
+    void requiredFieldsFormat() {
         DccTestBuilder dccTestBuilder = new DccTestBuilder();
         dccTestBuilder.fn("Tester");
         dccTestBuilder.fnt("TESTER");
-        Assertions.assertThrows(IllegalStateException.class, () -> {
-            dccTestBuilder.toJsonString();
-        });
+        Assertions.assertThrows(IllegalStateException.class, dccTestBuilder::toJsonString);
     }
 
     @Test
-    void patternMatch() throws Exception {
+    void patternMatch() {
         DccTestBuilder dccTestBuilder = new DccTestBuilder();
         Assertions.assertThrows(IllegalArgumentException.class, () -> {
             dccTestBuilder.fnt("tester");
@@ -46,7 +42,7 @@ class DccTestBuilderTest {
     }
 
     @Test
-    void genTest() throws Exception {
+    void genTest() {
         System.out.println(DgcCryptedPublisherTest.genSampleJson());
     }
 }

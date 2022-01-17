@@ -39,7 +39,7 @@ import app.coronawarn.quicktest.model.keycloak.KeycloakUpdateUserRequest;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.service.KeycloakService;
 import app.coronawarn.quicktest.utils.Utilities;
-import com.c4_soft.springaddons.security.oauth2.test.annotations.IdTokenClaims;
+import com.c4_soft.springaddons.security.oauth2.test.annotations.OpenIdClaims;
 import com.c4_soft.springaddons.security.oauth2.test.annotations.keycloak.WithMockKeycloakAuth;
 import com.c4_soft.springaddons.security.oauth2.test.mockmvc.keycloak.ServletKeycloakAuthUnitTestingSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -133,7 +133,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetAllUsers() throws Exception {
         KeycloakUserResponse userResponse = new KeycloakUserResponse();
@@ -156,7 +156,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetAllUsers_WrongRealm() throws Exception {
         doReturn("randomRealmName").when(keycloakSecurityContextSpy).getRealm();
@@ -169,7 +169,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetAllUsers_WrongRole() throws Exception {
         mockMvc().perform(MockMvcRequestBuilders
@@ -180,7 +180,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetAllUsers_AssignedToNoRootGroup() throws Exception {
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(Collections.emptyList());
@@ -193,7 +193,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetAllUsers_AssignedToTwoRootGroups() throws Exception {
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId, rootGroupId));
@@ -207,7 +207,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetUserDetails() throws Exception {
         KeycloakUserResponse userResponse = new KeycloakUserResponse();
@@ -229,7 +229,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetUserDetails_WrongRealm() throws Exception {
         doReturn("randomRealmName").when(keycloakSecurityContextSpy).getRealm();
@@ -242,7 +242,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetUserDetails_WrongRole() throws Exception {
         mockMvc().perform(MockMvcRequestBuilders
@@ -253,7 +253,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetUserDetails_AssignedToNoRootGroup() throws Exception {
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(Collections.emptyList());
@@ -266,7 +266,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testGetUserDetails_AssignedToTwoRootGroups() throws Exception {
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId, rootGroupId));
@@ -279,7 +279,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testDeleteUser() throws Exception {
         mockMvc().perform(MockMvcRequestBuilders
@@ -292,7 +292,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testDeleteUser_UserNotInRootGroup() throws Exception {
         when(keycloakServiceMock.getGroupMembers(rootGroupId)).thenReturn(Collections.emptyList());
@@ -307,7 +307,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testDeleteUser_UserNotFound() throws Exception {
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.NOT_FOUND))
@@ -323,7 +323,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testDeleteUser_ServerError() throws Exception {
         doThrow(new KeycloakService.KeycloakServiceException(KeycloakService.KeycloakServiceException.Reason.SERVER_ERROR))
@@ -339,7 +339,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testDeleteUser_WrongRole() throws Exception {
         mockMvc().perform(MockMvcRequestBuilders
@@ -350,7 +350,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testDeleteUser_AssignedToNoRootGroup() throws Exception {
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(Collections.emptyList());
@@ -363,7 +363,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testDeleteUser_AssignedToTwoRootGroups() throws Exception {
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup, rootGroup));
@@ -376,7 +376,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_Names() throws Exception {
         KeycloakUpdateUserRequest updateUserRequest = new KeycloakUpdateUserRequest();
@@ -397,7 +397,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_Password() throws Exception {
         KeycloakUpdateUserRequest updateUserRequest = new KeycloakUpdateUserRequest();
@@ -417,7 +417,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_Roles() throws Exception {
         KeycloakUpdateUserRequest updateUserRequest = new KeycloakUpdateUserRequest();
@@ -438,7 +438,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_All() throws Exception {
         KeycloakUpdateUserRequest updateUserRequest = new KeycloakUpdateUserRequest();
@@ -462,7 +462,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_UserNotInRootGroup() throws Exception {
         when(keycloakServiceMock.getGroupMembers(rootGroupId)).thenReturn(Collections.emptyList());
@@ -481,7 +481,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_UserNotFound() throws Exception {
 
@@ -504,7 +504,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_ServerError() throws Exception {
         KeycloakUpdateUserRequest updateUserRequest = new KeycloakUpdateUserRequest();
@@ -526,7 +526,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_WrongRole() throws Exception {
         mockMvc().perform(MockMvcRequestBuilders
@@ -539,7 +539,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_AssignedToNoRootGroup() throws Exception {
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(Collections.emptyList());
@@ -554,7 +554,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testUpdateUser_AssignedToTwoRootGroups() throws Exception {
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup, rootGroup));
@@ -569,7 +569,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
@@ -611,7 +611,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_WithoutSubgroup() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
@@ -653,7 +653,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_SubGroupNotInRootGroup() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
@@ -678,7 +678,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_UserAlreadyExists() throws Exception {
 
@@ -714,7 +714,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_BadRequest() throws Exception {
 
@@ -750,7 +750,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_ADMIN,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_ServerError() throws Exception {
 
@@ -786,7 +786,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_WrongRole() throws Exception {
         KeycloakCreateUserRequest createUserRequest = new KeycloakCreateUserRequest();
@@ -808,7 +808,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_AssignedToNoRootGroup() throws Exception {
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(Collections.emptyList());
@@ -832,7 +832,7 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
     @Test
     @WithMockKeycloakAuth(
         authorities = ROLE_LAB,
-        id = @IdTokenClaims(sub = userId)
+        claims = @OpenIdClaims(sub = userId)
     )
     void testCreateUser_AssignedToTwoRootGroups() throws Exception {
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup, rootGroup));

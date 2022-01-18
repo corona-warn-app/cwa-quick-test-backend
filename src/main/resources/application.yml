@@ -48,7 +48,6 @@ cwa-testresult-server:
   url: http://localhost:8080
 
 keycloak:
-  proxy-url: http://sia-lb.telekom.de:8080
   auth-server-url:
   realm:
   resource: quick-test-portal

@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   liquibase:
     change-log: classpath:/db/changelog.yml
     contexts: prod
@@ -45,11 +48,13 @@ cwa-testresult-server:
   url: http://localhost:8080
 
 keycloak:
+  proxy-url: http://sia-lb.telekom.de:8080
   auth-server-url:
   realm:
   resource: quick-test-portal
   public-client: true
   bearer-only: true
+
 
 keycloak-admin:
   auth-server-url:

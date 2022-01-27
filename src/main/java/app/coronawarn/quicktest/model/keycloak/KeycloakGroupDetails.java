@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.Data;
+import org.checkerframework.common.value.qual.ArrayLen;
 
 @Schema(
         description = "Request/Response model for group details."
@@ -50,8 +51,8 @@ public class KeycloakGroupDetails {
 
     private String email;
 
-    @Size(max = 50)
-    private String openingHours;
+    @ArrayLen(7)
+    private String[]  openingHours;
 
     private Boolean appointmentRequired;
 

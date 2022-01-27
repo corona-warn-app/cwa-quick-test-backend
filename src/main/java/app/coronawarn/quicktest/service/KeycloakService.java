@@ -249,7 +249,7 @@ public class KeycloakService {
                     mapEntry.getAppointment()));
             if (mapEntry.getOpeningHours() != null) {
                 groupDetails.setOpeningHours(
-                        mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours()[0] : null);
+                        mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours() : null);
             }
         } else {
             groupDetails.setSearchPortalConsent(false);

@@ -124,8 +124,7 @@ public class MapEntryService {
         mapEntryUploadData.setEmail(details.getEmail());
         mapEntryUploadData.setAppointment(convertAppointmentToString(details.getAppointmentRequired()));
         mapEntryUploadData.setWebsite(details.getWebsite());
-        String[] openingHours = {details.getOpeningHours()};
-        mapEntryUploadData.setOpeningHours(openingHours);
+        mapEntryUploadData.setOpeningHours(details.getOpeningHours());
 
         return mapEntryUploadData;
     }

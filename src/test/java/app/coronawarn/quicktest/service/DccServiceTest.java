@@ -38,7 +38,7 @@ import app.coronawarn.quicktest.model.dcc.DccUploadResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.utils.PdfGenerator;
-import eu.europa.ec.dgc.DgciGenerator;
+import eu.europa.ec.dgc.generation.DgciGenerator;
 import feign.FeignException;
 import feign.Request;
 import java.nio.charset.Charset;
@@ -78,7 +78,7 @@ class DccServiceTest {
     @Autowired
     PdfGenerator pdfGenerator;
 
-    private DgciGenerator dgciGenerator = new DgciGenerator("URN:UVCI:V1:DE");
+    private final DgciGenerator dgciGenerator = new DgciGenerator("URN:UVCI:V1:DE");
 
     @MockBean
     DccServerClient dccServerClient;
@@ -90,7 +90,7 @@ class DccServiceTest {
         QuickTest quickTest = getData();
         quickTest.setDccStatus(DccStatus.pendingPublicKey);
         quickTestRepository.saveAndFlush(quickTest);
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
+        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).orElseThrow();
         quickTest.setTestResult((short)6);
         quickTestRepository.saveAndFlush(quickTest);
 
@@ -98,7 +98,7 @@ class DccServiceTest {
 
         dccService.collectPublicKeys();
 
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
+        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).orElseThrow();
         assertNotNull(quickTest.getPublicKey());
         assertNotNull(quickTest.getDccUnsigned());
         assertNotNull(quickTest.getDccSignData());
@@ -139,7 +139,7 @@ class DccServiceTest {
 
         dccService.collectPublicKeys();
 
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
+        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).orElseThrow();
         assertNotNull(quickTest.getDccSignData());
         assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
         System.out.println("\n### upload data ###\n"+quickTest.getDccSignData());
@@ -152,7 +152,7 @@ class DccServiceTest {
         Optional<QuickTestArchive> quickTestArchiveOptional = quickTestArchiveRepository.findById(
           quickTest.getHashedGuid());
         assertTrue(quickTestArchiveOptional.isPresent());
-        QuickTestArchive quickTestArchiveFromDb = quickTestArchiveOptional.get();
+        QuickTestArchive quickTestArchiveFromDb = quickTestArchiveOptional.orElseThrow();
         assertNotNull(quickTestArchiveFromDb.getDcc());
         System.out.println(quickTestArchiveFromDb.getDcc());
         assertNotEquals(pdfFirstPage, quickTestArchiveFromDb.getPdf());
@@ -171,7 +171,7 @@ class DccServiceTest {
 
         dccService.collectPublicKeys();
 
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
+        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).orElseThrow();
         assertNotNull(quickTest.getDccSignData());
         assertEquals(DccStatus.pendingSignature, quickTest.getDccStatus());
 
@@ -272,7 +272,7 @@ class DccServiceTest {
         QuickTest quickTest = getData();
         quickTest.setDccStatus(DccStatus.pendingPublicKey);
         quickTestRepository.saveAndFlush(quickTest);
-        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).get();
+        quickTest = quickTestRepository.findById(quickTest.getHashedGuid()).orElseThrow();
         quickTest.setTestResult((short)6);
         quickTestRepository.saveAndFlush(quickTest);
         return quickTest;
@@ -281,6 +281,6 @@ class DccServiceTest {
     private FeignException.FeignClientException createFeignException(int status) {
         Request request = Request.create(Request.HttpMethod.POST, "url", Map.of(), "body".getBytes(),
           Charset.defaultCharset(), null);
-        return new FeignException.FeignClientException(status, "Conflict", request, "body".getBytes());
+        return new FeignException.FeignClientException(status, "Conflict", request, "body".getBytes(), null);
     }
 }

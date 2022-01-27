@@ -22,15 +22,18 @@ jobs:
         VERSION=${APP_TAG}-${APP_SHA};
         echo "VERSION=${VERSION}" >> ${GITHUB_ENV};
     - name: docker build
-      run: |
-        docker build \
-        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest \
-        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION} \
-        --tag ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-quick-test-backend:${VERSION} \
+      run: docker build
+        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest
+        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION}
+        --tag ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-quick-test-backend:${VERSION}
+        --build-arg MAVEN_PASSWORD=${APP_PACKAGES_PASSWORD}
+        --build-arg MAVEN_USERNAME=${APP_PACKAGES_USERNAME}
         .
       env:
         TRUSTED_URL: ${{ secrets.TRUSTED_URL }}
         TRUSTED_REPOSITORY: ${{ secrets.TRUSTED_REPOSITORY }}
+        APP_PACKAGES_USERNAME: ${{ github.actor }}
+        APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     - name: docker push github
       run: |
         echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY_OWNER} --password-stdin

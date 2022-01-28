@@ -21,10 +21,10 @@
 package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.Data;
-import org.checkerframework.common.value.qual.ArrayLen;
 
 @Schema(
         description = "Request/Response model for group details."
@@ -51,8 +51,8 @@ public class KeycloakGroupDetails {
 
     private String email;
 
-    @ArrayLen(7)
-    private String[]  openingHours;
+    @Size(max = 7)
+    private List<@Size(max = 64) String> openingHours;
 
     private Boolean appointmentRequired;
 

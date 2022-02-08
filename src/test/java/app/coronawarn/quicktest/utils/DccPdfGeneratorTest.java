@@ -22,9 +22,11 @@ package app.coronawarn.quicktest.utils;
 
 import static app.coronawarn.quicktest.utils.QuicktestUtils.getQuickTest;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.dgc.DccDecoder;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,12 +49,18 @@ class DccPdfGeneratorTest {
 
     @InjectMocks
     private DccPdfGenerator pdfGenerator;
+
     @Mock
     private PdfConfig pdfConfig;
+
+    @Mock
+    DccDecoder dccDecoderMock;
 
     @Test
     void appendDccPageTest() throws IOException {
         PdfConfig pdc = new PdfConfig();
+
+        when(dccDecoderMock.decodeDcc(any())).thenCallRealMethod();
 
         when(pdfConfig.getCertQrDescription()).thenReturn(pdc.getCertQrDescription());
         when(pdfConfig.getCertMemberStateDescriptionDe()).thenReturn(pdc.getCertMemberStateDescriptionDe());

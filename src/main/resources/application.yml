@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   liquibase:
     change-log: classpath:/db/changelog.yml
     contexts: prod
@@ -50,6 +53,7 @@ keycloak:
   resource: quick-test-portal
   public-client: true
   bearer-only: true
+
 
 keycloak-admin:
   auth-server-url:

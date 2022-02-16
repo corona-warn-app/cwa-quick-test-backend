@@ -436,7 +436,7 @@ public class QuickTestService {
         return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                List.of(QuickTest.TEST_RESULT_PENDING),
+                List.of(QuickTest.TEST_RESULT_PENDING, QuickTest.TEST_RESULT_PCR_PENDING),
                 0
         );
     }

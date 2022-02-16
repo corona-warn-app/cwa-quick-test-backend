@@ -224,11 +224,11 @@ public class DccService {
         dccTestBuilder.dob(quickTest.getBirthday());
         boolean covidDetected;
         switch (quickTest.getTestResult()) {
-          case 2:
+          case 12:
           case 7:
               covidDetected = true;
               break;
-          case 1:
+          case 11:
           case 6:
               covidDetected = false;
               break;

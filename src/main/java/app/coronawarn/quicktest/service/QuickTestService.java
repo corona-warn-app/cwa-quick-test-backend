@@ -204,7 +204,7 @@ public class QuickTestService {
                   "PcrTestName must be set for NAAT Tests");
             }
 
-            if (quicktest.getTestResult() < 10 ) {
+            if (quicktest.getTestResult() < 10) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                   "TestResult not allowed for NAAT Tests");
             }

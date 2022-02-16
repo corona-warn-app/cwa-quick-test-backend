@@ -135,8 +135,7 @@ public class QuickTestService {
         );
 
         if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING
-            // As the testresult is set @PrePersist in QuickTest Domain class to TEST_RESULT_PENDING
-            /*&& quicktest.getTestResult() != QuickTest.TEST_RESULT_PCR_PENDING*/) {
+            && quicktest.getTestResult() != QuickTest.TEST_RESULT_PCR_PENDING) {
             log.info("Requested Quick Test with shortHash is not pending.");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not pending");
         }
@@ -205,7 +204,7 @@ public class QuickTestService {
                   "PcrTestName must be set for NAAT Tests");
             }
 
-            if (quicktest.getTestResult() > 4) {
+            if (quicktest.getTestResult() < 10 ) {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                   "TestResult not allowed for NAAT Tests");
             }
@@ -437,7 +436,7 @@ public class QuickTestService {
         return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                List.of(QuickTest.TEST_RESULT_PENDING, QuickTest.TEST_RESULT_PCR_PENDING),
+                List.of(QuickTest.TEST_RESULT_PENDING),
                 0
         );
     }

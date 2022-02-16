@@ -135,7 +135,8 @@ public class QuickTestService {
         );
 
         if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING
-            && quicktest.getTestResult() != QuickTest.TEST_RESULT_PCR_PENDING) {
+            // As the testresult is set @PrePersist in QuickTest Domain class to TEST_RESULT_PENDING
+            /*&& quicktest.getTestResult() != QuickTest.TEST_RESULT_PCR_PENDING*/) {
             log.info("Requested Quick Test with shortHash is not pending.");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not pending");
         }

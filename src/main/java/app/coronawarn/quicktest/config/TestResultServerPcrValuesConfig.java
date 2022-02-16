@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("testresultserver-pcr")
+@ConfigurationProperties("testresultserverpcr")
 public class TestResultServerPcrValuesConfig {
 
     private boolean enabled;

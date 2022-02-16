@@ -94,7 +94,7 @@ testresultserver:
   keyStorePassword: ${QUICK_TEST_KEYSTORE_TRS_PASSWORD}
   trustStorePassword: ${QUICK_TEST_TRUSTSTORE_PASSWORD}
 
-testresultserver-pcr:
+testresultserverpcr:
   enabled: false
   oneWay: false
   twoWay: false

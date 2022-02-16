@@ -200,10 +200,10 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName("brandName");
 
-        for (short result = 0; result <= 10; result++) {
+        for (short result = 0; result <= 15; result++) {
             quickTestUpdateRequest.setResult((short) result);
 
-            if (result > 0 && result < 9) {
+            if (result > 0 && result < 14) {
                 mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
                     .put(API_BASE_PATH + "/6fa4dcec/testResult")
                     .accept(MediaType.APPLICATION_JSON_VALUE)

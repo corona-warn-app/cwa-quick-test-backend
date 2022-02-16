@@ -47,7 +47,7 @@ public class QuickTestUpdateRequest {
      * 9: Redeemed
      */
     @Min(1)
-    @Max(14)
+    @Max(13)
     private short result;
 
     @ValidCommonCharAndNumber

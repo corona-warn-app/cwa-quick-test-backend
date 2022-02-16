@@ -22,7 +22,7 @@ public interface TestResultServerPcrClient {
      *
      * @param testResults for TestResults
      */
-    @PostMapping(value = "/api/v1/lab/results",
+    @PostMapping(value = "/api/v1/pocnat/results",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
     ResponseEntity<Void> pcrResults(@RequestBody @NotNull @Valid PcrTestResultList testResults);

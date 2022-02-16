@@ -40,10 +40,10 @@ public class PcrTestResult {
      * 8: quick-test-Invalid
      * 9: quick-test-Redeemed
      */
-    @Min(1)
-    @Max(3)
+    @Min(10)
+    @Max(13)
     @NotNull
-    @Schema(description = "the result of the PCR test", required = true)
+    @Schema(description = "the result of the PoC-NAT test", required = true)
     private Short result;
 
     /**

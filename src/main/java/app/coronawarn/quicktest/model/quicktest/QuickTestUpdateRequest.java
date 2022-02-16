@@ -31,7 +31,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Schema(
-    description = "The quick test update."
+    description = "The quick test  or PoC-NAT update."
 )
 @Data
 @NoArgsConstructor
@@ -45,8 +45,12 @@ public class QuickTestUpdateRequest {
      * 7: Positive
      * 8: Invalid
      * 9: Redeemed
+     * 10 Pending PoC-NAT
+     * 11 Negative PoC-NAT
+     * 12 Positive PoC-NAT
+     * 13 Invalid PoC-NAT
      */
-    @Min(1)
+    @Min(6)
     @Max(13)
     private short result;
 

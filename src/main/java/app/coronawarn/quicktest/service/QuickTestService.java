@@ -283,7 +283,7 @@ public class QuickTestService {
               log.warn("TestType {} not supported.", testType);
               throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
           case NAAT:
-              quicktest.setTestResult((short) 0);
+              quicktest.setTestResult(QuickTest.TEST_RESULT_PCR_PENDING);
               quicktest.setTestType(testType);
               break;
           default:

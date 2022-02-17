@@ -208,7 +208,6 @@ public class QuickTestService {
                   "TestResult not allowed for NAAT Tests");
             }
 
-            quicktest.setTestBrandId(quickTestUpdateRequest.getPcrTestName());
             quicktest.setTestBrandName(quickTestUpdateRequest.getPcrTestName());
         } else {
             if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {

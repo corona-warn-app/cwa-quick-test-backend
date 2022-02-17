@@ -372,7 +372,11 @@ public class PdfGenerator {
             cos.showText(pdfConfig.getExecutedFromDescriptionText() + user);
         }
         cos.newLine();
-        cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
+        if (TestTypeUtils.isRat(quicktest.getTestType())) {
+            cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
+        } else {
+            cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandName());
+        }
         cos.newLine();
         if (TestTypeUtils.isRat(quicktest.getTestType())) {
             if (quicktest.getTestBrandName() == null) {

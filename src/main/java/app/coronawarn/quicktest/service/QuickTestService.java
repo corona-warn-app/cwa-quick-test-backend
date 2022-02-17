@@ -162,7 +162,6 @@ public class QuickTestService {
         addStatistics(quicktest);
         byte[] pdf;
         try {
-            // TODO PDF change
             pdf = createPdf(quicktest, pocInformation, user);
         } catch (IOException e) {
             log.error("generating PDF failed.");
@@ -209,7 +208,6 @@ public class QuickTestService {
                   "TestResult not allowed for NAAT Tests");
             }
 
-            //TODO set both to name?
             quicktest.setTestBrandId(quickTestUpdateRequest.getPcrTestName());
             quicktest.setTestBrandName(quickTestUpdateRequest.getPcrTestName());
         } else {

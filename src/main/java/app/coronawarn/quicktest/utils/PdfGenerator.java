@@ -59,9 +59,9 @@ public class PdfGenerator {
 
     private final PdfConfig pdfConfig;
 
-    private final int pendingPcr = 0;
-    private final int negativePcr = 1;
-    private final int positivePcr = 2;
+    private final int pendingPcr = 10;
+    private final int negativePcr = 11;
+    private final int positivePcr = 12;
     private final int pending = 5;
     private final int negative = 6;
     private final int positive = 7;

@@ -90,8 +90,8 @@ public class QuickTestArchiveService {
         return archives;
     }
 
-    // Add Pcr test values to lookup. Pcr values are alwasy 5 less than rat values
+    // Add Pcr test values to lookup. Pcr values are always 5 higher than rat values
     private List<Short> getPcrAndRatValues(Short testResult) {
-        return List.of(testResult, (short) (testResult - 5));
+        return List.of(testResult, (short) (testResult + 5));
     }
 }

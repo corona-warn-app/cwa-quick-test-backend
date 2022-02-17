@@ -73,6 +73,7 @@ public class PdfGenerator {
     private final float leading = 14.5f;
     private final int fontSize = 12;
     private PDFont fontType;
+    private PDFont fontTypeBold;
 
     /**
      * Generates a PDF file for rapid test result to print.
@@ -110,6 +111,9 @@ public class PdfGenerator {
             this.fontType = PDType0Font.load(document,
               Objects.requireNonNull(cs.getClassLoader())
                 .getResourceAsStream("pdf/fonts/arial.ttf"));
+            this.fontTypeBold = PDType0Font.load(document,
+              Objects.requireNonNull(cs.getClassLoader())
+                .getResourceAsStream("pdf/fonts/arialbd.ttf"));
         } catch (IOException e) {
             log.error("Could not load font");
         }
@@ -242,7 +246,7 @@ public class PdfGenerator {
                               boolean english)
       throws IOException {
         cos.beginText();
-        cos.setFont(fontType, fontSize);
+        cos.setFont(fontTypeBold, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 380);
 
@@ -287,6 +291,7 @@ public class PdfGenerator {
               cos.newLine();
               break;
         }
+        cos.setFont(fontType, fontSize);
 
         String dateAndTimeInGermany;
         if (quicktest.getUpdatedAt() != null) {
@@ -374,10 +379,14 @@ public class PdfGenerator {
         cos.newLine();
         if (TestTypeUtils.isRat(quicktest.getTestType())) {
             cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
+            cos.newLine();
         } else {
-            cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandName());
+            cos.showText(pdfConfig.getTestBrandIdDescriptionText());
+            for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
+                cos.showText(line);
+                cos.newLine();
+            }
         }
-        cos.newLine();
         if (TestTypeUtils.isRat(quicktest.getTestType())) {
             if (quicktest.getTestBrandName() == null) {
                 if (english) {

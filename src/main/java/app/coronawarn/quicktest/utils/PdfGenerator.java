@@ -381,7 +381,7 @@ public class PdfGenerator {
             cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
             cos.newLine();
         } else {
-            cos.showText(pdfConfig.getTestBrandIdDescriptionText());
+            cos.showText(pdfConfig.getPcrTestSystemDescriptionText());
             for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
                 cos.showText(line);
                 cos.newLine();

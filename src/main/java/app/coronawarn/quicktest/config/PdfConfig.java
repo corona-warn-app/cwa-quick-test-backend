@@ -53,6 +53,7 @@ public class PdfConfig {
     private String tradeNameEmptyText = "nicht angegeben";
     private String tradeNameEmptyTextEn = "not available";
     private String testBrandIdDescriptionText = "Test-ID: ";
+    private String pcrTestSystemDescriptionText = "PoC-NAA-Testsystem: ";
     private String quickTestHeadlineText = "Corona-Antigen-Schnelltest";
     private String authorPdfPropertiesText = "Schnelltestportal";
     private String creatorPdfPropertiesText = "Schnelltestportal";

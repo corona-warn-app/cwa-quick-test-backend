@@ -13,6 +13,7 @@ import java.util.List;
 import javax.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.keycloak.admin.client.Keycloak;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -124,8 +125,9 @@ public class MapEntryService {
         mapEntryUploadData.setEmail(details.getEmail());
         mapEntryUploadData.setAppointment(convertAppointmentToString(details.getAppointmentRequired()));
         mapEntryUploadData.setWebsite(details.getWebsite());
-        String[] openingHours = {details.getOpeningHours()};
-        mapEntryUploadData.setOpeningHours(openingHours);
+        if (CollectionUtils.isNotEmpty(details.getOpeningHours())) {
+            mapEntryUploadData.setOpeningHours(details.getOpeningHours().toArray(String[]::new));
+        }
 
         return mapEntryUploadData;
     }

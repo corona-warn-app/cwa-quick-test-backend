@@ -29,6 +29,7 @@ import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -252,7 +253,7 @@ public class KeycloakService {
                     mapEntry.getAppointment()));
             if (mapEntry.getOpeningHours() != null) {
                 groupDetails.setOpeningHours(
-                        mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours()[0] : null);
+                        mapEntry.getOpeningHours().length > 0 ? Arrays.asList(mapEntry.getOpeningHours()) : null);
             }
         } else {
             groupDetails.setSearchPortalConsent(false);

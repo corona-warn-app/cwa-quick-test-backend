@@ -1,20 +1,24 @@
-package eu.europa.ec.dgc;
+package app.coronawarn.quicktest.dgc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.upokecenter.cbor.CBORObject;
 import com.upokecenter.cbor.CBORType;
+import eu.europa.ec.dgc.generation.Base45Encoder;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.zip.InflaterInputStream;
+import org.springframework.stereotype.Service;
 
 /**
  * Small utility to decode date from dcc.
  * It does not verify the CBOR signature and has only some structure checks.
- * It is opposite to {@link DgcGenerator}
+ * It is opposite to {@link eu.europa.ec.dgc.generation.DgcGenerator}
  */
+@Service
 public class DccDecoder {
+
     /**
      * decode dcc.
      *
@@ -97,7 +101,7 @@ public class DccDecoder {
         } else {
             if (cborValue.getType() != valueType) {
                 throw new IllegalArgumentException("wrong type of: " + objectName + " is: "
-                        + cborValue.getType() + " expected: " + valueType);
+                    + cborValue.getType() + " expected: " + valueType);
             }
         }
         return cborValue;
@@ -106,9 +110,9 @@ public class DccDecoder {
     private CBORObject decodeTestCbor(byte[] unzippedCose) {
         CBORObject cborObject = CBORObject.DecodeFromBytes(unzippedCose);
         if (cborObject.getType() != CBORType.Array
-                || cborObject.size() < 4
-                || !cborObject.isTagged()
-                || 18 != cborObject.getMostInnerTag().ToInt32Checked()) {
+            || cborObject.size() < 4
+            || !cborObject.isTagged()
+            || 18 != cborObject.getMostInnerTag().ToInt32Checked()) {
             throw new IllegalArgumentException("unexpected cose structure");
         }
         if (cborObject.get(2).getType() != CBORType.ByteString) {

@@ -23,6 +23,8 @@ package app.coronawarn.quicktest.utils;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.dgc.DccDecodeResult;
+import app.coronawarn.quicktest.dgc.DccDecoder;
 import app.coronawarn.quicktest.domain.QuickTest;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -31,8 +33,6 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import eu.europa.ec.dgc.DccDecodeResult;
-import eu.europa.ec.dgc.DccDecoder;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -67,7 +67,8 @@ import org.springframework.stereotype.Service;
 public class DccPdfGenerator {
 
     private final PdfConfig pdfConfig;
-    private final DccDecoder dccDecoder = new DccDecoder();
+
+    private final DccDecoder dccDecoder;
 
     private final int pending = 5;
     private final int negativeRat = 6;

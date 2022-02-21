@@ -20,10 +20,7 @@
 
 package app.coronawarn.quicktest.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -35,6 +32,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.domain.QuickTestLog;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
@@ -79,6 +77,8 @@ public class QuickTestServiceTest {
     private QuickTestLogRepository quickTestLogRepository;
     @Mock
     private TestResultService testResultService;
+    @Mock
+    private QuickTestDeletionService quickTestDeletionService;
 
     @Mock
     private PdfGenerator pdf;
@@ -126,24 +126,29 @@ public class QuickTestServiceTest {
     }
 
     @Test
-    void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException {
+    void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException, IOException {
         QuickTestService qs = spy(quickTestService);
         Map<String, String> ids = new HashMap<>();
+        QuickTest pendingTest = createPendingTest();
+        pendingTest.setCreatedAt(Utilities.getCurrentLocalDateTimeUtc().minusMinutes(5));
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-            .thenReturn(createPendingTest());
-        try {
-            QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
-            quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short) 6);
-            quickTestUpdateRequest.setTestBrandName("TestBrandName");
-            qs.updateQuickTest(ids,
-                "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                quickTestUpdateRequest,
-                new ArrayList<>(),
-                "User");
-        } catch (NullPointerException e) {
-        }
+            .thenReturn(pendingTest);
+        when(pdf.generatePdf(any(), any(), any()))
+                .thenReturn(new ByteArrayOutputStream());
+
+        QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
+        quickTestUpdateRequest.setTestBrandId("testBrandId");
+        quickTestUpdateRequest.setResult((short) 6);
+        quickTestUpdateRequest.setTestBrandName("TestBrandName");
+        qs.updateQuickTest(ids,
+            "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
+            quickTestUpdateRequest,
+            new ArrayList<>(),
+            "User");
+        ArgumentCaptor<QuickTestLog> captor = ArgumentCaptor.forClass(QuickTestLog.class);
         verify(qs, times(1)).addStatistics(any());
+        verify(quickTestLogRepository).save(captor.capture());
+        assertNotEquals(captor.getValue().getCreatedAt(), pendingTest.getCreatedAt());
     }
 
     @Test
@@ -336,8 +341,7 @@ public class QuickTestServiceTest {
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
         when(quickTestConfig.getCleanUpSettings()).thenReturn(cleanUpSettings);
         quickTestService.removeAllBefore(now);
-        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0), any());
-        verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
+        verify(quickTestDeletionService, times(1)).handleChunk(eq(now), eq(1000), eq(1), eq(1));
         verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 

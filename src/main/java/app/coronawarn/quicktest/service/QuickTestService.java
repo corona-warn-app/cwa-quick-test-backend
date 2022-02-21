@@ -61,6 +61,7 @@ public class QuickTestService {
     private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
+    private final QuickTestDeletionService quickTestDeletionService;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
@@ -341,26 +342,7 @@ public class QuickTestService {
         log.info("Found {} QuickTests which need to set to failed on TRS in {} chunks", totalCount, chunks);
 
         for (int i = 1; i <= chunks; i++) {
-            log.info("Deleting chunk {} of {}", i, chunks);
-
-            List<QuickTest> quickTestChunk = quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(
-                    deleteTimestamp,
-                    0,
-                    PageRequest.of(i - 1, chunkSize));
-
-            quickTestChunk.forEach(quickTest -> sendResultToTestResultServer(
-                    quickTest.getTestResultServerHash(),
-                    TestResult.FAILED.getValue(),
-                    deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
-                    quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false,
-                    TestTypeUtils.isPcr(quickTest.getTestType())));
-
-            log.info("Set Status of quicktests on TRS. Deleting QuickTests in DB");
-
-            quickTestRepository.deleteAll(quickTestChunk);
-            quickTestRepository.flush();
-
-            log.info("Processing of chunk {} of {} finished.", i, chunks);
+            quickTestDeletionService.handleChunk(deleteTimestamp, chunkSize, chunks, i);
         }
 
         log.info("Delete remaining QuickTests");
@@ -369,7 +351,7 @@ public class QuickTestService {
 
     protected void addStatistics(QuickTest quickTest) {
         QuickTestLog quickTestLog = new QuickTestLog();
-        quickTestLog.setCreatedAt(quickTest.getCreatedAt());
+        quickTestLog.setCreatedAt(quickTest.getUpdatedAt());
         quickTestLog.setPocId(quickTest.getPocId());
         quickTestLog.setPositiveTestResult(
                 quickTest.getTestResult() == TestResult.fromName("positive").getValue()

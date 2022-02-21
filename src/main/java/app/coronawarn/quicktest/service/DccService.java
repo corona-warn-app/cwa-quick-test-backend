@@ -227,12 +227,12 @@ public class DccService {
         dccTestBuilder.dob(LocalDate.parse(quickTest.getBirthday()));
         boolean covidDetected;
         switch (quickTest.getTestResult()) {
-          case 12:
-          case 7:
+          case QuickTest.TEST_RESULT_PCR_POSITIVE:
+          case QuickTest.TEST_RESULT_PENDING:
               covidDetected = true;
               break;
-          case 11:
-          case 6:
+          case QuickTest.TEST_RESULT_PCR_NEGATIVE:
+          case QuickTest.TEST_RESULT_NEGATIVE:
               covidDetected = false;
               break;
           default:
@@ -240,7 +240,7 @@ public class DccService {
                         + " to positive or negative");
         }
         dccTestBuilder.detected(covidDetected)
-                .testType(quickTest.getTestType())
+                .testTypeRapid(TestTypeUtils.isRat(quickTest.getTestType()))
                 .dgci(dgci)
                 .country(dccConfig.getCountry())
                 .testingCentre(quickTest.getPocId())
@@ -249,7 +249,7 @@ public class DccService {
         if (TestTypeUtils.isRat(quickTest.getTestType())) {
             dccTestBuilder.testIdentifier(quickTest.getTestBrandId());
         } else {
-            dccTestBuilder.testIdentifierPcr(quickTest.getTestBrandName());
+            dccTestBuilder.testName(quickTest.getTestBrandName());
         }
         return dccTestBuilder.toJsonString();
     }

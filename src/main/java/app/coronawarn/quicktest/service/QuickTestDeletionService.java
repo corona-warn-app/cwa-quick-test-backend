@@ -20,10 +20,13 @@
 
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.TestResult;
+import app.coronawarn.quicktest.model.quicktest.PcrTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
+import app.coronawarn.quicktest.utils.TestTypeUtils;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -42,6 +45,8 @@ public class QuickTestDeletionService {
 
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
+    private final QuickTestConfig quickTestConfig;
+
 
     /**
      * Handle a chunk of old tests to delete.
@@ -65,7 +70,8 @@ public class QuickTestDeletionService {
           quickTest.getTestResultServerHash(),
           TestResult.REDEEMED.getValue(),
           deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
-          quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
+          quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false,
+                TestTypeUtils.isPcr(quickTest.getTestType())));
 
         log.info("Set Status of quicktests on TRS. Deleting QuickTests in DB");
 
@@ -88,15 +94,27 @@ public class QuickTestDeletionService {
      * @throws ResponseStatusException possible error
      */
     private void sendResultToTestResultServer(String testResultServerHash, short result, Long sc,
-                                              boolean confirmationCwa) throws ResponseStatusException {
+                                              boolean confirmationCwa, boolean isPcr) throws ResponseStatusException {
+
         if (confirmationCwa && testResultServerHash != null) {
-            log.info("Sending TestResult to TestResult-Server");
-            QuickTestResult quickTestResult = new QuickTestResult();
-            quickTestResult.setId(testResultServerHash);
-            quickTestResult.setResult(result);
-            quickTestResult.setSampleCollection(sc);
-            testResultService.createOrUpdateTestResult(quickTestResult);
-            log.info("Update TestResult on TestResult-Server successfully.");
+            if (isPcr) {
+                log.info("Sending PCR TestResult to TestResult-Server");
+                PcrTestResult pcrTestResult = new PcrTestResult();
+                pcrTestResult.setId(testResultServerHash);
+                pcrTestResult.setResult(result);
+                pcrTestResult.setSampleCollection(sc);
+                pcrTestResult.setLabId(quickTestConfig.getLabId());
+                testResultService.createOrUpdatePcrTestResult(pcrTestResult);
+                log.info("Update PCR TestResult on TestResult-Server successfully.");
+            } else {
+                log.info("Sending TestResult to TestResult-Server");
+                QuickTestResult quickTestResult = new QuickTestResult();
+                quickTestResult.setId(testResultServerHash);
+                quickTestResult.setResult(result);
+                quickTestResult.setSampleCollection(sc);
+                testResultService.createOrUpdateTestResult(quickTestResult);
+                log.info("Update TestResult on TestResult-Server successfully.");
+            }
         }
     }
 }

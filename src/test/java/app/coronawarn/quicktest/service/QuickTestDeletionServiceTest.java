@@ -34,6 +34,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+
+import app.coronawarn.quicktest.utils.TestTypeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -53,6 +55,9 @@ class QuickTestDeletionServiceTest {
     @Mock
     private TestResultService testResultService;
 
+    @Mock
+    private QuickTestConfig quickTestConfig;
+
 
     @Test
     void removeAllBeforeTest() {
@@ -60,15 +65,21 @@ class QuickTestDeletionServiceTest {
         QuickTest quickTest = new QuickTest();
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("");
-        quickTest.setTestResult((short) 9);
+        quickTest.setTestResult(QuickTest.TEST_RESULT_REDEEMED);
         quickTest.setUpdatedAt(now);
 
         QuickTest quickTest1 = new QuickTest();
         quickTest1.setConfirmationCwa(false);
         quickTest1.setTestResultServerHash("");
-        quickTest1.setTestResult((short) 9);
+        quickTest1.setTestResult(QuickTest.TEST_RESULT_REDEEMED);
         quickTest1.setUpdatedAt(now);
 
+        QuickTest quickTestPcr = new QuickTest();
+        quickTestPcr.setConfirmationCwa(true);
+        quickTestPcr.setTestResultServerHash("");
+        quickTestPcr.setTestResult(QuickTest.TEST_RESULT_PCR_REDEEMED);
+        quickTestPcr.setUpdatedAt(now);
+        quickTestPcr.setTestType("LP6464-4");
 
         QuickTestResult quickTestResult = new QuickTestResult();
         quickTestResult.setId(quickTest.getTestResultServerHash());
@@ -78,10 +89,12 @@ class QuickTestDeletionServiceTest {
         QuickTestConfig.CleanUpSettings cleanUpSettings = new QuickTestConfig.CleanUpSettings();
         cleanUpSettings.setChunkSize(1000);
 
+        when(quickTestConfig.getLabId()).thenReturn("lab4711");
         when(quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0), any()))
-          .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
+          .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1, quickTestPcr));
         underTest.handleChunk(now, cleanUpSettings.getChunkSize(), 1, 1);
         verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0), any());
         verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
+        verify(testResultService, times(1)).createOrUpdatePcrTestResult(any());
     }
 }

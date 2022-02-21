@@ -32,9 +32,18 @@ public interface QuickTestLogRepository extends JpaRepository<QuickTestLog, Stri
     int countAllByTenantIdAndPocIdAndCreatedAtBetween(String tenantId, String pocId, LocalDateTime utcDateFrom,
                                                       LocalDateTime utcDateTo);
 
+    int countAllByTenantIdAndPocIdAndTestTypeAndCreatedAtBetween(String tenantId, String pocId, String testType,
+                                                                 LocalDateTime utcDateFrom, LocalDateTime utcDateTo);
+
     int countAllByTenantIdAndPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(String tenantId, String pocId,
                                                                                  LocalDateTime utcDateFrom,
                                                                                  LocalDateTime utcDateTo);
+
+    int countAllByTenantIdAndPocIdAndAndTestTypeAndPositiveTestResultIsTrueAndCreatedAtBetween(String tenantId,
+                                                                                            String pocId,
+                                                                                            String testType,
+                                                                                            LocalDateTime utcDateFrom,
+                                                                                            LocalDateTime utcDateTo);
 
     List<QuickTestLog> findAllByTenantIdAndCreatedAtBetweenOrderByPocIdAscCreatedAtAsc(String tenantId,
                                                                                        LocalDateTime utcDateFrom,

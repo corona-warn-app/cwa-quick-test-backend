@@ -111,4 +111,8 @@ public class QuickTestPersonalDataRequest {
     @ValidCommonCharAndNumber
     @Size(min = 1, max = 250)
     private String additionalInfo;
+
+    @Size(min = 1, max = 30)
+    //May be null to ensure backwards compatibility
+    private String testType;
 }

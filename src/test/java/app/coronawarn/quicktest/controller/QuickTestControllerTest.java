@@ -26,7 +26,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -201,10 +200,10 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         quickTestUpdateRequest.setTestBrandId("brandId");
         quickTestUpdateRequest.setTestBrandName("brandName");
 
-        for (short result = 0; result <= 10; result++) {
+        for (short result = 5; result <= 15; result++) {
             quickTestUpdateRequest.setResult((short) result);
 
-            if (result > 5 && result < 9) {
+            if (result > 5 && result < 14) {
                 mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
                     .put(API_BASE_PATH + "/6fa4dcec/testResult")
                     .accept(MediaType.APPLICATION_JSON_VALUE)

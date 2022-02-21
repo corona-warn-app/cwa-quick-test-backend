@@ -26,6 +26,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum TestResult {
+    PENDING_PCR("pending_pcr", (short) 10),
+    NEGATIVE_PCR("negative_pcr", (short) 11),
+    POSITIVE_PCR("positive_pcr", (short) 12),
+    FAILED_PCR("failed_pcr", (short) 13),
     PENDING("pending", (short) 5),
     NEGATIVE("negative", (short) 6),
     POSITIVE("positive",  (short) 7),

@@ -39,9 +39,10 @@ public class QuickTestStatisticsTest {
         quickTestLog.setTenantId("testTenantId");
         quickTestLog.setCreatedAt(LocalDateTime.of(2021, 4, 8, 8, 11, 12));
         quickTestLog.setPositiveTestResult(true);
+        quickTestLog.setTestType("LP6464-4");
         assertEquals(
                 "QuickTestLog(id=0, pocId=testPocId, tenantId=testTenantId, " +
-                        "createdAt=2021-04-08T08:11:12, positiveTestResult=true)",
+                        "createdAt=2021-04-08T08:11:12, positiveTestResult=true, testType=LP6464-4)",
                 quickTestLog.toString());
     }
 }

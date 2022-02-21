@@ -18,20 +18,26 @@
  * ---license-end
  */
 
-package app.coronawarn.quicktest.model.quicktest;
+package app.coronawarn.quicktest.config;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 
-@Schema(
-    description = "The quick test statistics model."
-)
-@Data
-public class QuickTestStatisticsResponse {
-    private Integer totalTestCount;
-    private Integer positiveTestCount;
-    private Integer pcrTestCount;
-    private Integer pcrPositiveTestCount;
-    private Integer ratTestCount;
-    private Integer ratPositiveTestCount;
+@Getter
+@Setter
+@Configuration
+@ConfigurationProperties("testresultserverpcr")
+public class TestResultServerPcrValuesConfig {
+
+    private boolean enabled;
+    private boolean oneWay;
+    private boolean twoWay;
+    private boolean hostnameVerify;
+    private String keyStorePath;
+    private char[] keyStorePassword;
+    private String trustStorePath;
+    private char[] trustStorePassword;
+
 }

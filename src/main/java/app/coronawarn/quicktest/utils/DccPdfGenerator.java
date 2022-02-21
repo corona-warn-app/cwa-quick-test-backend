@@ -71,8 +71,10 @@ public class DccPdfGenerator {
     private final DccDecoder dccDecoder;
 
     private final int pending = 5;
-    private final int negative = 6;
-    private final int positive = 7;
+    private final int negativeRat = 6;
+    private final int negativePcr = 11;
+    private final int positiveRat = 7;
+    private final int positivePcr = 12;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss '(UTC' X')'");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -499,10 +501,14 @@ public class DccPdfGenerator {
 
         cos.setNonStrokingColor(Color.BLACK);
 
+        final String testTypeDesc =
+                TestTypeUtils.isRat(quickTest.getTestType())
+                        ? pdfConfig.getCertTestTypeRat() : pdfConfig.getCertTestTypePcr();
+
         List<List<String>> data = List.of(
           List.of(pdfConfig.getCertDiseaseAgentDe(), pdfConfig.getCertDiseaseAgentEn(),
             pdfConfig.getCertDiseaseAgentTargeted()),
-          List.of(pdfConfig.getCertTestTypeDe(), pdfConfig.getCertTestTypeEn(), pdfConfig.getCertTestType()),
+          List.of(pdfConfig.getCertTestTypeDe(), pdfConfig.getCertTestTypeEn(), testTypeDesc),
           List.of(pdfConfig.getCertTestManufacturerDe(), pdfConfig.getCertTestManufacturerEn(),
             quickTest.getTestBrandName()),
           List.of(pdfConfig.getCertDateSampleCollectionDe(), pdfConfig.getCertDateSampleCollectionEn(),
@@ -525,10 +531,12 @@ public class DccPdfGenerator {
     private String getTestResultText(Short testResultValue) {
         String testResult;
         switch (testResultValue != null ? testResultValue : -1) {
-          case positive:
+          case positivePcr:
+          case positiveRat:
               testResult = "Detected";
               break;
-          case negative:
+          case negativePcr:
+          case negativeRat:
               testResult = "Not detected";
               break;
           default:

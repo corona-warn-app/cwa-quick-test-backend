@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.2</version>
+        <version>2.6.3</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>app.coronawarn</groupId>
@@ -26,26 +26,36 @@
 
     <properties>
         <java.version>11</java.version>
-        <spring-cloud.version>2021.0.0</spring-cloud.version>
-        <keycloak.version>14.0.0</keycloak.version>
-        <springdoc.version>1.5.9</springdoc.version>
+        <spring-cloud.version>2021.0.1</spring-cloud.version>
+        <keycloak.version>16.1.1</keycloak.version>
+        <springdoc.version>1.6.6</springdoc.version>
         <liquibase.version>4.6.2</liquibase.version>
         <pdfbox.version>2.0.24</pdfbox.version>
         <google-zxing.version>3.4.1</google-zxing.version>
         <opencsv.version>5.5.2</opencsv.version>
-        <springTestAddons.version>3.1.13-jdk11</springTestAddons.version>
-        <shedlock.version>4.30.0</shedlock.version>
+        <springTestAddons.version>3.1.15-jdk11</springTestAddons.version>
+        <shedlock.version>4.33.0</shedlock.version>
+        <h2.version>2.1.210</h2.version>
+        <psql.version>42.3.3</psql.version>
+        <hibernate.version>5.6.5.Final</hibernate.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
         <license.projectName>Corona-Warn-App / cwa-quick-test-backend</license.projectName>
         <license.inceptionYear>2021</license.inceptionYear>
         <license.licenseName>apache_v2</license.licenseName>
         <log4j2.version>2.17.1</log4j2.version>
+        <owasp.version>6.5.3</owasp.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -112,6 +122,12 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
+            <version>${h2.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -202,12 +218,12 @@
         <dependency>
             <groupId>com.upokecenter</groupId>
             <artifactId>cbor</artifactId>
-            <version>4.5.1</version>
+            <version>4.5.2</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.dgc</groupId>
             <artifactId>dgc-lib</artifactId>
-            <version>1.1.9</version>
+            <version>1.1.13</version>
         </dependency>
 
         <!-- DB drivers -->
@@ -215,6 +231,7 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
+            <version>${psql.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>
@@ -243,6 +260,15 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>${owasp.version}</version>
+                <configuration>
+                    <suppressionFile>./owasp/suppressions.xml</suppressionFile>
+                    <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.asciidoctor</groupId>
                 <artifactId>asciidoctor-maven-plugin</artifactId>

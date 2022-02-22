@@ -129,7 +129,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
     void findArchivesByTestResultAndUpdatedAtBetween() throws Exception {
 
         QuickTestArchiveView quickTestArchive =
-          () -> "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4";
+          new QuickTestArchiveView("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         when(quickTestArchiveService.findByTestResultAndUpdatedAtBetween(any(), anyShort(), any(), any())).thenReturn(
             Collections.singletonList(quickTestArchive));
 

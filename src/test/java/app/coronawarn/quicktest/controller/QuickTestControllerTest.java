@@ -895,7 +895,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
     @Test
     void getPendingQuickTests() throws Exception {
-        QuicktestView quickTest = () -> "00000000";
+        QuicktestView quickTest = new QuicktestView("00000000");
         when(quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(any()))
                 .thenReturn(Collections.singletonList(quickTest));
 

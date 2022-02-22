@@ -20,7 +20,11 @@
 
 package app.coronawarn.quicktest.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -349,7 +353,7 @@ public class QuickTestServiceTest {
     void findAllPendingQuickTestsByTenantIdAndPocIdTest() {
         Map<String, String> ids = new HashMap<>();
         List<QuickTest> quickTests = new ArrayList<>();
-        QuicktestView quicktestView = () -> "00000000";
+        QuicktestView quicktestView = new QuicktestView("00000000");
         when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
             any(), any(), any(), any()))
             .thenReturn(List.of(quicktestView));

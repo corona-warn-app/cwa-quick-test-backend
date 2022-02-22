@@ -50,3 +50,6 @@ databaseChangeLog:
   - include:
       file: changelog/V017_add_testType_statistics_column.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V018_add_index_to_log.yml
+      relativeToChangelogFile: true

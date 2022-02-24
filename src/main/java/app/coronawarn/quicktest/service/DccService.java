@@ -180,6 +180,8 @@ public class DccService {
                         log.warn("Appending Certificate to PDF failed for quicktest hashedGuid=[{}]",
                             quickTest.getHashedGuid());
                     } catch (Exception exception) {
+                        log.warn("dcc: {}", dcc);
+                        log.warn("quicktest: {}", quickTest);
                         log.warn("General Exception while appending certificate to PDF for quicktest hashedGuid=[{}]",
                             quickTest.getHashedGuid(), exception);
                     }

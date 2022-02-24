@@ -35,6 +35,8 @@ import app.coronawarn.quicktest.utils.DccPdfGenerator;
 import app.coronawarn.quicktest.utils.TestTypeUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.upokecenter.cbor.CBORObject;
+import com.upokecenter.cbor.CBORType;
 import eu.europa.ec.dgc.generation.DccTestBuilder;
 import eu.europa.ec.dgc.generation.DgcCryptedPublisher;
 import eu.europa.ec.dgc.generation.DgcGenerator;
@@ -164,7 +166,7 @@ public class DccService {
                     quickTest.getTestResultServerHash().getBytes(StandardCharsets.UTF_8)));
                 digest.reset();
                 DccUploadResult dccUploadResult = dccServerClient.uploadDcc(testIdHashHex, dccUploadData);
-                byte[] coseSigned = dgcGenerator.dgcSetCosePartial(
+                byte[] coseSigned = dgcSetCosePartial(
                     Base64.getDecoder().decode(quickTest.getDccUnsigned()),
                     Base64.getDecoder().decode(dccUploadResult.getPartialDcc()));
                 Optional<QuickTestArchive> quickTestArchive =
@@ -265,5 +267,35 @@ public class DccService {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalArgumentException("can not extract public key");
         }
+    }
+
+    /**
+     * Set signature and unprotected header from partialDcc into unsigned cose dcc.
+     * @param coseData unsigned cose dcc
+     * @param partialDcc cose with signature and unprotected header
+     * @return signed cose dcc
+     */
+    public byte[] dgcSetCosePartial(byte[] coseData, byte[] partialDcc) {
+        CBORObject partialCose = CBORObject.DecodeFromBytes(partialDcc);
+        if (partialCose.getType() != CBORType.Array || partialCose.getValues().size() < 3) {
+            throw new IllegalArgumentException("partial dcc is not cbor array");
+        }
+        CBORObject cborObject = CBORObject.DecodeFromBytes(coseData);
+        if (cborObject.getType() == CBORType.Array && cborObject.getValues().size() == 4) {
+            // set signature
+            cborObject.set(3, partialCose.get(3));
+        } else {
+            throw new IllegalArgumentException("seems not to be cose");
+        }
+        // copy unprotected header
+        CBORObject unprotectedHeader = partialCose.get(1);
+        if (unprotectedHeader.getType() != CBORType.Map) {
+            throw new IllegalArgumentException("unprotected header in partial dcc is not cbor map");
+        }
+        for (CBORObject key : unprotectedHeader.getKeys()) {
+            CBORObject value = unprotectedHeader.get(key);
+            cborObject.get(1).set(key,value);
+        }
+        return cborObject.EncodeToBytes();
     }
 }

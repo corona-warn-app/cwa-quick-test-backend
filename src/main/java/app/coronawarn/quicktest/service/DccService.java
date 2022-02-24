@@ -181,7 +181,7 @@ public class DccService {
                             quickTest.getHashedGuid());
                     } catch (Exception exception) {
                         log.warn("General Exception while appending certificate to PDF for quicktest hashedGuid=[{}]",
-                            quickTest.getHashedGuid());
+                            quickTest.getHashedGuid(), exception);
                     }
                     quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
                 } else {

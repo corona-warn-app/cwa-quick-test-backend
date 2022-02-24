@@ -182,10 +182,8 @@ public class DccService {
                         log.warn("Appending Certificate to PDF failed for quicktest hashedGuid=[{}]",
                             quickTest.getHashedGuid());
                     } catch (Exception exception) {
-                        log.warn("dcc: {}", dcc);
-                        log.warn("quicktest: {}", quickTest);
                         log.warn("General Exception while appending certificate to PDF for quicktest hashedGuid=[{}]",
-                            quickTest.getHashedGuid(), exception);
+                            quickTest.getHashedGuid());
                     }
                     quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
                 } else {
@@ -232,7 +230,7 @@ public class DccService {
         boolean covidDetected;
         switch (quickTest.getTestResult()) {
           case QuickTest.TEST_RESULT_PCR_POSITIVE:
-          case QuickTest.TEST_RESULT_PENDING:
+          case QuickTest.TEST_RESULT_POSITIVE:
               covidDetected = true;
               break;
           case QuickTest.TEST_RESULT_PCR_NEGATIVE:
@@ -271,6 +269,7 @@ public class DccService {
 
     /**
      * Set signature and unprotected header from partialDcc into unsigned cose dcc.
+     * This method is a replacement of the librarys {@link DgcGenerator#dgcSetCosePartial(byte[], byte[])}
      * @param coseData unsigned cose dcc
      * @param partialDcc cose with signature and unprotected header
      * @return signed cose dcc

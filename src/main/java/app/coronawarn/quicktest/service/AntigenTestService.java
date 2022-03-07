@@ -30,8 +30,6 @@ import com.opencsv.exceptions.CsvValidationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +49,8 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class AntigenTestService {
 
-    private List<AntigenTest> antigenTests = new ArrayList();
+    private List<AntigenTest> antigenTests = new ArrayList<>();
+
     @Getter
     private LocalDateTime lastUpdate = Utilities.getCurrentLocalDateTimeUtc();
 
@@ -91,22 +90,19 @@ public class AntigenTestService {
     }
 
     private void init()  {
-        InputStream inputStreamCsv = loadAntigenTestsFromBfArM();
-        if (inputStreamCsv == null) {
-            final ClassPathResource classPathResource = new ClassPathResource("antigentests.csv");
-            inputStreamCsv = (Objects.requireNonNull(
-                    Objects.requireNonNull(classPathResource.getClassLoader())
-                            .getResourceAsStream("antigentests.csv")));
-        }
+        final ClassPathResource classPathResource = new ClassPathResource("antigentests.csv");
+        InputStream inputStreamCsv = (Objects.requireNonNull(
+                Objects.requireNonNull(classPathResource.getClassLoader())
+                        .getResourceAsStream("antigentests.csv")));
         setAntigenTests(inputStreamCsv);
     }
 
     private List<AntigenTest> mapToAntigenTest(List<List<String>> rawAntigenTests) {
-        List<AntigenTest> antigenTests = new ArrayList();
+        List<AntigenTest> mappedAntigenTests = new ArrayList<>();
         for (List<String> row : rawAntigenTests) {
-            antigenTests.add(new AntigenTest(row.get(0), row.get(1)));
+            mappedAntigenTests.add(new AntigenTest(row.get(0), row.get(1)));
         }
-        return antigenTests;
+        return mappedAntigenTests;
     }
 
     private List<List<String>> filterAntigenTests(List<List<String>> unFilteredAntigentest) {
@@ -122,7 +118,7 @@ public class AntigenTestService {
                     .withIgnoreQuotations(true)
                     .build();
             CSVReader csvReader = new CSVReaderBuilder(new InputStreamReader(inputStreamCsv, "windows-1252"))
-                    .withSkipLines(1)
+                    .withSkipLines(2)
                     .withCSVParser(parser)
                     .build();
             String[] values;
@@ -135,10 +131,5 @@ public class AntigenTestService {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return rawAntigenTests;
-    }
-
-    private InputStream loadAntigenTestsFromBfArM() {
-        // TODO impl
-        return null;
     }
 }

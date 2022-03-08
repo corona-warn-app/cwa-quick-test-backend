@@ -65,7 +65,7 @@ class AntigenTestServiceTest {
         assertEquals(13, antigenTests.size());
         antigenTestService.updateAntigenTestsByCsv(multipartFile);
         antigenTests = antigenTestService.getAntigenTests();
-        assertEquals(4, antigenTests.size());
+        assertEquals(5, antigenTests.size());
     }
 
     private String expectedResult() {

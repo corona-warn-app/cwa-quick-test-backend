@@ -242,4 +242,25 @@ public class Utilities {
         }
         return information;
     }
+
+    /**
+     * Check the Token for pcr_enabled flag.
+     */
+    public void checkPocNatPermission() {
+        Principal principal = getPrincipal();
+        boolean pcrEnabled = false;
+        if (principal instanceof KeycloakPrincipal) {
+            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
+            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+            Map<String, Object> customClaims = token.getOtherClaims();
+
+            if (customClaims.containsKey(quickTestConfig.getPcrEnabledKey())) {
+                pcrEnabled = Boolean.parseBoolean(String.valueOf(customClaims.get(quickTestConfig.getPcrEnabledKey())));
+            }
+        }
+        if (!pcrEnabled) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "User is not allowed to create PoC NAT tests.");
+        }
+    }
 }

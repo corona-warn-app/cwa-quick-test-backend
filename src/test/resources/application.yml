@@ -63,6 +63,7 @@ quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   groupKey: groups
+  pcrEnabledKey: pcr_enabled
   groupInformationDelimiter: \,
   tenantPointOfCareIdKey: pocId
   dbEncryptionKey: abcdefghjklmnopq

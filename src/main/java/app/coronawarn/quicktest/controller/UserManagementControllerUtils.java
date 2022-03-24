@@ -21,6 +21,8 @@
 package app.coronawarn.quicktest.controller;
 
 import app.coronawarn.quicktest.config.KeycloakAdminProperties;
+import app.coronawarn.quicktest.config.SecurityConfig;
+import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakGroupResponse;
 import app.coronawarn.quicktest.service.KeycloakService;
 import app.coronawarn.quicktest.utils.Utilities;
@@ -123,6 +125,17 @@ public class UserManagementControllerUtils {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Group is not within your subgroups");
         } else {
             return groupsMap.get(groupId);
+        }
+    }
+
+    protected void checkPermissionsBasedOnInput(KeycloakAuthenticationToken token, KeycloakGroupDetails details)
+        throws ResponseStatusException {
+        if (details.getEnablePcr() != null && details.getEnablePcr()) {
+            boolean hasRolePocNatAdmin = token.getAuthorities().stream()
+                    .anyMatch(role -> role.getAuthority().equals(SecurityConfig.ROLE_POC_NAT_ADMIN));
+            if (!hasRolePocNatAdmin) {
+                throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to enable PocNat");
+            }
         }
     }
 }

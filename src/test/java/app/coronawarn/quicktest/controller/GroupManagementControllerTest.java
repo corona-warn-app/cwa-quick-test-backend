@@ -20,8 +20,7 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.SecurityConfig.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -611,6 +610,44 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(objectMapper.writeValueAsString(groupDetails)))
             .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+            authorities = ROLE_ADMIN,
+            claims = @OpenIdClaims(sub = userId)
+    )
+    void testUpdateSubgroupPocNat_WrongRole() throws Exception {
+        KeycloakGroupDetails groupDetails = new KeycloakGroupDetails();
+        groupDetails.setName(subGroup.getName());
+        groupDetails.setPocDetails("pocDetails");
+        groupDetails.setPocId("pocId");
+        groupDetails.setEnablePcr(true);
+
+        mockMvc().perform(MockMvcRequestBuilders
+                        .put("/api/usermanagement/groups/" + subGroupId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(groupDetails)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+            authorities = { ROLE_ADMIN, ROLE_POC_NAT_ADMIN },
+            claims = @OpenIdClaims(sub = userId)
+    )
+    void testUpdateSubgroupPocNat_Success() throws Exception {
+        KeycloakGroupDetails groupDetails = new KeycloakGroupDetails();
+        groupDetails.setName(subGroup.getName());
+        groupDetails.setPocDetails("pocDetails");
+        groupDetails.setPocId("pocId");
+        groupDetails.setEnablePcr(true);
+
+        mockMvc().perform(MockMvcRequestBuilders
+                        .put("/api/usermanagement/groups/" + subGroupId)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(objectMapper.writeValueAsString(groupDetails)))
+                .andExpect(status().isNoContent());
     }
 
     @Test

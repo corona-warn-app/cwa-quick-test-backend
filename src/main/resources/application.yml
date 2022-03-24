@@ -84,6 +84,7 @@ quicktest:
   tenantIdKey: tenantId
   groupKey: groups
   bsnrKey: bsnr
+  pcrEnabledKey: pcr_enabled
   tenantPointOfCareIdKey: pocId
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,

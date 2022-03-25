@@ -241,8 +241,8 @@ public class QuickTestController {
             && quickTestPersonalDataRequest.getTestResultServerHash() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        if (TestTypeUtils.isPcr(quickTestPersonalDataRequest.getTestType())) {
-            utilities.checkPocNatPermission();
+        if (TestTypeUtils.isPcr(quickTestPersonalDataRequest.getTestType()) && !utilities.checkPocNatPermission()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not allowed to create PoC NAT tests.");
         }
         try {
             quickTestService.updateQuickTestWithPersonalData(

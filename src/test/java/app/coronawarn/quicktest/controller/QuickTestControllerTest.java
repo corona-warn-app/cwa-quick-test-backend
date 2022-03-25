@@ -26,8 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
@@ -866,6 +865,28 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         quickTestPersonalDataRequest.setTestResultServerHash(testResultServerHash);
 
+        //test poc nat
+        String pocNatType = "LP6464-4";
+        quickTestPersonalDataRequest.setTestType(pocNatType);
+        when(utilities.checkPocNatPermission()).thenReturn(true);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+                        .put(API_BASE_PATH + "/6fa4dcec/personalData")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(gson.toJson(quickTestPersonalDataRequest)))
+                .andExpect(status().isNoContent());
+
+        quickTestPersonalDataRequest.setTestType(pocNatType);
+        when(utilities.checkPocNatPermission()).thenReturn(false);
+        mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
+                        .put(API_BASE_PATH + "/6fa4dcec/personalData")
+                        .accept(MediaType.APPLICATION_JSON_VALUE)
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(gson.toJson(quickTestPersonalDataRequest)))
+                .andExpect(status().isForbidden());
+
+        quickTestPersonalDataRequest.setTestType(null);
+
         doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND))
             .when(quickTestService).updateQuickTestWithPersonalData(any(), any(), any());
         mockMvc().with(authentication().authorities(ROLE_COUNTER)).perform(MockMvcRequestBuilders
@@ -889,8 +910,6 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
             .andExpect(result -> assertEquals("500 INTERNAL_SERVER_ERROR",
                 result.getResolvedException().getMessage()));
-
-
     }
 
     @Test

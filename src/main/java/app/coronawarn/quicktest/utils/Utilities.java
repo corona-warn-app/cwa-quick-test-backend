@@ -178,9 +178,7 @@ public class Utilities {
         Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
-            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
-            Map<String, Object> customClaims = token.getOtherClaims();
+            Map<String, Object> customClaims = getCustomClaims((KeycloakPrincipal) principal);
 
             if (customClaims.containsKey(quickTestConfig.getPointOfCareInformationName())) {
                 information = String.valueOf(customClaims.get(quickTestConfig.getPointOfCareInformationName()));
@@ -228,9 +226,7 @@ public class Utilities {
         Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
-            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
-            Map<String, Object> customClaims = token.getOtherClaims();
+            Map<String, Object> customClaims = getCustomClaims((KeycloakPrincipal) principal);
             if (customClaims.containsKey(quickTestConfig.getGroupKey())) {
                 information = String.valueOf(customClaims.get(quickTestConfig.getGroupKey()));
             }
@@ -246,21 +242,23 @@ public class Utilities {
     /**
      * Check the Token for pcr_enabled flag.
      */
-    public void checkPocNatPermission() {
+    public boolean checkPocNatPermission() {
         Principal principal = getPrincipal();
         boolean pcrEnabled = false;
         if (principal instanceof KeycloakPrincipal) {
-            KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
-            IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
-            Map<String, Object> customClaims = token.getOtherClaims();
+            Map<String, Object> customClaims = getCustomClaims((KeycloakPrincipal) principal);
 
             if (customClaims.containsKey(quickTestConfig.getPcrEnabledKey())) {
                 pcrEnabled = Boolean.parseBoolean(String.valueOf(customClaims.get(quickTestConfig.getPcrEnabledKey())));
             }
         }
-        if (!pcrEnabled) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
-                    "User is not allowed to create PoC NAT tests.");
-        }
+        return pcrEnabled;
     }
+
+    private Map<String, Object> getCustomClaims(KeycloakPrincipal principal) {
+        KeycloakPrincipal keycloakPrincipal = principal;
+        IDToken token = keycloakPrincipal.getKeycloakSecurityContext().getToken();
+        return token.getOtherClaims();
+    }
+
 }

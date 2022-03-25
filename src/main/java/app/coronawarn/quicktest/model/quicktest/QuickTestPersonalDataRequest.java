@@ -92,11 +92,11 @@ public class QuickTestPersonalDataRequest {
     private LocalDate birthday;
 
     @ValidCommonChar
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 150)
     private String standardisedFamilyName;
 
     @ValidCommonChar
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 150)
     private String standardisedGivenName;
 
     @NotNull

@@ -102,7 +102,7 @@ public class QuickTestPersonalDataRequest {
     @NotNull
     @ValidCommonCharAndNumber
     private String diseaseAgentTargeted;
-
+    
     @ValidGuid
     private String testResultServerHash;
 

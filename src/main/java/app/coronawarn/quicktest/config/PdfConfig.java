@@ -128,6 +128,8 @@ public class PdfConfig {
     private String certIssuerDe = "Zertifikataussteller";
     private String certTestType = "Rapid immunoassay";
     private String certIssuerState = "DE";
+    private String certForTrainingEn = "Only for training purposes";
+    private String certForTrainingDe = "Nur zu Schulungszwecken";
 
     private String certQrDescription = "Scannen Sie den <br> nebenstehenden <br> QR-Code mit der <br> "
       + "CovPass-App oder der <br> Corona-Warn-App, um <br> Ihren digitalen Nachweis <br> zu erstellen. Laden Sie <br> "

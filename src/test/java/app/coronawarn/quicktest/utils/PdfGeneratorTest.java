@@ -88,6 +88,8 @@ public class PdfGeneratorTest {
         when(pdfConfig.getBirthDateDescriptionTextEn()).thenReturn(pdc.getBirthDateDescriptionTextEn());
         when(pdfConfig.getAdditionalInfoDescriptionText()).thenReturn("Zusätzliche Informationen: ");
         when(pdfConfig.getAdditionalInfoDescriptionTextEn()).thenReturn(pdc.getAdditionalInfoDescriptionTextEn());
+        when(pdfConfig.getCertForTrainingDe()).thenReturn(pdc.getCertForTrainingDe());
+        when(pdfConfig.getCertForTrainingEn()).thenReturn(pdc.getCertForTrainingEn());
 
         List<String> pocInformation = new ArrayList();
         pocInformation.add("PoC Unittest");
@@ -131,6 +133,7 @@ public class PdfGeneratorTest {
             assertEquals("Unittest", pdfDocument.getDocumentInformation().getAuthor());
             assertEquals("Rapid Test", pdfDocument.getDocumentInformation().getCreator());
         } finally {
+            pdfDocument.save("C:/tmp/meinTest.pdf");
             pdfDocument.close();
         }
     }

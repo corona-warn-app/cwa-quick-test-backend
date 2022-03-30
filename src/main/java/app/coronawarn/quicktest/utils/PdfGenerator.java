@@ -135,7 +135,9 @@ public class PdfGenerator {
         generateSubject(cos, rect, quicktest, english);
         generateText(cos, rect, quicktest, user, english);
         generateEnd(cos, rect, english);
-        generateTrainingText(cos, rect, english);
+        if (!isEnvironmentNameEmpty()) {
+            generateTrainingText(cos, rect, english);
+        }
         cos.close();
     }
 
@@ -432,15 +434,17 @@ public class PdfGenerator {
         cos.setNonStrokingColor(Color.ORANGE);
         if (english) {
             trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingEn()) / 1000 * trainingFontSize;
-            float tx = (trainingFontWidth/2) / (float)Math.sqrt(2);
-            cos.transform(Matrix.getRotateInstance(Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 -tx));
+            float tx = (trainingFontWidth / 2) / (float)Math.sqrt(2);
+            cos.transform(Matrix.getRotateInstance(
+                    Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 - tx));
             cos.showText(pdfConfig.getCertForTrainingEn());
         } else {
             trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingDe()) / 1000 * trainingFontSize;
             //Horizontal zentrierte Schrift
             //cos.newLineAtOffset(rect.getWidth() / 2 - trainingFontWidth /2, (rect.getHeight() / 2));
-            float tx = (trainingFontWidth/2) / (float)Math.sqrt(2);
-            cos.transform(Matrix.getRotateInstance(Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 -tx));
+            float tx = (trainingFontWidth / 2) / (float)Math.sqrt(2);
+            cos.transform(Matrix.getRotateInstance(
+                    Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 - tx));
             cos.showText(pdfConfig.getCertForTrainingDe());
         }
         cos.endText();
@@ -463,6 +467,17 @@ public class PdfGenerator {
     private void close(PDDocument document, ByteArrayOutputStream output) throws IOException {
         document.save(output);
         document.close();
+    }
+
+    private boolean isEnvironmentNameEmpty() {
+        if (quickTestConfig != null
+                && quickTestConfig.getFrontendContextConfig() != null
+                && quickTestConfig.getFrontendContextConfig().getEnvironmentName() != null
+                && !quickTestConfig.getFrontendContextConfig().getEnvironmentName().isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 
 }

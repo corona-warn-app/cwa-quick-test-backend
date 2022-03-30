@@ -25,6 +25,7 @@ import static app.coronawarn.quicktest.utils.PdfUtils.getFormattedTime;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.awt.Color;
 import java.io.ByteArrayOutputStream;
@@ -60,6 +61,7 @@ import org.springframework.stereotype.Service;
 public class PdfGenerator {
 
     private final PdfConfig pdfConfig;
+    private final QuickTestConfig quickTestConfig;
 
     private final int pending = 5;
     private final int negative = 6;
@@ -430,7 +432,8 @@ public class PdfGenerator {
         cos.setNonStrokingColor(Color.ORANGE);
         if (english) {
             trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingEn()) / 1000 * trainingFontSize;
-            cos.newLineAtOffset(rect.getWidth() / 2 - trainingFontWidth /2, (rect.getHeight() / 2));
+            float tx = (trainingFontWidth/2) / (float)Math.sqrt(2);
+            cos.transform(Matrix.getRotateInstance(Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 -tx));
             cos.showText(pdfConfig.getCertForTrainingEn());
         } else {
             trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingDe()) / 1000 * trainingFontSize;

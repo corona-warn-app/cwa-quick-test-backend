@@ -26,6 +26,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.dgc.DccDecoder;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
@@ -58,6 +59,10 @@ class DccPdfGeneratorTest {
     private PdfConfig pdfConfig;
 
     private PdfConfig pdc = new PdfConfig();
+
+    @Mock
+    private QuickTestConfig quickTestConfig;
+    QuickTestConfig.FrontendContextConfig frontendContextConfig = new QuickTestConfig.FrontendContextConfig();
 
     @BeforeEach
     void setUp() {
@@ -102,6 +107,14 @@ class DccPdfGeneratorTest {
 
     @Test
     void appendDccPageTest() throws IOException {
+        frontendContextConfig.setEnvironmentName("");
+        when(quickTestConfig.getFrontendContextConfig()).thenReturn(frontendContextConfig);
+
+        String environment = frontendContextConfig.getEnvironmentName();
+        if(environment != null && !environment.isEmpty()) {
+            when(pdfConfig.getCertForTrainingDe()).thenReturn(pdc.getCertForTrainingDe());
+        }
+
         when(pdfConfig.getCertTestTypeRat()).thenReturn(pdc.getCertTestTypeRat());
 
         QuickTest quicktest = getQuickTest();
@@ -134,6 +147,14 @@ class DccPdfGeneratorTest {
 
     @Test
     void appendPcrDccPageTest() throws IOException {
+        frontendContextConfig.setEnvironmentName("testsystem");
+        when(quickTestConfig.getFrontendContextConfig()).thenReturn(frontendContextConfig);
+
+        String environment = frontendContextConfig.getEnvironmentName();
+        if(environment != null && !environment.isEmpty()) {
+            when(pdfConfig.getCertForTrainingDe()).thenReturn(pdc.getCertForTrainingDe());
+        }
+
         when(pdfConfig.getCertTestTypePcr()).thenReturn(pdc.getCertTestTypePcr());
 
         QuickTest quicktest = getQuickTest("LP6464-4", 1);

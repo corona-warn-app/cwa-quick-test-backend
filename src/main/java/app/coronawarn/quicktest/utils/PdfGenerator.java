@@ -512,5 +512,4 @@ public class PdfGenerator {
 
         return true;
     }
-
 }

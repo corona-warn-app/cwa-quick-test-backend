@@ -23,7 +23,7 @@ package app.coronawarn.quicktest.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyShort;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -107,9 +107,9 @@ public class QuickTestArchiveServiceTest {
     void findByTestResultAndUpdatedAtBetweenTest() {
         String hashedGuid = quickTestArchive.getHashedGuid();
         when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndUpdatedAtBetween(any(), any(), any(), any()))
-            .thenReturn(Collections.singletonList(() -> hashedGuid));
-        when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(any(),
-            any(), anyShort(), any(), any())).thenReturn(Collections.singletonList(() -> hashedGuid));
+            .thenReturn(Collections.singletonList(new QuickTestArchiveView(hashedGuid)));
+        when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(any(),
+            any(), anyList(), any(), any())).thenReturn(Collections.singletonList(new QuickTestArchiveView(hashedGuid)));
         List<QuickTestArchiveView> quickTestArchives =
             quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
                 new HashMap<>(),
@@ -120,8 +120,8 @@ public class QuickTestArchiveServiceTest {
         assertEquals(1, quickTestArchives.size());
         verify(quickTestArchiveRepository, times(1))
             .findAllByTenantIdAndPocIdAndUpdatedAtBetween(any(), any(), any(), any());
-        verify(quickTestArchiveRepository, times(0)).findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(any(),
-            any(), anyShort(), any(), any());
+        verify(quickTestArchiveRepository, times(0)).findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(any(),
+            any(), anyList(), any(), any());
         checkResponse(quickTestArchive,
             quickTestArchives.get(0));
 
@@ -135,8 +135,8 @@ public class QuickTestArchiveServiceTest {
         assertEquals(1, quickTestArchives.size());
         verify(quickTestArchiveRepository, times(1))
             .findAllByTenantIdAndPocIdAndUpdatedAtBetween(any(), any(), any(), any());
-        verify(quickTestArchiveRepository, times(1)).findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(any(),
-            any(), anyShort(), any(), any());
+        verify(quickTestArchiveRepository, times(1)).findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(any(),
+            any(), anyList(), any(), any());
         checkResponse(quickTestArchive,
             quickTestArchives.get(0));
 

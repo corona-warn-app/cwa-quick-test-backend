@@ -1,5 +1,12 @@
 package app.coronawarn.quicktest.repository;
 
-public interface QuickTestArchiveView {
-    String getHashedGuid();
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
+public class QuickTestArchiveView {
+
+    private String hashedGuid;
+
 }

@@ -32,6 +32,7 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.service.QuickTestService;
+import app.coronawarn.quicktest.utils.TestTypeUtils;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -239,6 +240,9 @@ public class QuickTestController {
         if (quickTestPersonalDataRequest.getConfirmationCwa()
             && quickTestPersonalDataRequest.getTestResultServerHash() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+        if (TestTypeUtils.isPcr(quickTestPersonalDataRequest.getTestType()) && !utilities.checkPocNatPermission()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "User is not allowed to create PoC NAT tests.");
         }
         try {
             quickTestService.updateQuickTestWithPersonalData(

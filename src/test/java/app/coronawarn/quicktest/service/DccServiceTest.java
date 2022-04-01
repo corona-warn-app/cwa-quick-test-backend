@@ -206,6 +206,7 @@ class DccServiceTest {
         quickTestArchive.setTestBrandId(quickTest.getTestBrandId());
         quickTestArchive.setTestBrandName(quickTest.getTestBrandName());
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
+        quickTestArchive.setTestType(quickTest.getTestType());
 
         quickTestArchive.setPdf(pdf);
         return quickTestArchive;
@@ -254,6 +255,7 @@ class DccServiceTest {
         quickTest.setPrivacyAgreement(Boolean.FALSE);
         quickTest.setSex(Sex.DIVERSE);
         quickTest.setDiseaseAgentTargeted("COVID-19");
+        quickTest.setTestType("LP217198-3");
         return quickTest;
     }
 

@@ -46,6 +46,7 @@ logging:
 
 cwa-testresult-server:
   url: http://localhost:8080
+  url-pcr: http://localhost:8081
 
 keycloak:
   auth-server-url:
@@ -83,6 +84,7 @@ quicktest:
   tenantIdKey: tenantId
   groupKey: groups
   bsnrKey: bsnr
+  pcrEnabledKey: pcr_enabled
   tenantPointOfCareIdKey: pocId
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
@@ -99,6 +101,16 @@ quicktest:
     environment-name: local
 
 testresultserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePath: classpath:keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: classpath:truststore.jks
+  trustStorePassword: changeit
+
+testresultserverpcr:
   enabled: false
   oneWay: false
   twoWay: false

@@ -59,4 +59,6 @@ public class KeycloakGroupDetails {
     // Optional Betriebsstaettennummer of a poc
     @Size(min = 9, max = 9)
     private String bsnr;
+
+    private Boolean enablePcr;
 }

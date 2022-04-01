@@ -64,7 +64,7 @@ public class QuickTestArchiveService {
     /**
      * Finds all quicktests in archive table by test result and time range.
      *
-     * @param testResult test result value (5...9) or null
+     * @param testResult test result value (0...9) or null
      * @param dateFrom   Start date
      * @param dateTo     End date
      * @return quickTestArchives List of all found quickTestArchives
@@ -80,14 +80,18 @@ public class QuickTestArchiveService {
                 dateFrom,
                 dateTo);
         } else {
-            archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(
+            archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                testResult,
+                getPcrAndRatValues(testResult),
                 dateFrom,
                 dateTo);
         }
         return archives;
     }
 
+    // Add Pcr test values to lookup. Pcr values are always 5 higher than rat values
+    private List<Short> getPcrAndRatValues(Short testResult) {
+        return List.of(testResult, (short) (testResult + 5));
+    }
 }

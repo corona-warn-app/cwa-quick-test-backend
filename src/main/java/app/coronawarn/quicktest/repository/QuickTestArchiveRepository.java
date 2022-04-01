@@ -37,10 +37,10 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
         LocalDateTime dateTo
     );
 
-    List<QuickTestArchiveView> findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(
+    List<QuickTestArchiveView> findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(
             String tenantId,
             String pocId,
-            Short testResult,
+            List<Short> testResult,
             LocalDateTime dateFrom,
             LocalDateTime dateTo
     );

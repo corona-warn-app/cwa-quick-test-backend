@@ -20,7 +20,11 @@
 
 package app.coronawarn.quicktest.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
@@ -259,6 +263,7 @@ public class QuickTestServiceTest {
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         quickTest.setUpdatedAt(now);
+        quickTest.setTestType("LP217198-3");
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(pdf.generatePdf(any(), any(), any()))
@@ -317,12 +322,14 @@ public class QuickTestServiceTest {
         quickTest.setTestResultServerHash("");
         quickTest.setTestResult((short) 8);
         quickTest.setUpdatedAt(now);
+        quickTest.setTestType("LP217198-3");
 
         QuickTest quickTest1 = new QuickTest();
         quickTest1.setConfirmationCwa(false);
         quickTest1.setTestResultServerHash("");
         quickTest1.setTestResult((short) 8);
         quickTest1.setUpdatedAt(now);
+        quickTest1.setTestType("LP217198-3");
 
 
         QuickTestResult quickTestResult = new QuickTestResult();
@@ -346,8 +353,8 @@ public class QuickTestServiceTest {
     void findAllPendingQuickTestsByTenantIdAndPocIdTest() {
         Map<String, String> ids = new HashMap<>();
         List<QuickTest> quickTests = new ArrayList<>();
-        QuicktestView quicktestView = () -> "00000000";
-        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+        QuicktestView quicktestView = new QuicktestView("00000000");
+        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
             any(), any(), any(), any()))
             .thenReturn(List.of(quicktestView));
         List<QuicktestView> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);

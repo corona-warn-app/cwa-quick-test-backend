@@ -53,6 +53,7 @@ public class PdfConfig {
     private String tradeNameEmptyText = "nicht angegeben";
     private String tradeNameEmptyTextEn = "not available";
     private String testBrandIdDescriptionText = "Test-ID: ";
+    private String pcrTestSystemDescriptionText = "PoC-NAA-Testsystem: ";
     private String quickTestHeadlineText = "Corona-Antigen-Schnelltest";
     private String authorPdfPropertiesText = "Schnelltestportal";
     private String creatorPdfPropertiesText = "Schnelltestportal";
@@ -60,6 +61,8 @@ public class PdfConfig {
     private String logoPath = "logo.png";
     private String quickTestOfDateText = "Schnelltestergebnis vom ";
     private String quickTestOfDateTextEn = "Test result from ";
+    private String pcrTestOfDateText = "PCR-Testergebnis vom ";
+    private String pcrTestOfDateTextEn = "PCR Test result from ";
     private String personEmailDescriptionText = "E-mail: ";
     private String testResultDescriptionText = "Testergebnis: ";
     private String testResultDescriptionTextEn = "Test result: ";
@@ -126,7 +129,8 @@ public class PdfConfig {
     private String certStateOfTestDe = "Mitgliedstaat";
     private String certIssuerEn = "Certificate issuer";
     private String certIssuerDe = "Zertifikataussteller";
-    private String certTestType = "Rapid immunoassay";
+    private String certTestTypeRat = "Rapid immunoassay";
+    private String certTestTypePcr = "Nucleic acid amplification";
     private String certIssuerState = "DE";
     private String certForTrainingEn = "Only for training purposes";
     private String certForTrainingDe = "Nur zu Schulungszwecken";

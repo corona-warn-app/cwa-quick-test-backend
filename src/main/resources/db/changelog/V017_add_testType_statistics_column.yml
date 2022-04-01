@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-statistics-test-type-column
+      author: bergmann-dierk
+      changes:
+        - addColumn:
+            tableName: quick_test_log
+            columns:
+              - column:
+                  name: test_type
+                  type: varchar(100)

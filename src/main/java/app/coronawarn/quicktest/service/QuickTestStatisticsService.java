@@ -52,17 +52,29 @@ public class QuickTestStatisticsService {
      */
     public QuickTestStatistics getStatistics(Map<String, String> ids, LocalDateTime utcDateFrom,
                                              LocalDateTime utcDateTo) {
-        int totalCount = quickTestLogRepository.countAllByTenantIdAndPocIdAndCreatedAtBetween(
-            ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-            utcDateFrom, utcDateTo);
+        String tenantId = ids.get(quickTestConfig.getTenantIdKey());
+        String pocId = ids.get(quickTestConfig.getTenantPointOfCareIdKey());
+        String pcr = "LP6464-4";
 
-        int totalPositiveCount = quickTestLogRepository
-            .countAllByTenantIdAndPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(
-                ids.get(quickTestConfig.getTenantIdKey()), ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+        int totalCount = quickTestLogRepository.countAllByTenantIdAndPocIdAndCreatedAtBetween(tenantId, pocId,
                 utcDateFrom, utcDateTo);
 
+        int totalPositiveCount = quickTestLogRepository
+            .countAllByTenantIdAndPocIdAndPositiveTestResultIsTrueAndCreatedAtBetween(tenantId, pocId, utcDateFrom,
+                    utcDateTo);
+
+        int totalPcrCount = quickTestLogRepository.countAllByTenantIdAndPocIdAndTestTypeAndCreatedAtBetween(tenantId,
+                pocId, pcr, utcDateFrom, utcDateTo);
+
+        int positivePcrCount = quickTestLogRepository
+                .countAllByTenantIdAndPocIdAndAndTestTypeAndPositiveTestResultIsTrueAndCreatedAtBetween(tenantId, pocId,
+                        pcr, utcDateFrom, utcDateTo);
+
         return QuickTestStatistics.builder()
-            .totalTestCount(totalCount).positiveTestCount(totalPositiveCount).build();
+            .totalTestCount(totalCount).positiveTestCount(totalPositiveCount)
+                .pcrTestCount(totalPcrCount).pcrPositiveTestCount(positivePcrCount)
+                .ratTestCount(totalCount - totalPcrCount).ratPositiveTestCount(totalPositiveCount - positivePcrCount)
+                .build();
     }
 
     /**

@@ -129,7 +129,7 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
     void findArchivesByTestResultAndUpdatedAtBetween() throws Exception {
 
         QuickTestArchiveView quickTestArchive =
-          () -> "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4";
+          new QuickTestArchiveView("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         when(quickTestArchiveService.findByTestResultAndUpdatedAtBetween(any(), anyShort(), any(), any())).thenReturn(
             Collections.singletonList(quickTestArchive));
 
@@ -215,21 +215,6 @@ class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSuppo
             .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME))
             .contentType(MediaType.APPLICATION_PDF_VALUE))
             .andExpect(status().isBadRequest());
-
-
-        assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> {
-            mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders
-                .get("/api/quicktestarchive/")
-                .param("testResult", "4")
-                .param("dateFrom",
-                    ZonedDateTime.now().minusDays(1).withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .param("dateTo", ZonedDateTime.now().withNano(0).format(DateTimeFormatter.ISO_OFFSET_DATE_TIME))
-                .contentType(MediaType.APPLICATION_PDF_VALUE))
-                .andExpect(status().isBadRequest());
-        }).matches(e ->
-            e.getRootCause().getMessage().equals("findArchivesByTestResultAndUpdatedAtBetween.testResult: " +
-                "must be greater than or equal to 5")
-        );
 
         assertThatExceptionOfType(NestedServletException.class).isThrownBy(() -> {
             mockMvc().with(authentication().authorities(ROLE_LAB)).perform(MockMvcRequestBuilders

@@ -6,4 +6,5 @@ import lombok.Data;
 public class QuickTestDccConsent {
     private Boolean dccConsent;
     private Short testResult;
+    private String testType;
 }

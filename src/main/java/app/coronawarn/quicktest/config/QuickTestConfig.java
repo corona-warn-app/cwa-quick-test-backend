@@ -42,6 +42,7 @@ public class QuickTestConfig {
     private String groupInformationDelimiter;
     private String dbEncryptionKey;
     private String labId;
+    private String pcrEnabledKey;
 
     private FrontendContextConfig frontendContextConfig = new FrontendContextConfig();
 

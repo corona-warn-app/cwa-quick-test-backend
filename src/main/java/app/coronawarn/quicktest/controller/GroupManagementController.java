@@ -210,6 +210,7 @@ public class GroupManagementController {
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         utils.checkGroupIsInSubgroups(userRootGroup, id);
+        utils.checkPermissionsBasedOnInput(token, body);
 
         try {
             keycloakService.updateGroup(body);

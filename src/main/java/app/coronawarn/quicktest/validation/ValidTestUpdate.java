@@ -1,6 +1,5 @@
 package app.coronawarn.quicktest.validation;
 
-import app.coronawarn.quicktest.validation.validators.PersonalDataValidator;
 import app.coronawarn.quicktest.validation.validators.TestUpdateValidator;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -20,7 +19,7 @@ public @interface ValidTestUpdate {
      * the message.
      * @return message
      */
-    String message () default "Provide either testBrandId or dccTestManufacturerId";
+    String message () default "Provide either testBrandId, dccTestManufacturerId or pcrTestName";
     /**
      * group.
      * @return groups.

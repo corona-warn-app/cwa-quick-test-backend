@@ -25,7 +25,9 @@ import static app.coronawarn.quicktest.utils.PdfUtils.getFormattedTime;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -49,6 +51,7 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.util.Matrix;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -58,6 +61,7 @@ import org.springframework.stereotype.Service;
 public class PdfGenerator {
 
     private final PdfConfig pdfConfig;
+    private final QuickTestConfig quickTestConfig;
 
     private final int pendingPcr = 10;
     private final int negativePcr = 11;
@@ -138,6 +142,9 @@ public class PdfGenerator {
         generateSubject(cos, rect, quicktest, english);
         generateText(cos, rect, quicktest, user, english);
         generateEnd(cos, rect, english);
+        if (!isEnvironmentNameEmpty()) {
+            generateTrainingText(cos, rect, english);
+        }
         cos.close();
     }
 
@@ -449,6 +456,33 @@ public class PdfGenerator {
 
     }
 
+    private void generateTrainingText(PDPageContentStream cos, PDRectangle rect,
+                              boolean english) throws IOException {
+        PDFont font = PDType1Font.HELVETICA_BOLD;
+        int trainingFontSize = 28;
+        float trainingFontWidth = 0.0f;
+
+        cos.beginText();
+        cos.setFont(font, trainingFontSize);
+        cos.setNonStrokingColor(Color.ORANGE);
+        if (english) {
+            trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingEn()) / 1000 * trainingFontSize;
+            float tx = (trainingFontWidth / 2) / (float)Math.sqrt(2);
+            cos.transform(Matrix.getRotateInstance(
+                    Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 - tx));
+            cos.showText(pdfConfig.getCertForTrainingEn());
+        } else {
+            trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingDe()) / 1000 * trainingFontSize;
+            //Horizontal zentrierte Schrift
+            //cos.newLineAtOffset(rect.getWidth() / 2 - trainingFontWidth /2, (rect.getHeight() / 2));
+            float tx = (trainingFontWidth / 2) / (float)Math.sqrt(2);
+            cos.transform(Matrix.getRotateInstance(
+                    Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 - tx));
+            cos.showText(pdfConfig.getCertForTrainingDe());
+        }
+        cos.endText();
+    }
+
     private void generateEnd(PDPageContentStream cos, PDRectangle rect, boolean english) throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
@@ -461,7 +495,6 @@ public class PdfGenerator {
         }
         cos.newLine();
         cos.endText();
-
     }
 
     private void close(PDDocument document, ByteArrayOutputStream output) throws IOException {
@@ -469,4 +502,14 @@ public class PdfGenerator {
         document.close();
     }
 
+    private boolean isEnvironmentNameEmpty() {
+        if (quickTestConfig != null
+                && quickTestConfig.getFrontendContextConfig() != null
+                && quickTestConfig.getFrontendContextConfig().getEnvironmentName() != null
+                && !quickTestConfig.getFrontendContextConfig().getEnvironmentName().isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
 }

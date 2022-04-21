@@ -26,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -48,10 +49,13 @@ public class PdfGeneratorTest {
     private PdfGenerator pdfGenerator;
     @Mock
     private PdfConfig pdfConfig;
+    @Mock
+    private QuickTestConfig quickTestConfig;
 
     @Test
     void generatePdfTest() throws IOException {
         PdfConfig pdc = new PdfConfig();
+        QuickTestConfig.FrontendContextConfig frontendContextConfig = new QuickTestConfig.FrontendContextConfig();
         when(pdfConfig.getLogoPath()).thenReturn("/logo");
         when(pdfConfig.getAuthorPdfPropertiesText()).thenReturn("Unittest");
         when(pdfConfig.getQuickTestHeadlineText()).thenReturn("Unittest");
@@ -88,6 +92,15 @@ public class PdfGeneratorTest {
         when(pdfConfig.getBirthDateDescriptionTextEn()).thenReturn(pdc.getBirthDateDescriptionTextEn());
         when(pdfConfig.getAdditionalInfoDescriptionText()).thenReturn("Zusätzliche Informationen: ");
         when(pdfConfig.getAdditionalInfoDescriptionTextEn()).thenReturn(pdc.getAdditionalInfoDescriptionTextEn());
+
+        frontendContextConfig.setEnvironmentName("testsystem");
+        when(quickTestConfig.getFrontendContextConfig()).thenReturn(frontendContextConfig);
+
+        String environment = frontendContextConfig.getEnvironmentName();
+        if(environment != null && !environment.isEmpty()) {
+            when(pdfConfig.getCertForTrainingDe()).thenReturn(pdc.getCertForTrainingDe());
+            when(pdfConfig.getCertForTrainingEn()).thenReturn(pdc.getCertForTrainingEn());
+        }
 
         List<String> pocInformation = new ArrayList();
         pocInformation.add("PoC Unittest");

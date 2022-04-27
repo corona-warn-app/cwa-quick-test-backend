@@ -27,35 +27,29 @@
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2021.0.1</spring-cloud.version>
-        <keycloak.version>15.1.0</keycloak.version>
-        <springdoc.version>1.6.6</springdoc.version>
-        <liquibase.version>4.9.0</liquibase.version>
-        <pdfbox.version>2.0.24</pdfbox.version>
+        <keycloak.version>15.1.1</keycloak.version>
+        <springdoc.version>1.6.8</springdoc.version>
+        <liquibase.version>4.9.1</liquibase.version>
+        <pdfbox.version>2.0.26</pdfbox.version>
         <google-zxing.version>3.4.1</google-zxing.version>
-        <opencsv.version>5.5.2</opencsv.version>
+        <opencsv.version>5.6</opencsv.version>
         <springTestAddons.version>3.1.15-jdk11</springTestAddons.version>
-        <shedlock.version>4.33.0</shedlock.version>
-        <h2.version>2.1.210</h2.version>
-        <psql.version>42.3.3</psql.version>
-        <hibernate.version>5.6.5.Final</hibernate.version>
+        <shedlock.version>4.34.0</shedlock.version>
+        <h2.version>2.1.212</h2.version>
+        <modelmapper.version>3.1.0</modelmapper.version>
+        <cbor.version>4.5.2</cbor.version>
+        <dgclib.version>1.3.1</dgclib.version>
         <!-- plugins -->
         <plugin.checkstyle.version>3.1.2</plugin.checkstyle.version>
         <license.projectName>Corona-Warn-App / cwa-quick-test-backend</license.projectName>
         <license.inceptionYear>2021</license.inceptionYear>
         <license.licenseName>apache_v2</license.licenseName>
-        <log4j2.version>2.17.2</log4j2.version>
         <owasp.version>6.5.3</owasp.version>
     </properties>
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -125,11 +119,6 @@
             <version>${h2.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
@@ -161,7 +150,7 @@
         <dependency>
             <groupId>org.modelmapper.extensions</groupId>
             <artifactId>modelmapper-spring</artifactId>
-            <version>2.4.4</version>
+            <version>${modelmapper.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -218,12 +207,12 @@
         <dependency>
             <groupId>com.upokecenter</groupId>
             <artifactId>cbor</artifactId>
-            <version>4.5.2</version>
+            <version>${cbor.version}</version>
         </dependency>
         <dependency>
             <groupId>eu.europa.ec.dgc</groupId>
             <artifactId>dgc-lib</artifactId>
-            <version>1.1.13</version>
+            <version>${dgclib.version}</version>
         </dependency>
 
         <!-- DB drivers -->
@@ -231,7 +220,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
-            <version>${psql.version}</version>
         </dependency>
         <dependency>
             <groupId>mysql</groupId>

@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-index-on-quick-test-log-table
+      author: f11h
+      changes:
+        - createIndex :
+            tableName: quick_test_log
+            indexName: idx_log_created_at
+            columns:
+              - column:
+                  name: created_at
+        - createIndex :
+            tableName: quick_test_log
+            indexName: idx_log_tenant_id
+            columns:
+              - column:
+                  name: tenant_id
+        - createIndex :
+            tableName: quick_test_log
+            indexName: idx_log_poc_id
+            columns:
+              - column:
+                  name: poc_id
+        - createIndex :
+            tableName: quick_test_log
+            indexName: idx_log_tenant_id_poc_id_combined
+            columns:
+              - column:
+                  name: tenant_id
+              - column:
+                  name: poc_id

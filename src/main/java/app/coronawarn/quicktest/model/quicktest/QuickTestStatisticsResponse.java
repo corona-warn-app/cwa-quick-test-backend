@@ -30,4 +30,8 @@ import lombok.Data;
 public class QuickTestStatisticsResponse {
     private Integer totalTestCount;
     private Integer positiveTestCount;
+    private Integer pcrTestCount;
+    private Integer pcrPositiveTestCount;
+    private Integer ratTestCount;
+    private Integer ratPositiveTestCount;
 }

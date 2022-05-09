@@ -23,6 +23,7 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
+import app.coronawarn.quicktest.repository.QuickTestArchiveView;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -63,15 +64,15 @@ public class QuickTestArchiveService {
     /**
      * Finds all quicktests in archive table by test result and time range.
      *
-     * @param testResult test result value (5...9) or null
+     * @param testResult test result value (0...9) or null
      * @param dateFrom   Start date
      * @param dateTo     End date
      * @return quickTestArchives List of all found quickTestArchives
      */
     @Transactional(readOnly = true)
-    public List<QuickTestArchive> findByTestResultAndUpdatedAtBetween(
+    public List<QuickTestArchiveView> findByTestResultAndUpdatedAtBetween(
         Map<String, String> ids, Short testResult, LocalDateTime dateFrom, LocalDateTime dateTo) {
-        List<QuickTestArchive> archives;
+        List<QuickTestArchiveView> archives;
         if (testResult == null) {
             archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndUpdatedAtBetween(
                 ids.get(quickTestConfig.getTenantIdKey()),
@@ -79,14 +80,18 @@ public class QuickTestArchiveService {
                 dateFrom,
                 dateTo);
         } else {
-            archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(
+            archives = quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                testResult,
+                getPcrAndRatValues(testResult),
                 dateFrom,
                 dateTo);
         }
         return archives;
     }
 
+    // Add Pcr test values to lookup. Pcr values are always 5 higher than rat values
+    private List<Short> getPcrAndRatValues(Short testResult) {
+        return List.of(testResult, (short) (testResult + 5));
+    }
 }

@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import lombok.Data;
@@ -50,9 +51,14 @@ public class KeycloakGroupDetails {
 
     private String email;
 
-    @Size(max = 50)
-    private String openingHours;
+    @Size(max = 7)
+    private List<@Size(max = 64) String> openingHours;
 
     private Boolean appointmentRequired;
 
+    // Optional Betriebsstaettennummer of a poc
+    @Size(min = 9, max = 9)
+    private String bsnr;
+
+    private Boolean enablePcr;
 }

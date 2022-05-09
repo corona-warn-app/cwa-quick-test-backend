@@ -92,17 +92,17 @@ public class QuickTestPersonalDataRequest {
     private LocalDate birthday;
 
     @ValidCommonChar
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 150)
     private String standardisedFamilyName;
 
     @ValidCommonChar
-    @Size(min = 1, max = 50)
+    @Size(min = 1, max = 150)
     private String standardisedGivenName;
 
     @NotNull
     @ValidCommonCharAndNumber
     private String diseaseAgentTargeted;
-
+    
     @ValidGuid
     private String testResultServerHash;
 
@@ -111,4 +111,8 @@ public class QuickTestPersonalDataRequest {
     @ValidCommonCharAndNumber
     @Size(min = 1, max = 250)
     private String additionalInfo;
+
+    @Size(min = 1, max = 30)
+    //May be null to ensure backwards compatibility
+    private String testType;
 }

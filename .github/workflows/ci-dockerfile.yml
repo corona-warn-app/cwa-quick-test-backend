@@ -2,20 +2,20 @@ name: ci-dockerfile
 on:
   push:
     branches:
-    - master
+      - master
     paths:
-    - Dockerfile
-    pull_request:
-      types:
+      - Dockerfile
+  pull_request:
+    types:
       - opened
       - synchronize
       - reopened
-      paths:
+    paths:
       - Dockerfile
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - run: docker pull hadolint/hadolint
-    - run: docker run --rm --interactive hadolint/hadolint < Dockerfile
+      - uses: actions/checkout@v2
+      - run: docker pull hadolint/hadolint
+      - run: docker run --rm --interactive hadolint/hadolint < Dockerfile

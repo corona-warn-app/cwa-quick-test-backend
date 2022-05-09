@@ -1,4 +1,4 @@
-package eu.europa.ec.dgc;
+package app.coronawarn.quicktest.dgc;
 
 import com.fasterxml.jackson.databind.JsonNode;
 

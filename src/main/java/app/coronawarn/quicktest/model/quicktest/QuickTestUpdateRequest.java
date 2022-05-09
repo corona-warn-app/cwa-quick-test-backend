@@ -25,14 +25,13 @@ import app.coronawarn.quicktest.validation.ValidTestUpdate;
 import io.swagger.v3.oas.annotations.media.Schema;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Schema(
-    description = "The quick test update."
+    description = "The quick test  or PoC-NAT update."
 )
 @Data
 @NoArgsConstructor
@@ -46,9 +45,13 @@ public class QuickTestUpdateRequest {
      * 7: Positive
      * 8: Invalid
      * 9: Redeemed
+     * 10 Pending PoC-NAT
+     * 11 Negative PoC-NAT
+     * 12 Positive PoC-NAT
+     * 13 Invalid PoC-NAT
      */
     @Min(6)
-    @Max(8)
+    @Max(13)
     private short result;
 
     @ValidCommonCharAndNumber
@@ -66,5 +69,9 @@ public class QuickTestUpdateRequest {
     @ValidCommonCharAndNumber
     @Size(min = 1, max = 128)
     private String dccTestManufacturerDescription;
+
+    @ValidCommonCharAndNumber
+    @Size(min = 1, max = 128)
+    private String pcrTestName;
 
 }

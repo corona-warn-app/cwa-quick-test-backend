@@ -35,12 +35,14 @@ public class QuickTestConfig {
     private String pointOfCareIdName;
     private String tenantIdKey;
     private String groupKey;
+    private String bsnrKey;
     private String tenantPointOfCareIdKey;
     private String pointOfCareInformationName;
     private String pointOfCareInformationDelimiter;
     private String groupInformationDelimiter;
     private String dbEncryptionKey;
     private String labId;
+    private String pcrEnabledKey;
 
     private FrontendContextConfig frontendContextConfig = new FrontendContextConfig();
 

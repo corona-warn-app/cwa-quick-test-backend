@@ -25,7 +25,9 @@ import static app.coronawarn.quicktest.utils.PdfUtils.getFormattedTime;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
+import java.awt.Color;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -49,6 +51,7 @@ import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.util.Matrix;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
@@ -58,7 +61,11 @@ import org.springframework.stereotype.Service;
 public class PdfGenerator {
 
     private final PdfConfig pdfConfig;
+    private final QuickTestConfig quickTestConfig;
 
+    private final int pendingPcr = 10;
+    private final int negativePcr = 11;
+    private final int positivePcr = 12;
     private final int pending = 5;
     private final int negative = 6;
     private final int positive = 7;
@@ -70,6 +77,7 @@ public class PdfGenerator {
     private final float leading = 14.5f;
     private final int fontSize = 12;
     private PDFont fontType;
+    private PDFont fontTypeBold;
 
     /**
      * Generates a PDF file for rapid test result to print.
@@ -107,6 +115,9 @@ public class PdfGenerator {
             this.fontType = PDType0Font.load(document,
               Objects.requireNonNull(cs.getClassLoader())
                 .getResourceAsStream("pdf/fonts/arial.ttf"));
+            this.fontTypeBold = PDType0Font.load(document,
+              Objects.requireNonNull(cs.getClassLoader())
+                .getResourceAsStream("pdf/fonts/arialbd.ttf"));
         } catch (IOException e) {
             log.error("Could not load font");
         }
@@ -131,6 +142,9 @@ public class PdfGenerator {
         generateSubject(cos, rect, quicktest, english);
         generateText(cos, rect, quicktest, user, english);
         generateEnd(cos, rect, english);
+        if (!isEnvironmentNameEmpty()) {
+            generateTrainingText(cos, rect, english);
+        }
         cos.close();
     }
 
@@ -214,10 +228,21 @@ public class PdfGenerator {
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 340f);
         if (english) {
-            cos.showText(pdfConfig.getQuickTestOfDateTextEn() + getFormattedTime(quicktest.getUpdatedAt(),
-              formatterEn));
+            if (TestTypeUtils.isRat(quicktest.getTestType())) {
+                cos.showText(pdfConfig.getQuickTestOfDateTextEn() + getFormattedTime(quicktest.getUpdatedAt(),
+                        formatterEn));
+            } else {
+                cos.showText(pdfConfig.getPcrTestOfDateTextEn() + getFormattedTime(quicktest.getUpdatedAt(),
+                        formatterEn));
+            }
         } else {
-            cos.showText(pdfConfig.getQuickTestOfDateText() + getFormattedTime(quicktest.getUpdatedAt(), formatter));
+            if (TestTypeUtils.isRat(quicktest.getTestType())) {
+                cos.showText(
+                        pdfConfig.getQuickTestOfDateText() + getFormattedTime(quicktest.getUpdatedAt(), formatter));
+            } else {
+                cos.showText(
+                        pdfConfig.getPcrTestOfDateText() + getFormattedTime(quicktest.getUpdatedAt(), formatter));
+            }
         }
         cos.newLine();
         cos.endText();
@@ -228,12 +253,13 @@ public class PdfGenerator {
                               boolean english)
       throws IOException {
         cos.beginText();
-        cos.setFont(fontType, fontSize);
+        cos.setFont(fontTypeBold, fontSize);
         cos.setLeading(leading);
         cos.newLineAtOffset(offsetX, rect.getHeight() - 380);
 
         switch (quicktest.getTestResult() != null ? quicktest.getTestResult() : -1) {
           case pending:
+          case pendingPcr:
               if (english) {
                   cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultPendingTextEn());
               } else {
@@ -242,6 +268,7 @@ public class PdfGenerator {
               cos.newLine();
               break;
           case negative:
+          case negativePcr:
               if (english) {
                   cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultNegativeTextEn());
                   cos.newLine();
@@ -254,6 +281,7 @@ public class PdfGenerator {
               }
               break;
           case positive:
+          case positivePcr:
               if (english) {
                   cos.showText(pdfConfig.getTestResultDescriptionTextEn() + pdfConfig.getTestResultPositiveTextEn());
               } else {
@@ -270,6 +298,7 @@ public class PdfGenerator {
               cos.newLine();
               break;
         }
+        cos.setFont(fontType, fontSize);
 
         String dateAndTimeInGermany;
         if (quicktest.getUpdatedAt() != null) {
@@ -355,29 +384,40 @@ public class PdfGenerator {
             cos.showText(pdfConfig.getExecutedFromDescriptionText() + user);
         }
         cos.newLine();
-        cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
-        cos.newLine();
-        if (quicktest.getTestBrandName() == null) {
-            if (english) {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn() + pdfConfig.getTradeNameEmptyTextEn());
-            } else {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
-            }
+        if (TestTypeUtils.isRat(quicktest.getTestType())) {
+            cos.showText(pdfConfig.getTestBrandIdDescriptionText() + quicktest.getTestBrandId());
+            cos.newLine();
         } else {
-            if (english) {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn());
-            } else {
-                cos.showText(pdfConfig.getTestBrandNameDescriptionText());
-            }
+            cos.showText(pdfConfig.getPcrTestSystemDescriptionText());
             for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
                 cos.showText(line);
                 cos.newLine();
             }
         }
+        if (TestTypeUtils.isRat(quicktest.getTestType())) {
+            if (quicktest.getTestBrandName() == null) {
+                if (english) {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn() + pdfConfig.getTradeNameEmptyTextEn());
+                } else {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionText() + pdfConfig.getTradeNameEmptyText());
+                }
+            } else {
+                if (english) {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionTextEn());
+                } else {
+                    cos.showText(pdfConfig.getTestBrandNameDescriptionText());
+                }
+                for (String line : splitStringToParagraph(quicktest.getTestBrandName(), 60)) {
+                    cos.showText(line);
+                    cos.newLine();
+                }
+            }
+        }
         String useText = "";
-        if (quicktest.getTestResult() != null && quicktest.getTestResult() == positive) {
+        final Short testResult = quicktest.getTestResult();
+        if (testResult != null && (testResult == positive || testResult == positivePcr)) {
             useText = english ? pdfConfig.getPositiveInstructionTextEn() : pdfConfig.getPositiveInstructionText();
-        } else if (quicktest.getTestResult() != null && quicktest.getTestResult() == negative) {
+        } else if (testResult != null && (testResult == negative || testResult == negativePcr)) {
             useText = english ? pdfConfig.getNegativeInstructionTextEn() : pdfConfig.getNegativeInstructionText();
         }
         cos.newLine();
@@ -416,6 +456,33 @@ public class PdfGenerator {
 
     }
 
+    private void generateTrainingText(PDPageContentStream cos, PDRectangle rect,
+                              boolean english) throws IOException {
+        PDFont font = PDType1Font.HELVETICA_BOLD;
+        int trainingFontSize = 28;
+        float trainingFontWidth = 0.0f;
+
+        cos.beginText();
+        cos.setFont(font, trainingFontSize);
+        cos.setNonStrokingColor(Color.ORANGE);
+        if (english) {
+            trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingEn()) / 1000 * trainingFontSize;
+            float tx = (trainingFontWidth / 2) / (float)Math.sqrt(2);
+            cos.transform(Matrix.getRotateInstance(
+                    Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 - tx));
+            cos.showText(pdfConfig.getCertForTrainingEn());
+        } else {
+            trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingDe()) / 1000 * trainingFontSize;
+            //Horizontal zentrierte Schrift
+            //cos.newLineAtOffset(rect.getWidth() / 2 - trainingFontWidth /2, (rect.getHeight() / 2));
+            float tx = (trainingFontWidth / 2) / (float)Math.sqrt(2);
+            cos.transform(Matrix.getRotateInstance(
+                    Math.toRadians(45), rect.getWidth() / 2 - tx, rect.getHeight() / 2 - tx));
+            cos.showText(pdfConfig.getCertForTrainingDe());
+        }
+        cos.endText();
+    }
+
     private void generateEnd(PDPageContentStream cos, PDRectangle rect, boolean english) throws IOException {
         cos.beginText();
         cos.setFont(fontType, fontSize);
@@ -428,7 +495,6 @@ public class PdfGenerator {
         }
         cos.newLine();
         cos.endText();
-
     }
 
     private void close(PDDocument document, ByteArrayOutputStream output) throws IOException {
@@ -436,4 +502,14 @@ public class PdfGenerator {
         document.close();
     }
 
+    private boolean isEnvironmentNameEmpty() {
+        if (quickTestConfig != null
+                && quickTestConfig.getFrontendContextConfig() != null
+                && quickTestConfig.getFrontendContextConfig().getEnvironmentName() != null
+                && !quickTestConfig.getFrontendContextConfig().getEnvironmentName().isEmpty()) {
+            return false;
+        }
+
+        return true;
+    }
 }

@@ -23,7 +23,7 @@ package app.coronawarn.quicktest.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyShort;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -32,6 +32,7 @@ import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
+import app.coronawarn.quicktest.repository.QuickTestArchiveView;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -104,11 +105,12 @@ public class QuickTestArchiveServiceTest {
 
     @Test
     void findByTestResultAndUpdatedAtBetweenTest() {
+        String hashedGuid = quickTestArchive.getHashedGuid();
         when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndUpdatedAtBetween(any(), any(), any(), any()))
-            .thenReturn(Collections.singletonList(quickTestArchive));
-        when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(any(),
-            any(), anyShort(), any(), any())).thenReturn(Collections.singletonList(quickTestArchive));
-        List<QuickTestArchive> quickTestArchives =
+            .thenReturn(Collections.singletonList(new QuickTestArchiveView(hashedGuid)));
+        when(quickTestArchiveRepository.findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(any(),
+            any(), anyList(), any(), any())).thenReturn(Collections.singletonList(new QuickTestArchiveView(hashedGuid)));
+        List<QuickTestArchiveView> quickTestArchives =
             quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
                 new HashMap<>(),
                 null,
@@ -118,8 +120,8 @@ public class QuickTestArchiveServiceTest {
         assertEquals(1, quickTestArchives.size());
         verify(quickTestArchiveRepository, times(1))
             .findAllByTenantIdAndPocIdAndUpdatedAtBetween(any(), any(), any(), any());
-        verify(quickTestArchiveRepository, times(0)).findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(any(),
-            any(), anyShort(), any(), any());
+        verify(quickTestArchiveRepository, times(0)).findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(any(),
+            any(), anyList(), any(), any());
         checkResponse(quickTestArchive,
             quickTestArchives.get(0));
 
@@ -133,27 +135,16 @@ public class QuickTestArchiveServiceTest {
         assertEquals(1, quickTestArchives.size());
         verify(quickTestArchiveRepository, times(1))
             .findAllByTenantIdAndPocIdAndUpdatedAtBetween(any(), any(), any(), any());
-        verify(quickTestArchiveRepository, times(1)).findAllByTenantIdAndPocIdAndTestResultAndUpdatedAtBetween(any(),
-            any(), anyShort(), any(), any());
+        verify(quickTestArchiveRepository, times(1)).findAllByTenantIdAndPocIdAndTestResultInAndUpdatedAtBetween(any(),
+            any(), anyList(), any(), any());
         checkResponse(quickTestArchive,
             quickTestArchives.get(0));
 
     }
 
 
-    private void checkResponse(QuickTestArchive expected, QuickTestArchive act) {
+    private void checkResponse(QuickTestArchive expected, QuickTestArchiveView act) {
         assertEquals(expected.getHashedGuid(), act.getHashedGuid());
-        assertEquals(expected.getLastName(), act.getLastName());
-        assertEquals(expected.getFirstName(), act.getFirstName());
-        assertEquals(expected.getEmail(), act.getEmail());
-        assertEquals(expected.getPhoneNumber(), act.getPhoneNumber());
-        assertEquals(expected.getSex(), act.getSex());
-        assertEquals(expected.getStreet(), act.getStreet());
-        assertEquals(expected.getHouseNumber(), act.getHouseNumber());
-        assertEquals(expected.getZipCode(), act.getZipCode());
-        assertEquals(expected.getCity(), act.getCity());
-        assertEquals(expected.getBirthday(), act.getBirthday());
-        assertEquals(expected.getTestResult(), act.getTestResult());
     }
 }
 

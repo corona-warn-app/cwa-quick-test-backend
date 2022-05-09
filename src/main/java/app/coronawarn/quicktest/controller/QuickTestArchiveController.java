@@ -23,9 +23,9 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
-import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestArchiveResponseList;
+import app.coronawarn.quicktest.repository.QuickTestArchiveView;
 import app.coronawarn.quicktest.service.QuickTestArchiveService;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
@@ -118,13 +118,13 @@ public class QuickTestArchiveController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_COUNTER, ROLE_LAB})
     public ResponseEntity<QuickTestArchiveResponseList> findArchivesByTestResultAndUpdatedAtBetween(
-            @RequestParam(required = false) @Min(5) @Max(8) Short testResult,
+            @RequestParam(required = false) @Min(0) @Max(8) Short testResult,
             @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateFrom,
             @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateTo) {
         try {
             LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
             LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
-            List<QuickTestArchive> archives = quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
+            List<QuickTestArchiveView> archives = quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
                 utilities.getIdsFromToken(),
                 testResult,
                 utcDateFrom,

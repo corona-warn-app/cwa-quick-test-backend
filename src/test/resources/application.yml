@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   mail:
     protocol: smtp
     host: example.localdomain
@@ -38,6 +41,7 @@ jdbc:
 
 cwa-testresult-server:
   url: http://localhost:1234
+  url-pcr: http://localhost:4321
 
 keycloak:
   auth-server-url: https://example.org
@@ -66,6 +70,7 @@ quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   groupKey: groups
+  pcrEnabledKey: pcr_enabled
   groupInformationDelimiter: \,
   tenantPointOfCareIdKey: pocId
   dbEncryptionKey: abcdefghjklmnopq

@@ -9,6 +9,7 @@ public class TestUpdateValidator implements ConstraintValidator<ValidTestUpdate,
 
     @Override
     public boolean isValid(QuickTestUpdateRequest testUpdate, ConstraintValidatorContext context) {
-        return testUpdate.getTestBrandId() != null || testUpdate.getDccTestManufacturerId() != null;
+        return testUpdate.getTestBrandId() != null || testUpdate.getDccTestManufacturerId() != null
+            || testUpdate.getPcrTestName() != null;
     }
 }

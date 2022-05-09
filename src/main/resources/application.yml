@@ -1,4 +1,7 @@
 spring:
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
   liquibase:
     change-log: classpath:/db/changelog.yml
     contexts: prod
@@ -50,6 +53,7 @@ logging:
 
 cwa-testresult-server:
   url: http://localhost:8080
+  url-pcr: http://localhost:8081
 
 keycloak:
   auth-server-url:
@@ -57,6 +61,7 @@ keycloak:
   resource: quick-test-portal
   public-client: true
   bearer-only: true
+
 
 keycloak-admin:
   auth-server-url:
@@ -85,6 +90,8 @@ quicktest:
   pointOfCareIdName: poc_id
   tenantIdKey: tenantId
   groupKey: groups
+  bsnrKey: bsnr
+  pcrEnabledKey: pcr_enabled
   tenantPointOfCareIdKey: pocId
   pointOfCareInformationName: poc_details
   pointOfCareInformationDelimiter: \,
@@ -122,6 +129,16 @@ archive:
       iterations: 12345
 
 testresultserver:
+  enabled: false
+  oneWay: false
+  twoWay: false
+  hostnameVerify: false
+  keyStorePath: classpath:keystore.jks
+  keyStorePassword: changeit
+  trustStorePath: classpath:truststore.jks
+  trustStorePassword: changeit
+
+testresultserverpcr:
   enabled: false
   oneWay: false
   twoWay: false

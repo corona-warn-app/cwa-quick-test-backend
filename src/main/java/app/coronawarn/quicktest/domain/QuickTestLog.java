@@ -60,4 +60,7 @@ public class QuickTestLog {
     @Column(name = "positive_test_result")
     private Boolean positiveTestResult;
 
+    @Column(name = "test_type")
+    private String testType;
+
 }

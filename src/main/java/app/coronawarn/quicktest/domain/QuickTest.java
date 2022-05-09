@@ -57,12 +57,17 @@ public class QuickTest {
 
     static final long SERIAL_VERSION_UID = 1L;
 
+    public static final short TEST_RESULT_PCR_PENDING = 10;
+    public static final short TEST_RESULT_PCR_NEGATIVE = 11;
+    public static final short TEST_RESULT_PCR_POSITIVE = 12;
+    public static final short TEST_RESULT_PCR_INVALID = 13;
+    public static final short TEST_RESULT_PCR_REDEEMED = 14;
     public static final short TEST_RESULT_PENDING = 5;
     public static final short TEST_RESULT_NEGATIVE = 6;
     public static final short TEST_RESULT_POSITIVE = 7;
     public static final short TEST_RESULT_INVALID = 8;
     public static final short TEST_RESULT_REDEEMED = 9;
-
+  
     /**
      * alias TestId in another systems.
      */
@@ -198,6 +203,10 @@ public class QuickTest {
     @Column(name = "group_name")
     @Convert(converter = DbEncryptionStringConverter.class)
     private String groupName;
+
+    @Column(name = "test_type")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String testType;
 
     @PrePersist
     private void onCreate() {

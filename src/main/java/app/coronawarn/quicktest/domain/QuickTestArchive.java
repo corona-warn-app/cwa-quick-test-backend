@@ -160,6 +160,10 @@ public class QuickTestArchive {
     @Convert(converter = DbEncryptionStringConverter.class)
     private String groupName;
 
+    @Column(name = "test_type")
+    @Convert(converter = DbEncryptionStringConverter.class)
+    private String testType;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

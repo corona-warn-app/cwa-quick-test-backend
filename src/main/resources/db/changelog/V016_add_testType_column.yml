@@ -1,0 +1,24 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-groupname-columns
+      author: bergmann-dierk
+      preConditions:
+        - onFail: MARK_RAN
+        - onError: MARK_RAN
+        - not:
+          - columnExists:
+              tableName: quick_test
+              columnName: test_type
+      changes:
+        - addColumn:
+            tableName: quick_test
+            columns:
+              - column:
+                  name: test_type
+                  type: varchar(100)
+        - addColumn:
+            tableName: quick_test_archive
+            columns:
+              - column:
+                  name: test_type
+                  type: varchar(100)

@@ -32,13 +32,16 @@ import app.coronawarn.quicktest.model.dcc.DccUploadResult;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.utils.DccPdfGenerator;
+import app.coronawarn.quicktest.utils.TestTypeUtils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.europa.ec.dgc.DccTestBuilder;
-import eu.europa.ec.dgc.DgcCryptedPublisher;
-import eu.europa.ec.dgc.DgcGenerator;
-import eu.europa.ec.dgc.dto.DgcData;
-import eu.europa.ec.dgc.dto.DgcInitData;
+import com.upokecenter.cbor.CBORObject;
+import com.upokecenter.cbor.CBORType;
+import eu.europa.ec.dgc.generation.DccTestBuilder;
+import eu.europa.ec.dgc.generation.DgcCryptedPublisher;
+import eu.europa.ec.dgc.generation.DgcGenerator;
+import eu.europa.ec.dgc.generation.dto.DgcData;
+import eu.europa.ec.dgc.generation.dto.DgcInitData;
 import feign.FeignException;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -49,6 +52,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Base64;
@@ -79,12 +83,13 @@ public class DccService {
 
     // TODO to be scheduled look up for keys, then generate dcc and prepare for upload
     // should open transaction pro quick test
+
     /**
      * collect public keys.
      */
     @Scheduled(fixedDelayString = "${dcc.searchPublicKeysJob.fixedDelayString}")
     @SchedulerLock(name = "QuickTestSearchPublicKeys", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${dcc.searchPublicKeysJob.lockLimit}")
+        lockAtMostFor = "${dcc.searchPublicKeysJob.lockLimit}")
     public void collectPublicKeys() {
         Map<String, QuickTest> quickTestMap = new HashMap<>();
         MessageDigest digest = createSha256Digest();
@@ -120,7 +125,7 @@ public class DccService {
                     }
                 } else {
                     log.warn("got public key for " + dccPublicKey.getTestId()
-                            + " which in not in state pendingPublicKey");
+                        + " which in not in state pendingPublicKey");
                 }
             }
         } else {
@@ -130,13 +135,14 @@ public class DccService {
 
     /**
      * create sha256 digest.
+     *
      * @return the digest.
      */
     public MessageDigest createSha256Digest() {
         try {
             return MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException("have no SHA-256 digest",e);
+            throw new IllegalArgumentException("have no SHA-256 digest", e);
         }
     }
 
@@ -145,7 +151,7 @@ public class DccService {
      */
     @Scheduled(fixedDelayString = "${dcc.uploadDccJob.fixedDelayString}")
     @SchedulerLock(name = "QuickTestUploadDcc", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${dcc.uploadDccJob.lockLimit}")
+        lockAtMostFor = "${dcc.uploadDccJob.lockLimit}")
     public void uploadDccData() {
         ObjectMapper objectMapper = new ObjectMapper();
         MessageDigest digest = createSha256Digest();
@@ -157,31 +163,31 @@ public class DccService {
             try {
                 DccUploadData dccUploadData = objectMapper.readValue(quickTest.getDccSignData(), DccUploadData.class);
                 String testIdHashHex = Hex.toHexString(digest.digest(
-                        quickTest.getTestResultServerHash().getBytes(StandardCharsets.UTF_8)));
+                    quickTest.getTestResultServerHash().getBytes(StandardCharsets.UTF_8)));
                 digest.reset();
                 DccUploadResult dccUploadResult = dccServerClient.uploadDcc(testIdHashHex, dccUploadData);
-                byte[] coseSigned = dgcGenerator.dgcSetCosePartial(
-                        Base64.getDecoder().decode(quickTest.getDccUnsigned()),
-                        Base64.getDecoder().decode(dccUploadResult.getPartialDcc()));
+                byte[] coseSigned = dgcSetCosePartial(
+                    Base64.getDecoder().decode(quickTest.getDccUnsigned()),
+                    Base64.getDecoder().decode(dccUploadResult.getPartialDcc()));
                 Optional<QuickTestArchive> quickTestArchive =
-                        quickTestArchiveRepository.findByHashedGuid(quickTest.getHashedGuid());
+                    quickTestArchiveRepository.findByHashedGuid(quickTest.getHashedGuid());
                 if (quickTestArchive.isPresent()) {
                     String dcc = dgcGenerator.coseToQrCode(coseSigned);
                     quickTestArchive.get().setDcc(dcc);
                     try {
                         ByteArrayOutputStream pdf =
-                          dccPdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(), quickTest, dcc);
+                            dccPdfGenerator.appendCertificatePage(quickTestArchive.get().getPdf(), quickTest, dcc);
                         quickTestArchive.get().setPdf(pdf.toByteArray());
                     } catch (IOException exception) {
                         log.warn("Appending Certificate to PDF failed for quicktest hashedGuid=[{}]",
-                          quickTest.getHashedGuid());
+                            quickTest.getHashedGuid());
                     } catch (Exception exception) {
                         log.warn("General Exception while appending certificate to PDF for quicktest hashedGuid=[{}]",
-                          quickTest.getHashedGuid());
+                            quickTest.getHashedGuid());
                     }
                     quickTestArchiveRepository.saveAndFlush(quickTestArchive.get());
                 } else {
-                    log.warn("can not find quick test archive {}",quickTest.getHashedGuid());
+                    log.warn("can not find quick test archive {}", quickTest.getHashedGuid());
                 }
                 quickTestRepository.delete(quickTest);
             } catch (FeignException e) {
@@ -220,13 +226,15 @@ public class DccService {
         DccTestBuilder dccTestBuilder = new DccTestBuilder();
         dccTestBuilder.fn(quickTest.getLastName()).gn(quickTest.getFirstName());
         dccTestBuilder.fnt(quickTest.getStandardisedFamilyName()).gnt(quickTest.getStandardisedGivenName());
-        dccTestBuilder.dob(quickTest.getBirthday());
+        dccTestBuilder.dob(LocalDate.parse(quickTest.getBirthday()));
         boolean covidDetected;
         switch (quickTest.getTestResult()) {
-          case 7:
+          case QuickTest.TEST_RESULT_PCR_POSITIVE:
+          case QuickTest.TEST_RESULT_POSITIVE:
               covidDetected = true;
               break;
-          case 6:
+          case QuickTest.TEST_RESULT_PCR_NEGATIVE:
+          case QuickTest.TEST_RESULT_NEGATIVE:
               covidDetected = false;
               break;
           default:
@@ -234,13 +242,17 @@ public class DccService {
                         + " to positive or negative");
         }
         dccTestBuilder.detected(covidDetected)
-                .testTypeRapid(true)
+                .testTypeRapid(TestTypeUtils.isRat(quickTest.getTestType()))
                 .dgci(dgci)
-                .countryOfTest(dccConfig.getCountry())
+                .country(dccConfig.getCountry())
                 .testingCentre(quickTest.getPocId())
-                .testIdentifier(quickTest.getTestBrandId())
                 .sampleCollection(quickTest.getUpdatedAt())
                 .certificateIssuer(dccConfig.getIssuer());
+        if (TestTypeUtils.isRat(quickTest.getTestType())) {
+            dccTestBuilder.testIdentifier(quickTest.getTestBrandId());
+        } else {
+            dccTestBuilder.testName(quickTest.getTestBrandName());
+        }
         return dccTestBuilder.toJsonString();
     }
 
@@ -253,5 +265,36 @@ public class DccService {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalArgumentException("can not extract public key");
         }
+    }
+
+    /**
+     * Set signature and unprotected header from partialDcc into unsigned cose dcc.
+     * This method is a replacement of the librarys {@link DgcGenerator#dgcSetCosePartial(byte[], byte[])}
+     * @param coseData unsigned cose dcc
+     * @param partialDcc cose with signature and unprotected header
+     * @return signed cose dcc
+     */
+    public byte[] dgcSetCosePartial(byte[] coseData, byte[] partialDcc) {
+        CBORObject partialCose = CBORObject.DecodeFromBytes(partialDcc);
+        if (partialCose.getType() != CBORType.Array || partialCose.getValues().size() < 3) {
+            throw new IllegalArgumentException("partial dcc is not cbor array");
+        }
+        CBORObject cborObject = CBORObject.DecodeFromBytes(coseData);
+        if (cborObject.getType() == CBORType.Array && cborObject.getValues().size() == 4) {
+            // set signature
+            cborObject.set(3, partialCose.get(3));
+        } else {
+            throw new IllegalArgumentException("seems not to be cose");
+        }
+        // copy unprotected header
+        CBORObject unprotectedHeader = partialCose.get(1);
+        if (unprotectedHeader.getType() != CBORType.Map) {
+            throw new IllegalArgumentException("unprotected header in partial dcc is not cbor map");
+        }
+        for (CBORObject key : unprotectedHeader.getKeys()) {
+            CBORObject value = unprotectedHeader.get(key);
+            cborObject.get(1).set(key,value);
+        }
+        return cborObject.EncodeToBytes();
     }
 }

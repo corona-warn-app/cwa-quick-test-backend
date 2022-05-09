@@ -1,8 +1,16 @@
 FROM maven:3-openjdk-11 as build
 
-COPY . .
-RUN mvn clean install
+ARG MAVEN_PASSWORD
+ARG MAVEN_USERNAME
 
+WORKDIR /
+
+COPY . .
+
+RUN mvn clean install \
+    --settings ./settings.xml \
+    --define app.packages.username=${MAVEN_USERNAME} \
+    --define app.packages.password=${MAVEN_PASSWORD}
 
 FROM gcr.io/distroless/java-debian10:11 as run
 

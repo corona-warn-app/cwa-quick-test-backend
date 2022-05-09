@@ -23,6 +23,9 @@ package app.coronawarn.quicktest.utils;
 import static app.coronawarn.quicktest.utils.PdfUtils.splitStringToParagraph;
 
 import app.coronawarn.quicktest.config.PdfConfig;
+import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.dgc.DccDecodeResult;
+import app.coronawarn.quicktest.dgc.DccDecoder;
 import app.coronawarn.quicktest.domain.QuickTest;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -31,8 +34,6 @@ import com.google.zxing.client.j2se.MatrixToImageConfig;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import eu.europa.ec.dgc.DccDecodeResult;
-import eu.europa.ec.dgc.DccDecoder;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -55,6 +56,7 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 import org.apache.pdfbox.pdmodel.font.PDType0Font;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.pdmodel.graphics.image.JPEGFactory;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.util.Matrix;
@@ -67,11 +69,15 @@ import org.springframework.stereotype.Service;
 public class DccPdfGenerator {
 
     private final PdfConfig pdfConfig;
-    private final DccDecoder dccDecoder = new DccDecoder();
+    private final QuickTestConfig quickTestConfig;
+
+    private final DccDecoder dccDecoder;
 
     private final int pending = 5;
-    private final int negative = 6;
-    private final int positive = 7;
+    private final int negativeRat = 6;
+    private final int negativePcr = 11;
+    private final int positiveRat = 7;
+    private final int positivePcr = 12;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss '(UTC' X')'");
     private final DateTimeFormatter formatterDate = DateTimeFormatter.ofPattern("dd.MM.yyyy");
     private final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -135,6 +141,9 @@ public class DccPdfGenerator {
         generateQrCode(document, cos, rect, dcc, false);
         generateMemberStateInfoPage(document, cos, rect, false);
         generateCertificateInfoPage(cos, rect, quicktest, dccDecodeResult, false);
+        if (!isEnvironmentNameEmpty()) {
+            generateTrainingText(cos, rect, false);
+        }
         cos.close();
     }
 
@@ -158,6 +167,9 @@ public class DccPdfGenerator {
 
         generateMemberStateInfoPage(document, cos, rect, true);
         generateCertificateInfoPage(cos, rect, quicktest, dccDecodeResult, true);
+        if (!isEnvironmentNameEmpty()) {
+            generateTrainingText(cos, rect, true);
+        }
         cos.close();
     }
 
@@ -498,10 +510,14 @@ public class DccPdfGenerator {
 
         cos.setNonStrokingColor(Color.BLACK);
 
+        final String testTypeDesc =
+                TestTypeUtils.isRat(quickTest.getTestType())
+                        ? pdfConfig.getCertTestTypeRat() : pdfConfig.getCertTestTypePcr();
+
         List<List<String>> data = List.of(
           List.of(pdfConfig.getCertDiseaseAgentDe(), pdfConfig.getCertDiseaseAgentEn(),
             pdfConfig.getCertDiseaseAgentTargeted()),
-          List.of(pdfConfig.getCertTestTypeDe(), pdfConfig.getCertTestTypeEn(), pdfConfig.getCertTestType()),
+          List.of(pdfConfig.getCertTestTypeDe(), pdfConfig.getCertTestTypeEn(), testTypeDesc),
           List.of(pdfConfig.getCertTestManufacturerDe(), pdfConfig.getCertTestManufacturerEn(),
             quickTest.getTestBrandName()),
           List.of(pdfConfig.getCertDateSampleCollectionDe(), pdfConfig.getCertDateSampleCollectionEn(),
@@ -524,10 +540,12 @@ public class DccPdfGenerator {
     private String getTestResultText(Short testResultValue) {
         String testResult;
         switch (testResultValue != null ? testResultValue : -1) {
-          case positive:
+          case positivePcr:
+          case positiveRat:
               testResult = "Detected";
               break;
-          case negative:
+          case negativePcr:
+          case negativeRat:
               testResult = "Not detected";
               break;
           default:
@@ -586,5 +604,43 @@ public class DccPdfGenerator {
     private void close(PDDocument document, ByteArrayOutputStream output) throws IOException {
         document.save(output);
         document.close();
+    }
+
+    private void generateTrainingText(PDPageContentStream cos, PDRectangle rect, boolean foldable) throws IOException {
+        PDFont font = PDType1Font.HELVETICA_BOLD;
+        int trainingFontSize = 28;
+
+        cos.beginText();
+        cos.setFont(font, trainingFontSize);
+        cos.setNonStrokingColor(Color.ORANGE);
+
+        float trainingFontWidth = 0.0f;
+        trainingFontWidth = font.getStringWidth(pdfConfig.getCertForTrainingDe()) / 1000 * trainingFontSize;
+        float x = 0;
+        float y = 0;
+        float tx = (trainingFontWidth / 2) / (float)Math.sqrt(2);
+        if (foldable) {
+            x = rect.getWidth() / 2 - tx;
+            y = rect.getHeight() - tx;
+        } else {
+            x = rect.getWidth() / 2 - tx;
+            y = rect.getHeight() / 2 - tx;
+        }
+
+        cos.transform(Matrix.getRotateInstance(
+            Math.toRadians(45), x, y));
+        cos.showText(pdfConfig.getCertForTrainingDe());
+        cos.endText();
+    }
+
+    private boolean isEnvironmentNameEmpty() {
+        if (quickTestConfig != null
+                && quickTestConfig.getFrontendContextConfig() != null
+                && quickTestConfig.getFrontendContextConfig().getEnvironmentName() != null
+                && !quickTestConfig.getFrontendContextConfig().getEnvironmentName().isEmpty()) {
+            return false;
+        }
+
+        return true;
     }
 }

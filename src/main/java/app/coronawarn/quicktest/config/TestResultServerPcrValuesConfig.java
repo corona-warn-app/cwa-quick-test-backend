@@ -20,25 +20,24 @@
 
 package app.coronawarn.quicktest.config;
 
-import eu.europa.ec.dgc.DgcCryptedPublisher;
-import eu.europa.ec.dgc.DgcGenerator;
-import eu.europa.ec.dgc.DgciGenerator;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+@Getter
+@Setter
 @Configuration
-@RequiredArgsConstructor
-public class DccBeanConfig {
-    private final DccConfig dccConfig;
+@ConfigurationProperties("testresultserverpcr")
+public class TestResultServerPcrValuesConfig {
 
-    @Bean
-    DgcGenerator dgcGenerator() {
-        return new DgcGenerator();
-    }
+    private boolean enabled;
+    private boolean oneWay;
+    private boolean twoWay;
+    private boolean hostnameVerify;
+    private String keyStorePath;
+    private char[] keyStorePassword;
+    private String trustStorePath;
+    private char[] trustStorePassword;
 
-    @Bean
-    DgcCryptedPublisher dgcCryptedPublisher() {
-        return new DgcCryptedPublisher();
-    }
 }

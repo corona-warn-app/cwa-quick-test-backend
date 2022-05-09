@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.when;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.domain.QuickTestLog;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
@@ -79,6 +81,8 @@ public class QuickTestServiceTest {
     private QuickTestLogRepository quickTestLogRepository;
     @Mock
     private TestResultService testResultService;
+    @Mock
+    private QuickTestDeletionService quickTestDeletionService;
 
     @Mock
     private PdfGenerator pdf;
@@ -126,24 +130,29 @@ public class QuickTestServiceTest {
     }
 
     @Test
-    void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException {
+    void addStatisticsInUpdateQuickTestIsCalledTest() throws ResponseStatusException, IOException {
         QuickTestService qs = spy(quickTestService);
         Map<String, String> ids = new HashMap<>();
+        QuickTest pendingTest = createPendingTest();
+        pendingTest.setCreatedAt(Utilities.getCurrentLocalDateTimeUtc().minusMinutes(5));
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
-            .thenReturn(createPendingTest());
-        try {
-            QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
-            quickTestUpdateRequest.setTestBrandId("testBrandId");
-            quickTestUpdateRequest.setResult((short) 6);
-            quickTestUpdateRequest.setTestBrandName("TestBrandName");
-            qs.updateQuickTest(ids,
-                "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
-                quickTestUpdateRequest,
-                new ArrayList<>(),
-                "User");
-        } catch (NullPointerException e) {
-        }
+            .thenReturn(pendingTest);
+        when(pdf.generatePdf(any(), any(), any()))
+                .thenReturn(new ByteArrayOutputStream());
+
+        QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
+        quickTestUpdateRequest.setTestBrandId("testBrandId");
+        quickTestUpdateRequest.setResult((short) 6);
+        quickTestUpdateRequest.setTestBrandName("TestBrandName");
+        qs.updateQuickTest(ids,
+            "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
+            quickTestUpdateRequest,
+            new ArrayList<>(),
+            "User");
+        ArgumentCaptor<QuickTestLog> captor = ArgumentCaptor.forClass(QuickTestLog.class);
         verify(qs, times(1)).addStatistics(any());
+        verify(quickTestLogRepository).save(captor.capture());
+        assertNotEquals(captor.getValue().getCreatedAt(), pendingTest.getCreatedAt());
     }
 
     @Test
@@ -254,6 +263,7 @@ public class QuickTestServiceTest {
         quickTest.setConfirmationCwa(true);
         quickTest.setTestResultServerHash("6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4");
         quickTest.setUpdatedAt(now);
+        quickTest.setTestType("LP217198-3");
         when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
             .thenReturn(quickTest);
         when(pdf.generatePdf(any(), any(), any()))
@@ -312,12 +322,14 @@ public class QuickTestServiceTest {
         quickTest.setTestResultServerHash("");
         quickTest.setTestResult((short) 8);
         quickTest.setUpdatedAt(now);
+        quickTest.setTestType("LP217198-3");
 
         QuickTest quickTest1 = new QuickTest();
         quickTest1.setConfirmationCwa(false);
         quickTest1.setTestResultServerHash("");
         quickTest1.setTestResult((short) 8);
         quickTest1.setUpdatedAt(now);
+        quickTest1.setTestType("LP217198-3");
 
 
         QuickTestResult quickTestResult = new QuickTestResult();
@@ -333,8 +345,7 @@ public class QuickTestServiceTest {
             .thenReturn(Arrays.asList(quickTest, quickTest, quickTest1));
         when(quickTestConfig.getCleanUpSettings()).thenReturn(cleanUpSettings);
         quickTestService.removeAllBefore(now);
-        verify(quickTestRepository, times(1)).findAllByCreatedAtBeforeAndVersionIsGreaterThan(eq(now), eq(0), any());
-        verify(testResultService, times(2)).createOrUpdateTestResult(quickTestResult);
+        verify(quickTestDeletionService, times(1)).handleChunk(eq(now), eq(1000), eq(1), eq(1));
         verify(quickTestRepository, times(1)).deleteByCreatedAtBefore(now);
     }
 
@@ -342,8 +353,8 @@ public class QuickTestServiceTest {
     void findAllPendingQuickTestsByTenantIdAndPocIdTest() {
         Map<String, String> ids = new HashMap<>();
         List<QuickTest> quickTests = new ArrayList<>();
-        QuicktestView quicktestView = () -> "00000000";
-        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+        QuicktestView quicktestView = new QuicktestView("00000000");
+        when(quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
             any(), any(), any(), any()))
             .thenReturn(List.of(quicktestView));
         List<QuicktestView> quickTests1 = quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(ids);

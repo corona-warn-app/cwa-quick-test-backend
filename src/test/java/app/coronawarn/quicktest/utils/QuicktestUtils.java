@@ -27,9 +27,13 @@ import java.time.LocalDateTime;
 public class QuicktestUtils {
 
     public static QuickTest getQuickTest() {
+        return getQuickTest("LP217198-3", 6);
+    }
+
+    public static QuickTest getQuickTest(String testType, int result) {
         QuickTest quicktest = new QuickTest();
         quicktest.setZipCode("12345");
-        quicktest.setTestResult(Short.parseShort("6"));
+        quicktest.setTestResult((short) result);
         quicktest.setHashedGuid("mkamhvdumyvhxeftazravmyrasozuloaghgluvbfjohpofogkylcnsybubamwnht");
         quicktest.setCity("oyvkpigcga");
         quicktest.setConfirmationCwa(Boolean.TRUE);
@@ -55,6 +59,7 @@ public class QuicktestUtils {
           "tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et " +
           "justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea tak");
         quicktest.setGroupName("Mein Testcenter mit fünfzig Zeichen Testzertifikat");
+        quicktest.setTestType(testType);
         return quicktest;
     }
 }

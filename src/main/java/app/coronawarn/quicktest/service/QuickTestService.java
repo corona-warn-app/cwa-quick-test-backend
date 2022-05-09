@@ -26,6 +26,7 @@ import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.domain.QuickTestLog;
 import app.coronawarn.quicktest.model.TestResult;
+import app.coronawarn.quicktest.model.quicktest.PcrTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResult;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
@@ -34,16 +35,17 @@ import app.coronawarn.quicktest.repository.QuickTestLogRepository;
 import app.coronawarn.quicktest.repository.QuickTestRepository;
 import app.coronawarn.quicktest.repository.QuicktestView;
 import app.coronawarn.quicktest.utils.PdfGenerator;
+import app.coronawarn.quicktest.utils.TestTypeUtils;
 import app.coronawarn.quicktest.utils.Utilities;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.time.temporal.TemporalAmount;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -59,6 +61,7 @@ public class QuickTestService {
     private final QuickTestConfig quickTestConfig;
     private final QuickTestRepository quickTestRepository;
     private final TestResultService testResultService;
+    private final QuickTestDeletionService quickTestDeletionService;
     private final QuickTestArchiveRepository quickTestArchiveRepository;
     private final QuickTestLogRepository quickTestLogRepository;
     private final PdfGenerator pdf;
@@ -132,7 +135,8 @@ public class QuickTestService {
                 shortHash
         );
 
-        if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING) {
+        if (quicktest.getTestResult() != QuickTest.TEST_RESULT_PENDING
+            && quicktest.getTestResult() != QuickTest.TEST_RESULT_PCR_PENDING) {
             log.info("Requested Quick Test with shortHash is not pending.");
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "not pending");
         }
@@ -140,22 +144,14 @@ public class QuickTestService {
         log.info("Updating TestResult on TestResult-Server for hash");
         quicktest.setTestResult(quickTestUpdateRequest.getResult());
 
-        if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
-            if (quickTestUpdateRequest.getDccTestManufacturerId() == null) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                        "DccTestManufacturerId must be set for DCC Tests");
-            }
-
-            quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
-            quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getDccTestManufacturerDescription()));
-        } else {
-            quicktest.setTestBrandId(quickTestUpdateRequest.getTestBrandId());
-            quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getTestBrandName()));
-        }
+        validateTestType(quickTestUpdateRequest, quicktest);
 
         quicktest.setUpdatedAt(LocalDateTime.now());
 
-        if ((quicktest.getTestResult() == 6 || quicktest.getTestResult() == 7)
+        if ((quicktest.getTestResult() == QuickTest.TEST_RESULT_PCR_NEGATIVE
+            || quicktest.getTestResult() == QuickTest.TEST_RESULT_PCR_POSITIVE
+            || quicktest.getTestResult() == QuickTest.TEST_RESULT_NEGATIVE
+            || quicktest.getTestResult() == QuickTest.TEST_RESULT_POSITIVE)
                 && quicktest.getDccStatus() == null) {
             if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()
                     && quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
@@ -194,10 +190,44 @@ public class QuickTestService {
         }
         sendResultToTestResultServer(quicktest.getTestResultServerHash(), quickTestUpdateRequest.getResult(),
                 quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
-                quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false);
+                quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false,
+                TestTypeUtils.isPcr(quicktest.getTestType()));
         log.debug("Updated TestResult for hashedGuid {} with TestResult {}", quicktest.getHashedGuid(),
                 quickTestUpdateRequest.getResult());
         log.info("Updated TestResult for hashedGuid with TestResult");
+    }
+
+    private void validateTestType(QuickTestUpdateRequest quickTestUpdateRequest, QuickTest quicktest) {
+        if (TestTypeUtils.isPcr(quicktest.getTestType())) {
+            if (StringUtils.isBlank(quickTestUpdateRequest.getPcrTestName())) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "PcrTestName must be set for NAAT Tests");
+            }
+
+            if (quicktest.getTestResult() < 10) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                  "TestResult not allowed for NAAT Tests");
+            }
+
+            quicktest.setTestBrandName(quickTestUpdateRequest.getPcrTestName());
+        } else {
+            if (quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
+                if (StringUtils.isBlank(quickTestUpdateRequest.getDccTestManufacturerId())) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                      "DccTestManufacturerId must be set for DCC Tests");
+                }
+                if (quicktest.getTestResult() < 5) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                      "TestResult not allowed for RAT Tests");
+                }
+
+                quicktest.setTestBrandId(quickTestUpdateRequest.getDccTestManufacturerId());
+                quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getDccTestManufacturerDescription()));
+            } else {
+                quicktest.setTestBrandId(quickTestUpdateRequest.getTestBrandId());
+                quicktest.setTestBrandName(sanitiseInput(quickTestUpdateRequest.getTestBrandName()));
+            }
+        }
     }
 
     /**
@@ -237,11 +267,27 @@ public class QuickTestService {
     public void updateQuickTestWithPersonalData(Map<String, String> ids, String shortHash,
                                                 QuickTest quickTestPersonalData)
             throws ResponseStatusException {
+
         QuickTest quicktest = getQuickTest(
-                ids.get(quickTestConfig.getTenantIdKey()),
-                ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                shortHash
+          ids.get(quickTestConfig.getTenantIdKey()),
+          ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
+          shortHash
         );
+
+        final String testType = StringUtils.isBlank(quickTestPersonalData.getTestType())
+          ? TestTypeUtils.getDefaultType() : quickTestPersonalData.getTestType();
+        switch (TestTypeUtils.getTestType(testType)) {
+          case INVALID:
+              log.warn("TestType {} not supported.", testType);
+              throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+          case NAAT:
+              quicktest.setTestResult(QuickTest.TEST_RESULT_PCR_PENDING);
+              quicktest.setTestType(testType);
+              break;
+          default:
+              quicktest.setTestType(testType);
+              break;
+        }
         // TODO with merge
         quicktest.setConfirmationCwa(quickTestPersonalData.getConfirmationCwa());
         quicktest.setPrivacyAgreement(quickTestPersonalData.getPrivacyAgreement());
@@ -268,9 +314,13 @@ public class QuickTestService {
             log.debug("Could not save updateQuickTestWithPersonalData, message=[{}]", e.getMessage());
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
-              quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
-              quickTestPersonalData.getConfirmationCwa() != null ? quickTestPersonalData.getConfirmationCwa() : false);
+        // only create entry in TR if rat, TR only accepts results 1-3
+        if (TestTypeUtils.isRat(quicktest.getTestType())) {
+            sendResultToTestResultServer(quicktest.getTestResultServerHash(), quicktest.getTestResult(),
+                    quicktest.getUpdatedAt().toEpochSecond(ZoneOffset.UTC),
+                    quicktest.getConfirmationCwa() != null ? quicktest.getConfirmationCwa() : false,
+                    false);
+        }
         log.debug("Updated TestResult for hashedGuid {} with PersonalData", quicktest.getHashedGuid());
         log.info("Updated TestResult for hashedGuid with PersonalData");
 
@@ -292,25 +342,7 @@ public class QuickTestService {
         log.info("Found {} QuickTests which need to set to failed on TRS in {} chunks", totalCount, chunks);
 
         for (int i = 1; i <= chunks; i++) {
-            log.info("Deleting chunk {} of {}", i, chunks);
-
-            List<QuickTest> quickTestChunk = quickTestRepository.findAllByCreatedAtBeforeAndVersionIsGreaterThan(
-                    deleteTimestamp,
-                    0,
-                    PageRequest.of(i - 1, chunkSize));
-
-            quickTestChunk.forEach(quickTest -> sendResultToTestResultServer(
-                    quickTest.getTestResultServerHash(),
-                    TestResult.FAILED.getValue(),
-                    deleteTimestamp.toEpochSecond(ZoneOffset.UTC),
-                    quickTest.getConfirmationCwa() != null ? quickTest.getConfirmationCwa() : false));
-
-            log.info("Set Status of quicktests on TRS. Deleting QuickTests in DB");
-
-            quickTestRepository.deleteAll(quickTestChunk);
-            quickTestRepository.flush();
-
-            log.info("Processing of chunk {} of {} finished.", i, chunks);
+            quickTestDeletionService.handleChunk(deleteTimestamp, chunkSize, chunks, i);
         }
 
         log.info("Delete remaining QuickTests");
@@ -319,10 +351,13 @@ public class QuickTestService {
 
     protected void addStatistics(QuickTest quickTest) {
         QuickTestLog quickTestLog = new QuickTestLog();
-        quickTestLog.setCreatedAt(quickTest.getCreatedAt());
+        quickTestLog.setCreatedAt(quickTest.getUpdatedAt());
         quickTestLog.setPocId(quickTest.getPocId());
-        quickTestLog.setPositiveTestResult(quickTest.getTestResult() == TestResult.fromName("positive").getValue());
+        quickTestLog.setPositiveTestResult(
+                quickTest.getTestResult() == TestResult.fromName("positive").getValue()
+                        || quickTest.getTestResult() == TestResult.fromName("positive_pcr").getValue());
         quickTestLog.setTenantId(quickTest.getTenantId());
+        quickTestLog.setTestType(quickTest.getTestType());
         quickTestLogRepository.save(quickTestLog);
     }
 
@@ -354,6 +389,7 @@ public class QuickTestService {
         quickTestArchive.setTestResultServerHash(quickTest.getTestResultServerHash());
         quickTestArchive.setAdditionalInfo(quickTest.getAdditionalInfo());
         quickTestArchive.setGroupName(quickTest.getGroupName());
+        quickTestArchive.setTestType(quickTest.getTestType());
         return quickTestArchive;
     }
 
@@ -376,24 +412,35 @@ public class QuickTestService {
      */
     @Transactional(readOnly = true)
     public List<QuicktestView> findAllPendingQuickTestsByTenantIdAndPocId(Map<String, String> ids) {
-        return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultAndVersionIsGreaterThan(
+        return quickTestRepository.getShortHashedGuidByTenantIdAndPocIdAndTestResultInAndVersionIsGreaterThan(
                 ids.get(quickTestConfig.getTenantIdKey()),
                 ids.get(quickTestConfig.getTenantPointOfCareIdKey()),
-                QuickTest.TEST_RESULT_PENDING,
+                List.of(QuickTest.TEST_RESULT_PENDING, QuickTest.TEST_RESULT_PCR_PENDING),
                 0
         );
     }
 
     private void sendResultToTestResultServer(String testResultServerHash, short result, Long sc,
-                                              boolean confirmationCwa) throws ResponseStatusException {
+                                              boolean confirmationCwa, boolean isPcr) throws ResponseStatusException {
         if (confirmationCwa && testResultServerHash != null) {
-            log.info("Sending TestResult to TestResult-Server");
-            QuickTestResult quickTestResult = new QuickTestResult();
-            quickTestResult.setId(testResultServerHash);
-            quickTestResult.setResult(result);
-            quickTestResult.setSampleCollection(sc);
-            testResultService.createOrUpdateTestResult(quickTestResult);
-            log.info("Update TestResult on TestResult-Server successfully.");
+            if (isPcr) {
+                log.info("Sending PCR TestResult to TestResult-Server");
+                PcrTestResult pcrTestResult = new PcrTestResult();
+                pcrTestResult.setId(testResultServerHash);
+                pcrTestResult.setResult(result);
+                pcrTestResult.setSampleCollection(sc);
+                pcrTestResult.setLabId(quickTestConfig.getLabId());
+                testResultService.createOrUpdatePcrTestResult(pcrTestResult);
+                log.info("Update PCR TestResult on TestResult-Server successfully.");
+            } else {
+                log.info("Sending TestResult to TestResult-Server");
+                QuickTestResult quickTestResult = new QuickTestResult();
+                quickTestResult.setId(testResultServerHash);
+                quickTestResult.setResult(result);
+                quickTestResult.setSampleCollection(sc);
+                testResultService.createOrUpdateTestResult(quickTestResult);
+                log.info("Update TestResult on TestResult-Server successfully.");
+            }
         }
     }
 
@@ -418,6 +465,7 @@ public class QuickTestService {
         QuickTestDccConsent quickTestDccConsent = new QuickTestDccConsent();
         quickTestDccConsent.setDccConsent(quicktest.getDccConsent());
         quickTestDccConsent.setTestResult(quicktest.getTestResult());
+        quickTestDccConsent.setTestType(quicktest.getTestType());
         return quickTestDccConsent;
     }
 

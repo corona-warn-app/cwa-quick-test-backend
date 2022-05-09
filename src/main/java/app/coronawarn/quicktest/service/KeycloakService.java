@@ -29,6 +29,7 @@ import app.coronawarn.quicktest.model.keycloak.KeycloakGroupDetails;
 import app.coronawarn.quicktest.model.keycloak.KeycloakUserResponse;
 import app.coronawarn.quicktest.model.map.MapEntrySingleResponse;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import javax.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.GroupResource;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -71,6 +73,8 @@ public class KeycloakService {
 
     private static final String POC_ID_ATTRIBUTE = "poc_id";
     private static final String POC_DETAILS_ATTRIBUTE = "poc_details";
+    private static final String BSNR_ATTRIBUTE = "bsnr";
+    private static final String PCR_ATTRIBUTE = "pcr_enabled";
 
     /**
      * Creates a new Keycloak User in the Main Realm and sets roles and the root group.
@@ -237,6 +241,8 @@ public class KeycloakService {
         groupDetails.setName(group.getName());
         groupDetails.setPocDetails(getFromAttributes(group.getAttributes(), POC_DETAILS_ATTRIBUTE));
         groupDetails.setPocId(getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE));
+        groupDetails.setBsnr(getFromAttributes(group.getAttributes(), BSNR_ATTRIBUTE));
+        groupDetails.setEnablePcr(BooleanUtils.toBoolean(getFromAttributes(group.getAttributes(), PCR_ATTRIBUTE)));
         MapEntrySingleResponse mapEntry = mapEntryService.getMapEntry(groupId);
         if (mapEntry != null) {
             log.info(mapEntry.toString());
@@ -247,7 +253,7 @@ public class KeycloakService {
                     mapEntry.getAppointment()));
             if (mapEntry.getOpeningHours() != null) {
                 groupDetails.setOpeningHours(
-                        mapEntry.getOpeningHours().length > 0 ? mapEntry.getOpeningHours()[0] : null);
+                        mapEntry.getOpeningHours().length > 0 ? Arrays.asList(mapEntry.getOpeningHours()) : null);
             }
         } else {
             groupDetails.setSearchPortalConsent(false);
@@ -497,7 +503,8 @@ public class KeycloakService {
         group.setName(details.getName());
         // do not update POC ID
         group.setAttributes(getGroupAttributes(details.getPocDetails(),
-                getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE)));
+                getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE), details.getBsnr(),
+                details.getEnablePcr()));
 
         try {
             groupResource.update(group);
@@ -541,7 +548,8 @@ public class KeycloakService {
             log.info("created group");
             // setting group properties with Group Details and POC ID
             newGroup = response.readEntity(GroupRepresentation.class);
-            newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId()));
+            newGroup.setAttributes(getGroupAttributes(details.getPocDetails(), newGroup.getId(), details.getBsnr(),
+              details.getEnablePcr()));
             realm().groups().group(newGroup.getId()).update(newGroup);
             if (details.getSearchPortalConsent()) {
                 details.setId(newGroup.getId());
@@ -634,7 +642,8 @@ public class KeycloakService {
         }
     }
 
-    private Map<String, List<String>> getGroupAttributes(String pocDetails, String pocId) {
+    private Map<String, List<String>> getGroupAttributes(String pocDetails, String pocId, String bsnr,
+                                                         Boolean pcrEnabled) {
         Map<String, List<String>> attributes = new HashMap<>();
         if (pocDetails != null) {
             attributes.put(POC_DETAILS_ATTRIBUTE, List.of(pocDetails));
@@ -644,6 +653,13 @@ public class KeycloakService {
             attributes.put(POC_ID_ATTRIBUTE, List.of(pocId));
         }
 
+        if (bsnr != null) {
+            attributes.put(BSNR_ATTRIBUTE, List.of(bsnr));
+        }
+
+        if (pcrEnabled != null) {
+            attributes.put(PCR_ATTRIBUTE, List.of(pcrEnabled.toString()));
+        }
         return attributes;
     }
 

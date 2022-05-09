@@ -34,12 +34,14 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class ArchiveServiceTest {
+class ArchiveServiceTest {
 
     @Autowired
     private ArchiveService archiveService;
@@ -59,18 +61,24 @@ public class ArchiveServiceTest {
     @Autowired
     private ObjectMapper mapper;
 
+    @BeforeEach
+    void setUp() {
+        this.quickTestArchiveRepository.deleteAll();
+    }
+
     @Test
     void moveToArchive() throws Exception {
         // GIVEN
+        final int initialArchive = this.archiveRepository.findAll().size();
         final QuickTestArchive test = this.buildQuickTestArchive();
         this.quickTestArchiveRepository.saveAndFlush(test);
         // WHEN
         this.archiveService.moveToArchive();
         // THEN
         final List<Archive> results = this.archiveRepository.findAll();
-        assertThat(results).isNotNull().hasSize(1);
+        assertThat(results).isNotNull().hasSize(initialArchive + 1);
         // AND result
-        final Archive result = results.get(0);
+        final Archive result = results.stream().filter(it -> test.getHashedGuid().equals(it.getHashedGuid())).findFirst().orElse(null);
         assertThat(result).isNotNull();
         assertThat(result.getHashedGuid()).isEqualTo(test.getHashedGuid());
         assertThat(result.getIdentifier()).isEqualTo(this.archiveService

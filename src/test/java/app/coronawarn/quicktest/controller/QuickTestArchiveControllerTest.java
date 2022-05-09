@@ -50,7 +50,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.mockito.InjectMocks;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -62,7 +64,8 @@ import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.util.NestedServletException;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(QuickTestArchiveController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
 class QuickTestArchiveControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 

@@ -35,9 +35,9 @@ public interface QuicktestMapClient {
         produces = MediaType.APPLICATION_JSON_VALUE
     )
     MapEntrySingleResponse getMapEntry(@RequestHeader(AUTH_TOKEN) String bearerToken,
-                                       @PathVariable String userReference);
+                                       @PathVariable("userReference") String userReference);
 
     @DeleteMapping(value = "/api/centers/{centerId}")
     ResponseEntity<Void> deleteMapEntry(@RequestHeader(AUTH_TOKEN) String bearerToken,
-                                        @PathVariable String centerId);
+                                        @PathVariable("centerId") String centerId);
 }

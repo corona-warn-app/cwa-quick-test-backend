@@ -84,7 +84,7 @@ public class QuickTestArchiveController {
     @RequestMapping(path = "/{hashedGuid}/pdf", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     @Secured({ROLE_COUNTER, ROLE_LAB})
     public ResponseEntity<byte[]> getQuickTestPdf(
-            @PathVariable String hashedGuid) {
+            @PathVariable("hashedGuid") String hashedGuid) {
         try {
             ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""

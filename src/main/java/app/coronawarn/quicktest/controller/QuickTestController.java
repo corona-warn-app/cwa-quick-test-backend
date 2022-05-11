@@ -146,7 +146,7 @@ public class QuickTestController {
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @DeleteMapping(value = "/{shortHash}")
     @Secured(ROLE_COUNTER)
-    public ResponseEntity<Void> deleteEmptyQuickTest(@Valid @PathVariable String shortHash) {
+    public ResponseEntity<Void> deleteEmptyQuickTest(@Valid @PathVariable("shortHash") String shortHash) {
         quickTestService.deleteQuicktest(utilities.getIdsFromToken(), shortHash, utilities.getUserNameFromToken());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -169,7 +169,7 @@ public class QuickTestController {
     @PutMapping(value = "/{shortHash}/testResult", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<Void> updateQuickTestStatus(
-        @PathVariable String shortHash,
+        @PathVariable("shortHash") String shortHash,
         @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
         try {
             quickTestService.updateQuickTest(
@@ -206,7 +206,7 @@ public class QuickTestController {
     @GetMapping(value = "/{shortHash}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestDccConsent> getDccConsent(
-            @PathVariable String shortHash) {
+            @PathVariable("shortHash") String shortHash) {
         try {
             return ResponseEntity.ok(quickTestService.getDccConsent(utilities.getIdsFromToken(),shortHash));
         } catch (ResponseStatusException e) {
@@ -235,7 +235,7 @@ public class QuickTestController {
     @PutMapping(value = "/{shortHash}/personalData", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> updateQuickTestWithPersonalData(
-        @PathVariable String shortHash,
+        @PathVariable("shortHash") String shortHash,
         @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
         if (quickTestPersonalDataRequest.getConfirmationCwa()
             && quickTestPersonalDataRequest.getTestResultServerHash() == null) {

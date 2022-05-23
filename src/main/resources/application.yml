@@ -112,10 +112,11 @@ archive:
     path: classpath:archive/dev.jks
     password: changeMe
   moveToArchiveJob:
-    cron: "-"
+    # every minute
+    cron: 0 * * * * *
     locklimit: 1800000
     #### 1209600 = 2 weeks
-    older-than-in-seconds: 5000
+    older-than-in-seconds: 60
     chunkSize: 1000
   hash:
     algorithm: SHA-256

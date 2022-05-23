@@ -140,10 +140,11 @@ quicktest:
 
 archive:
   moveToArchiveJob:
-    cron: 0 * * * * *
+    # every hour
+    cron: 0 0 * * * *
     locklimit: 1800000
-    #### 1209600 = 2 weeks
-    older-than-in-seconds: 1209600
+    #### 2419200 = 4 weeks
+    older-than-in-seconds: 2419200
   hash:
     algorithm: SHA-256
     pepper: ${QT_ARCHIVE_PEPPER}

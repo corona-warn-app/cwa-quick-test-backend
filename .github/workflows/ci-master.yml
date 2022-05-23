@@ -23,8 +23,8 @@ jobs:
         echo "VERSION=${VERSION}" >> ${GITHUB_ENV};
     - name: docker build
       run: docker build
-        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest
-        --tag docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION}
+        --tag ghcr.io/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest
+        --tag ghcr.io/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION}
         --tag ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-quick-test-backend:${VERSION}
         --build-arg MAVEN_PASSWORD=${APP_PACKAGES_PASSWORD}
         --build-arg MAVEN_USERNAME=${APP_PACKAGES_USERNAME}
@@ -36,9 +36,9 @@ jobs:
         APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
     - name: docker push github
       run: |
-        echo ${GITHUB_TOKEN} | docker login docker.pkg.github.com -u ${GITHUB_REPOSITORY_OWNER} --password-stdin
-        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest
-        docker push docker.pkg.github.com/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION}
+        echo ${GITHUB_TOKEN} | docker login ghcr.io -u ${GITHUB_REPOSITORY_OWNER} --password-stdin
+        docker push ghcr.io/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest
+        docker push ghcr.io/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     - name: docker push trusted

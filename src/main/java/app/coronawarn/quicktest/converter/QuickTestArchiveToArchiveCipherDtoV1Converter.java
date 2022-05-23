@@ -54,7 +54,6 @@ public class QuickTestArchiveToArchiveCipherDtoV1Converter implements Converter<
         cipherDto.setTestBrandId(quickTest.getTestBrandId());
         cipherDto.setTestBrandName(quickTest.getTestBrandName());
         cipherDto.setBirthday(quickTest.getBirthday());
-        cipherDto.setPdfBase64(Base64.getEncoder().encodeToString(quickTest.getPdf()));
         cipherDto.setTestResultServerHash(quickTest.getTestResultServerHash());
         cipherDto.setDcc(quickTest.getDcc());
         cipherDto.setAdditionalInfo(quickTest.getAdditionalInfo());

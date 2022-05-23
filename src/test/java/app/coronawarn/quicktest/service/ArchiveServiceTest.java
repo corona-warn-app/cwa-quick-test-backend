@@ -124,7 +124,6 @@ class ArchiveServiceTest {
         assertThat(dto.getTestBrandId()).isEqualTo(test.getTestBrandId());
         assertThat(dto.getTestBrandName()).isEqualTo(test.getTestBrandName());
         assertThat(dto.getBirthday()).isEqualTo(test.getBirthday());
-        assertThat(dto.getPdfBase64()).isEqualTo(Base64.getEncoder().encodeToString(test.getPdf()));
         assertThat(dto.getTestResultServerHash()).isEqualTo(test.getTestResultServerHash());
         assertThat(dto.getDcc()).isEqualTo(test.getDcc());
         assertThat(dto.getAdditionalInfo()).isEqualTo(test.getAdditionalInfo());

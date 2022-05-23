@@ -114,6 +114,11 @@ public class JksKeyProvider implements KeyProvider {
         return this.cryption.decrypt(this.getPrivateKey(this.getPublicKey()), encrypted);
     }
 
+    @Override
+    public String encrypt(String plain) {
+        return this.cryption.encrypt(this.getPublicKey(), plain);
+    }
+
     private PrivateKey getPrivateKey(PublicKey publicKey) {
         return this.entries.stream()
                 .filter(key -> key.getCertificate().getPublicKey().equals(publicKey))

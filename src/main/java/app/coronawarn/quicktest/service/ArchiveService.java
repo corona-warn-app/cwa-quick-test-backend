@@ -43,6 +43,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.core.convert.ConversionService;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,13 +86,14 @@ public class ArchiveService {
     @Transactional
     public void moveToArchive() {
         final long olderThanInSeconds = this.properties.getMoveToArchiveJob().getOlderThanInSeconds();
+        final int chunkSize = this.properties.getMoveToArchiveJob().getChunkSize();
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
-            this.quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime)
+            this.quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
                     .map(this::convertQuickTest)
                     .map(this::buildArchive)
                     .map(this.repository::save)
-                    .map(archive -> archive.getHashedGuid())
+                    .map(Archive::getHashedGuid)
                     .forEach(this.quickTestArchiveRepository::deleteById);
         } else {
             log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
@@ -120,8 +122,7 @@ public class ArchiveService {
     }
 
     private String encryptSecret(final String secret) {
-        final PublicKey publicKey = this.keyProvider.getPublicKey();
-        return this.cryptionService.getRsaCryption().encrypt(publicKey, secret);
+        return this.keyProvider.encrypt(secret);
     }
 
     private String buildCiphertext(final String secret, final ArchiveCipherDtoV1 dto) {

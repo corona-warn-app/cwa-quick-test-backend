@@ -20,7 +20,9 @@
 
 package app.coronawarn.quicktest.service;
 
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
 
 public interface KeyProvider {
 
@@ -29,7 +31,7 @@ public interface KeyProvider {
      * 
      * @return public key for archive
      */
-    PublicKey getPublicKey();
+    PublicKey getPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException;
 
     /**
      * Provides the pepper for hashing values.
@@ -45,4 +47,6 @@ public interface KeyProvider {
      * @return decrypted content
      */
     String decrypt(String encrypted);
+
+    String encrypt(String plain);
 }

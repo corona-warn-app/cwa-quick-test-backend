@@ -155,3 +155,5 @@ archive:
     defaultAes: AES/GCM/NoPadding
     AesGcmNoPadding256:
       iterations: ${QT_ARCHIVE_ITERATIONS}
+  vaultTransit:
+    dek: vault-dek

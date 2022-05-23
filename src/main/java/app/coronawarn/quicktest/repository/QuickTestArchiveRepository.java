@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 
@@ -48,5 +49,5 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
     );
 
     Stream<QuickTestArchive> findAllByUpdatedAtBefore(
-            @Param("updatedAt") LocalDateTime updatedAtBefore);
+            @Param("updatedAt") LocalDateTime updatedAtBefore, Pageable pageable);
 }

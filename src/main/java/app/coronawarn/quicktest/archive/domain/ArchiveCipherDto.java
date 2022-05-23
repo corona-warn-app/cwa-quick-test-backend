@@ -72,8 +72,6 @@ public abstract class ArchiveCipherDto {
 
     private String birthday;
 
-    private String pdfBase64;
-
     private String testResultServerHash;
 
     private String dcc;

@@ -23,7 +23,11 @@ package app.coronawarn.quicktest.service.crypton;
 import static org.assertj.core.api.Assertions.assertThat;
 import app.coronawarn.quicktest.service.KeyProvider;
 import app.coronawarn.quicktest.service.cryption.RsaEcbOaepWithSha512AndMgf1PaddingCryption;
+
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
+import java.security.spec.InvalidKeySpecException;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -42,7 +46,7 @@ class RsaEcbOaepWithSha512AndMgf1PaddingCryptionTest {
      * keys are used.
      */
     @Test
-    void encryptAndDecript() {
+    void encryptAndDecript() throws NoSuchAlgorithmException, InvalidKeySpecException {
         // GIVEN
         final String plain = "B5hCYqxtkHtSkkhZcEEfVyL48zWEn8vqhJJxAQhr4eQTtHZZEHrVsNnbc4kKT2TPqLWKJ25A4VydVavp";
         final PublicKey publicKey = this.keyProvider.getPublicKey();

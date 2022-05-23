@@ -32,6 +32,12 @@ public class ArchiveProperties {
     private Job moveToArchiveJob = new Job();
     private Hash hash = new Hash();
     private Crypt crypt = new Crypt();
+    private VaultTransit vaultTransit = new VaultTransit();
+
+    @Data
+    public static final class VaultTransit {
+        private String dek;
+    }
 
     @Data
     public static final class ArchiveJks {
@@ -44,6 +50,7 @@ public class ArchiveProperties {
         private String cron;
         private long locklimit = -1;
         private long olderThanInSeconds = -1;
+        private int chunkSize = 1000;
     }
 
     @Data

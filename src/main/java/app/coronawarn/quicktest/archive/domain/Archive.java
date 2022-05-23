@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import lombok.AccessLevel;
@@ -50,10 +51,12 @@ public class Archive {
     @Column(name = "poc_id", columnDefinition = "varchar(255)", nullable = false)
     private String pocId;
 
-    @Column(name = "secret", columnDefinition = "longtext", nullable = false)
+    @Lob
+    @Column(name = "secret", nullable = false)
     private String secret;
 
-    @Column(name = "ciphertext", columnDefinition = "longtext", nullable = false)
+    @Lob
+    @Column(name = "ciphertext", nullable = false)
     private String ciphertext;
 
     @Column(name = "algorithm_aes", columnDefinition = "varchar(255)", nullable = false)

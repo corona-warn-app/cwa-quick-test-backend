@@ -31,7 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Primary
-@Profile({ "cloud" })
+@Profile({ "hsm" })
 @Service
 @RequiredArgsConstructor
 public class HsmKeyProvider implements KeyProvider {
@@ -52,5 +52,10 @@ public class HsmKeyProvider implements KeyProvider {
     @Override
     public String decrypt(String encrypted) {
         throw new DccException(HttpStatus.INTERNAL_SERVER_ERROR, "not allowed access");
+    }
+
+    @Override
+    public String encrypt(String plain) {
+        throw new DccException(HttpStatus.NOT_IMPLEMENTED, "not implemented");
     }
 }

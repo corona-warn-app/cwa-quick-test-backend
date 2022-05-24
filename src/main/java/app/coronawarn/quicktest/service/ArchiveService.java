@@ -76,8 +76,8 @@ public class ArchiveService {
     @SchedulerLock(name = "MoveToArchiveJob", lockAtLeastFor = "PT0S", 
         lockAtMostFor = "${archive.moveToArchiveJob.locklimit}")
     public void moveToArchiveJob() {
-        log.debug("Starting Job: moveToArchiveJob");
-        this.moveToArchive();
+        log.info("Starting Job: moveToArchiveJob");
+        moveToArchive();
     }
 
     /**
@@ -85,23 +85,24 @@ public class ArchiveService {
      */
     @Transactional
     public void moveToArchive() {
-        final long olderThanInSeconds = this.properties.getMoveToArchiveJob().getOlderThanInSeconds();
-        final int chunkSize = this.properties.getMoveToArchiveJob().getChunkSize();
+        final long olderThanInSeconds = properties.getMoveToArchiveJob().getOlderThanInSeconds();
+        final int chunkSize = properties.getMoveToArchiveJob().getChunkSize();
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
-            this.quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
+            quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
                     .map(this::convertQuickTest)
                     .map(this::buildArchive)
-                    .map(this.repository::save)
+                    .map(repository::save)
                     .map(Archive::getHashedGuid)
-                    .forEach(this.quickTestArchiveRepository::deleteById);
+                    .forEach(quickTestArchiveRepository::deleteById);
         } else {
             log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
         }
+        log.info("Finished move to longterm archive.");
     }
 
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchive quickTestArchive) {
-        return this.converter.convert(quickTestArchive, ArchiveCipherDtoV1.class);
+        return converter.convert(quickTestArchive, ArchiveCipherDtoV1.class);
     }
 
     private Archive buildArchive(final ArchiveCipherDtoV1 dto) {
@@ -110,45 +111,45 @@ public class ArchiveService {
 
         final Archive archive = new Archive();
         archive.setHashedGuid(dto.getHashedGuid());
-        archive.setIdentifier(this.buildIdentifier(dto));
-        archive.setTenantId(this.createHash(dto.getTenantId()));
-        archive.setPocId(this.createHash(dto.getPocId()));
-        archive.setCiphertext(this.buildCiphertext(secret, dto));
-        archive.setSecret(this.encryptSecret(secret));
-        archive.setAlgorithmAes(this.cryptionService.getAesCryption().getAlgorithm());
+        archive.setIdentifier(buildIdentifier(dto));
+        archive.setTenantId(createHash(dto.getTenantId()));
+        archive.setPocId(createHash(dto.getPocId()));
+        archive.setCiphertext(buildCiphertext(secret, dto));
+        archive.setSecret(encryptSecret(secret));
+        archive.setAlgorithmAes(cryptionService.getAesCryption().getAlgorithm());
         archive.setCreatedAt(now);
         archive.setUpdatedAt(now);
         return archive;
     }
 
     private String encryptSecret(final String secret) {
-        return this.keyProvider.encrypt(secret);
+        return keyProvider.encrypt(secret);
     }
 
     private String buildCiphertext(final String secret, final ArchiveCipherDtoV1 dto) {
         try {
-            final String json = this.mapper.writeValueAsString(dto);
-            return this.cryptionService.getAesCryption().encrypt(secret, json);
+            final String json = mapper.writeValueAsString(dto);
+            return cryptionService.getAesCryption().encrypt(secret, json);
         } catch (JsonProcessingException e) {
             throw new UncheckedJsonProcessingException(e);
         }
     }
 
     private String buildIdentifier(final ArchiveCipherDtoV1 dto) {
-        return this.buildIdentifier(dto.getBirthday(), dto.getLastName());
+        return buildIdentifier(dto.getBirthday(), dto.getLastName());
     }
 
     String buildIdentifier(final String birthday, final String lastname) {
         final String identifier = String.format("%s%s",
                 LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
                 lastname.substring(0, 2).toUpperCase());
-        return this.createHash(identifier);
+        return createHash(identifier);
     }
     
     String createHash(String in) {
-        final MessageDigest digest = buildMessageDigest(this.properties.getHash().getAlgorithm());
+        final MessageDigest digest = buildMessageDigest(properties.getHash().getAlgorithm());
         digest.reset();
-        digest.update(this.keyProvider.getPepper());
+        digest.update(keyProvider.getPepper());
         byte[] identifierHashed = digest.digest(in.getBytes(StandardCharsets.UTF_8));
         return Hex.toHexString(identifierHashed);
     }

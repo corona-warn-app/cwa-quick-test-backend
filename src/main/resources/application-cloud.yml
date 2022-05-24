@@ -157,4 +157,4 @@ archive:
     AesGcmNoPadding256:
       iterations: ${QT_ARCHIVE_ITERATIONS}
   vaultTransit:
-    dek: vault-dek
+    dek: ${QT_VAULT_DEK}

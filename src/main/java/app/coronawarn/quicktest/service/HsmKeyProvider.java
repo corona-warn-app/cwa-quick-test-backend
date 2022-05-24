@@ -40,7 +40,6 @@ public class HsmKeyProvider implements KeyProvider {
 
     @Override
     public PublicKey getPublicKey() {
-        // TODO impl
         throw new DccException(HttpStatus.NOT_IMPLEMENTED, "not implemented");
     }
 

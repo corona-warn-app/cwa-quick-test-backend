@@ -147,7 +147,7 @@ archive:
     older-than-in-seconds: 2419200
   hash:
     algorithm: SHA-256
-    pepper: ${QT_ARCHIVE_PEPPER}
+    pepper: ${QT_ARCHIVE_PEPPER:APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn}
   crypt:
     secretLength: 50
     secretLetters: true
@@ -155,7 +155,7 @@ archive:
     defaultRsa: RSA/ECB/OAEPwithSHA-512andMGF1Padding
     defaultAes: AES/GCM/NoPadding
     AesGcmNoPadding256:
-      iterations: ${QT_ARCHIVE_ITERATIONS}
+      iterations: ${QT_ARCHIVE_ITERATIONS:12345}
   vaultTransit:
-    folder: ${QT_VAULT_FOLDER}
-    dek: ${QT_VAULT_DEK}
+    folder: ${QT_VAULT_FOLDER:cwa-quick-test-archive}
+    dek: ${QT_VAULT_DEK:cwa-quick-test-archive-encryption-key}

@@ -27,7 +27,7 @@ jdbc:
     url: ${DB_JDBC_URL_READ}
   archive:
     driver-class-name: ${DB_DRIVER_CLASS_NAME}
-    url: ${DB_JDBC_URL_ARCHIVE}
+    url: ${DB_ARCHIVE_JDBC_URL}
     liquibase:
       change-log: classpath:db/archive-changelog.yml
 

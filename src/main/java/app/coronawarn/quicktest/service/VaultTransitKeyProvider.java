@@ -28,7 +28,9 @@ public class VaultTransitKeyProvider implements KeyProvider {
 
     @Override
     public PublicKey getPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
-        VaultTransitKey publicKey = vaultTemplate.opsForTransit().getKey(properties.getVaultTransit().getDek());
+        VaultTransitKey publicKey = vaultTemplate
+                .opsForTransit(properties.getVaultTransit().getFolder())
+                .getKey(properties.getVaultTransit().getDek());
         String key = Integer.toString(publicKey.getLatestVersion());
         Map<String,String> keyValues = (Map<String, String>) publicKey.getKeys().get(key);
         String publicKeyStr = keyValues.get("public_key");
@@ -50,11 +52,15 @@ public class VaultTransitKeyProvider implements KeyProvider {
 
     @Override
     public String decrypt(String encrypted) {
-        return this.vaultTemplate.opsForTransit().decrypt(properties.getVaultTransit().getDek(), encrypted);
+        return this.vaultTemplate
+                .opsForTransit(properties.getVaultTransit().getFolder())
+                .decrypt(properties.getVaultTransit().getDek(), encrypted);
     }
 
     @Override
     public String encrypt(String plain) {
-        return this.vaultTemplate.opsForTransit().encrypt(properties.getVaultTransit().getDek(), plain);
+        return this.vaultTemplate
+                .opsForTransit(properties.getVaultTransit().getFolder())
+                .encrypt(properties.getVaultTransit().getDek(), plain);
     }
 }

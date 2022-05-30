@@ -36,7 +36,8 @@ public class ArchiveProperties {
 
     @Data
     public static final class VaultTransit {
-        private String dek;
+        private String folder = "cwa-quick-test-archive";
+        private String dek = "cwa-quick-test-archive-encryption-key";
     }
 
     @Data

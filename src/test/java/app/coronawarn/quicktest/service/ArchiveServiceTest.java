@@ -90,7 +90,7 @@ class ArchiveServiceTest {
         assertThat(result.getVersion()).isNotNull().isNotNegative();
         // AND RSA encryption
         assertThat(result.getSecret()).isNotNull();
-        final String secret = this.keyProvider.decrypt(result.getSecret());
+        final String secret = this.keyProvider.decrypt(result.getSecret(), result.getPocId());
         assertThat(secret).isNotBlank();
         // AND AES encryption
         assertThat(result.getCiphertext()).isNotNull();

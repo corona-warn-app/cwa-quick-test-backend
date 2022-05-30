@@ -52,7 +52,7 @@ class RsaEcbOaepWithSha512AndMgf1PaddingCryptionTest {
         final PublicKey publicKey = this.keyProvider.getPublicKey();
         // WHEN 
         final String encrypted = this.cryption.encrypt(publicKey, plain);
-        final String decrypted = this.keyProvider.decrypt(encrypted);
+        final String decrypted = this.keyProvider.decrypt(encrypted, "test");
         // THEN 
         assertThat(encrypted).isNotNull();
         assertThat(decrypted).isNotNull().isEqualTo(plain);

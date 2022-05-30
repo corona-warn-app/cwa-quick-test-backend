@@ -49,12 +49,12 @@ public class HsmKeyProvider implements KeyProvider {
     }
 
     @Override
-    public String decrypt(String encrypted) {
+    public String decrypt(String encrypted, String context) {
         throw new DccException(HttpStatus.INTERNAL_SERVER_ERROR, "not allowed access");
     }
 
     @Override
-    public String encrypt(String plain) {
+    public String encrypt(String plain, String context) {
         throw new DccException(HttpStatus.NOT_IMPLEMENTED, "not implemented");
     }
 }

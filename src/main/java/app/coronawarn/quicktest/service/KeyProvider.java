@@ -46,7 +46,7 @@ public interface KeyProvider {
      * @param encrypted content
      * @return decrypted content
      */
-    String decrypt(String encrypted);
+    String decrypt(String encrypted, String context);
 
-    String encrypt(String plain);
+    String encrypt(String plain, String context);
 }

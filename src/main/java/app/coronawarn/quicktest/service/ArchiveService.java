@@ -115,15 +115,15 @@ public class ArchiveService {
         archive.setTenantId(createHash(dto.getTenantId()));
         archive.setPocId(createHash(dto.getPocId()));
         archive.setCiphertext(buildCiphertext(secret, dto));
-        archive.setSecret(encryptSecret(secret));
+        archive.setSecret(encryptSecret(secret, dto.getPocId()));
         archive.setAlgorithmAes(cryptionService.getAesCryption().getAlgorithm());
         archive.setCreatedAt(now);
         archive.setUpdatedAt(now);
         return archive;
     }
 
-    private String encryptSecret(final String secret) {
-        return keyProvider.encrypt(secret);
+    private String encryptSecret(final String secret, final String context) {
+        return keyProvider.encrypt(secret, context);
     }
 
     private String buildCiphertext(final String secret, final ArchiveCipherDtoV1 dto) {

@@ -14,6 +14,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.vault.core.VaultTemplate;
+import org.springframework.vault.support.VaultTransitContext;
 import org.springframework.vault.support.VaultTransitKey;
 
 
@@ -51,16 +52,18 @@ public class VaultTransitKeyProvider implements KeyProvider {
     }
 
     @Override
-    public String decrypt(String encrypted) {
+    public String decrypt(String encrypted, String context) {
         return this.vaultTemplate
                 .opsForTransit(properties.getVaultTransit().getFolder())
                 .decrypt(properties.getVaultTransit().getDek(), encrypted);
     }
 
     @Override
-    public String encrypt(String plain) {
+    public String encrypt(String plain, String context) {
         return this.vaultTemplate
                 .opsForTransit(properties.getVaultTransit().getFolder())
-                .encrypt(properties.getVaultTransit().getDek(), plain);
+                .encrypt(properties.getVaultTransit().getDek(),
+                        Base64.encode(plain.getBytes(StandardCharsets.UTF_8)),
+                        VaultTransitContext.fromContext(Base64.encode(context.getBytes(StandardCharsets.UTF_8))));
     }
 }

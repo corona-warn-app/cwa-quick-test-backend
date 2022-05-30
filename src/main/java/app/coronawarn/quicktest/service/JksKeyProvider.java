@@ -110,12 +110,12 @@ public class JksKeyProvider implements KeyProvider {
     }
 
     @Override
-    public String decrypt(String encrypted) {
+    public String decrypt(String encrypted, String context) {
         return this.cryption.decrypt(this.getPrivateKey(this.getPublicKey()), encrypted);
     }
 
     @Override
-    public String encrypt(String plain) {
+    public String encrypt(String plain, String context) {
         return this.cryption.encrypt(this.getPublicKey(), plain);
     }
 

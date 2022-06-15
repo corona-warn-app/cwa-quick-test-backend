@@ -40,6 +40,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
@@ -79,6 +80,7 @@ public class ArchiveService {
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
             quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
+                    .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
                     .map(this::convertQuickTest)
                     .map(this::buildArchive)
                     .map(repository::save)

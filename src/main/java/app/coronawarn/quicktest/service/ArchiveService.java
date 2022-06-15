@@ -131,9 +131,10 @@ public class ArchiveService {
     }
 
     String buildIdentifier(final String birthday, final String lastname) {
+        final String lastnameId = StringUtils.rightPad(lastname, 2, 'X');
         final String identifier = String.format("%s%s",
                 LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
-                lastname.substring(0, 2).toUpperCase());
+                lastnameId.substring(0, 2).toUpperCase());
         return createHash(identifier);
     }
     

@@ -140,7 +140,7 @@ quicktest:
 
 archive:
   moveToArchiveJob:
-    cron: 0 0/10 * * * *
+    cron: 0 0/5 * * * *
     locklimit: 1800000
     #### 2419200 = 4 weeks
     older-than-in-seconds: 2419200

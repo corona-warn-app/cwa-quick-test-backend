@@ -23,10 +23,14 @@ package app.coronawarn.quicktest.archive.repository;
 import app.coronawarn.quicktest.archive.domain.Archive;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.RollbackException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 
 // see app.coronawarn.quicktest.config.ArchiveEntityManagerConfig
 @RequiredArgsConstructor
+@Slf4j
 public class ArchiveRepository {
 
     private final EntityManager em;
@@ -38,9 +42,17 @@ public class ArchiveRepository {
      * @return {@link Archive}
      */
     public Archive save(Archive archive) {
-        this.em.getTransaction().begin();
-        this.em.persist(archive);
-        this.em.getTransaction().commit();
+        try {
+            this.em.getTransaction().begin();
+            this.em.persist(archive);
+            this.em.getTransaction().commit();
+        } catch (final RollbackException r) {
+            log.warn("Rollback exception occured: {}", r.getMessage());
+            // resume on error in case of a constraint violation (already present)
+            if (r.getCause() instanceof ConstraintViolationException) {
+                log.warn("Constraint violation, value already present in longterm db.");
+            }
+        }
         return archive;
     }
 

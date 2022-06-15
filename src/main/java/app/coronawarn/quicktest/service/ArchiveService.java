@@ -40,11 +40,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.core.convert.ConversionService;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -70,15 +68,6 @@ public class ArchiveService {
     private final ObjectMapper mapper;
 
     private final CryptionService cryptionService;
-
-    @Transactional
-    @Scheduled(cron = "${archive.moveToArchiveJob.cron}")
-    @SchedulerLock(name = "MoveToArchiveJob", lockAtLeastFor = "PT0S", 
-        lockAtMostFor = "${archive.moveToArchiveJob.locklimit}")
-    public void moveToArchiveJob() {
-        log.info("Starting Job: moveToArchiveJob");
-        moveToArchive();
-    }
 
     /**
      * Moves the entries to the archive.

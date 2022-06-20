@@ -47,5 +47,5 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
             LocalDateTime dateTo
     );
 
-    Stream<QuickTestArchive> findAllByUpdatedAtBefore(LocalDateTime updatedAt, Pageable pageable);
+    Stream<QuickTestArchiveDataView> findAllByUpdatedAtBefore(LocalDateTime updatedAt, Pageable pageable);
 }

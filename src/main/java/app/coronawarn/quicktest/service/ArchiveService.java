@@ -24,9 +24,9 @@ import app.coronawarn.quicktest.archive.domain.Archive;
 import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
 import app.coronawarn.quicktest.archive.repository.ArchiveRepository;
 import app.coronawarn.quicktest.config.ArchiveProperties;
-import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.exception.UncheckedJsonProcessingException;
 import app.coronawarn.quicktest.exception.UncheckedNoSuchAlgorithmException;
+import app.coronawarn.quicktest.repository.QuickTestArchiveDataView;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.cryption.CryptionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -92,8 +91,37 @@ public class ArchiveService {
         log.info("Finished move to longterm archive.");
     }
 
-    private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchive quickTestArchive) {
-        return converter.convert(quickTestArchive, ArchiveCipherDtoV1.class);
+    private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {
+        final ArchiveCipherDtoV1 archive = new ArchiveCipherDtoV1();
+
+        archive.setShortHashedGuid(quickTestArchive.getShortHashedGuid());
+        archive.setHashedGuid(quickTestArchive.getHashedGuid());
+        archive.setTenantId(quickTestArchive.getTenantId());
+        archive.setPocId(quickTestArchive.getPocId());
+        archive.setCreatedAt(quickTestArchive.getCreatedAt());
+        archive.setUpdatedAt(quickTestArchive.getUpdatedAt());
+        archive.setVersion(quickTestArchive.getVersion());
+        archive.setConfirmationCwa(quickTestArchive.getConfirmationCwa());
+        archive.setTestResult(quickTestArchive.getTestResult());
+        archive.setPrivacyAgreement(quickTestArchive.getPrivacyAgreement());
+        archive.setFirstName(quickTestArchive.getFirstName());
+        archive.setLastName(quickTestArchive.getLastName());
+        archive.setEmail(quickTestArchive.getEmail());
+        archive.setPhoneNumber(quickTestArchive.getPhoneNumber());
+        archive.setSex(quickTestArchive.getSex());
+        archive.setStreet(quickTestArchive.getStreet());
+        archive.setHouseNumber(quickTestArchive.getHouseNumber());
+        archive.setZipCode(quickTestArchive.getZipCode());
+        archive.setCity(quickTestArchive.getCity());
+        archive.setBirthday(quickTestArchive.getBirthday());
+        archive.setTestBrandId(quickTestArchive.getTestBrandId());
+        archive.setTestBrandName(quickTestArchive.getTestBrandName());
+        archive.setTestResultServerHash(quickTestArchive.getTestResultServerHash());
+        archive.setDcc(quickTestArchive.getDcc());
+        archive.setAdditionalInfo(quickTestArchive.getAdditionalInfo());
+        archive.setGroupName(quickTestArchive.getGroupName());
+
+        return archive;
     }
 
     private Archive buildArchive(final ArchiveCipherDtoV1 dto) {

@@ -144,14 +144,15 @@ public class ArchiveService {
     private Archive buildArchive(final ArchiveCipherDtoV1 dto) {
         final LocalDateTime now = LocalDateTime.now();
         final String secret = cryptionService.generateRandomSecret();
+        final String pocIdHash = dto.getPocId();
 
         final Archive archive = new Archive();
         archive.setHashedGuid(dto.getHashedGuid());
         archive.setIdentifier(buildIdentifier(dto));
         archive.setTenantId(createHash(dto.getTenantId()));
-        archive.setPocId(createHash(dto.getPocId()));
+        archive.setPocId(pocIdHash);
         archive.setCiphertext(buildCiphertext(secret, dto));
-        archive.setSecret(encryptSecret(secret, dto.getPocId()));
+        archive.setSecret(encryptSecret(secret, pocIdHash));
         archive.setAlgorithmAes(cryptionService.getAesCryption().getAlgorithm());
         archive.setCreatedAt(now);
         archive.setUpdatedAt(now);

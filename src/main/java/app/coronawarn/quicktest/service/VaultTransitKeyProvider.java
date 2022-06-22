@@ -9,6 +9,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.util.encoders.Base64;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -22,6 +23,7 @@ import org.springframework.vault.support.VaultTransitKey;
 @Profile({ "cloud" })
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VaultTransitKeyProvider implements KeyProvider {
 
     private final ArchiveProperties properties;
@@ -53,9 +55,13 @@ public class VaultTransitKeyProvider implements KeyProvider {
 
     @Override
     public String decrypt(String encrypted, String context) {
-        return this.vaultTemplate
+        log.info("KEY: encrypted {} - context {}", encrypted, context);
+        byte[] decrypt = this.vaultTemplate
                 .opsForTransit(properties.getVaultTransit().getFolder())
-                .decrypt(properties.getVaultTransit().getDek(), encrypted);
+                .decrypt(properties.getVaultTransit().getDek(), encrypted,
+                        VaultTransitContext.fromContext(Base64.encode(context.getBytes(StandardCharsets.UTF_8))));
+        log.info("CIPHER: {}", new String(decrypt));
+        return new String(decrypt);
     }
 
     @Override

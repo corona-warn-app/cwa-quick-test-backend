@@ -100,10 +100,14 @@ public class ArchiveService {
         List<Archive> allByPocId = repository.findAllByPocId(createHash(pocId));
         List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
         for (Archive archive : allByPocId) {
-            final String decrypt = keyProvider.decrypt(archive.getSecret(), archive.getPocId());
-            final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
-            final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
-            dtos.add(dto);
+            try {
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), archive.getPocId());
+                final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
+                final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
+                dtos.add(dto);
+            } catch (final Exception e) {
+                log.warn("Could not decrypt archive {}", archive.getHashedGuid());
+            }
         }
         return dtos;
     }
@@ -144,7 +148,7 @@ public class ArchiveService {
     private Archive buildArchive(final ArchiveCipherDtoV1 dto) {
         final LocalDateTime now = LocalDateTime.now();
         final String secret = cryptionService.generateRandomSecret();
-        final String pocIdHash = dto.getPocId();
+        final String pocIdHash = createHash(dto.getPocId());
 
         final Archive archive = new Archive();
         archive.setHashedGuid(dto.getHashedGuid());

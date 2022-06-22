@@ -61,7 +61,9 @@ public class VaultTransitKeyProvider implements KeyProvider {
                 .decrypt(properties.getVaultTransit().getDek(), encrypted,
                         VaultTransitContext.fromContext(Base64.encode(context.getBytes(StandardCharsets.UTF_8))));
         log.info("CIPHER: {}", new String(decrypt));
-        return new String(decrypt);
+        String decode = new String(Base64.decode(decrypt));
+        log.info("DECODED: {}", decode);
+        return decode;
     }
 
     @Override

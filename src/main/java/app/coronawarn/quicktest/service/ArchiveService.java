@@ -107,6 +107,7 @@ public class ArchiveService {
                 dtos.add(dto);
             } catch (final Exception e) {
                 log.warn("Could not decrypt archive {}", archive.getHashedGuid());
+                log.warn("Cause: {}", e.getLocalizedMessage());
             }
         }
         return dtos;

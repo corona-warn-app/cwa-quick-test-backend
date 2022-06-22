@@ -37,6 +37,8 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -89,6 +91,21 @@ public class ArchiveService {
             log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
         }
         log.info("Finished move to longterm archive.");
+    }
+
+    /**
+     * Get longterm archives by pocId.
+     */
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId) throws JsonProcessingException {
+        List<Archive> allByPocId = repository.findAllByPocId(createHash(pocId));
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
+        for (Archive archive : allByPocId) {
+            final String decrypt = keyProvider.decrypt(archive.getSecret(), archive.getPocId());
+            final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
+            final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
+            dtos.add(dto);
+        }
+        return dtos;
     }
 
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {

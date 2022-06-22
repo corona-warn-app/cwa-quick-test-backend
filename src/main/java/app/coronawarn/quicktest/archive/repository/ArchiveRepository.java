@@ -24,6 +24,7 @@ import app.coronawarn.quicktest.archive.domain.Archive;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.RollbackException;
+import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
@@ -64,6 +65,19 @@ public class ArchiveRepository {
     public List<Archive> findAll() {
         this.em.getTransaction().begin();
         final List<Archive> result = this.em.createQuery("SELECT a FROM Archive a", Archive.class).getResultList();
+        this.em.getTransaction().commit();
+        return result;
+    }
+
+    /**
+     * Returns all entries by pocId.
+     *
+     * @return {@link List} of {@link Archive}
+     */
+    public List<Archive> findAllByPocId(final String pocId) {
+        this.em.getTransaction().begin();
+        TypedQuery<Archive> query = this.em.createQuery("SELECT a FROM Archive a WHERE a.pocId = ?1", Archive.class);
+        final List<Archive> result = query.setParameter(1, pocId).getResultList();
         this.em.getTransaction().commit();
         return result;
     }

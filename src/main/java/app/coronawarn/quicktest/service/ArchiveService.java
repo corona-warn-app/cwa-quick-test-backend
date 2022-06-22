@@ -101,7 +101,7 @@ public class ArchiveService {
         List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
         for (Archive archive : allByPocId) {
             try {
-                final String decrypt = keyProvider.decrypt(archive.getSecret(), archive.getPocId());
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), pocId);
                 final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
                 final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
                 dtos.add(dto);
@@ -148,15 +148,14 @@ public class ArchiveService {
     private Archive buildArchive(final ArchiveCipherDtoV1 dto) {
         final LocalDateTime now = LocalDateTime.now();
         final String secret = cryptionService.generateRandomSecret();
-        final String pocIdHash = createHash(dto.getPocId());
 
         final Archive archive = new Archive();
         archive.setHashedGuid(dto.getHashedGuid());
         archive.setIdentifier(buildIdentifier(dto));
         archive.setTenantId(createHash(dto.getTenantId()));
-        archive.setPocId(pocIdHash);
+        archive.setPocId(createHash(dto.getPocId()));
         archive.setCiphertext(buildCiphertext(secret, dto));
-        archive.setSecret(encryptSecret(secret, pocIdHash));
+        archive.setSecret(encryptSecret(secret, dto.getPocId()));
         archive.setAlgorithmAes(cryptionService.getAesCryption().getAlgorithm());
         archive.setCreatedAt(now);
         archive.setUpdatedAt(now);

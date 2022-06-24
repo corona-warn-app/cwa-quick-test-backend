@@ -28,9 +28,16 @@ jdbc:
   master:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:quicktest;MODE=MYSQL
+    liquibase:
+      change-log: classpath:db/changelog.yml
   replica:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:quicktest;MODE=MYSQL
+  archive:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:quicktest-archive;MODE=MYSQL
+    liquibase:
+      change-log: classpath:db/archive-changelog.yml
 
 cwa-testresult-server:
   url: http://localhost:1234
@@ -75,10 +82,32 @@ quicktest:
     locklimit: 1800000
     chunk-size: 1000
 
+archive:
+  jks:
+    path: classpath:archive/dev.jks
+    password: changeMe
+  moveToArchiveJob:
+    cron: "-"
+    locklimit: 1800000
+    older-than-in-seconds: 5000
+  hash:
+    algorithm: SHA-256
+    pepper: APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn
+  crypt:
+    secretLength: 50
+    secretLetters: true
+    secretNumbers: true
+    defaultRsa: RSA/ECB/OAEPwithSHA-512andMGF1Padding
+    defaultAes: AES/GCM/NoPadding
+    AesGcmNoPadding256:
+      iterations: 12345
+
 cwa-dcc-server:
   url: http://localhost:8080
+
 quicktest-map-server:
   url: http://localhost:8099
+
 dcc:
   country: DE
   issuer: RKI
@@ -87,6 +116,8 @@ dcc:
   searchPublicKeysJob:
     cron: "*/2 * * * * *"
     lockLimit: 1800000
+    fixedDelayString: 30000
   uploadDccJob:
     cron: "*/2 * * * * *"
     lockLimit: 1800000
+    fixedDelayString: 30000

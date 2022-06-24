@@ -20,6 +20,16 @@
 
 package app.coronawarn.quicktest.controller;
 
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
 import app.coronawarn.quicktest.model.Aggregation;
 import app.coronawarn.quicktest.model.quicktest.QuickTestStatistics;
@@ -50,7 +60,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.keycloak.adapters.springsecurity.KeycloakSecurityComponents;
 import org.mockito.InjectMocks;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
@@ -59,19 +70,9 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.server.ResponseStatusException;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TENANT_COUNTER;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(QuickTestStatisticsController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
 class QuickTestStatisticsControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 

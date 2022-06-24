@@ -1,0 +1,68 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-archive-table
+      author: as
+      changes:
+        - createTable:
+            tableName: archive
+            columns:
+              - column:
+                  name: hashed_guid
+                  type: varchar(108)
+                  constraints:
+                    primaryKeyName: pk_archive
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: identifier
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  # test provider identifier
+                  name: tenant_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  # test spot identifier
+                  name: poc_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: secret
+                  type: clob
+                  constraints:
+                    nullable: false
+              - column:
+                  name: ciphertext
+                  type: clob
+                  constraints:
+                    nullable: false
+              - column:
+                  name: algorithm_aes
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: version
+                  type: int
+                  constraints:
+                    nullable: false
+        - createIndex:
+            tableName: archive
+            indexName: idx_archive_identifier
+            columns:
+              - column:
+                  name: identifier

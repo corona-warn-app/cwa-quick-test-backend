@@ -32,3 +32,4 @@ build/
 
 build.sh
 trusted.key
+.checkstyle

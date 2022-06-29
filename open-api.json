@@ -1,21 +1,13 @@
 {
   "openapi": "3.0.1",
-  "info": {
-    "title": "OpenAPI definition",
-    "version": "v0"
-  },
+  "info": { "title": "OpenAPI definition", "version": "v0" },
   "servers": [
-    {
-      "url": "http://127.0.0.1:8093",
-      "description": "Generated server url"
-    }
+    { "url": "http://localhost:8093", "description": "Generated server url" }
   ],
   "paths": {
     "/api/usermanagement/groups/{id}": {
       "get": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Get Details of a group",
         "operationId": "getSubGroupDetails",
         "parameters": [
@@ -24,12 +16,20 @@
             "in": "path",
             "description": "ID of the group",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
+          "200": {
+            "description": "Group Details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KeycloakGroupDetails"
+                }
+              }
+            }
+          },
           "403": {
             "description": "Group is not in your subgroups",
             "content": {
@@ -49,23 +49,11 @@
                 }
               }
             }
-          },
-          "200": {
-            "description": "Group Details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/KeycloakGroupDetails"
-                }
-              }
-            }
           }
         }
       },
       "put": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Update a group within your root group",
         "operationId": "updateSubGroupDetails",
         "parameters": [
@@ -74,37 +62,25 @@
             "in": "path",
             "description": "ID of the group",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/KeycloakGroupDetails"
-              }
+              "schema": { "$ref": "#/components/schemas/KeycloakGroupDetails" }
             }
           },
           "required": true
         },
         "responses": {
-          "403": {
-            "description": "Group is not in your root group."
-          },
-          "204": {
-            "description": "Group Updated"
-          },
-          "404": {
-            "description": "Group not found."
-          }
+          "404": { "description": "Group not found." },
+          "204": { "description": "Group Updated" },
+          "403": { "description": "Group is not in your root group." }
         }
       },
       "delete": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Delete a group.",
         "operationId": "deleteSubGroupDetails",
         "parameters": [
@@ -113,39 +89,27 @@
             "in": "path",
             "description": "ID of the group",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
           "description": "Containing the ID of the group which should be deleted",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/KeycloakGroupId"
-              }
+              "schema": { "$ref": "#/components/schemas/KeycloakGroupId" }
             }
           }
         },
         "responses": {
-          "204": {
-            "description": "Group deleted."
-          },
-          "403": {
-            "description": "Group is not in your root group."
-          },
-          "404": {
-            "description": "Group not found."
-          }
+          "404": { "description": "Group not found." },
+          "204": { "description": "Group deleted." },
+          "403": { "description": "Group is not in your root group." }
         }
       }
     },
     "/api/quicktest/{shortHash}/testResult": {
       "put": {
-        "tags": [
-          "quick-test-controller"
-        ],
+        "tags": ["quick-test-controller"],
         "summary": "Updates the test result of a quicktest",
         "description": "Updates the test result of a quicktest",
         "operationId": "updateQuickTestStatus",
@@ -154,9 +118,7 @@
             "name": "shortHash",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -170,23 +132,17 @@
           "required": true
         },
         "responses": {
+          "404": { "description": "Short Hash doesn't exists" },
           "500": {
             "description": "Updating failed because of internal error."
           },
-          "404": {
-            "description": "Short Hash doesn't exists"
-          },
-          "204 ": {
-            "description": "Update successful"
-          }
+          "204 ": { "description": "Update successful" }
         }
       }
     },
     "/api/quicktest/{shortHash}/personalData": {
       "put": {
-        "tags": [
-          "quick-test-controller"
-        ],
+        "tags": ["quick-test-controller"],
         "summary": "Updates the test result of a quicktest",
         "description": "Updates the test result of a quicktest",
         "operationId": "updateQuickTestWithPersonalData",
@@ -195,9 +151,7 @@
             "name": "shortHash",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "requestBody": {
@@ -211,23 +165,17 @@
           "required": true
         },
         "responses": {
+          "404": { "description": "Short Hash doesn't exists" },
           "500": {
             "description": "Updating failed because of internal error."
           },
-          "404": {
-            "description": "Short Hash doesn't exists"
-          },
-          "204 ": {
-            "description": "Update successful"
-          }
+          "204 ": { "description": "Update successful" }
         }
       }
     },
     "/api/usermanagement/users": {
       "get": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Get all users.",
         "operationId": "getUsers",
         "responses": {
@@ -247,9 +195,7 @@
         }
       },
       "post": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Create a new user within your root group",
         "operationId": "createNewUser",
         "requestBody": {
@@ -273,8 +219,8 @@
               }
             }
           },
-          "409": {
-            "description": "User with username already exists",
+          "201": {
+            "description": "User created and assigned to root group",
             "content": {
               "*/*": {
                 "schema": {
@@ -283,8 +229,8 @@
               }
             }
           },
-          "201": {
-            "description": "User created and assigned to root group",
+          "409": {
+            "description": "User with username already exists",
             "content": {
               "*/*": {
                 "schema": {
@@ -298,9 +244,7 @@
     },
     "/api/usermanagement/groups": {
       "get": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Get subgroups of currently logged in user",
         "operationId": "getSubGroups",
         "responses": {
@@ -320,36 +264,26 @@
         }
       },
       "post": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Create a new group within your root group",
         "operationId": "createSubGroup",
         "requestBody": {
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/KeycloakGroupDetails"
-              }
+              "schema": { "$ref": "#/components/schemas/KeycloakGroupDetails" }
             }
           },
           "required": true
         },
         "responses": {
-          "409": {
-            "description": "Group with this name already exists"
-          },
-          "201": {
-            "description": "Group Created"
-          }
+          "201": { "description": "Group Created" },
+          "409": { "description": "Group with this name already exists" }
         }
       }
     },
     "/api/usermanagement/groups/{parentId}/users": {
       "post": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Add a user as children of a group. The user will be automatically removed from all other subgroups",
         "operationId": "addUserToGroup",
         "parameters": [
@@ -357,9 +291,7 @@
             "name": "parentId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "id",
@@ -372,31 +304,21 @@
           "description": "Containing the ID of the user which should be added to parent group",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/KeycloakUserId"
-              }
+              "schema": { "$ref": "#/components/schemas/KeycloakUserId" }
             }
           },
           "required": true
         },
         "responses": {
-          "403": {
-            "description": "Group or User is not in your root group."
-          },
-          "404": {
-            "description": "Group or User not found."
-          },
-          "204": {
-            "description": "User assigned to group"
-          }
+          "404": { "description": "Group or User not found." },
+          "204": { "description": "User assigned to group" },
+          "403": { "description": "Group or User is not in your root group." }
         }
       }
     },
     "/api/usermanagement/groups/{parentId}/subgroups": {
       "post": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Add Group as children of another group",
         "operationId": "addSubGroup",
         "parameters": [
@@ -404,9 +326,7 @@
             "name": "parentId",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
           {
             "name": "id",
@@ -419,40 +339,30 @@
           "description": "Containing the ID of the group which should be added to parent group",
           "content": {
             "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/KeycloakGroupId"
-              }
+              "schema": { "$ref": "#/components/schemas/KeycloakGroupId" }
             }
           },
           "required": true
         },
         "responses": {
-          "403": {
-            "description": "Group is not in your root group."
-          },
+          "404": { "description": "Group not found." },
+          "204": { "description": "Group relation updated" },
           "409": {
             "description": "A group with the name of the child group already exists in the parent's subgroups."
           },
-          "204": {
-            "description": "Group relation updated"
-          },
-          "404": {
-            "description": "Group not found."
-          }
+          "403": { "description": "Group is not in your root group." }
         }
       }
     },
     "/api/quicktest": {
       "get": {
-        "tags": [
-          "quick-test-controller"
-        ],
+        "tags": ["quick-test-controller"],
         "summary": "Get poc specific quicktests",
         "description": "Returns all found (pending) quicktests containing personal data for a specific poc",
         "operationId": "getQuickTestsForTenantIdAndPocId",
         "responses": {
-          "500": {
-            "description": "Query failed due to an internal server error",
+          "200": {
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -461,8 +371,8 @@
               }
             }
           },
-          "200": {
-            "description": "OK",
+          "500": {
+            "description": "Query failed due to an internal server error",
             "content": {
               "application/json": {
                 "schema": {
@@ -474,9 +384,7 @@
         }
       },
       "post": {
-        "tags": [
-          "quick-test-controller"
-        ],
+        "tags": ["quick-test-controller"],
         "summary": "Creates a quicktest",
         "description": "Creates a quicktest and a pending testresult",
         "operationId": "createQuickTest",
@@ -491,23 +399,17 @@
           "required": true
         },
         "responses": {
+          "409": { "description": "Quicktest with short hash already exists" },
+          "201": { "description": "Quicktest is created" },
           "500": {
             "description": "Inserting failed because of internal error."
-          },
-          "409": {
-            "description": "Quicktest with short hash already exists"
-          },
-          "201": {
-            "description": "Quicktest is created"
           }
         }
       }
     },
     "/api/usermanagement/users/{id}": {
       "get": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Get user details.",
         "operationId": "getUser",
         "parameters": [
@@ -515,9 +417,7 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
@@ -534,9 +434,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Delete a user",
         "operationId": "deleteUser",
         "parameters": [
@@ -544,32 +442,18 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
-          {
-            "in": "path",
-            "description": "ID of the User",
-            "required": true
-          }
+          { "in": "path", "description": "ID of the User", "required": true }
         ],
         "responses": {
-          "403": {
-            "description": "User is not in your root group"
-          },
-          "204": {
-            "description": "User deleted"
-          },
-          "404": {
-            "description": "User not found"
-          }
+          "204": { "description": "User deleted" },
+          "403": { "description": "User is not in your root group" },
+          "404": { "description": "User not found" }
         }
       },
       "patch": {
-        "tags": [
-          "User Management"
-        ],
+        "tags": ["User Management"],
         "description": "Update a user",
         "operationId": "updateUser",
         "parameters": [
@@ -577,15 +461,9 @@
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           },
-          {
-            "in": "path",
-            "description": "ID of the User",
-            "required": true
-          }
+          { "in": "path", "description": "ID of the User", "required": true }
         ],
         "requestBody": {
           "content": {
@@ -598,23 +476,15 @@
           "required": true
         },
         "responses": {
-          "204": {
-            "description": "User updated"
-          },
-          "403": {
-            "description": "User is not in your root group"
-          },
-          "404": {
-            "description": "User not found"
-          }
+          "204": { "description": "User updated" },
+          "403": { "description": "User is not in your root group" },
+          "404": { "description": "User not found" }
         }
       }
     },
     "/api/quickteststatistics": {
       "get": {
-        "tags": [
-          "quick-test-statistics-controller"
-        ],
+        "tags": ["quick-test-statistics-controller"],
         "summary": "Get quicktest statistics",
         "description": "Returns the statistics for total and positive counts (default for today)",
         "operationId": "getQuicktestStatistics",
@@ -623,24 +493,18 @@
             "name": "dateFrom",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "required": false,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
-          "500": {
-            "description": "Inserting failed because of internal error.",
+          "200": {
+            "description": "Get statistic data",
             "content": {
               "application/json": {
                 "schema": {
@@ -649,8 +513,8 @@
               }
             }
           },
-          "200": {
-            "description": "Get statistic data",
+          "500": {
+            "description": "Inserting failed because of internal error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -664,9 +528,7 @@
     },
     "/api/quickteststatistics/tenant": {
       "get": {
-        "tags": [
-          "quick-test-statistics-controller"
-        ],
+        "tags": ["quick-test-statistics-controller"],
         "summary": "Get aggregated statistic data for tenant",
         "description": "Returns the aggregated statistics for tenant with total and positive counts",
         "operationId": "getQuicktestStatisticsForTenantWithAggregation",
@@ -675,37 +537,24 @@
             "name": "dateFrom",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "aggregation",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "NONE",
-                "HOUR",
-                "DAY"
-              ]
-            }
+            "schema": { "type": "string", "enum": ["NONE", "HOUR", "DAY"] }
           }
         ],
         "responses": {
-          "500": {
-            "description": "Inserting failed because of internal error.",
+          "200": {
+            "description": "Get aggregated statistic data for tenant",
             "content": {
               "application/json": {
                 "schema": {
@@ -714,8 +563,8 @@
               }
             }
           },
-          "200": {
-            "description": "Get aggregated statistic data for tenant",
+          "500": {
+            "description": "Inserting failed because of internal error.",
             "content": {
               "application/json": {
                 "schema": {
@@ -729,9 +578,7 @@
     },
     "/api/quicktestarchive": {
       "get": {
-        "tags": [
-          "quick-test-archive-controller"
-        ],
+        "tags": ["quick-test-archive-controller"],
         "summary": "Find quicktests in archive",
         "description": "Returns all found quicktests in archive for search parameters",
         "operationId": "findArchivesByTestResultAndUpdatedAtBetween",
@@ -742,7 +589,7 @@
             "required": false,
             "schema": {
               "maximum": 8,
-              "minimum": 5,
+              "minimum": 0,
               "type": "integer",
               "format": "int32"
             }
@@ -751,19 +598,13 @@
             "name": "dateFrom",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           },
           {
             "name": "dateTo",
             "in": "query",
             "required": true,
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            }
+            "schema": { "type": "string", "format": "date-time" }
           }
         ],
         "responses": {
@@ -792,9 +633,7 @@
     },
     "/api/quicktestarchive/{hashedGuid}/pdf": {
       "get": {
-        "tags": [
-          "quick-test-archive-controller"
-        ],
+        "tags": ["quick-test-archive-controller"],
         "summary": "Response quicktest as PDF",
         "description": "PDF stored in DB will be responsed for download if found.",
         "operationId": "getQuickTestPdf",
@@ -803,22 +642,17 @@
             "name": "hashedGuid",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "500": {
-            "description": "Inserting failed because of internal error.",
+          "404": {
+            "description": "Quicktest not found",
             "content": {
               "application/pdf": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "byte"
-                  }
+                  "items": { "type": "string", "format": "byte" }
                 }
               }
             }
@@ -829,24 +663,18 @@
               "application/pdf": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "byte"
-                  }
+                  "items": { "type": "string", "format": "byte" }
                 }
               }
             }
           },
-          "404": {
-            "description": "Quicktest not found",
+          "500": {
+            "description": "Inserting failed because of internal error.",
             "content": {
               "application/pdf": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "type": "string",
-                    "format": "byte"
-                  }
+                  "items": { "type": "string", "format": "byte" }
                 }
               }
             }
@@ -856,9 +684,7 @@
     },
     "/api/quicktest/{shortHash}": {
       "get": {
-        "tags": [
-          "quick-test-controller"
-        ],
+        "tags": ["quick-test-controller"],
         "summary": "Updates the test result of a quicktest",
         "description": "Updates the test result of a quicktest",
         "operationId": "getDccConsent",
@@ -867,29 +693,23 @@
             "name": "shortHash",
             "in": "path",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
+            "schema": { "type": "string" }
           }
         ],
         "responses": {
-          "500": {
-            "description": "internal error.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuickTestDccConsent"
-                }
-              }
-            }
-          },
           "200": {
             "description": "test found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuickTestDccConsent"
-                }
+                "schema": { "$ref": "#/components/schemas/QuickTestDccConsent" }
+              }
+            }
+          },
+          "500": {
+            "description": "internal error.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/QuickTestDccConsent" }
               }
             }
           },
@@ -897,29 +717,44 @@
             "description": "test not found",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/QuickTestDccConsent"
-                }
+                "schema": { "$ref": "#/components/schemas/QuickTestDccConsent" }
               }
             }
           }
+        }
+      },
+      "delete": {
+        "tags": ["quick-test-controller"],
+        "summary": "Deletes a quicktest",
+        "description": "Deletes a quicktest",
+        "operationId": "deleteEmptyQuickTest",
+        "parameters": [
+          {
+            "name": "shortHash",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "403": {
+            "description": "Deletion of updated Quicktests not allowed."
+          },
+          "200 ": { "description": "Deletion successful." },
+          "500": { "description": "Updating failed because of internal error." }
         }
       }
     },
     "/api/config/keycloak.json": {
       "get": {
-        "tags": [
-          "config-controller"
-        ],
+        "tags": ["config-controller"],
         "operationId": "getKeyCloakConfig",
         "responses": {
           "200": {
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/KeyCloakConfigFile"
-                }
+                "schema": { "$ref": "#/components/schemas/KeyCloakConfigFile" }
               }
             }
           }
@@ -928,9 +763,7 @@
     },
     "/api/config/context.json": {
       "get": {
-        "tags": [
-          "config-controller"
-        ],
+        "tags": ["config-controller"],
         "operationId": "getQuickTestContextFile",
         "responses": {
           "200": {
@@ -948,34 +781,28 @@
     },
     "/api/antigentests": {
       "get": {
-        "tags": [
-          "antigen-test-controller"
-        ],
+        "tags": ["antigen-test-controller"],
         "summary": "Response antigen tests as JSON array",
         "operationId": "getAntigenTests",
         "responses": {
-          "500": {
-            "description": "Request failed due to an internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AntigenTest"
-                  }
-                }
-              }
-            }
-          },
           "404": {
             "description": "antigen tests empty",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AntigenTest"
-                  }
+                  "items": { "$ref": "#/components/schemas/AntigenTest" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Request failed due to an internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AntigenTest" }
                 }
               }
             }
@@ -986,9 +813,7 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AntigenTest"
-                  }
+                  "items": { "$ref": "#/components/schemas/AntigenTest" }
                 }
               }
             }
@@ -1000,33 +825,28 @@
   "components": {
     "schemas": {
       "KeycloakGroupDetails": {
-        "required": [
-          "name"
-        ],
+        "required": ["name"],
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
             "description": "Ignored when used for updating the group details"
           },
-          "name": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string"
+          "name": { "maxLength": 50, "minLength": 0, "type": "string" },
+          "pocDetails": { "maxLength": 300, "minLength": 0, "type": "string" },
+          "pocId": { "maxLength": 50, "minLength": 0, "type": "string" },
+          "searchPortalConsent": { "type": "boolean" },
+          "website": { "type": "string" },
+          "email": { "type": "string" },
+          "openingHours": {
+            "maxItems": 7,
+            "minItems": 0,
+            "type": "array",
+            "items": { "type": "string" }
           },
-          "pocDetails": {
-            "maxLength": 300,
-            "minLength": 0,
-            "type": "string"
-          },
-          "pocId": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string"
-          },
-          "searchPortalConsent": {
-            "type": "boolean"
-          }
+          "appointmentRequired": { "type": "boolean" },
+          "bsnr": { "maxLength": 9, "minLength": 9, "type": "string" },
+          "enablePcr": { "type": "boolean" }
         },
         "description": "Request/Response model for group details."
       },
@@ -1034,16 +854,12 @@
         "type": "object",
         "properties": {
           "result": {
-            "maximum": 8,
+            "maximum": 13,
             "minimum": 6,
             "type": "integer",
             "format": "int32"
           },
-          "testBrandId": {
-            "maxLength": 15,
-            "minLength": 1,
-            "type": "string"
-          },
+          "testBrandId": { "maxLength": 15, "minLength": 1, "type": "string" },
           "testBrandName": {
             "maxLength": 200,
             "minLength": 0,
@@ -1058,9 +874,10 @@
             "maxLength": 128,
             "minLength": 1,
             "type": "string"
-          }
+          },
+          "pcrTestName": { "maxLength": 128, "minLength": 1, "type": "string" }
         },
-        "description": "The quick test update."
+        "description": "The quick test  or PoC-NAT update."
       },
       "QuickTestPersonalDataRequest": {
         "required": [
@@ -1078,88 +895,37 @@
         ],
         "type": "object",
         "properties": {
-          "confirmationCwa": {
-            "type": "boolean"
-          },
-          "privacyAgreement": {
-            "type": "boolean"
-          },
-          "lastName": {
-            "maxLength": 79,
-            "minLength": 1,
-            "type": "string"
-          },
-          "firstName": {
-            "maxLength": 79,
-            "minLength": 1,
-            "type": "string"
-          },
-          "email": {
-            "maxLength": 255,
-            "minLength": 5,
-            "type": "string"
-          },
-          "phoneNumber": {
-            "maxLength": 79,
-            "minLength": 1,
-            "type": "string"
-          },
-          "sex": {
-            "type": "string",
-            "enum": [
-              "MALE",
-              "FEMALE",
-              "DIVERSE"
-            ]
-          },
-          "street": {
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string"
-          },
-          "houseNumber": {
-            "maxLength": 15,
-            "minLength": 1,
-            "type": "string"
-          },
-          "zipCode": {
-            "maxLength": 5,
-            "minLength": 5,
-            "type": "string"
-          },
-          "city": {
-            "maxLength": 255,
-            "minLength": 1,
-            "type": "string"
-          },
-          "birthday": {
-            "type": "string",
-            "format": "date"
-          },
+          "confirmationCwa": { "type": "boolean" },
+          "privacyAgreement": { "type": "boolean" },
+          "lastName": { "maxLength": 79, "minLength": 1, "type": "string" },
+          "firstName": { "maxLength": 79, "minLength": 1, "type": "string" },
+          "email": { "maxLength": 255, "minLength": 5, "type": "string" },
+          "phoneNumber": { "maxLength": 79, "minLength": 1, "type": "string" },
+          "sex": { "type": "string", "enum": ["MALE", "FEMALE", "DIVERSE"] },
+          "street": { "maxLength": 255, "minLength": 1, "type": "string" },
+          "houseNumber": { "maxLength": 15, "minLength": 1, "type": "string" },
+          "zipCode": { "maxLength": 5, "minLength": 5, "type": "string" },
+          "city": { "maxLength": 255, "minLength": 1, "type": "string" },
+          "birthday": { "type": "string", "format": "date" },
           "standardisedFamilyName": {
-            "maxLength": 50,
+            "maxLength": 150,
             "minLength": 1,
             "type": "string"
           },
           "standardisedGivenName": {
-            "maxLength": 50,
+            "maxLength": 150,
             "minLength": 1,
             "type": "string"
           },
-          "diseaseAgentTargeted": {
-            "type": "string"
-          },
-          "testResultServerHash": {
-            "type": "string"
-          },
-          "dccConsent": {
-            "type": "boolean"
-          },
+          "diseaseAgentTargeted": { "type": "string" },
+          "testResultServerHash": { "type": "string" },
+          "dccConsent": { "type": "boolean" },
           "additionalInfo": {
             "maxLength": 250,
             "minLength": 1,
             "type": "string"
-          }
+          },
+          "testType": { "maxLength": 30, "minLength": 1, "type": "string" }
         },
         "description": "The quick test personaldata model."
       },
@@ -1174,163 +940,77 @@
         ],
         "type": "object",
         "properties": {
-          "lastName": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string"
-          },
-          "firstName": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string"
-          },
-          "username": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string"
-          },
-          "password": {
-            "maxLength": 64,
-            "minLength": 8,
-            "type": "string"
-          },
+          "lastName": { "maxLength": 30, "minLength": 0, "type": "string" },
+          "firstName": { "maxLength": 30, "minLength": 0, "type": "string" },
+          "username": { "maxLength": 50, "minLength": 0, "type": "string" },
+          "password": { "maxLength": 64, "minLength": 8, "type": "string" },
           "subGroup": {
             "maxLength": 36,
             "minLength": 36,
             "type": "string",
             "description": "ID of a subgroup to put user into. If not provided user will just put into root group."
           },
-          "roleCounter": {
-            "type": "boolean"
-          },
-          "roleLab": {
-            "type": "boolean"
-          }
+          "roleCounter": { "type": "boolean" },
+          "roleLab": { "type": "boolean" }
         },
         "description": "Request model for user creation."
       },
       "KeycloakUserResponse": {
-        "required": [
-          "firstName",
-          "lastName",
-          "username"
-        ],
+        "required": ["firstName", "lastName", "username"],
         "type": "object",
         "properties": {
-          "id": {
-            "type": "string"
-          },
-          "lastName": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string"
-          },
-          "firstName": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string"
-          },
-          "username": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string"
-          },
-          "roleCounter": {
-            "type": "boolean"
-          },
-          "roleLab": {
-            "type": "boolean"
-          },
-          "subGroup": {
-            "type": "string"
-          }
+          "id": { "type": "string" },
+          "lastName": { "maxLength": 30, "minLength": 0, "type": "string" },
+          "firstName": { "maxLength": 30, "minLength": 0, "type": "string" },
+          "username": { "maxLength": 50, "minLength": 0, "type": "string" },
+          "roleCounter": { "type": "boolean" },
+          "roleLab": { "type": "boolean" },
+          "subGroup": { "type": "string" }
         },
         "description": "Response model for user."
       },
       "KeycloakUserId": {
-        "required": [
-          "userId"
-        ],
+        "required": ["userId"],
         "type": "object",
         "properties": {
-          "userId": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string"
-          }
+          "userId": { "maxLength": 50, "minLength": 0, "type": "string" }
         },
         "description": "Request model for user id."
       },
       "KeycloakGroupId": {
-        "required": [
-          "groupId"
-        ],
+        "required": ["groupId"],
         "type": "object",
         "properties": {
-          "groupId": {
-            "maxLength": 50,
-            "minLength": 0,
-            "type": "string"
-          }
+          "groupId": { "maxLength": 50, "minLength": 0, "type": "string" }
         },
         "description": "Request model for group id."
       },
       "QuickTestCreationRequest": {
-        "required": [
-          "hashedGuid"
-        ],
+        "required": ["hashedGuid"],
         "type": "object",
-        "properties": {
-          "hashedGuid": {
-            "type": "string"
-          }
-        },
+        "properties": { "hashedGuid": { "type": "string" } },
         "description": "The quick test creation model."
       },
       "KeycloakUpdateUserRequest": {
         "type": "object",
         "properties": {
-          "lastName": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string"
-          },
-          "firstName": {
-            "maxLength": 30,
-            "minLength": 0,
-            "type": "string"
-          },
-          "password": {
-            "maxLength": 64,
-            "minLength": 8,
-            "type": "string"
-          },
-          "roleCounter": {
-            "type": "boolean"
-          },
-          "roleLab": {
-            "type": "boolean"
-          }
+          "lastName": { "maxLength": 30, "minLength": 0, "type": "string" },
+          "firstName": { "maxLength": 30, "minLength": 0, "type": "string" },
+          "password": { "maxLength": 64, "minLength": 8, "type": "string" },
+          "roleCounter": { "type": "boolean" },
+          "roleLab": { "type": "boolean" }
         },
         "description": "Request model for user update."
       },
       "KeycloakGroupResponse": {
         "type": "object",
         "properties": {
-          "name": {
-            "type": "string"
-          },
-          "id": {
-            "type": "string"
-          },
-          "path": {
-            "type": "string"
-          },
+          "name": { "type": "string" },
+          "id": { "type": "string" },
+          "path": { "type": "string" },
           "children": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/KeycloakGroupResponse"
-            }
+            "items": { "$ref": "#/components/schemas/KeycloakGroupResponse" }
           }
         },
         "description": "Response model for group."
@@ -1338,45 +1018,29 @@
       "QuickTestStatisticsResponse": {
         "type": "object",
         "properties": {
-          "totalTestCount": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "positiveTestCount": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "totalTestCount": { "type": "integer", "format": "int32" },
+          "positiveTestCount": { "type": "integer", "format": "int32" },
+          "pcrTestCount": { "type": "integer", "format": "int32" },
+          "pcrPositiveTestCount": { "type": "integer", "format": "int32" },
+          "ratTestCount": { "type": "integer", "format": "int32" },
+          "ratPositiveTestCount": { "type": "integer", "format": "int32" }
         },
         "description": "The quick test statistics model."
       },
       "QuickTestTenantStatisticsResponse": {
         "type": "object",
         "properties": {
-          "aggregation": {
-            "type": "string",
-            "enum": [
-              "NONE",
-              "HOUR",
-              "DAY"
-            ]
-          },
+          "aggregation": { "type": "string", "enum": ["NONE", "HOUR", "DAY"] },
           "quickTestStatistics": {
             "$ref": "#/components/schemas/QuickTestStatisticsResponse"
           },
-          "pocId": {
-            "type": "string"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          }
+          "pocId": { "type": "string" },
+          "timestamp": { "type": "string", "format": "date-time" }
         },
         "description": "The quick test tenant statistics model."
       },
       "QuickTestTenantStatisticsResponseList": {
-        "required": [
-          "quickTestTenantStatistics"
-        ],
+        "required": ["quickTestTenantStatistics"],
         "type": "object",
         "properties": {
           "quickTestTenantStatistics": {
@@ -1390,85 +1054,31 @@
       },
       "QuickTestArchiveResponse": {
         "type": "object",
-        "properties": {
-          "hashedGuid": {
-            "type": "string"
-          },
-          "lastName": {
-            "type": "string"
-          },
-          "firstName": {
-            "type": "string"
-          },
-          "email": {
-            "type": "string"
-          },
-          "phoneNumber": {
-            "type": "string"
-          },
-          "sex": {
-            "type": "string",
-            "enum": [
-              "MALE",
-              "FEMALE",
-              "DIVERSE"
-            ]
-          },
-          "street": {
-            "type": "string"
-          },
-          "houseNumber": {
-            "type": "string"
-          },
-          "zipCode": {
-            "type": "string"
-          },
-          "city": {
-            "type": "string"
-          },
-          "birthday": {
-            "type": "string"
-          },
-          "testResult": {
-            "type": "string"
-          }
-        },
+        "properties": { "hashedGuid": { "type": "string" } },
         "description": "Response model for quick test archive entries."
       },
       "QuickTestArchiveResponseList": {
-        "required": [
-          "quickTestArchives"
-        ],
+        "required": ["quickTestArchives"],
         "type": "object",
         "properties": {
           "quickTestArchives": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QuickTestArchiveResponse"
-            }
+            "items": { "$ref": "#/components/schemas/QuickTestArchiveResponse" }
           }
         }
       },
       "QuickTestResponse": {
         "type": "object",
-        "properties": {
-          "shortHashedGuid": {
-            "type": "string"
-          }
-        },
+        "properties": { "shortHashedGuid": { "type": "string" } },
         "description": "Model for quicktest response."
       },
       "QuickTestResponseList": {
-        "required": [
-          "quickTests"
-        ],
+        "required": ["quickTests"],
         "type": "object",
         "properties": {
           "quickTests": {
             "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/QuickTestResponse"
-            }
+            "items": { "$ref": "#/components/schemas/QuickTestResponse" }
           }
         },
         "description": "Model for quicktest response list."
@@ -1476,54 +1086,34 @@
       "QuickTestDccConsent": {
         "type": "object",
         "properties": {
-          "dccConsent": {
-            "type": "boolean"
-          },
-          "testResult": {
-            "type": "integer",
-            "format": "int32"
-          }
+          "dccConsent": { "type": "boolean" },
+          "testResult": { "type": "integer", "format": "int32" },
+          "testType": { "type": "string" }
         }
       },
       "KeyCloakConfigFile": {
         "type": "object",
         "properties": {
-          "resource": {
-            "type": "string"
-          },
-          "auth-server-url": {
-            "type": "string"
-          },
-          "ssl-required": {
-            "type": "string"
-          },
-          "public-client": {
-            "type": "boolean"
-          }
+          "resource": { "type": "string" },
+          "auth-server-url": { "type": "string" },
+          "ssl-required": { "type": "string" },
+          "public-client": { "type": "boolean" }
         },
         "description": "Configuration Model for KeyCloak Clients"
       },
       "QuickTestContextFile": {
         "type": "object",
         "properties": {
-          "rules-server-url": {
-            "type": "string"
-          },
-          "environment-name": {
-            "type": "string"
-          }
+          "rules-server-url": { "type": "string" },
+          "environment-name": { "type": "string" }
         },
         "description": "Configuration Model for Context Configuration for Frontend"
       },
       "AntigenTest": {
         "type": "object",
         "properties": {
-          "testBrandId": {
-            "type": "string"
-          },
-          "testBrandName": {
-            "type": "string"
-          }
+          "testBrandId": { "type": "string" },
+          "testBrandName": { "type": "string" }
         }
       }
     }

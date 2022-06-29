@@ -22,16 +22,24 @@ package app.coronawarn.quicktest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.openfeign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableFeignClients
+@EnableScheduling
 @EnableConfigurationProperties
+@EntityScan(basePackages = {"app.coronawarn.quicktest.domain", "app.coronawarn.quicktest.model"})
+@EnableJpaRepositories(basePackages = "app.coronawarn.quicktest", 
+    excludeFilters = @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = "app.coronawarn.quicktest.archive.*"))
 public class CwaQuickTestBackendApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(CwaQuickTestBackendApplication.class, args);
     }
-
 }

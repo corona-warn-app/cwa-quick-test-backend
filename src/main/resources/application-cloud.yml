@@ -20,9 +20,16 @@ jdbc:
   master:
     driver-class-name: ${DB_DRIVER_CLASS_NAME}
     url: ${DB_JDBC_URL}
+    liquibase:
+      change-log: classpath:db/changelog.yml
   replica:
     driver-class-name: ${DB_DRIVER_CLASS_NAME}
     url: ${DB_JDBC_URL_READ}
+  archive:
+    driver-class-name: ${DB_DRIVER_CLASS_NAME}
+    url: ${DB_ARCHIVE_JDBC_URL}
+    liquibase:
+      change-log: classpath:db/archive-changelog.yml
 
 management:
   server:
@@ -131,3 +138,23 @@ quicktest:
     rules-server-url: ${QUICK_TEST_DCC_RULES_SERVER_URL}
     environment-name: ${QUICK_TEST_ENVIRONMENT_NAME:unknown}
 
+archive:
+  moveToArchiveJob:
+    cron: 0 0/5 * * * *
+    locklimit: 1800000
+    #### 2419200 = 4 weeks, 1209600 = 2 weeks
+    older-than-in-seconds: 1209600
+  hash:
+    algorithm: SHA-256
+    pepper: ${QT_ARCHIVE_PEPPER:APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn}
+  crypt:
+    secretLength: 50
+    secretLetters: true
+    secretNumbers: true
+    defaultRsa: RSA/ECB/OAEPwithSHA-512andMGF1Padding
+    defaultAes: AES/GCM/NoPadding
+    AesGcmNoPadding256:
+      iterations: ${QT_ARCHIVE_ITERATIONS:128}
+  vaultTransit:
+    folder: ${QT_VAULT_FOLDER:cwa-quick-test-archive}
+    dek: ${QT_VAULT_DEK:cwa-quick-test-archive-encryption-key}

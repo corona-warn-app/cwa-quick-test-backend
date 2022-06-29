@@ -24,6 +24,8 @@ import app.coronawarn.quicktest.domain.QuickTestArchive;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchive, String> {
@@ -45,4 +47,5 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
             LocalDateTime dateTo
     );
 
+    Stream<QuickTestArchiveDataView> findAllByUpdatedAtBefore(LocalDateTime updatedAt, Pageable pageable);
 }

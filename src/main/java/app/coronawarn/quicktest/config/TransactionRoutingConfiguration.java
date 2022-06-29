@@ -55,7 +55,12 @@ public class TransactionRoutingConfiguration {
 
     @Value("${jdbc.replica.driver-class-name}")
     private String replicaDriverClassName;
+    
+    @Value("${jdbc.archive.url}")
+    private String archiveUrl;
 
+    @Value("${jdbc.archive.driver-class-name}")
+    private String archiveDriverClassName;
 
     /**
      * Routing Datasource between read-only replica and read-write master.
@@ -93,6 +98,7 @@ public class TransactionRoutingConfiguration {
      * Master datasource.
      * @return master
      */
+    @Bean(name = "masterDataSource", destroyMethod = "close")
     public DataSource masterDataSource() {
 
         log.info("Creating Master Datasource");
@@ -101,6 +107,22 @@ public class TransactionRoutingConfiguration {
         hikariDataSource.setJdbcUrl(masterUrl);
         hikariDataSource.setMaximumPoolSize(maxPool);
         hikariDataSource.setMinimumIdle(minPool);
+        return hikariDataSource;
+    }
+    
+    /**
+     * Archive datassource.
+     * 
+     * @return archive
+     */
+    @Bean(name = "archiveDataSource", destroyMethod = "close")
+    public DataSource archiveDataSource() {
+        log.info("Creating Archive Datasource");
+        final HikariDataSource hikariDataSource = new HikariDataSource();
+        hikariDataSource.setDriverClassName(this.archiveDriverClassName);
+        hikariDataSource.setJdbcUrl(this.archiveUrl);
+        hikariDataSource.setMaximumPoolSize(this.maxPool);
+        hikariDataSource.setMinimumIdle(this.minPool);
         return hikariDataSource;
     }
 }

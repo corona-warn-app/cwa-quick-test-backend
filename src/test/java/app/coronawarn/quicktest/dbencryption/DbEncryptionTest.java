@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.fail;
-
 import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
@@ -47,6 +46,7 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import javax.persistence.EntityManager;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
@@ -55,10 +55,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.core.AutoConfigureCache;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureDataJpa;
-import org.springframework.boot.test.autoconfigure.orm.jpa.AutoConfigureTestEntityManager;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
@@ -67,9 +63,6 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 @AutoConfigureCache
-@AutoConfigureDataJpa
-@AutoConfigureTestDatabase
-@AutoConfigureTestEntityManager
 @ImportAutoConfiguration
 @Slf4j
 public class DbEncryptionTest {
@@ -82,7 +75,7 @@ public class DbEncryptionTest {
     QuickTestArchiveRepository quickTestArchiveRepository;
 
     @Autowired
-    TestEntityManager entityManager;
+    EntityManager entityManager;
 
     @MockBean
     Utilities utilities;
@@ -122,7 +115,7 @@ public class DbEncryptionTest {
         quickTestArchive.setPdf(pdf.toByteArray());
         quickTestArchive = quickTestArchiveRepository.saveAndFlush(quickTestArchive);
         Object databaseEntry =
-            entityManager.getEntityManager().createNativeQuery("SELECT * FROM quick_test_archive q WHERE " +
+            entityManager.createNativeQuery("SELECT * FROM quick_test_archive q WHERE " +
                 "HASHED_GUID='" +
                 "8fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4'")
                 .getSingleResult();

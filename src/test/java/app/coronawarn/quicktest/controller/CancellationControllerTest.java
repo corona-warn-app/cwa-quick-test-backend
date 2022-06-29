@@ -66,12 +66,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
 class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
-    private final static String partnerId = "TESTID1234";
     private final static String userId = "user-id";
-    private final static String rootGroupId = "0".repeat(36);
+    private final static String rootGroupId = "0".repeat(20);
     private final static String rootGroupPath = "root-group-path";
     private final static String realmId = "REALM";
-    private final static String subGroupId = "a".repeat(36);
+    private final static String subGroupId = "a".repeat(20);
     private final static String subGroupPath = "sub-group-path";
     private final GroupRepresentation rootGroup = new GroupRepresentation();
     private final GroupRepresentation subGroup = new GroupRepresentation();
@@ -130,13 +129,13 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     void createCancellation() throws Exception {
         CancellationRequest request = new CancellationRequest();
         List<String> ids = new ArrayList<>();
-        ids.add(partnerId);
+        ids.add(rootGroupId);
         request.setPartnerIds(ids);
         request.setFinalDeletion(LocalDateTime.now());
         String json = mapper.writeValueAsString(request);
         var result = mockMvc().perform(MockMvcRequestBuilders
             .post("/api/cancellation").contentType(MediaType.APPLICATION_JSON)
-          .content(json))
+            .content(json))
           .andExpect(status().isOk()).andReturn();
         System.out.println(result.getResponse().getContentAsString());
     }
@@ -149,7 +148,7 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     void createCancellationWrongRole() throws Exception {
         CancellationRequest request = new CancellationRequest();
         List<String> ids = new ArrayList<>();
-        ids.add(partnerId);
+        ids.add(rootGroupId);
         request.setPartnerIds(ids);
         request.setFinalDeletion(LocalDateTime.now());
         String json = mapper.writeValueAsString(request);
@@ -168,5 +167,28 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         mockMvc().perform(MockMvcRequestBuilders
             .post("/api/cancellation"))
           .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+      authorities = ROLE_TERMINATOR,
+      claims = @OpenIdClaims(sub = userId)
+    )
+    void getCancellation() throws Exception {
+        createCancellation();
+        mockMvc().perform(MockMvcRequestBuilders
+            .get("/api/cancellation"))
+          .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+      authorities = ROLE_TERMINATOR,
+      claims = @OpenIdClaims(sub = userId)
+    )
+    void getCancellationNotCreated() throws Exception {
+        mockMvc().perform(MockMvcRequestBuilders
+            .get("/api/cancellation"))
+          .andExpect(status().isNotFound());
     }
 }

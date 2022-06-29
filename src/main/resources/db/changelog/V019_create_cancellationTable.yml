@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-cancellation-table
+      author: f11h
+      changes:
+        - createTable:
+            tableName: cancellation
+            columns:
+              - column:
+                  name: partner_id
+                  type: varchar(20)
+                  constraints:
+                    nullable: false
+                    primaryKeyName: pk_cancellation_partner_id
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: final_deletion
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: download_requested
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: moved_to_longterm_archive
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: csv_created
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: download_link_requested
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: data_deleted
+                  type: datetime
+                  constraints:
+                    nullable: true
+              - column:
+                  name: bucket_object_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: true

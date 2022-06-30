@@ -1,13 +1,16 @@
 package app.coronawarn.quicktest.controller;
 
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TERMINATOR;
 
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.model.cancellation.CancellationRequest;
 import app.coronawarn.quicktest.service.CancellationService;
+import app.coronawarn.quicktest.service.KeycloakService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +38,8 @@ public class CancellationController {
 
 
     private final CancellationService cancellationService;
+
+    private final KeycloakService keycloakService;
 
     private final UserManagementControllerUtils utils;
 
@@ -79,6 +84,38 @@ public class CancellationController {
         Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getId());
         if (cancellation.isPresent()) {
             return ResponseEntity.ok(cancellation.get());
+        } else {
+            throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND, "No cancellation found for given PartnerId.");
+        }
+    }
+
+    /**
+     * Endpoint for requesting a download.
+     */
+    @Operation(
+      summary = "start the cancellation process",
+      description = "download_requested timestamp will be set to current timestamp for PartnerId of current User."
+    )
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successful"),
+      @ApiResponse(responseCode = "404", description = "No cancellation found for given PartnerId."),
+      @ApiResponse(responseCode = "409", description = "Download already requested previously.")
+    })
+    @PostMapping(value = "/requestDownload", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({ROLE_ADMIN})
+    public ResponseEntity<Void> requestDownload() {
+        GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getId());
+        if (cancellation.isPresent()) {
+            if (cancellation.get().getDownloadRequested() == null) {
+                cancellationService.updateDownloadRequested(cancellation.get(), LocalDateTime.now());
+                keycloakService.deleteSubGroups(groupRepresentation);
+                return ResponseEntity.ok().build();
+            } else {
+                throw new ResponseStatusException(
+                  HttpStatus.CONFLICT, "Download already requested previously.");
+            }
         } else {
             throw new ResponseStatusException(
               HttpStatus.NOT_FOUND, "No cancellation found for given PartnerId.");

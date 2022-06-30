@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.controller;
 
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TERMINATOR;
 import static org.mockito.Mockito.doReturn;
@@ -190,5 +191,54 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         mockMvc().perform(MockMvcRequestBuilders
             .get("/api/cancellation"))
           .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+      authorities = {ROLE_ADMIN, ROLE_TERMINATOR},
+      claims = @OpenIdClaims(sub = userId)
+    )
+    void requestDownload() throws Exception {
+        createCancellation();
+        mockMvc().perform(MockMvcRequestBuilders
+            .post("/api/cancellation/requestDownload"))
+          .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+      authorities = ROLE_ADMIN,
+      claims = @OpenIdClaims(sub = userId)
+    )
+    void requestDownloadNotFound() throws Exception {
+        mockMvc().perform(MockMvcRequestBuilders
+            .post("/api/cancellation/requestDownload"))
+          .andExpect(status().isNotFound());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+      authorities = ROLE_TERMINATOR,
+      claims = @OpenIdClaims(sub = userId)
+    )
+    void requestDownloadWrongRole() throws Exception {
+        mockMvc().perform(MockMvcRequestBuilders
+            .post("/api/cancellation/requestDownload"))
+          .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @WithMockKeycloakAuth(
+      authorities = {ROLE_ADMIN, ROLE_TERMINATOR},
+      claims = @OpenIdClaims(sub = userId)
+    )
+    void requestDownloadMultipleTimes() throws Exception {
+        createCancellation();
+        mockMvc().perform(MockMvcRequestBuilders
+            .post("/api/cancellation/requestDownload"))
+          .andExpect(status().isOk());
+        mockMvc().perform(MockMvcRequestBuilders
+            .post("/api/cancellation/requestDownload"))
+          .andExpect(status().isConflict());
     }
 }

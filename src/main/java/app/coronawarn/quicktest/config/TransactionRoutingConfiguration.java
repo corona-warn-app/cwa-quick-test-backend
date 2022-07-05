@@ -25,6 +25,7 @@ import app.coronawarn.quicktest.datasource.TransactionRoutingDatasource;
 import com.zaxxer.hikari.HikariDataSource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,6 +44,9 @@ public class TransactionRoutingConfiguration {
 
     @Value("${jdbc.max-pool}")
     private int maxPool;
+
+    @Value("${jdbc.connection-timeout}")
+    private int connectionTimeout;
 
     @Value("${jdbc.master.url}")
     private String masterUrl;
@@ -91,6 +95,7 @@ public class TransactionRoutingConfiguration {
         hikariDataSource.setJdbcUrl(replicaUrl);
         hikariDataSource.setMaximumPoolSize(maxPool);
         hikariDataSource.setMinimumIdle(minPool);
+        hikariDataSource.setConnectionTimeout(TimeUnit.SECONDS.toMillis(connectionTimeout));
         return hikariDataSource;
     }
 
@@ -107,6 +112,7 @@ public class TransactionRoutingConfiguration {
         hikariDataSource.setJdbcUrl(masterUrl);
         hikariDataSource.setMaximumPoolSize(maxPool);
         hikariDataSource.setMinimumIdle(minPool);
+        hikariDataSource.setConnectionTimeout(TimeUnit.SECONDS.toMillis(connectionTimeout));
         return hikariDataSource;
     }
     
@@ -123,6 +129,7 @@ public class TransactionRoutingConfiguration {
         hikariDataSource.setJdbcUrl(this.archiveUrl);
         hikariDataSource.setMaximumPoolSize(this.maxPool);
         hikariDataSource.setMinimumIdle(this.minPool);
+        hikariDataSource.setConnectionTimeout(TimeUnit.SECONDS.toMillis(connectionTimeout));
         return hikariDataSource;
     }
 }

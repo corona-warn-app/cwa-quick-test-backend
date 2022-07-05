@@ -81,7 +81,6 @@ public class ArchiveService {
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
             quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
-                    .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
                     .map(this::convertQuickTest)
                     .map(this::buildArchive)
                     .map(repository::save)
@@ -93,15 +92,21 @@ public class ArchiveService {
         log.info("Finished move to longterm archive.");
     }
 
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String tenantId) throws JsonProcessingException {
+        return getQuicktestsFromLongterm(tenantId, null);
+    }
+
     /**
-     * Get longterm archives by pocId.
+     * Get longterm archives by tenantId.
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId) throws JsonProcessingException {
-        List<Archive> allByPocId = repository.findAllByPocId(createHash(pocId));
-        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
-        for (Archive archive : allByPocId) {
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String tenantId, final String pocId)
+            throws JsonProcessingException {
+        List<Archive> allByTenantId = repository.findAllByTenantId(createHash(tenantId));
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByTenantId.size());
+        for (Archive archive : allByTenantId) {
             try {
-                final String decrypt = keyProvider.decrypt(archive.getSecret(), pocId);
+                final String context = StringUtils.isBlank(pocId) ? tenantId : pocId;
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), context);
                 final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
                 final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
                 dtos.add(dto);
@@ -156,7 +161,7 @@ public class ArchiveService {
         archive.setTenantId(createHash(dto.getTenantId()));
         archive.setPocId(createHash(dto.getPocId()));
         archive.setCiphertext(buildCiphertext(secret, dto));
-        archive.setSecret(encryptSecret(secret, dto.getPocId()));
+        archive.setSecret(encryptSecret(secret, dto.getTenantId()));
         archive.setAlgorithmAes(cryptionService.getAesCryption().getAlgorithm());
         archive.setCreatedAt(now);
         archive.setUpdatedAt(now);
@@ -189,6 +194,9 @@ public class ArchiveService {
     }
     
     String createHash(String in) {
+        if (StringUtils.isBlank(in)) {
+            return "";
+        }
         final MessageDigest digest = buildMessageDigest(properties.getHash().getAlgorithm());
         digest.reset();
         digest.update(keyProvider.getPepper());

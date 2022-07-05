@@ -33,6 +33,8 @@ spring:
 jdbc:
   min-pool: 15
   max-pool: 25
+  # timeout in seconds
+  connection-timeout: 120
   master:
     driver-class-name: org.h2.Driver
     url: jdbc:h2:mem:quicktest;MODE=MYSQL

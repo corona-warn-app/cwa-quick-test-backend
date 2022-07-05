@@ -33,7 +33,7 @@ public class ArchiveController {
     private final ArchiveService archiveService;
 
     /**
-     * Endpoint for getting quicktests in longterm archive table by pocId.
+     * Endpoint for getting quicktests in longterm archive table by tenantId.
      *
      * @return QuickTestArchiveListResponse with all found archives
      */
@@ -47,9 +47,10 @@ public class ArchiveController {
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_COUNTER, ROLE_LAB})
-    public ResponseEntity<List<ArchiveCipherDtoV1>> findLongtermArchiveByPocId(@RequestParam String pocId) {
+    public ResponseEntity<List<ArchiveCipherDtoV1>> findLongtermArchiveByPocId(@RequestParam String tenantId,
+                                                                               @RequestParam String pocId) {
         try {
-            return ResponseEntity.ok(archiveService.getQuicktestsFromLongterm(pocId));
+            return ResponseEntity.ok(archiveService.getQuicktestsFromLongterm(tenantId, pocId));
         } catch (JsonProcessingException e) {
             log.error("Couldn't parse DB entry.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

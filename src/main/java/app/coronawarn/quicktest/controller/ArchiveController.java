@@ -48,8 +48,8 @@ public class ArchiveController {
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_COUNTER, ROLE_LAB})
-    public ResponseEntity<List<ArchiveCipherDtoV1>> findLongtermArchive(@RequestParam String tenantId,
-                                                                        @RequestParam String pocId) {
+    public ResponseEntity<List<ArchiveCipherDtoV1>> findLongtermArchive(@RequestParam(required = false) String tenantId,
+                                                                        @RequestParam(required = false) String pocId) {
         try {
             if (StringUtils.isBlank(tenantId)) {
                 return ResponseEntity.ok(archiveService.getQuicktestsFromLongtermByPocId(pocId));

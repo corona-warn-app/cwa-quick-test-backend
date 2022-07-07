@@ -70,6 +70,19 @@ public class ArchiveRepository {
     }
 
     /**
+     * Returns all entries by pocId.
+     *
+     * @return {@link List} of {@link Archive}
+     */
+    public List<Archive> findAllByPocId(final String pocId) {
+        this.em.getTransaction().begin();
+        TypedQuery<Archive> query = this.em.createQuery("SELECT a FROM Archive a WHERE a.pocId = ?1", Archive.class);
+        final List<Archive> result = query.setParameter(1, pocId).getResultList();
+        this.em.getTransaction().commit();
+        return result;
+    }
+
+    /**
      * Returns all entries by tenantId.
      *
      * @return {@link List} of {@link Archive}

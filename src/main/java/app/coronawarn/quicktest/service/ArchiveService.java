@@ -92,8 +92,13 @@ public class ArchiveService {
         log.info("Finished move to longterm archive.");
     }
 
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String tenantId) throws JsonProcessingException {
-        return getQuicktestsFromLongterm(tenantId, null);
+    /**
+     * Get longterm archives by pocId.
+     */
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByPocId(final String pocId)
+            throws JsonProcessingException {
+        List<Archive> archives = repository.findAllByPocId(createHash(pocId));
+        return decryptEntries(null, pocId, archives);
     }
 
     /**
@@ -101,11 +106,15 @@ public class ArchiveService {
      */
     public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String tenantId, final String pocId)
             throws JsonProcessingException {
-        List<Archive> allByTenantId = repository.findAllByTenantId(createHash(tenantId));
+        List<Archive> archives = repository.findAllByTenantId(createHash(tenantId));
+        return decryptEntries(tenantId, pocId, archives);
+    }
+
+    private List<ArchiveCipherDtoV1> decryptEntries(String tenantId, String pocId, List<Archive> allByTenantId) {
         List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByTenantId.size());
         for (Archive archive : allByTenantId) {
             try {
-                final String context = StringUtils.isBlank(pocId) ? tenantId : pocId;
+                final String context = StringUtils.isAnyBlank(pocId, archive.getPocId()) ? tenantId : pocId;
                 final String decrypt = keyProvider.decrypt(archive.getSecret(), context);
                 final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
                 final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);

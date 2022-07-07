@@ -56,4 +56,28 @@ public class ArchiveController {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+    /**
+     * Endpoint for getting quicktests in longterm archive table by pocId.
+     *
+     * @return QuickTestArchiveListResponse with all found archives
+     */
+    @Operation(
+            summary = "Find quicktests in longterm archive",
+            description = "Returns all found quicktests in longterm archive for search parameters"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful"),
+            @ApiResponse(responseCode = "500", description = "Query failed because of an internal server error")
+    })
+    @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Secured({ROLE_COUNTER, ROLE_LAB})
+    public ResponseEntity<List<ArchiveCipherDtoV1>> findLongtermArchiveByPocId(@RequestParam String pocId) {
+        try {
+            return ResponseEntity.ok(archiveService.getQuicktestsFromLongtermByPocId(pocId));
+        } catch (JsonProcessingException e) {
+            log.error("Couldn't parse DB entry.");
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

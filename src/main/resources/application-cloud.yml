@@ -154,7 +154,7 @@ archive:
     defaultRsa: RSA/ECB/OAEPwithSHA-512andMGF1Padding
     defaultAes: AES/GCM/NoPadding
     AesGcmNoPadding256:
-      iterations: ${QT_ARCHIVE_ITERATIONS:128}
+      iterations: ${QT_ARCHIVE_ITERATIONS:12345}
   vaultTransit:
     folder: ${QT_VAULT_FOLDER:cwa-quick-test-archive}
     dek: ${QT_VAULT_DEK:cwa-quick-test-archive-encryption-key}

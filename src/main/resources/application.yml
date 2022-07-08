@@ -232,3 +232,8 @@ dcc:
   uploadDccJob:
     fixedDelayString: 30000
     lockLimit: 1800000
+
+cancellation:
+  triggerDownloadJob:
+    cron: 0 * * * * *
+    lockLimit: 1800000

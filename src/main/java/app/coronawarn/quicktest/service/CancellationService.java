@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -126,6 +128,17 @@ public class CancellationService {
     }
 
     /**
+     * Set FinalDeletion Flag/Timestamp and persist entity.
+     *
+     * @param cancellation Cancellation Entity
+     * @param dataDeleted  timestamp of complete deletion
+     */
+    public void updateFinalDeletion(Cancellation cancellation, LocalDateTime dataDeleted) {
+        cancellation.setFinalDeletion(dataDeleted);
+        cancellationRepository.save(cancellation);
+    }
+
+    /**
      * Searches in the DB for an existing cancellation entity which download request is older than 48h and not
      * moved_to_longterm_archive.
      *
@@ -135,5 +148,19 @@ public class CancellationService {
         LocalDateTime ldt = LocalDateTime.now().minusHours(48);
         Date expiryDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
         return cancellationRepository.findByMovedToLongtermArchiveIsNullAndDownloadRequestedBefore(ldt);
+    }
+
+    /**
+     * Jobs sets download_requested of all cancellations that end in less then 7 days to current time.
+     */
+    @Scheduled(cron = "${cancellation.triggerDownloadJob.cron}")
+    @SchedulerLock(name = "TriggerDownloadJob", lockAtLeastFor = "PT0S",
+      lockAtMostFor = "${cancellation.triggerDownloadJob.locklimit}")
+    public void triggerDownloadJob() {
+        List<Cancellation> cancellations =
+          cancellationRepository.findByDownloadRequestedIsNullAndFinalDeletionBefore(LocalDateTime.now().plusDays(7));
+        for (Cancellation cancellation : cancellations) {
+            updateDownloadRequested(cancellation,LocalDateTime.now());
+        }
     }
 }

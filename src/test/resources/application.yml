@@ -125,3 +125,8 @@ dcc:
     cron: "*/2 * * * * *"
     lockLimit: 1800000
     fixedDelayString: 30000
+
+cancellation:
+  triggerDownloadJob:
+    cron: "-"
+    lockLimit: 1800000

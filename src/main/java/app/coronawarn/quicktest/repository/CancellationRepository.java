@@ -29,4 +29,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CancellationRepository extends JpaRepository<Cancellation, String> {
     List<Cancellation> findByMovedToLongtermArchiveIsNullAndDownloadRequestedBefore(LocalDateTime expiryDate);
+
+    List<Cancellation> findByDownloadRequestedIsNullAndFinalDeletionBefore(LocalDateTime expiryDate);
 }

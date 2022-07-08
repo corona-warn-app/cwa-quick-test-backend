@@ -163,3 +163,8 @@ archive:
   vaultTransit:
     folder: ${QT_VAULT_FOLDER:cwa-quick-test-archive}
     dek: ${QT_VAULT_DEK:cwa-quick-test-archive-encryption-key}
+
+cancellation:
+  triggerDownloadJob:
+    cron: 0 0/5 * * * *
+    lockLimit: 1800000

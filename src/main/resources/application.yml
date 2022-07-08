@@ -118,6 +118,13 @@ archive:
     #### 1209600 = 2 weeks
     older-than-in-seconds: 60
     chunkSize: 100
+  cancellationArchiveJob:
+    # every minute
+    cron: 0 * * * * *
+    locklimit: 1800000
+    #### 1209600 = 2 weeks
+    older-than-in-seconds: 60
+    chunkSize: 100
   hash:
     algorithm: SHA-256
     pepper: APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn

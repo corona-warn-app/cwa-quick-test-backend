@@ -81,15 +81,31 @@ public class ArchiveService {
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
             quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
-                    .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
-                    .map(this::convertQuickTest)
-                    .map(this::buildArchive)
-                    .map(repository::save)
-                    .map(Archive::getHashedGuid)
-                    .forEach(quickTestArchiveRepository::deleteById);
+              .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
+              .map(this::convertQuickTest)
+              .map(this::buildArchive)
+              .map(repository::save)
+              .map(Archive::getHashedGuid)
+              .forEach(quickTestArchiveRepository::deleteById);
         } else {
             log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
         }
+        log.info("Finished move to longterm archive.");
+    }
+
+    /**
+     * Moves all entries to the archive for a given tenantId.
+     */
+    @Transactional
+    public void moveToArchiveByTenantId(String tenantId) {
+        final int chunkSize = properties.getCancellationArchiveJob().getChunkSize();
+        quickTestArchiveRepository.findAllByTenantId(tenantId, PageRequest.of(0, chunkSize))
+          .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
+          .map(this::convertQuickTest)
+          .map(this::buildArchive)
+          .map(repository::save)
+          .map(Archive::getHashedGuid)
+          .forEach(quickTestArchiveRepository::deleteById);
         log.info("Finished move to longterm archive.");
     }
 
@@ -183,11 +199,11 @@ public class ArchiveService {
     String buildIdentifier(final String birthday, final String lastname) {
         final String lastnameId = StringUtils.rightPad(lastname, 2, 'X');
         final String identifier = String.format("%s%s",
-                LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
-                lastnameId.substring(0, 2).toUpperCase());
+          LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
+          lastnameId.substring(0, 2).toUpperCase());
         return createHash(identifier);
     }
-    
+
     String createHash(String in) {
         final MessageDigest digest = buildMessageDigest(properties.getHash().getAlgorithm());
         digest.reset();

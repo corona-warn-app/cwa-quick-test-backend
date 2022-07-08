@@ -23,6 +23,9 @@ package app.coronawarn.quicktest.service;
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.repository.CancellationRepository;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -122,4 +125,15 @@ public class CancellationService {
         cancellationRepository.save(cancellation);
     }
 
+    /**
+     * Searches in the DB for an existing cancellation entity which download request is older than 48h and not
+     * moved_to_longterm_archive.
+     *
+     * @return List holding all entities found.
+     */
+    public List<Cancellation> getReadyToArchive() {
+        LocalDateTime ldt = LocalDateTime.now().minusHours(48);
+        Date expiryDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        return cancellationRepository.findByMovedToLongtermArchiveIsNullAndDownloadRequestedBefore(ldt);
+    }
 }

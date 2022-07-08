@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.quicktest.archive.domain.Archive;
 import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
 import app.coronawarn.quicktest.archive.repository.ArchiveRepository;
@@ -31,10 +32,8 @@ import app.coronawarn.quicktest.service.cryption.AesCryption;
 import app.coronawarn.quicktest.service.cryption.CryptionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -133,6 +132,73 @@ class ArchiveServiceTest {
         assertThat(deletedTest).isEmpty();
     }
 
+    @Test
+    void moveToArchiveByTenantId() throws Exception {
+        // GIVEN
+        final int initialArchive = this.archiveRepository.findAll().size();
+        final QuickTestArchive test = this.buildCancellationQuickTestArchive();
+        this.quickTestArchiveRepository.saveAndFlush(test);
+        // WHEN
+        this.archiveService.moveToArchiveByTenantId("tenant_id2");
+        // THEN
+        final List<Archive> results = this.archiveRepository.findAll();
+        assertThat(results).isNotNull().hasSize(initialArchive + 1);
+        // AND result
+        final Archive result = results.stream().filter(it -> test.getHashedGuid().equals(it.getHashedGuid())).findFirst().orElse(null);
+        assertThat(result).isNotNull();
+        assertThat(result.getHashedGuid()).isEqualTo(test.getHashedGuid());
+        assertThat(result.getIdentifier()).isEqualTo(this.archiveService
+          .buildIdentifier(test.getBirthday(), test.getLastName()));
+        assertThat(result.getTenantId()).isEqualTo(this.archiveService.createHash(test.getTenantId()));
+        assertThat(result.getPocId()).isEqualTo(this.archiveService.createHash(test.getPocId()));
+        assertThat(result.getCreatedAt()).isAfterOrEqualTo(LocalDateTime.now().minusMinutes(5));
+        assertThat(result.getUpdatedAt()).isAfterOrEqualTo(LocalDateTime.now().minusMinutes(5));
+        assertThat(result.getVersion()).isNotNull().isNotNegative();
+        // AND RSA encryption
+        assertThat(result.getSecret()).isNotNull();
+        final String secret = this.keyProvider.decrypt(result.getSecret(), result.getPocId());
+        assertThat(secret).isNotBlank();
+        // AND AES encryption
+        assertThat(result.getCiphertext()).isNotNull();
+        final AesCryption aesCryption = this.cryptionService.getAesCryption();
+        final String json = aesCryption.decrypt(secret, result.getCiphertext());
+        assertThat(json).isNotBlank().contains("ArchiveCipherDtoV1");
+        assertThat(result.getAlgorithmAes()).isEqualTo(aesCryption.getAlgorithm());
+        // AND DTO (Ciphertext)
+        final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
+        assertThat(dto).isNotNull();
+        assertThat(dto.getClassName()).isEqualTo(ArchiveCipherDtoV1.class.getSimpleName());
+        assertThat(dto.getHashedGuid()).isEqualTo(test.getHashedGuid());
+        assertThat(dto.getShortHashedGuid()).isEqualTo(test.getShortHashedGuid());
+        assertThat(dto.getTenantId()).isEqualTo(test.getTenantId());
+        assertThat(dto.getPocId()).isEqualTo(test.getPocId());
+        assertThat(dto.getCreatedAt()).isEqualToIgnoringNanos(test.getCreatedAt());
+        assertThat(dto.getUpdatedAt()).isEqualToIgnoringNanos(test.getUpdatedAt());
+        assertThat(dto.getVersion()).isEqualTo(test.getVersion());
+        assertThat(dto.getConfirmationCwa()).isEqualTo(test.getConfirmationCwa());
+        assertThat(dto.getTestResult()).isEqualTo(test.getTestResult());
+        assertThat(dto.getPrivacyAgreement()).isEqualTo(test.getPrivacyAgreement());
+        assertThat(dto.getLastName()).isEqualTo(test.getLastName());
+        assertThat(dto.getFirstName()).isEqualTo(test.getFirstName());
+        assertThat(dto.getEmail()).isEqualTo(test.getEmail());
+        assertThat(dto.getPhoneNumber()).isEqualTo(test.getPhoneNumber());
+        assertThat(dto.getSex()).isEqualTo(test.getSex());
+        assertThat(dto.getStreet()).isEqualTo(test.getStreet());
+        assertThat(dto.getHouseNumber()).isEqualTo(test.getHouseNumber());
+        assertThat(dto.getZipCode()).isEqualTo(test.getZipCode());
+        assertThat(dto.getCity()).isEqualTo(test.getCity());
+        assertThat(dto.getTestBrandId()).isEqualTo(test.getTestBrandId());
+        assertThat(dto.getTestBrandName()).isEqualTo(test.getTestBrandName());
+        assertThat(dto.getBirthday()).isEqualTo(test.getBirthday());
+        assertThat(dto.getTestResultServerHash()).isEqualTo(test.getTestResultServerHash());
+        assertThat(dto.getDcc()).isEqualTo(test.getDcc());
+        assertThat(dto.getAdditionalInfo()).isEqualTo(test.getAdditionalInfo());
+        assertThat(dto.getGroupName()).isEqualTo(test.getGroupName());
+        // AND deleted QuickTestArchive
+        final Optional<QuickTestArchive> deletedTest = this.quickTestArchiveRepository.findById(test.getHashedGuid());
+        assertThat(deletedTest).isEmpty();
+    }
+
     private QuickTestArchive buildQuickTestArchive() {
         QuickTestArchive qta = new QuickTestArchive();
         qta.setShortHashedGuid("27a9ac47");
@@ -161,6 +227,37 @@ class ArchiveServiceTest {
         qta.setDcc("dcc");
         qta.setAdditionalInfo("additional_info");
         qta.setGroupName("group_name");
+        return qta;
+    }
+
+    private QuickTestArchive buildCancellationQuickTestArchive() {
+        QuickTestArchive qta = new QuickTestArchive();
+        qta.setShortHashedGuid("27a9ac48");
+        qta.setHashedGuid("27a9ac470b7832857ad03b25dc96032e0a1056ff4f5afb538de4994e0a63d228");
+        qta.setTenantId("tenant_id2");
+        qta.setPocId("poc_id2");
+        qta.setCreatedAt(LocalDateTime.now().minusMonths(3));
+        qta.setUpdatedAt(LocalDateTime.now().minusMonths(2));
+        qta.setConfirmationCwa(Boolean.TRUE);
+        qta.setTestResult(Short.valueOf("5"));
+        qta.setPrivacyAgreement(Boolean.TRUE);
+        qta.setLastName("last_name2");
+        qta.setFirstName("first_name2");
+        qta.setEmail("email2");
+        qta.setPhoneNumber("phone_number2");
+        qta.setSex(Sex.MALE);
+        qta.setStreet("street2");
+        qta.setHouseNumber("house_number2");
+        qta.setZipCode("12345");
+        qta.setCity("city2");
+        qta.setTestBrandId("test_brand_id2");
+        qta.setTestBrandName("test_brand_name2");
+        qta.setBirthday("2000-01-02");
+        qta.setPdf("PDF".getBytes());
+        qta.setTestResultServerHash("test_result_server_hash2");
+        qta.setDcc("dcc2");
+        qta.setAdditionalInfo("additional_info2");
+        qta.setGroupName("group_name2");
         return qta;
     }
 }

@@ -20,10 +20,15 @@
 
 package app.coronawarn.quicktest.service;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.repository.CancellationRepository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -60,12 +65,12 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION, createdCancellation.get().getFinalDeletion());
         Assertions.assertNotNull(createdCancellation.get().getCreatedAt());
         Assertions.assertNotNull(createdCancellation.get().getUpdatedAt());
-        Assertions.assertNull(createdCancellation.get().getCsvCreated());
-        Assertions.assertNull(createdCancellation.get().getDataDeleted());
-        Assertions.assertNull(createdCancellation.get().getBucketObjectId());
-        Assertions.assertNull(createdCancellation.get().getDownloadLinkRequested());
-        Assertions.assertNull(createdCancellation.get().getMovedToLongtermArchive());
-        Assertions.assertNull(createdCancellation.get().getDownloadRequested());
+        assertNull(createdCancellation.get().getCsvCreated());
+        assertNull(createdCancellation.get().getDataDeleted());
+        assertNull(createdCancellation.get().getBucketObjectId());
+        assertNull(createdCancellation.get().getDownloadLinkRequested());
+        assertNull(createdCancellation.get().getMovedToLongtermArchive());
+        assertNull(createdCancellation.get().getDownloadRequested());
 
         cancellationService.createCancellation(PARTNER_ID, FINAL_DELETION.plusDays(1));
         Assertions.assertEquals(1, cancellationRepository.count());
@@ -75,12 +80,12 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION, createdCancellation.get().getFinalDeletion());
         Assertions.assertNotNull(createdCancellation.get().getCreatedAt());
         Assertions.assertNotNull(createdCancellation.get().getUpdatedAt());
-        Assertions.assertNull(createdCancellation.get().getCsvCreated());
-        Assertions.assertNull(createdCancellation.get().getDataDeleted());
-        Assertions.assertNull(createdCancellation.get().getBucketObjectId());
-        Assertions.assertNull(createdCancellation.get().getDownloadLinkRequested());
-        Assertions.assertNull(createdCancellation.get().getMovedToLongtermArchive());
-        Assertions.assertNull(createdCancellation.get().getDownloadRequested());
+        assertNull(createdCancellation.get().getCsvCreated());
+        assertNull(createdCancellation.get().getDataDeleted());
+        assertNull(createdCancellation.get().getBucketObjectId());
+        assertNull(createdCancellation.get().getDownloadLinkRequested());
+        assertNull(createdCancellation.get().getMovedToLongtermArchive());
+        assertNull(createdCancellation.get().getDownloadRequested());
     }
 
     @Test
@@ -93,12 +98,12 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION, createdCancellation.get().getFinalDeletion());
         Assertions.assertNotNull(createdCancellation.get().getCreatedAt());
         Assertions.assertNotNull(createdCancellation.get().getUpdatedAt());
-        Assertions.assertNull(createdCancellation.get().getCsvCreated());
-        Assertions.assertNull(createdCancellation.get().getDataDeleted());
-        Assertions.assertNull(createdCancellation.get().getBucketObjectId());
-        Assertions.assertNull(createdCancellation.get().getDownloadLinkRequested());
-        Assertions.assertNull(createdCancellation.get().getMovedToLongtermArchive());
-        Assertions.assertNull(createdCancellation.get().getDownloadRequested());
+        assertNull(createdCancellation.get().getCsvCreated());
+        assertNull(createdCancellation.get().getDataDeleted());
+        assertNull(createdCancellation.get().getBucketObjectId());
+        assertNull(createdCancellation.get().getDownloadLinkRequested());
+        assertNull(createdCancellation.get().getMovedToLongtermArchive());
+        assertNull(createdCancellation.get().getDownloadRequested());
 
         Assertions.assertTrue(cancellationService.getByPartnerId("NOTEXISTINGPARTNERID").isEmpty());
     }
@@ -114,11 +119,11 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION.truncatedTo(ChronoUnit.MINUTES), updatedCancellation.get().getFinalDeletion().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
         Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
-        Assertions.assertNull(updatedCancellation.get().getCsvCreated());
-        Assertions.assertNull(updatedCancellation.get().getDataDeleted());
-        Assertions.assertNull(updatedCancellation.get().getBucketObjectId());
-        Assertions.assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        Assertions.assertNull(updatedCancellation.get().getMovedToLongtermArchive());
+        assertNull(updatedCancellation.get().getCsvCreated());
+        assertNull(updatedCancellation.get().getDataDeleted());
+        assertNull(updatedCancellation.get().getBucketObjectId());
+        assertNull(updatedCancellation.get().getDownloadLinkRequested());
+        assertNull(updatedCancellation.get().getMovedToLongtermArchive());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getDownloadRequested());
     }
 
@@ -133,11 +138,11 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION.truncatedTo(ChronoUnit.MINUTES), updatedCancellation.get().getFinalDeletion().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
         Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
-        Assertions.assertNull(updatedCancellation.get().getCsvCreated());
-        Assertions.assertNull(updatedCancellation.get().getDataDeleted());
-        Assertions.assertNull(updatedCancellation.get().getBucketObjectId());
-        Assertions.assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        Assertions.assertNull(updatedCancellation.get().getDownloadRequested());
+        assertNull(updatedCancellation.get().getCsvCreated());
+        assertNull(updatedCancellation.get().getDataDeleted());
+        assertNull(updatedCancellation.get().getBucketObjectId());
+        assertNull(updatedCancellation.get().getDownloadLinkRequested());
+        assertNull(updatedCancellation.get().getDownloadRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getMovedToLongtermArchive());
     }
 
@@ -152,11 +157,11 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION.truncatedTo(ChronoUnit.MINUTES), updatedCancellation.get().getFinalDeletion().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
         Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
-        Assertions.assertNull(updatedCancellation.get().getMovedToLongtermArchive());
-        Assertions.assertNull(updatedCancellation.get().getDataDeleted());
+        assertNull(updatedCancellation.get().getMovedToLongtermArchive());
+        assertNull(updatedCancellation.get().getDataDeleted());
         Assertions.assertEquals(PARTNER_ID + ".csv", updatedCancellation.get().getBucketObjectId());
-        Assertions.assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        Assertions.assertNull(updatedCancellation.get().getDownloadRequested());
+        assertNull(updatedCancellation.get().getDownloadLinkRequested());
+        assertNull(updatedCancellation.get().getDownloadRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getCsvCreated());
     }
 
@@ -171,11 +176,11 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION.truncatedTo(ChronoUnit.MINUTES), updatedCancellation.get().getFinalDeletion().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
         Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
-        Assertions.assertNull(updatedCancellation.get().getCsvCreated());
-        Assertions.assertNull(updatedCancellation.get().getDataDeleted());
-        Assertions.assertNull(updatedCancellation.get().getBucketObjectId());
-        Assertions.assertNull(updatedCancellation.get().getDownloadRequested());
-        Assertions.assertNull(updatedCancellation.get().getMovedToLongtermArchive());
+        assertNull(updatedCancellation.get().getCsvCreated());
+        assertNull(updatedCancellation.get().getDataDeleted());
+        assertNull(updatedCancellation.get().getBucketObjectId());
+        assertNull(updatedCancellation.get().getDownloadRequested());
+        assertNull(updatedCancellation.get().getMovedToLongtermArchive());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getDownloadLinkRequested());
     }
 
@@ -190,11 +195,38 @@ class CancellationServiceTest {
         Assertions.assertEquals(FINAL_DELETION.truncatedTo(ChronoUnit.MINUTES), updatedCancellation.get().getFinalDeletion().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
         Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
-        Assertions.assertNull(updatedCancellation.get().getCsvCreated());
-        Assertions.assertNull(updatedCancellation.get().getMovedToLongtermArchive());
-        Assertions.assertNull(updatedCancellation.get().getBucketObjectId());
-        Assertions.assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        Assertions.assertNull(updatedCancellation.get().getDownloadRequested());
+        assertNull(updatedCancellation.get().getCsvCreated());
+        assertNull(updatedCancellation.get().getMovedToLongtermArchive());
+        assertNull(updatedCancellation.get().getBucketObjectId());
+        assertNull(updatedCancellation.get().getDownloadLinkRequested());
+        assertNull(updatedCancellation.get().getDownloadRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getDataDeleted());
+    }
+
+    @Test
+    void testGetReadyToArchive() {
+        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, FINAL_DELETION);
+        assertNull(cancellation.getMovedToLongtermArchive());
+        cancellationService.updateDownloadRequested(cancellation, LocalDateTime.now().minusHours(48));
+        List<Cancellation> results = cancellationService.getReadyToArchive();
+        assertFalse(results.isEmpty());
+    }
+
+    @Test
+    void testGetReadyToArchiveYoungerThen48h() {
+        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, FINAL_DELETION);
+        assertNull(cancellation.getMovedToLongtermArchive());
+        cancellationService.updateDownloadRequested(cancellation, LocalDateTime.now());
+        List<Cancellation> results = cancellationService.getReadyToArchive();
+        assertTrue(results.isEmpty());
+    }
+
+    @Test
+    void testGetReadyToArchiveMovedNotNull() {
+        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, FINAL_DELETION);
+        cancellationService.updateDownloadRequested(cancellation, LocalDateTime.now().minusHours(48));
+        cancellationService.updateMovedToLongterm(cancellation, LocalDateTime.now());
+        List<Cancellation> results = cancellationService.getReadyToArchive();
+        assertTrue(results.isEmpty());
     }
 }

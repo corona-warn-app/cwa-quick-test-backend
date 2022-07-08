@@ -48,4 +48,6 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
     );
 
     Stream<QuickTestArchiveDataView> findAllByUpdatedAtBefore(LocalDateTime updatedAt, Pageable pageable);
+
+    Stream<QuickTestArchiveDataView> findAllByTenantId(String tenantId, Pageable pageable);
 }

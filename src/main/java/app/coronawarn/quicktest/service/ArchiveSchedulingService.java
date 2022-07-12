@@ -1,6 +1,18 @@
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
+import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.StringWriter;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +28,9 @@ public class ArchiveSchedulingService {
 
     private final ArchiveService archiveService;
     private final CancellationService cancellationService;
+
+    private final CsvUploadConfig s3Config;
+    private final AmazonS3 s3Client;
 
     /**
      * Scheduler used for moving quicktests from qt archive to longterm.
@@ -44,5 +59,41 @@ public class ArchiveSchedulingService {
             cancellationService.updateMovedToLongterm(cancellation, LocalDateTime.now());
         }
         log.info("Completed Job: cancellationArchiveJob");
+    }
+
+    /**
+     * Scheduler used for moving longterm archives to bucket as a csv.
+     */
+    @Scheduled(cron = "${archive.csvUploadJob.cron}")
+    @SchedulerLock(name = "CsvUploadJob", lockAtLeastFor = "PT0S",
+      lockAtMostFor = "${archive.csvUploadJob.locklimit}")
+    public void csvUploadJob() {
+        log.info("Starting Job: csvUploadJob");
+        List<Cancellation> cancellations = cancellationService.getReadyToUpload();
+        for (Cancellation cancellation : cancellations) {
+            try {
+                List<ArchiveCipherDtoV1> quicktests =
+                  archiveService.getQuicktestsFromLongtermByTenantId(cancellation.getPartnerId());
+                StringWriter stringWriter = new StringWriter();
+                CSVWriter csvWriter =
+                  new CSVWriter(stringWriter, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+                StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
+                  new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
+                    .build();
+                beanToCsv.write(quicktests);
+                InputStream inputStream = new ByteArrayInputStream(stringWriter.toString().getBytes());
+                String id = cancellation.getPartnerId() + ".csv";
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(stringWriter.toString().getBytes().length);
+                s3Client.putObject(s3Config.getBucketName(), id, inputStream, metadata);
+                log.info("File stored to S3 with id {}", id);
+                cancellationService.updateCsvCreated(cancellation, LocalDateTime.now(), id);
+            } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+                log.error("Could not convert Quicktest to CSV: " + e.getLocalizedMessage());
+                throw new RuntimeException(e);
+            }
+        }
+        log.info("Completed Job: csvUploadJob");
     }
 }

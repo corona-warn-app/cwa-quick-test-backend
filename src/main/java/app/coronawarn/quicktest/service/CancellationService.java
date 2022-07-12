@@ -151,6 +151,16 @@ public class CancellationService {
     }
 
     /**
+     * Searches in the DB for an existing cancellation entity which moved_to_longterm_archive is not null but
+     * csv_created is null.
+     *
+     * @return List holding all entities found.
+     */
+    public List<Cancellation> getReadyToUpload() {
+        return cancellationRepository.findByMovedToLongtermArchiveNotNullAndCsvCreatedIsNull();
+    }
+
+    /**
      * Jobs sets download_requested of all cancellations that end in less then 7 days to current time.
      */
     @Scheduled(cron = "${cancellation.triggerDownloadJob.cron}")
@@ -160,7 +170,7 @@ public class CancellationService {
         List<Cancellation> cancellations =
           cancellationRepository.findByDownloadRequestedIsNullAndFinalDeletionBefore(LocalDateTime.now().plusDays(7));
         for (Cancellation cancellation : cancellations) {
-            updateDownloadRequested(cancellation,LocalDateTime.now());
+            updateDownloadRequested(cancellation, LocalDateTime.now());
         }
     }
 }

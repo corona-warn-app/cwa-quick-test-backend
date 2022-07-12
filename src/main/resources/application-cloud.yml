@@ -149,6 +149,11 @@ archive:
     locklimit: 1800000
     #### 2419200 = 4 weeks, 1209600 = 2 weeks
     older-than-in-seconds: 1209600
+  csvUploadJob:
+    cron: 0 0/5 * * * *
+    locklimit: 1800000
+    #### 2419200 = 4 weeks, 1209600 = 2 weeks
+    older-than-in-seconds: 1209600
   hash:
     algorithm: SHA-256
     pepper: ${QT_ARCHIVE_PEPPER:APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn}
@@ -168,3 +173,15 @@ cancellation:
   triggerDownloadJob:
     cron: 0 0/5 * * * *
     lockLimit: 1800000
+
+s3:
+  accessKey: ${S3_ACCESS_KEY}
+  bucketName: ${S3_BUCKET_NAME}
+  proxy:
+    enabled: false
+    host:
+    port: -1
+  region:
+    endpoint: ${S3_REGION_ENDPOINT}
+    name: ${S3_REGION_NAME}
+  secretKey: ${S3_SECRET_KEY}

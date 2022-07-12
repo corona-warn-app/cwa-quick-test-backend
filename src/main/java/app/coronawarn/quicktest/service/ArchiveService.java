@@ -129,6 +129,26 @@ public class ArchiveService {
         return dtos;
     }
 
+    /**
+     * Get longterm archives by tenantId.
+     */
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByTenantId(final String tenantId) {
+        List<Archive> allByPocId = repository.findAllByTenantId(createHash(tenantId));
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
+        for (Archive archive : allByPocId) {
+            try {
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
+                final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
+                final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
+                dtos.add(dto);
+            } catch (final Exception e) {
+                log.warn("Could not decrypt archive {}", archive.getHashedGuid());
+                log.warn("Cause: {}", e.getLocalizedMessage());
+            }
+        }
+        return dtos;
+    }
+
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {
         final ArchiveCipherDtoV1 archive = new ArchiveCipherDtoV1();
 

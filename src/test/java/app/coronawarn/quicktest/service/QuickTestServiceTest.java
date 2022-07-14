@@ -27,11 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTest;
@@ -153,6 +149,54 @@ public class QuickTestServiceTest {
         verify(qs, times(1)).addStatistics(any());
         verify(quickTestLogRepository).save(captor.capture());
         assertNotEquals(captor.getValue().getCreatedAt(), pendingTest.getCreatedAt());
+    }
+
+    @Test
+    void deleteNonDccTests() throws ResponseStatusException, IOException {
+        QuickTestService qs = spy(quickTestService);
+        Map<String, String> ids = new HashMap<>();
+        QuickTest pendingTest = createPendingTest();
+        pendingTest.setDccConsent(false);
+        pendingTest.setCreatedAt(Utilities.getCurrentLocalDateTimeUtc().minusMinutes(5));
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
+                .thenReturn(pendingTest);
+        when(pdf.generatePdf(any(), any(), any()))
+                .thenReturn(new ByteArrayOutputStream());
+
+        QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
+        quickTestUpdateRequest.setTestBrandId("testBrandId");
+        quickTestUpdateRequest.setResult((short) 6);
+        quickTestUpdateRequest.setTestBrandName("TestBrandName");
+        qs.updateQuickTest(ids,
+                "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
+                quickTestUpdateRequest,
+                new ArrayList<>(),
+                "User");
+        verify(quickTestRepository, times(1)).deleteById(pendingTest.getHashedGuid());
+    }
+
+    @Test
+    void keepDccTestsInQtTable() throws ResponseStatusException, IOException {
+        QuickTestService qs = spy(quickTestService);
+        Map<String, String> ids = new HashMap<>();
+        QuickTest pendingTest = createPendingTest();
+        pendingTest.setDccConsent(true);
+        pendingTest.setCreatedAt(Utilities.getCurrentLocalDateTimeUtc().minusMinutes(5));
+        when(quickTestRepository.findByTenantIdAndPocIdAndShortHashedGuid(any(), any(), any()))
+                .thenReturn(pendingTest);
+        when(pdf.generatePdf(any(), any(), any()))
+                .thenReturn(new ByteArrayOutputStream());
+
+        QuickTestUpdateRequest quickTestUpdateRequest = new QuickTestUpdateRequest();
+        quickTestUpdateRequest.setDccTestManufacturerId("testBrandId");
+        quickTestUpdateRequest.setResult((short) 6);
+        quickTestUpdateRequest.setDccTestManufacturerDescription("TestBrandName");
+        qs.updateQuickTest(ids,
+                "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c4",
+                quickTestUpdateRequest,
+                new ArrayList<>(),
+                "User");
+        verify(quickTestRepository, never()).deleteById(pendingTest.getHashedGuid());
     }
 
     @Test

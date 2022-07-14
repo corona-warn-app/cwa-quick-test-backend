@@ -185,3 +185,4 @@ s3:
     endpoint: ${S3_REGION_ENDPOINT}
     name: ${S3_REGION_NAME}
   secretKey: ${S3_SECRET_KEY}
+  expiration: 3600

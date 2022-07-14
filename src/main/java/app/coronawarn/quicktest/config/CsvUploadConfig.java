@@ -11,10 +11,13 @@ public class CsvUploadConfig {
     private String accessKey;
     private String secretKey;
     private String bucketName;
+    private int expiration;
 
     private Region region;
 
     private ProxyConfig proxy;
+
+
 
     @Data
     public static class Region {

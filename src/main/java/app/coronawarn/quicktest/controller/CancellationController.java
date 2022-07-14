@@ -3,15 +3,22 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TERMINATOR;
 
+import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.model.cancellation.CancellationRequest;
 import app.coronawarn.quicktest.service.CancellationService;
 import app.coronawarn.quicktest.service.KeycloakService;
+import com.amazonaws.HttpMethod;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.net.URL;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +43,9 @@ import org.springframework.web.server.ResponseStatusException;
 @RequiredArgsConstructor
 public class CancellationController {
 
+    private final CsvUploadConfig s3Config;
+
+    private final AmazonS3 s3Client;
 
     private final CancellationService cancellationService;
 
@@ -115,6 +125,48 @@ public class CancellationController {
             } else {
                 throw new ResponseStatusException(
                   HttpStatus.CONFLICT, "Download already requested previously.");
+            }
+        } else {
+            throw new ResponseStatusException(
+              HttpStatus.NOT_FOUND, "No cancellation found for given PartnerId.");
+        }
+    }
+
+    /**
+     * Endpoint for receiving download link of tenant.
+     *
+     * @return Download link of csv for tenant
+     */
+    @Operation(
+      summary = "Returns Download link of csv for tenant",
+      description = "Returns Download link of csv with all quicktests for tenant."
+    )
+    @ApiResponses(value = {
+      @ApiResponse(responseCode = "200", description = "Successful"),
+      @ApiResponse(responseCode = "404", description = "Download Link for given PartnerId not yet available, "
+        + "cancellation might not have been processed yet."),
+      @ApiResponse(responseCode = "404", description = "No cancellation found for given PartnerId.")
+    })
+    @GetMapping(value = "/download", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<URL> getCsvLink(KeycloakAuthenticationToken token) {
+        GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getId());
+        if (cancellation.isPresent()) {
+            if (cancellation.get().getCsvCreated() != null && cancellation.get().getBucketObjectId() != null) {
+                long expTimeMillis = Instant.now().toEpochMilli();
+                expTimeMillis += s3Config.getExpiration();
+                Date expiration = new Date();
+                expiration.setTime(expTimeMillis);
+                GeneratePresignedUrlRequest generatePresignedUrlRequest =
+                  new GeneratePresignedUrlRequest(s3Config.getBucketName(), cancellation.get().getBucketObjectId())
+                    .withMethod(HttpMethod.GET)
+                    .withExpiration(expiration);
+                return ResponseEntity.ok(s3Client.generatePresignedUrl(generatePresignedUrlRequest));
+            } else {
+                throw new ResponseStatusException(
+                  HttpStatus.BAD_REQUEST,
+                  "Download Link for given PartnerId not yet available, "
+                    + "cancellation might not have been processed yet.");
             }
         } else {
             throw new ResponseStatusException(

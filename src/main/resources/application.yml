@@ -256,3 +256,4 @@ s3:
     endpoint: http://localhost:9000
     name: eu-de
   secretKey: minioadmin
+  expiration: 3600

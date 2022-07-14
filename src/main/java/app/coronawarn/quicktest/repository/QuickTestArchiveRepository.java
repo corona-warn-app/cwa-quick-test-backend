@@ -25,8 +25,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
+import javax.transaction.Transactional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchive, String> {
 
@@ -48,4 +52,9 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
     );
 
     Stream<QuickTestArchiveDataView> findAllByUpdatedAtBefore(LocalDateTime updatedAt, Pageable pageable);
+
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM QuickTestArchive q WHERE q.hashedGuid = :hashedGuid")
+    int deleteByHashedGuid(@Param("hashedGuid") String hashedGuid);
 }

@@ -85,7 +85,7 @@ public class ArchiveService {
                     .map(this::buildArchive)
                     .map(repository::save)
                     .map(Archive::getHashedGuid)
-                    .forEach(quickTestArchiveRepository::deleteById);
+                    .forEach(quickTestArchiveRepository::deleteByHashedGuid);
         } else {
             log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
         }

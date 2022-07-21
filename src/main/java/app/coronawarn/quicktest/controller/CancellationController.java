@@ -90,11 +90,15 @@ public class CancellationController {
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Cancellation> getCancellation(KeycloakAuthenticationToken token) {
+        log.info("Cancellation get received");
         GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
+        log.info("GroupRepresentation: Id:" + groupRepresentation.getId() + " Name: " + groupRepresentation.getName());
         Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getId());
         if (cancellation.isPresent()) {
+            log.info("Cancellation FOUND");
             return ResponseEntity.ok(cancellation.get());
         } else {
+            log.info("Cancellation NOT FOUND");
             throw new ResponseStatusException(
               HttpStatus.NOT_FOUND, "No cancellation found for given PartnerId.");
         }

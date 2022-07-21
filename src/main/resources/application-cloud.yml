@@ -172,7 +172,7 @@ archive:
 cancellation:
   triggerDownloadJob:
     cron: 0 0/5 * * * *
-    lockLimit: 1800000
+    locklimit: 1800000
 
 s3:
   accessKey: ${S3_ACCESS_KEY}

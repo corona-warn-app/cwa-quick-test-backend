@@ -243,7 +243,7 @@ dcc:
 cancellation:
   triggerDownloadJob:
     cron: 0 * * * * *
-    lockLimit: 1800000
+    locklimit: 1800000
 
 s3:
   accessKey: minioadmin

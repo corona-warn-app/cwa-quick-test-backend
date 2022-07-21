@@ -93,7 +93,7 @@ public class CancellationController {
         log.info("Cancellation get received");
         GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
         log.info("GroupRepresentation: Id:" + groupRepresentation.getId() + " Name: " + groupRepresentation.getName());
-        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getId());
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getName());
         if (cancellation.isPresent()) {
             log.info("Cancellation FOUND");
             return ResponseEntity.ok(cancellation.get());
@@ -120,7 +120,7 @@ public class CancellationController {
     @Secured({ROLE_ADMIN})
     public ResponseEntity<Void> requestDownload() {
         GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
-        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getId());
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getName());
         if (cancellation.isPresent()) {
             if (cancellation.get().getDownloadRequested() == null) {
                 cancellationService.updateDownloadRequested(cancellation.get(), LocalDateTime.now());
@@ -154,7 +154,7 @@ public class CancellationController {
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<URL> getCsvLink(KeycloakAuthenticationToken token) {
         GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
-        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getId());
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getName());
         if (cancellation.isPresent()) {
             if (cancellation.get().getCsvCreated() != null && cancellation.get().getBucketObjectId() != null) {
                 long expTimeMillis = Instant.now().toEpochMilli();

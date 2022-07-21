@@ -143,7 +143,7 @@ public class CancellationController {
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successful"),
-      @ApiResponse(responseCode = "404", description = "Download Link for given PartnerId not yet available, "
+      @ApiResponse(responseCode = "400", description = "Download Link for given PartnerId not yet available, "
         + "cancellation might not have been processed yet."),
       @ApiResponse(responseCode = "404", description = "No cancellation found for given PartnerId.")
     })

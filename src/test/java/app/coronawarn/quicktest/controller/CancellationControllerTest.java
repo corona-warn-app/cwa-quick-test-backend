@@ -76,9 +76,14 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
     private final static String userId = "user-id";
     private final static String rootGroupId = "0".repeat(20);
+
+    private final static String rootGroupName = "c".repeat(20);
+
     private final static String rootGroupPath = "root-group-path";
     private final static String realmId = "REALM";
     private final static String subGroupId = "a".repeat(20);
+
+    private final static String subGroupName = "b".repeat(20);
     private final static String subGroupPath = "sub-group-path";
     private final GroupRepresentation rootGroup = new GroupRepresentation();
     private final GroupRepresentation subGroup = new GroupRepresentation();
@@ -103,8 +108,10 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         user1.setFirstName("firstname");
 
         subGroup.setId(subGroupId);
+        subGroup.setName(subGroupName);
         subGroup.setPath(subGroupPath);
         rootGroup.setId(rootGroupId);
+        rootGroup.setName(rootGroupName);
         rootGroup.setPath(rootGroupPath);
         rootGroup.setSubGroups(List.of(subGroup));
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup));
@@ -142,7 +149,7 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     void createCancellation() throws Exception {
         CancellationRequest request = new CancellationRequest();
         List<String> ids = new ArrayList<>();
-        ids.add(rootGroupId);
+        ids.add(rootGroupName);
         request.setPartnerIds(ids);
         request.setFinalDeletion(LocalDateTime.now());
         String json = mapper.writeValueAsString(request);

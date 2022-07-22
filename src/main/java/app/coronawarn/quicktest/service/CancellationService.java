@@ -20,8 +20,10 @@
 
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.repository.CancellationRepository;
+import com.amazonaws.services.s3.AmazonS3;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
@@ -38,6 +40,12 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class CancellationService {
     private final CancellationRepository cancellationRepository;
+
+    private final ArchiveService archiveService;
+
+    private final AmazonS3 s3Client;
+
+    private final CsvUploadConfig s3Config;
 
     /**
      * Create a new Cancellation Entity for given PartnerId.
@@ -161,16 +169,36 @@ public class CancellationService {
     }
 
     /**
-     * Jobs sets download_requested of all cancellations that end in less then 7 days to current time.
+     * Job sets download_requested of all cancellations that end in less then 7 days to current time.
      */
     @Scheduled(cron = "${cancellation.triggerDownloadJob.cron}")
     @SchedulerLock(name = "TriggerDownloadJob", lockAtLeastFor = "PT0S",
       lockAtMostFor = "${cancellation.triggerDownloadJob.locklimit}")
     public void triggerDownloadJob() {
+        log.info("Starting Job: triggerDownloadJob");
         List<Cancellation> cancellations =
           cancellationRepository.findByDownloadRequestedIsNullAndFinalDeletionBefore(LocalDateTime.now().plusDays(7));
         for (Cancellation cancellation : cancellations) {
             updateDownloadRequested(cancellation, LocalDateTime.now());
         }
+        log.info("Completed Job: triggerDownloadJob");
+    }
+
+    /**
+     * Final job to delete data.
+     */
+    @Scheduled(cron = "${cancellation.finalDeleteJob.cron}")
+    @SchedulerLock(name = "FinalDeleteJob", lockAtLeastFor = "PT0S",
+      lockAtMostFor = "${cancellation.finalDeleteJob.locklimit}")
+    public void finalDeleteJob() {
+        log.info("Starting Job: finalDeleteJob");
+        List<Cancellation> cancellations =
+          cancellationRepository.findByFinalDeletionBefore(LocalDateTime.now());
+        for (Cancellation cancellation : cancellations) {
+            archiveService.deleteByTenantId(cancellation.getPartnerId());
+            String id = cancellation.getPartnerId() + ".csv";
+            s3Client.deleteObject(s3Config.getBucketName(), id);
+        }
+        log.info("Completed Job: finalDeleteJob");
     }
 }

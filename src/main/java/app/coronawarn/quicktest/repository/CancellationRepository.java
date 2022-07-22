@@ -33,4 +33,6 @@ public interface CancellationRepository extends JpaRepository<Cancellation, Stri
     List<Cancellation> findByDownloadRequestedIsNullAndFinalDeletionBefore(LocalDateTime expiryDate);
 
     List<Cancellation> findByMovedToLongtermArchiveNotNullAndCsvCreatedIsNull();
+
+    List<Cancellation> findByFinalDeletionBefore(LocalDateTime expiryDate);
 }

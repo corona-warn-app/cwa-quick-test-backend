@@ -149,6 +149,10 @@ public class ArchiveService {
         return dtos;
     }
 
+    public void deleteByTenantId(String partnerId) {
+        repository.deleteAllByTenantId(createHash(partnerId));
+    }
+
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {
         final ArchiveCipherDtoV1 archive = new ArchiveCipherDtoV1();
 

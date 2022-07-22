@@ -23,6 +23,7 @@ package app.coronawarn.quicktest.archive.repository;
 import app.coronawarn.quicktest.archive.domain.Archive;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.RollbackException;
 import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +39,7 @@ public class ArchiveRepository {
 
     /**
      * Saves the entry.
-     * 
+     *
      * @param archive {@link Archive}
      * @return {@link Archive}
      */
@@ -59,7 +60,7 @@ public class ArchiveRepository {
 
     /**
      * Returns all existing entries.
-     * 
+     *
      * @return {@link List} of {@link Archive}
      */
     public List<Archive> findAll() {
@@ -88,10 +89,21 @@ public class ArchiveRepository {
      * @return {@link List} of {@link Archive}
      */
     public List<Archive> findAllByTenantId(final String tenantId) {
-        this.em.getTransaction().begin();
-        TypedQuery<Archive> query = this.em.createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class);
+        em.getTransaction().begin();
+        TypedQuery<Archive> query = em.createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class);
         final List<Archive> result = query.setParameter(1, tenantId).getResultList();
-        this.em.getTransaction().commit();
+        em.getTransaction().commit();
         return result;
+    }
+
+    /**
+     * Delete all entries by tenantId.
+     */
+    public void deleteAllByTenantId(final String tenantId) {
+        em.getTransaction().begin();
+        Query query = em.createQuery("DELETE FROM Archive a WHERE a.tenantId = ?1");
+        query.setParameter(1, tenantId);
+        int rows = query.executeUpdate();
+        em.getTransaction().commit();
     }
 }

@@ -25,9 +25,15 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 import app.coronawarn.quicktest.domain.Cancellation;
+import app.coronawarn.quicktest.domain.QuickTestArchive;
+import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.CancellationRepository;
+import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
+import com.amazonaws.services.s3.AmazonS3;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -37,6 +43,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 @SpringBootTest
 class CancellationServiceTest {
@@ -45,7 +52,16 @@ class CancellationServiceTest {
     private CancellationService cancellationService;
 
     @Autowired
+    private ArchiveService archiveService;
+
+    @Autowired
+    private QuickTestArchiveRepository quickTestArchiveRepository;
+
+    @Autowired
     private CancellationRepository cancellationRepository;
+
+    @MockBean
+    private AmazonS3 s3Client;
 
     @BeforeEach
     void setUp() {
@@ -262,5 +278,54 @@ class CancellationServiceTest {
         } else {
             fail("No Cancellation was found, test is faulty");
         }
+    }
+
+    @Test
+    void testFinalDeleteJob() {
+        doNothing().when(s3Client).deleteObject(any(),any());
+        final QuickTestArchive test = buildCancellationQuickTestArchive();
+        quickTestArchiveRepository.saveAndFlush(test);
+        archiveService.moveToArchiveByTenantId(PARTNER_ID);
+        var archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        assertFalse(archiveEntries.isEmpty());
+        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, FINAL_DELETION);
+        cancellationService.finalDeleteJob();
+        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        assertFalse(archiveEntries.isEmpty());
+        cancellationService.updateFinalDeletion(cancellation,LocalDateTime.now());
+        cancellationService.finalDeleteJob();
+        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        assertTrue(archiveEntries.isEmpty());
+    }
+
+    private QuickTestArchive buildCancellationQuickTestArchive() {
+        QuickTestArchive qta = new QuickTestArchive();
+        qta.setShortHashedGuid("27a9ac48");
+        qta.setHashedGuid("27a9ac470b7832857ad03b25dc96032e0a1056ff4f5afb538de4994e0a63d229");
+        qta.setTenantId(PARTNER_ID);
+        qta.setPocId("poc_id2");
+        qta.setCreatedAt(LocalDateTime.now().minusMonths(3));
+        qta.setUpdatedAt(LocalDateTime.now().minusMonths(2));
+        qta.setConfirmationCwa(Boolean.TRUE);
+        qta.setTestResult(Short.valueOf("5"));
+        qta.setPrivacyAgreement(Boolean.TRUE);
+        qta.setLastName("last_name2");
+        qta.setFirstName("first_name2");
+        qta.setEmail("email2");
+        qta.setPhoneNumber("phone_number2");
+        qta.setSex(Sex.MALE);
+        qta.setStreet("street2");
+        qta.setHouseNumber("house_number2");
+        qta.setZipCode("12345");
+        qta.setCity("city2");
+        qta.setTestBrandId("test_brand_id2");
+        qta.setTestBrandName("test_brand_name2");
+        qta.setBirthday("2000-01-02");
+        qta.setPdf("PDF".getBytes());
+        qta.setTestResultServerHash("test_result_server_hash2");
+        qta.setDcc("dcc2");
+        qta.setAdditionalInfo("additional_info2");
+        qta.setGroupName("group_name2");
+        return qta;
     }
 }

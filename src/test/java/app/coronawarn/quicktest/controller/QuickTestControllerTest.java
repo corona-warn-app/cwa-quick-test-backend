@@ -102,6 +102,8 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
     private final static String realmId = "REALM";
     private final static String subGroupId = "a".repeat(20);
     private final static String subGroupPath = "sub-group-path";
+    private final static String rootGroupName = "c".repeat(20);
+    private final static String subGroupName = "b".repeat(20);
     private final GroupRepresentation rootGroup = new GroupRepresentation();
     private final GroupRepresentation subGroup = new GroupRepresentation();
     private final UserRepresentation user1 = new UserRepresentation();
@@ -117,7 +119,10 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
 
         subGroup.setId(subGroupId);
         subGroup.setPath(subGroupPath);
+        subGroup.setId(subGroupId);
+        subGroup.setName(subGroupName);
         rootGroup.setId(rootGroupId);
+        rootGroup.setName(rootGroupName);
         rootGroup.setPath(rootGroupPath);
         rootGroup.setSubGroups(List.of(subGroup));
         when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup));

@@ -161,6 +161,7 @@ public class CancellationController {
                   new GeneratePresignedUrlRequest(s3Config.getBucketName(), cancellation.get().getBucketObjectId())
                     .withMethod(HttpMethod.GET)
                     .withExpiration(expiration);
+                cancellationService.updateDownloadLinkRequested(cancellation.get(), LocalDateTime.now());
                 return ResponseEntity.ok(s3Client.generatePresignedUrl(generatePresignedUrlRequest));
             } else {
                 throw new ResponseStatusException(

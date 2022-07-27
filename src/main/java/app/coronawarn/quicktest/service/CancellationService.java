@@ -32,6 +32,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +47,13 @@ public class CancellationService {
     private final AmazonS3 s3Client;
 
     private final CsvUploadConfig s3Config;
+
+
+    @Value("${cancellation.triggerDownloadDaysBeforeFinalDelete}")
+    private int triggerDownloadDaysBeforeFinalDelete;
+
+    @Value("${cancellation.readyToArchiveHours}")
+    private int readyToArchiveHours;
 
     /**
      * Create a new Cancellation Entity for given PartnerId.
@@ -153,7 +161,7 @@ public class CancellationService {
      * @return List holding all entities found.
      */
     public List<Cancellation> getReadyToArchive() {
-        LocalDateTime ldt = LocalDateTime.now().minusHours(48);
+        LocalDateTime ldt = LocalDateTime.now().minusHours(readyToArchiveHours);
         Date expiryDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
         return cancellationRepository.findByMovedToLongtermArchiveIsNullAndDownloadRequestedBefore(ldt);
     }
@@ -177,7 +185,8 @@ public class CancellationService {
     public void triggerDownloadJob() {
         log.info("Starting Job: triggerDownloadJob");
         List<Cancellation> cancellations =
-          cancellationRepository.findByDownloadRequestedIsNullAndFinalDeletionBefore(LocalDateTime.now().plusDays(7));
+          cancellationRepository.findByDownloadRequestedIsNullAndFinalDeletionBefore(
+            LocalDateTime.now().plusDays(triggerDownloadDaysBeforeFinalDelete));
         for (Cancellation cancellation : cancellations) {
             updateDownloadRequested(cancellation, LocalDateTime.now());
         }

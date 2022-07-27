@@ -137,6 +137,8 @@ cancellation:
   finalDeleteJob:
     cron: "-"
     locklimit: 1800000
+  triggerDownloadDaysBeforeFinalDelete: 7
+  readyToArchiveHours: 48
 
 s3:
   accessKey: minioadmin

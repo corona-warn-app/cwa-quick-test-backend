@@ -176,6 +176,8 @@ cancellation:
   finalDeleteJob:
     cron: 0 0/5 * * * *
     locklimit: 1800000
+  triggerDownloadDaysBeforeFinalDelete: 7
+  readyToArchiveHours: 48
 
 s3:
   accessKey: ${S3_ACCESS_KEY}

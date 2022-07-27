@@ -71,6 +71,7 @@ class CancellationServiceTest {
     public static final LocalDateTime FINAL_DELETION = LocalDateTime.now().plusDays(30).truncatedTo(ChronoUnit.MINUTES);
     public static final LocalDateTime NEW_STATE_DATE = LocalDateTime.now().plusDays(10).truncatedTo(ChronoUnit.MINUTES);
     public static final String PARTNER_ID = "P10000";
+    public static final String PARTNER_ID_UPDATE = "P10099";
 
     @Test
     void testCreateNewCancellation() {
@@ -128,11 +129,11 @@ class CancellationServiceTest {
 
     @Test
     void testUpdateDownloadRequested() {
-        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, FINAL_DELETION);
+        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID_UPDATE, FINAL_DELETION);
 
         cancellationService.updateDownloadRequested(cancellation, NEW_STATE_DATE);
 
-        Optional<Cancellation> updatedCancellation = cancellationRepository.findById(PARTNER_ID);
+        Optional<Cancellation> updatedCancellation = cancellationRepository.findById(PARTNER_ID_UPDATE);
         Assertions.assertTrue(updatedCancellation.isPresent());
         Assertions.assertEquals(FINAL_DELETION.truncatedTo(ChronoUnit.MINUTES),
           updatedCancellation.get().getFinalDeletion().truncatedTo(ChronoUnit.MINUTES));

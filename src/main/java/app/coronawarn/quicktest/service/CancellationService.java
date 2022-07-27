@@ -202,12 +202,12 @@ public class CancellationService {
     public void finalDeleteJob() {
         log.info("Starting Job: finalDeleteJob");
         List<Cancellation> cancellations =
-          cancellationRepository.findByFinalDeletionBefore(LocalDateTime.now());
+          cancellationRepository.findByFinalDeletionBeforeAndDataDeletedIsNull(LocalDateTime.now());
         for (Cancellation cancellation : cancellations) {
             archiveService.deleteByTenantId(cancellation.getPartnerId());
             String id = cancellation.getPartnerId() + ".csv";
             s3Client.deleteObject(s3Config.getBucketName(), id);
-            updateFinalDeletion(cancellation,LocalDateTime.now());
+            updateDataDeleted(cancellation,LocalDateTime.now());
         }
         log.info("Completed Job: finalDeleteJob");
     }

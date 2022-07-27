@@ -207,6 +207,7 @@ public class CancellationService {
             archiveService.deleteByTenantId(cancellation.getPartnerId());
             String id = cancellation.getPartnerId() + ".csv";
             s3Client.deleteObject(s3Config.getBucketName(), id);
+            updateFinalDeletion(cancellation,LocalDateTime.now());
         }
         log.info("Completed Job: finalDeleteJob");
     }

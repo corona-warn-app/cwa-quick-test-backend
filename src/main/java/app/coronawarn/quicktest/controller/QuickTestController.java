@@ -203,12 +203,8 @@ public class QuickTestController {
               "Cancellation started more then 24 hours ago, endpoint is not available anymore.");
         }
         try {
-            quickTestService.updateQuickTest(
-              utilities.getIdsFromToken(),
-                shortHash,
-                quickTestUpdateRequest,
-              utilities.getPocInformationFromToken(),
-              utilities.getUserNameFromToken()
+            quickTestService.updateQuickTest(utilities.getIdsFromToken(), shortHash, quickTestUpdateRequest,
+              utilities.getPocInformationFromToken(), utilities.getUserNameFromToken()
             );
         } catch (ResponseStatusException e) {
             throw e;
@@ -311,7 +307,7 @@ public class QuickTestController {
         if (utils != null) {
             GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
             Optional<Cancellation> cancellationOptional =
-              cancellationService.getByPartnerId(groupRepresentation.getId());
+              cancellationService.getByPartnerId(groupRepresentation.getName());
             if (cancellationOptional.isPresent()) {
                 Cancellation cancellation = cancellationOptional.get();
                 if (cancellation.getDownloadRequested() != null) {
@@ -329,7 +325,7 @@ public class QuickTestController {
         if (utils != null) {
             GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
             Optional<Cancellation> cancellationOptional =
-              cancellationService.getByPartnerId(groupRepresentation.getId());
+              cancellationService.getByPartnerId(groupRepresentation.getName());
             if (cancellationOptional.isPresent()) {
                 Cancellation cancellation = cancellationOptional.get();
                 if (cancellation.getDownloadRequested() != null) {

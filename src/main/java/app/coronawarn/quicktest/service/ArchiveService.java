@@ -112,12 +112,13 @@ public class ArchiveService {
     /**
      * Get longterm archives by pocId.
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId) throws JsonProcessingException {
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId, final String tenantId)
+      throws JsonProcessingException {
         List<Archive> allByPocId = repository.findAllByPocId(createHash(pocId));
         List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
         for (Archive archive : allByPocId) {
             try {
-                final String decrypt = keyProvider.decrypt(archive.getSecret(), pocId);
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
                 final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
                 final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
                 dtos.add(dto);
@@ -196,7 +197,7 @@ public class ArchiveService {
         archive.setTenantId(createHash(dto.getTenantId()));
         archive.setPocId(createHash(dto.getPocId()));
         archive.setCiphertext(buildCiphertext(secret, dto));
-        archive.setSecret(encryptSecret(secret, dto.getPocId()));
+        archive.setSecret(encryptSecret(secret, dto.getTenantId()));
         archive.setAlgorithmAes(cryptionService.getAesCryption().getAlgorithm());
         archive.setCreatedAt(now);
         archive.setUpdatedAt(now);

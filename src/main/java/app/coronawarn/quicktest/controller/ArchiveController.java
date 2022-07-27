@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +33,8 @@ public class ArchiveController {
 
     private final ArchiveService archiveService;
 
+    private final UserManagementControllerUtils utils;
+
     /**
      * Endpoint for getting quicktests in longterm archive table by tenantId.
      *
@@ -48,14 +50,10 @@ public class ArchiveController {
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_COUNTER, ROLE_LAB})
-    public ResponseEntity<List<ArchiveCipherDtoV1>> findLongtermArchive(@RequestParam(required = false) String tenantId,
-                                                                        @RequestParam(required = false) String pocId) {
+    public ResponseEntity<List<ArchiveCipherDtoV1>> findLongtermArchiveByPocId(@RequestParam String pocId) {
         try {
-            if (StringUtils.isBlank(tenantId)) {
-                return ResponseEntity.ok(archiveService.getQuicktestsFromLongtermByPocId(pocId));
-            } else {
-                return ResponseEntity.ok(archiveService.getQuicktestsFromLongterm(tenantId, pocId));
-            }
+            GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
+            return ResponseEntity.ok(archiveService.getQuicktestsFromLongterm(pocId, groupRepresentation.getName()));
         } catch (JsonProcessingException e) {
             log.error("Couldn't parse DB entry.");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR);

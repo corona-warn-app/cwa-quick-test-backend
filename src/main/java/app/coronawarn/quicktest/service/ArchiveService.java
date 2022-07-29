@@ -81,11 +81,12 @@ public class ArchiveService {
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
             quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
-                    .map(this::convertQuickTest)
-                    .map(this::buildArchive)
-                    .map(repository::save)
-                    .map(Archive::getHashedGuid)
-                    .forEach(quickTestArchiveRepository::deleteByHashedGuid);
+              .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
+              .map(this::convertQuickTest)
+              .map(this::buildArchive)
+              .map(repository::save)
+              .map(Archive::getHashedGuid)
+              .forEach(quickTestArchiveRepository::deleteById);
         } else {
             log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
         }
@@ -95,27 +96,33 @@ public class ArchiveService {
     /**
      * Get longterm archives by pocId.
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByPocId(final String pocId)
-            throws JsonProcessingException {
-        List<Archive> archives = repository.findAllByPocId(createHash(pocId));
-        return decryptEntries(null, pocId, archives);
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId, final String tenantId)
+      throws JsonProcessingException {
+        List<Archive> allByPocId = repository.findAllByPocId(createHash(pocId));
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
+        for (Archive archive : allByPocId) {
+            try {
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
+                final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
+                final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
+                dtos.add(dto);
+            } catch (final Exception e) {
+                log.warn("Could not decrypt archive {}", archive.getHashedGuid());
+                log.warn("Cause: {}", e.getLocalizedMessage());
+            }
+        }
+        return dtos;
     }
 
     /**
      * Get longterm archives by tenantId.
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String tenantId, final String pocId)
-            throws JsonProcessingException {
-        List<Archive> archives = repository.findAllByTenantId(createHash(tenantId));
-        return decryptEntries(tenantId, pocId, archives);
-    }
-
-    private List<ArchiveCipherDtoV1> decryptEntries(String tenantId, String pocId, List<Archive> allByTenantId) {
-        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByTenantId.size());
-        for (Archive archive : allByTenantId) {
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByTenantId(final String tenantId) {
+        List<Archive> allByPocId = repository.findAllByTenantId(createHash(tenantId));
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
+        for (Archive archive : allByPocId) {
             try {
-                final String context = StringUtils.isAnyBlank(pocId, archive.getPocId()) ? tenantId : pocId;
-                final String decrypt = keyProvider.decrypt(archive.getSecret(), context);
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
                 final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
                 final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
                 dtos.add(dto);
@@ -201,7 +208,7 @@ public class ArchiveService {
                 lastnameId.substring(0, 2).toUpperCase());
         return createHash(identifier);
     }
-    
+
     String createHash(String in) {
         if (StringUtils.isBlank(in)) {
             return "";

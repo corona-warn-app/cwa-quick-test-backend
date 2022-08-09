@@ -34,6 +34,11 @@ public class ArchiveProperties {
     private Crypt crypt = new Crypt();
     private VaultTransit vaultTransit = new VaultTransit();
 
+    /**
+     * Comma seperated list of PartnerID of Partners who should be ignored for archiving.
+     */
+    private String excludedPartners = "";
+
     @Data
     public static final class VaultTransit {
         private String folder = "cwa-quick-test-archive";

@@ -139,6 +139,7 @@ quicktest:
     environment-name: ${QUICK_TEST_ENVIRONMENT_NAME:unknown}
 
 archive:
+  excluded-partners: ${QT_ARCHIVE_EXCLUDED_PARTNERS:}
   moveToArchiveJob:
     cron: 0 0/5 * * * *
     locklimit: 1800000

@@ -5,7 +5,7 @@
     <parent>
         <groupId>app.coronawarn</groupId>
         <artifactId>cwa-parent</artifactId>
-        <version>1.3</version>
+        <version>1.5</version>
     </parent>
     <artifactId>cwa-quick-test-backend</artifactId>
     <version>1.0.0-SNAPSHOT</version>

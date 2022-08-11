@@ -36,7 +36,7 @@ public class ArchiveController {
     private final UserManagementControllerUtils utils;
 
     /**
-     * Endpoint for getting quicktests in longterm archive table by pocId.
+     * Endpoint for getting quicktests in longterm archive table by tenantId.
      *
      * @return QuickTestArchiveListResponse with all found archives
      */

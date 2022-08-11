@@ -148,13 +148,10 @@ public class QuickTestService {
 
         quicktest.setUpdatedAt(LocalDateTime.now());
 
-        if ((quicktest.getTestResult() == QuickTest.TEST_RESULT_PCR_NEGATIVE
-            || quicktest.getTestResult() == QuickTest.TEST_RESULT_PCR_POSITIVE
-            || quicktest.getTestResult() == QuickTest.TEST_RESULT_NEGATIVE
-            || quicktest.getTestResult() == QuickTest.TEST_RESULT_POSITIVE)
-                && quicktest.getDccStatus() == null) {
-            if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()
-                    && quicktest.getDccConsent() != null && quicktest.getDccConsent()) {
+        if (quicktest.getDccConsent() != null && quicktest.getDccConsent() && quicktest.getDccStatus() == null
+                && (quicktest.getTestResult() == QuickTest.TEST_RESULT_PCR_NEGATIVE
+                || quicktest.getTestResult() == QuickTest.TEST_RESULT_NEGATIVE)) {
+            if (quicktest.getConfirmationCwa() != null && quicktest.getConfirmationCwa()) {
                 quicktest.setDccStatus(DccStatus.pendingPublicKey);
             } else {
                 quicktest.setDccStatus(DccStatus.pendingSignatureNoCWA);

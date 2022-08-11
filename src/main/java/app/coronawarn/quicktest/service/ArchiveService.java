@@ -102,7 +102,7 @@ public class ArchiveService {
     public void moveToArchiveByTenantId(String tenantId) {
         final int chunkSize = properties.getCancellationArchiveJob().getChunkSize();
         quickTestArchiveRepository.findAllByTenantId(tenantId, PageRequest.of(0, chunkSize))
-          .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
+          .filter(this::checkIsNotOnIgnoreListOrDelete)
           .map(this::convertQuickTest)
           .map(this::buildArchive)
           .map(repository::save)

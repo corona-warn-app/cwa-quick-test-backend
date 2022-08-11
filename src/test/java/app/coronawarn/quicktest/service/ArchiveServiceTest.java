@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import app.coronawarn.quicktest.archive.domain.Archive;
 import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
 import app.coronawarn.quicktest.archive.repository.ArchiveRepository;
@@ -31,16 +32,18 @@ import app.coronawarn.quicktest.service.cryption.AesCryption;
 import app.coronawarn.quicktest.service.cryption.CryptionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
-import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
-
+import org.apache.commons.lang3.RandomUtils;
+import org.apache.tomcat.util.buf.HexUtils;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+@SpringBootTest(
+        properties = "archive.excludedPartners=excluded_partner , excluded_partner2"
+)
 class ArchiveServiceTest {
 
     @Autowired
@@ -70,8 +73,12 @@ class ArchiveServiceTest {
     void moveToArchive() throws Exception {
         // GIVEN
         final int initialArchive = this.archiveRepository.findAll().size();
-        final QuickTestArchive test = this.buildQuickTestArchive();
+        final QuickTestArchive test = this.buildQuickTestArchive("tenant_id");
+        final QuickTestArchive excludedTest = this.buildQuickTestArchive("excluded_partner");
+        final QuickTestArchive excludedTest2 = this.buildQuickTestArchive("excluded_partner2");
         this.quickTestArchiveRepository.saveAndFlush(test);
+        this.quickTestArchiveRepository.saveAndFlush(excludedTest);
+        this.quickTestArchiveRepository.saveAndFlush(excludedTest2);
         // WHEN
         this.archiveService.moveToArchive();
         // THEN
@@ -129,15 +136,16 @@ class ArchiveServiceTest {
         assertThat(dto.getAdditionalInfo()).isEqualTo(test.getAdditionalInfo());
         assertThat(dto.getGroupName()).isEqualTo(test.getGroupName());
         // AND deleted QuickTestArchive
-        final Optional<QuickTestArchive> deletedTest = this.quickTestArchiveRepository.findById(test.getHashedGuid());
-        assertThat(deletedTest).isEmpty();
+        Assertions.assertTrue(this.quickTestArchiveRepository.findById(test.getHashedGuid()).isEmpty(), "Archived tests are not properly deleted from archive table.");
+        Assertions.assertTrue(this.quickTestArchiveRepository.findById(excludedTest.getHashedGuid()).isEmpty(), "Excluded tests are not properly deleted from archive table.");
+        Assertions.assertTrue(this.quickTestArchiveRepository.findById(excludedTest2.getHashedGuid()).isEmpty(), "Excluded tests are not properly deleted from archive table.");
     }
 
-    private QuickTestArchive buildQuickTestArchive() {
+    private QuickTestArchive buildQuickTestArchive(String tenantId) {
         QuickTestArchive qta = new QuickTestArchive();
-        qta.setShortHashedGuid("27a9ac47");
-        qta.setHashedGuid("27a9ac470b7832857ad03b25dc96032e0a1056ff4f5afb538de4994e0a63d227");
-        qta.setTenantId("tenant_id");
+        qta.setShortHashedGuid(HexUtils.toHexString(RandomUtils.nextBytes(4)));
+        qta.setHashedGuid(HexUtils.toHexString(RandomUtils.nextBytes(32)));
+        qta.setTenantId(tenantId);
         qta.setPocId("poc_id");
         qta.setCreatedAt(LocalDateTime.now().minusMonths(3));
         qta.setUpdatedAt(LocalDateTime.now().minusMonths(2));

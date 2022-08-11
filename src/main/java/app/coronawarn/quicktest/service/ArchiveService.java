@@ -39,6 +39,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -82,6 +84,7 @@ public class ArchiveService {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
             quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
               .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
+              .filter(this::checkIsNotOnIgnoreListOrDelete)
               .map(this::convertQuickTest)
               .map(this::buildArchive)
               .map(repository::save)
@@ -132,6 +135,26 @@ public class ArchiveService {
             }
         }
         return dtos;
+    }
+
+    /**
+     * Checks whether the PartnerId of given Test is on ignore-list for longterm archive and directly deletes entry
+     * from archive.
+     *
+     * @param archiveData entity to check
+     * @return true if entity's partner ID is NOT on ignore list.
+     */
+    private boolean checkIsNotOnIgnoreListOrDelete(QuickTestArchiveDataView archiveData) {
+        List<String> excludedPartners = Stream.of(properties.getExcludedPartners().split(","))
+                .map(String::trim)
+                .collect(Collectors.toList());
+
+        if (excludedPartners.stream().anyMatch(partnerId -> partnerId.equals(archiveData.getTenantId()))) {
+            quickTestArchiveRepository.deleteById(archiveData.getHashedGuid());
+            return false;
+        } else {
+            return true;
+        }
     }
 
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {

@@ -83,7 +83,6 @@ public class ArchiveService {
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
             quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
-              .filter(quickTestArchive -> StringUtils.isNotBlank(quickTestArchive.getPocId()))
               .filter(this::checkIsNotOnIgnoreListOrDelete)
               .map(this::convertQuickTest)
               .map(this::buildArchive)

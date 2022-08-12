@@ -8,6 +8,7 @@ import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.model.cancellation.CancellationRequest;
 import app.coronawarn.quicktest.service.CancellationService;
 import app.coronawarn.quicktest.service.KeycloakService;
+import app.coronawarn.quicktest.utils.Utilities;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
@@ -51,7 +52,9 @@ public class CancellationController {
 
     private final KeycloakService keycloakService;
 
-    private final UserManagementControllerUtils utils;
+    private final UserManagementControllerUtils userManagementUtils;
+
+    private final Utilities utils;
 
     /**
      * Endpoint for creating new cancellations.
@@ -89,9 +92,8 @@ public class CancellationController {
       @ApiResponse(responseCode = "404", description = "No cancellation found for given PartnerId.")
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Cancellation> getCancellation(KeycloakAuthenticationToken token) {
-        GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
-        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getName());
+    public ResponseEntity<Cancellation> getCancellation() {
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
         if (cancellation.isPresent()) {
             return ResponseEntity.ok(cancellation.get());
         } else {
@@ -114,13 +116,19 @@ public class CancellationController {
     })
     @PostMapping(value = "/requestDownload", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_ADMIN})
-    public ResponseEntity<Void> requestDownload() {
-        GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
-        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getName());
+    public ResponseEntity<Void> requestDownload(KeycloakAuthenticationToken token) {
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
         if (cancellation.isPresent()) {
             if (cancellation.get().getDownloadRequested() == null) {
                 cancellationService.updateDownloadRequested(cancellation.get(), LocalDateTime.now());
-                keycloakService.deleteSubGroups(groupRepresentation);
+
+                try {
+                    userManagementUtils.checkRealm(token);
+                    GroupRepresentation group = userManagementUtils.checkUserRootGroup();
+                    keycloakService.deleteSubGroupsFromMapService(group);
+                } catch (ResponseStatusException ignored) {
+                    // User is not in the UserManagement Realm
+                }
                 return ResponseEntity.ok().build();
             } else {
                 throw new ResponseStatusException(
@@ -148,9 +156,8 @@ public class CancellationController {
       @ApiResponse(responseCode = "404", description = "No cancellation found for given PartnerId.")
     })
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<URL> getCsvLink(KeycloakAuthenticationToken token) {
-        GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
-        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(groupRepresentation.getName());
+    public ResponseEntity<URL> getCsvLink() {
+        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
         if (cancellation.isPresent()) {
             if (cancellation.get().getCsvCreated() != null && cancellation.get().getBucketObjectId() != null) {
                 long expTimeMillis = Instant.now().toEpochMilli();

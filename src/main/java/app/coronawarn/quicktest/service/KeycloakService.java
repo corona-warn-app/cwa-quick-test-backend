@@ -392,11 +392,11 @@ public class KeycloakService {
     }
 
     /**
-     * Deletes all subgroups from a group.
+     * Deletes all subgroups at the Map Service.
      *
      * @param group group which subGroups are to be deleted
      */
-    public void deleteSubGroups(GroupRepresentation group) {
+    public void deleteSubGroupsFromMapService(GroupRepresentation group) {
 
         List<String> subGroupPocIds = getSubGroupIds(group).stream()
           .map(this::getSubGroupDetails)

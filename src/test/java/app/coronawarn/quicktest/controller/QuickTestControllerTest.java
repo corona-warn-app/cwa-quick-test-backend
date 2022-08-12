@@ -150,6 +150,7 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             KeycloakSecurityContext keycloakSecurityContextSpy = spy(originalKeycloakSecurityContext);
             when(accountSpy.getKeycloakSecurityContext()).thenReturn(keycloakSecurityContextSpy);
             doReturn(realmId).when(keycloakSecurityContextSpy).getRealm();
+            when(utilities.getTenantIdFromToken()).thenReturn(rootGroupName);
         }
     }
 
@@ -236,48 +237,6 @@ class QuickTestControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             .contentType(MediaType.APPLICATION_JSON_VALUE)
             .content(new Gson().toJson(quicktestCreationRequest)))
           .andExpect(status().isUnauthorized());
-    }
-
-    @Test
-    @WithMockKeycloakAuth(
-      claims = @OpenIdClaims(sub = userId)
-    )
-    void catchAndConvertExceptionTests() {
-        QuickTestCreationRequest quicktestCreationRequest = null;
-        QuickTestUpdateRequest quickTestUpdateRequest = null;
-        QuickTestPersonalDataRequest quickTestPersonalDataRequest = new QuickTestPersonalDataRequest();
-        quickTestPersonalDataRequest.setConfirmationCwa(false);
-
-        try {
-            quickTestController.createQuickTest(quicktestCreationRequest);
-            fail("has to throw exception");
-        } catch (ResponseStatusException e) {
-            assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
-        } catch (Exception e) {
-            fail("catch exception and convert to ResponseStatusException failed");
-        }
-
-        try {
-            quickTestController.updateQuickTestStatus(
-              "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55",
-              quickTestUpdateRequest);
-            fail("has to throw exception");
-        } catch (ResponseStatusException e) {
-            assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
-        } catch (Exception e) {
-            fail("catch exception and convert to ResponseStatusException failed");
-        }
-
-        try {
-            quickTestController.updateQuickTestWithPersonalData(
-              "6fa4dcecf716d8dd96c9e927dda5484f1a8a9da03155aa760e0c38f9bed645c55",
-              quickTestPersonalDataRequest);
-            fail("has to throw exception");
-        } catch (ResponseStatusException e) {
-            assertEquals(e.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR, "wrong status");
-        } catch (Exception e) {
-            fail("catch exception and convert to ResponseStatusException failed");
-        }
     }
 
     @Test

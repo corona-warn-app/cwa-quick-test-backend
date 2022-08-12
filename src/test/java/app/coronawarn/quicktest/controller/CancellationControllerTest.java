@@ -26,8 +26,6 @@ import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TERMINATOR;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static org.springframework.test.annotation.DirtiesContext.MethodMode.AFTER_METHOD;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import app.coronawarn.quicktest.config.QuicktestKeycloakSpringBootConfigResolver;
@@ -56,14 +54,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.test.context.TestSecurityContextHolder;
-import org.springframework.stereotype.Repository;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -139,6 +134,7 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         when(accountSpy.getKeycloakSecurityContext()).thenReturn(keycloakSecurityContextSpy);
         doReturn(realmId).when(keycloakSecurityContextSpy).getRealm();
         cancellationRepository.deleteAll();
+        when(utilities.getTenantIdFromToken()).thenReturn(rootGroupName);
     }
 
     @Test

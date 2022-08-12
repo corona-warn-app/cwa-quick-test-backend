@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.representations.idm.GroupRepresentation;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -304,36 +303,31 @@ public class QuickTestController {
     }
 
     private boolean isCancellationStarted() {
-        if (utils != null) {
-            GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
-            Optional<Cancellation> cancellationOptional =
-              cancellationService.getByPartnerId(groupRepresentation.getName());
-            if (cancellationOptional.isPresent()) {
-                Cancellation cancellation = cancellationOptional.get();
-                if (cancellation.getDownloadRequested() != null) {
-                    return true;
-                }
-                if (cancellation.getFinalDeletion() != null) {
-                    return cancellation.getFinalDeletion().isBefore(LocalDateTime.now());
-                }
+        Optional<Cancellation> cancellationOptional =
+          cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
+        if (cancellationOptional.isPresent()) {
+            Cancellation cancellation = cancellationOptional.get();
+            if (cancellation.getDownloadRequested() != null) {
+                return true;
+            }
+            if (cancellation.getFinalDeletion() != null) {
+                return cancellation.getFinalDeletion().isBefore(LocalDateTime.now());
             }
         }
+
         return false;
     }
 
     private boolean isCancellationStartedOver24h() {
-        if (utils != null) {
-            GroupRepresentation groupRepresentation = utils.checkUserRootGroup();
-            Optional<Cancellation> cancellationOptional =
-              cancellationService.getByPartnerId(groupRepresentation.getName());
-            if (cancellationOptional.isPresent()) {
-                Cancellation cancellation = cancellationOptional.get();
-                if (cancellation.getDownloadRequested() != null) {
-                    return cancellation.getDownloadRequested().isBefore(LocalDateTime.now().minusDays(1));
-                }
-                if (cancellation.getFinalDeletion() != null) {
-                    return cancellation.getFinalDeletion().isBefore(LocalDateTime.now());
-                }
+        Optional<Cancellation> cancellationOptional =
+                cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
+        if (cancellationOptional.isPresent()) {
+            Cancellation cancellation = cancellationOptional.get();
+            if (cancellation.getDownloadRequested() != null) {
+                return cancellation.getDownloadRequested().isBefore(LocalDateTime.now().minusDays(1));
+            }
+            if (cancellation.getFinalDeletion() != null) {
+                return cancellation.getFinalDeletion().isBefore(LocalDateTime.now());
             }
         }
         return false;

@@ -26,14 +26,11 @@ jobs:
       run: docker build
         --tag ghcr.io/${GITHUB_REPOSITORY}/cwa-quick-test-backend:latest
         --tag ghcr.io/${GITHUB_REPOSITORY}/cwa-quick-test-backend:${VERSION}
-        --tag ${TRUSTED_URL}/${TRUSTED_REPOSITORY}/cwa-quick-test-backend:${VERSION}
         --tag ${MTR_REPOSITORY}/cwa-quick-test-backend:${VERSION}
         --build-arg MAVEN_PASSWORD=${APP_PACKAGES_PASSWORD}
         --build-arg MAVEN_USERNAME=${APP_PACKAGES_USERNAME}
         .
       env:
-        TRUSTED_URL: ${{ secrets.TRUSTED_URL }}
-        TRUSTED_REPOSITORY: ${{ secrets.TRUSTED_REPOSITORY }}
         APP_PACKAGES_USERNAME: ${{ github.actor }}
         APP_PACKAGES_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         MTR_REPOSITORY: ${{ secrets.MTR_REPOSITORY }}

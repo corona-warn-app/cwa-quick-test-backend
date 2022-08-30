@@ -108,6 +108,16 @@ quicktest:
   frontend-context-config:
     rules-server-url: https://distribution-6155b8d7d3c6.dcc-rules.de
     environment-name: local
+  cancellation:
+    final-deletion-days: 28
+    ready-to-archive-hours: 48
+    trigger-download-days-before-final-delete: 7
+    trigger-download-job:
+      cron: 0 * * * * *
+      locklimit: 1800000
+    final-delete-job:
+      cron: 0 * * * * *
+      locklimit: 1800000
 
 archive:
   jks:
@@ -241,16 +251,6 @@ dcc:
   uploadDccJob:
     fixedDelayString: 30000
     lockLimit: 1800000
-
-cancellation:
-  triggerDownloadJob:
-    cron: 0 * * * * *
-    locklimit: 1800000
-  finalDeleteJob:
-    cron: 0 * * * * *
-    locklimit: 1800000
-  triggerDownloadDaysBeforeFinalDelete: 7
-  readyToArchiveHours: 48
 
 s3:
   accessKey: minioadmin

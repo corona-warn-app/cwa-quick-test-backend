@@ -72,9 +72,11 @@ public class CancellationController {
     @Secured({ROLE_TERMINATOR})
     public ResponseEntity<List<Cancellation>> createCancellations(@RequestBody CancellationRequest request) {
         List<Cancellation> cancellations = new ArrayList<>();
+
         for (String partnerId : request.getPartnerIds()) {
-            cancellations.add(cancellationService.createCancellation(partnerId, request.getFinalDeletion()));
+            cancellations.add(cancellationService.createCancellation(partnerId, request.getCancellationDate()));
         }
+
         return ResponseEntity.ok(cancellations);
     }
 
@@ -94,7 +96,8 @@ public class CancellationController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Cancellation> getCancellation() {
         Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
-        if (cancellation.isPresent()) {
+
+        if (cancellation.isPresent() && LocalDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
             return ResponseEntity.ok(cancellation.get());
         } else {
             throw new ResponseStatusException(
@@ -118,7 +121,8 @@ public class CancellationController {
     @Secured({ROLE_ADMIN})
     public ResponseEntity<Void> requestDownload(KeycloakAuthenticationToken token) {
         Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
-        if (cancellation.isPresent()) {
+
+        if (cancellation.isPresent() && LocalDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
             if (cancellation.get().getDownloadRequested() == null) {
                 cancellationService.updateDownloadRequested(cancellation.get(), LocalDateTime.now());
 
@@ -158,7 +162,9 @@ public class CancellationController {
     @GetMapping(value = "/download", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<URL> getCsvLink() {
         Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
-        if (cancellation.isPresent()) {
+
+        if (cancellation.isPresent() && LocalDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
+
             if (cancellation.get().getCsvCreated() != null && cancellation.get().getBucketObjectId() != null) {
                 long expTimeMillis = Instant.now().toEpochMilli();
                 expTimeMillis += s3Config.getExpiration();

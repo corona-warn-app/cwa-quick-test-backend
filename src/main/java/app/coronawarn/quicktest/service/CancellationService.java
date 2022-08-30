@@ -21,18 +21,16 @@
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.config.CsvUploadConfig;
+import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.repository.CancellationRepository;
 import com.amazonaws.services.s3.AmazonS3;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -48,22 +46,29 @@ public class CancellationService {
 
     private final CsvUploadConfig s3Config;
 
+    private final QuickTestConfig quickTestConfig;
 
-    @Value("${cancellation.triggerDownloadDaysBeforeFinalDelete}")
-    private int triggerDownloadDaysBeforeFinalDelete;
+    /**
+     * Gets the date when this cancellation will be finally deleted.
+     *
+     * @param cancellation Cancellation Entity
+     * @return LocalDateTime
+     */
+    public LocalDateTime getFinalDeletion(Cancellation cancellation) {
+        return cancellation.getCancellationDate()
+                .plusDays(quickTestConfig.getCancellation().getFinalDeletionDays());
 
-    @Value("${cancellation.readyToArchiveHours}")
-    private int readyToArchiveHours;
+    }
 
     /**
      * Create a new Cancellation Entity for given PartnerId.
      * If cancellation already exists it will be returned and not modified.
      *
-     * @param partnerId     partner ID of partner.
-     * @param finalDeletion Date of final deletion when all data should be deleted.
+     * @param partnerId        partner ID of partner.
+     * @param cancellationDate Date of cancellation will be active.
      * @return the created and persisted entity.
      */
-    public Cancellation createCancellation(String partnerId, LocalDateTime finalDeletion) {
+    public Cancellation createCancellation(String partnerId, LocalDateTime cancellationDate) {
         Optional<Cancellation> existingCancellation = getByPartnerId(partnerId);
 
         if (existingCancellation.isPresent()) {
@@ -71,9 +76,13 @@ public class CancellationService {
         } else {
             Cancellation newEntity = new Cancellation();
             newEntity.setPartnerId(partnerId);
-            newEntity.setFinalDeletion(finalDeletion);
+            newEntity.setCancellationDate(cancellationDate);
 
-            return cancellationRepository.save(newEntity);
+            newEntity = cancellationRepository.save(newEntity);
+
+            newEntity.setFinalDeletion(getFinalDeletion(newEntity));
+
+            return newEntity;
         }
     }
 
@@ -84,7 +93,10 @@ public class CancellationService {
      * @return Optional holding the entity if found.
      */
     public Optional<Cancellation> getByPartnerId(String partnerId) {
-        return cancellationRepository.findById(partnerId);
+        Optional<Cancellation> foundCancellation = cancellationRepository.findById(partnerId);
+        foundCancellation.ifPresent(cancellation -> cancellation.setFinalDeletion(getFinalDeletion(cancellation)));
+
+        return foundCancellation;
     }
 
     /**
@@ -144,25 +156,14 @@ public class CancellationService {
     }
 
     /**
-     * Set FinalDeletion Flag/Timestamp and persist entity.
-     *
-     * @param cancellation Cancellation Entity
-     * @param dataDeleted  timestamp of complete deletion
-     */
-    public void updateFinalDeletion(Cancellation cancellation, LocalDateTime dataDeleted) {
-        cancellation.setFinalDeletion(dataDeleted);
-        cancellationRepository.save(cancellation);
-    }
-
-    /**
      * Searches in the DB for an existing cancellation entity which download request is older than 48h and not
      * moved_to_longterm_archive.
      *
      * @return List holding all entities found.
      */
     public List<Cancellation> getReadyToArchive() {
-        LocalDateTime ldt = LocalDateTime.now().minusHours(readyToArchiveHours);
-        Date expiryDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        LocalDateTime ldt = LocalDateTime.now().minusHours(quickTestConfig.getCancellation().getReadyToArchiveHours());
+
         return cancellationRepository.findByMovedToLongtermArchiveIsNullAndDownloadRequestedBefore(ldt);
     }
 
@@ -179,36 +180,45 @@ public class CancellationService {
     /**
      * Job sets download_requested of all cancellations that end in less then 7 days to current time.
      */
-    @Scheduled(cron = "${cancellation.triggerDownloadJob.cron}")
+    @Scheduled(cron = "${quicktest.cancellation.trigger-download-job.cron}")
     @SchedulerLock(name = "TriggerDownloadJob", lockAtLeastFor = "PT0S",
-      lockAtMostFor = "${cancellation.triggerDownloadJob.locklimit}")
+            lockAtMostFor = "${quicktest.cancellation.trigger-download-job.locklimit}")
     public void triggerDownloadJob() {
         log.info("Starting Job: triggerDownloadJob");
+
+        LocalDateTime triggerThreshold = LocalDateTime.now()
+                .minusDays(quickTestConfig.getCancellation().getFinalDeletionDays())
+                .plusDays(quickTestConfig.getCancellation().getTriggerDownloadDaysBeforeFinalDelete());
+
         List<Cancellation> cancellations =
-          cancellationRepository.findByDownloadRequestedIsNullAndFinalDeletionBefore(
-            LocalDateTime.now().plusDays(triggerDownloadDaysBeforeFinalDelete));
-        for (Cancellation cancellation : cancellations) {
-            updateDownloadRequested(cancellation, LocalDateTime.now());
-        }
+                cancellationRepository.findByDownloadRequestedIsNullAndCancellationDateBefore(triggerThreshold);
+
+        cancellations.forEach(cancellation -> updateDownloadRequested(cancellation, LocalDateTime.now()));
+
         log.info("Completed Job: triggerDownloadJob");
     }
 
     /**
      * Final job to delete data.
      */
-    @Scheduled(cron = "${cancellation.finalDeleteJob.cron}")
+    @Scheduled(cron = "${quicktest.cancellation.final-delete-job.cron}")
     @SchedulerLock(name = "FinalDeleteJob", lockAtLeastFor = "PT0S",
-      lockAtMostFor = "${cancellation.finalDeleteJob.locklimit}")
+            lockAtMostFor = "${quicktest.cancellation.final-delete-job.locklimit}")
     public void finalDeleteJob() {
         log.info("Starting Job: finalDeleteJob");
+        LocalDateTime triggerThreshold = LocalDateTime.now()
+                .minusDays(quickTestConfig.getCancellation().getFinalDeletionDays());
+
         List<Cancellation> cancellations =
-          cancellationRepository.findByFinalDeletionBeforeAndDataDeletedIsNull(LocalDateTime.now());
-        for (Cancellation cancellation : cancellations) {
+                cancellationRepository.findByCancellationDateBeforeAndDataDeletedIsNull(triggerThreshold);
+
+        cancellations.forEach(cancellation -> {
             archiveService.deleteByTenantId(cancellation.getPartnerId());
             String id = cancellation.getPartnerId() + ".csv";
             s3Client.deleteObject(s3Config.getBucketName(), id);
-            updateDataDeleted(cancellation,LocalDateTime.now());
-        }
+            updateDataDeleted(cancellation, LocalDateTime.now());
+        });
+
         log.info("Completed Job: finalDeleteJob");
     }
 }

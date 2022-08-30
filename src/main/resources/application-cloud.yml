@@ -137,6 +137,8 @@ quicktest:
   frontend-context-config:
     rules-server-url: ${QUICK_TEST_DCC_RULES_SERVER_URL}
     environment-name: ${QUICK_TEST_ENVIRONMENT_NAME:unknown}
+  cancellation:
+    final-deletion-days: ${QUICK_TEST_CANCELLATION_FINAL_DELETION_DAYS:28}
 
 archive:
   excluded-partners: ${QT_ARCHIVE_EXCLUDED_PARTNERS:}

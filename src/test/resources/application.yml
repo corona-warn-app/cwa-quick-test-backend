@@ -82,6 +82,15 @@ quicktest:
     max-age-in-minutes: 2
     locklimit: 1800000
     chunk-size: 1000
+  cancellation:
+    trigger-download-job:
+      cron: "-"
+      locklimit: 1800000
+    final-delete-job:
+      cron: "-"
+      locklimit: 1800000
+    trigger-download-days-before-final-delete: 7
+    ready-to-archive-hours: 48
 
 archive:
   jks:
@@ -130,16 +139,6 @@ dcc:
     cron: "*/2 * * * * *"
     lockLimit: 1800000
     fixedDelayString: 30000
-
-cancellation:
-  triggerDownloadJob:
-    cron: "-"
-    locklimit: 1800000
-  finalDeleteJob:
-    cron: "-"
-    locklimit: 1800000
-  triggerDownloadDaysBeforeFinalDelete: 7
-  readyToArchiveHours: 48
 
 s3:
   accessKey: minioadmin

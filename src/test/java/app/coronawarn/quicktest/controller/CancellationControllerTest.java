@@ -137,17 +137,12 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         when(utilities.getTenantIdFromToken()).thenReturn(rootGroupName);
     }
 
-    @Test
-    @WithMockKeycloakAuth(
-      authorities = ROLE_TERMINATOR,
-      claims = @OpenIdClaims(sub = userId)
-    )
-    void createCancellation() throws Exception {
+    void createCancellation(LocalDateTime cancellationDate) throws Exception {
         CancellationRequest request = new CancellationRequest();
         List<String> ids = new ArrayList<>();
         ids.add(rootGroupName);
         request.setPartnerIds(ids);
-        request.setFinalDeletion(LocalDateTime.now());
+        request.setCancellationDate(cancellationDate);
         String json = mapper.writeValueAsString(request);
         var result = mockMvc().perform(MockMvcRequestBuilders
             .post("/api/cancellation").contentType(MediaType.APPLICATION_JSON)
@@ -165,7 +160,7 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         List<String> ids = new ArrayList<>();
         ids.add(rootGroupId);
         request.setPartnerIds(ids);
-        request.setFinalDeletion(LocalDateTime.now());
+        request.setCancellationDate(LocalDateTime.now());
         String json = mapper.writeValueAsString(request);
         mockMvc().perform(MockMvcRequestBuilders
             .post("/api/cancellation").contentType(MediaType.APPLICATION_JSON)
@@ -190,12 +185,23 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
       claims = @OpenIdClaims(sub = userId)
     )
     void getCancellation() throws Exception {
-        createCancellation();
+        createCancellation(LocalDateTime.now().minusDays(1));
         mockMvc().perform(MockMvcRequestBuilders
             .get("/api/cancellation"))
           .andExpect(status().isOk());
     }
 
+    @Test
+    @WithMockKeycloakAuth(
+            authorities = ROLE_TERMINATOR,
+            claims = @OpenIdClaims(sub = userId)
+    )
+    void getCancellation404IfCancellationDateIsInFuture() throws Exception {
+        createCancellation(LocalDateTime.now().plusDays(1));
+        mockMvc().perform(MockMvcRequestBuilders
+                        .get("/api/cancellation"))
+                .andExpect(status().isNotFound());
+    }
     @Test
     @WithMockKeycloakAuth(
       authorities = ROLE_TERMINATOR,
@@ -213,7 +219,7 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
       claims = @OpenIdClaims(sub = userId)
     )
     void requestDownload() throws Exception {
-        createCancellation();
+        createCancellation(LocalDateTime.now().minusDays(1));
         mockMvc().perform(MockMvcRequestBuilders
             .post("/api/cancellation/requestDownload"))
           .andExpect(status().isOk());
@@ -247,7 +253,7 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
       claims = @OpenIdClaims(sub = userId)
     )
     void requestDownloadMultipleTimes() throws Exception {
-        createCancellation();
+        createCancellation(LocalDateTime.now().minusDays(1));
         mockMvc().perform(MockMvcRequestBuilders
             .post("/api/cancellation/requestDownload"))
           .andExpect(status().isOk());

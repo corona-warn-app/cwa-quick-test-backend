@@ -310,8 +310,8 @@ public class QuickTestController {
             if (cancellation.getDownloadRequested() != null) {
                 return true;
             }
-            if (cancellation.getFinalDeletion() != null) {
-                return cancellation.getFinalDeletion().isBefore(LocalDateTime.now());
+            if (cancellation.getCancellationDate() != null) {
+                return cancellation.getCancellationDate().isBefore(LocalDateTime.now());
             }
         }
 
@@ -326,8 +326,8 @@ public class QuickTestController {
             if (cancellation.getDownloadRequested() != null) {
                 return cancellation.getDownloadRequested().isBefore(LocalDateTime.now().minusDays(1));
             }
-            if (cancellation.getFinalDeletion() != null) {
-                return cancellation.getFinalDeletion().isBefore(LocalDateTime.now());
+            if (cancellation.getCancellationDate() != null) {
+                return cancellation.getCancellationDate().isBefore(LocalDateTime.now());
             }
         }
         return false;

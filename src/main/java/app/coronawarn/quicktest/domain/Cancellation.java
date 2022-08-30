@@ -28,6 +28,7 @@ import javax.persistence.Id;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,8 +54,8 @@ public class Cancellation {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    @Column(name = "final_deletion")
-    private LocalDateTime finalDeletion;
+    @Column(name = "cancellation_date")
+    private LocalDateTime cancellationDate;
 
     @Column(name = "download_requested")
     private LocalDateTime downloadRequested;
@@ -73,6 +74,9 @@ public class Cancellation {
 
     @Column(name = "bucket_object_id")
     private String bucketObjectId;
+
+    @Transient()
+    private LocalDateTime finalDeletion;
 
     @PrePersist
     private void onCreate() {

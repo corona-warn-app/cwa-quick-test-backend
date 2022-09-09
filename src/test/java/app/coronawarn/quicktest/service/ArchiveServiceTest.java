@@ -143,6 +143,8 @@ class ArchiveServiceTest {
 
     @Test
     void testFailedArchiveJobCleanup() {
+        int initialArchiveEntities = archiveRepository.findAll().size();
+
         quickTestArchiveRepository.saveAndFlush(buildQuickTestArchive("tenant_id"));
         QuickTestArchive test2 = quickTestArchiveRepository.saveAndFlush(buildQuickTestArchive("tenant_id"));
         QuickTestArchive test3 = quickTestArchiveRepository.saveAndFlush(buildQuickTestArchive("tenant_id"));
@@ -150,7 +152,7 @@ class ArchiveServiceTest {
         // Regular Archiving
         archiveService.moveToArchive();
         Assertions.assertEquals(0, quickTestArchiveRepository.findAll().size());
-        Assertions.assertEquals(3, archiveRepository.findAll().size());
+        Assertions.assertEquals(initialArchiveEntities + 3, archiveRepository.findAll().size());
 
         // Re-Persist cleaned up entities in ShortTermArchive to simulate delete failed
         quickTestArchiveRepository.saveAndFlush(test2);
@@ -160,11 +162,15 @@ class ArchiveServiceTest {
         // Rerun Archiving Job
         archiveService.moveToArchive();
         Assertions.assertEquals(0, quickTestArchiveRepository.findAll().size());
-        Assertions.assertEquals(3, archiveRepository.findAll().size());
+        Assertions.assertEquals(initialArchiveEntities + 3, archiveRepository.findAll().size());
     }
 
+    /**
+     * Mass Test is required because of big query to search for existing UUID.
+     */
     @Test
-    void testFailedArchiveJobCleanupMassTest() throws Exception {
+    void testFailedArchiveJobCleanupMassTest() {
+        int initialArchiveEntities = archiveRepository.findAll().size();
         final int n = 2000;
 
         for (int i = 0; i < n; i++) {
@@ -178,7 +184,7 @@ class ArchiveServiceTest {
         archiveService.moveToArchive();
         archiveService.moveToArchive();
         Assertions.assertEquals(0, quickTestArchiveRepository.findAll().size());
-        Assertions.assertEquals(n + 2, archiveRepository.findAll().size());
+        Assertions.assertEquals(initialArchiveEntities + n + 2, archiveRepository.findAll().size());
 
         // Re-Persist cleaned up entities in ShortTermArchive to simulate delete failed
         quickTestArchiveRepository.saveAndFlush(test2);
@@ -190,7 +196,7 @@ class ArchiveServiceTest {
         archiveService.moveToArchive();
         archiveService.moveToArchive();
         Assertions.assertEquals(0, quickTestArchiveRepository.findAll().size());
-        Assertions.assertEquals(n + 2, archiveRepository.findAll().size());
+        Assertions.assertEquals(initialArchiveEntities + n + 2, archiveRepository.findAll().size());
     }
 
     private QuickTestArchive buildQuickTestArchive(String tenantId) {

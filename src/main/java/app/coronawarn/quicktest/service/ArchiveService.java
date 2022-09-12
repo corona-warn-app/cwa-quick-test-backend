@@ -63,9 +63,9 @@ public class ArchiveService {
 
     private final KeyProvider keyProvider;
 
-    private final ArchiveRepository repository;
+    private final ArchiveRepository longTermArchiveRepository;
 
-    private final QuickTestArchiveRepository quickTestArchiveRepository;
+    private final QuickTestArchiveRepository shortTermArchiveRepository;
 
     private final ConversionService converter;
 
@@ -82,13 +82,35 @@ public class ArchiveService {
         final int chunkSize = properties.getMoveToArchiveJob().getChunkSize();
         if (olderThanInSeconds > 0) {
             final LocalDateTime beforeDateTime = LocalDateTime.now().minusSeconds(olderThanInSeconds);
-            quickTestArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
-              .filter(this::checkIsNotOnIgnoreListOrDelete)
-              .map(this::convertQuickTest)
-              .map(this::buildArchive)
-              .map(repository::save)
-              .map(Archive::getHashedGuid)
-              .forEach(quickTestArchiveRepository::deleteById);
+            List<QuickTestArchiveDataView> shortTermArchiveEntities =
+                    shortTermArchiveRepository.findAllByUpdatedAtBefore(beforeDateTime, PageRequest.of(0, chunkSize))
+                            .filter(this::checkIsNotOnIgnoreListOrDelete)
+                            .collect(Collectors.toList());
+
+            if (shortTermArchiveEntities.isEmpty()) {
+                log.debug("No ShortTermArchive Data to move.");
+                return;
+            }
+
+            List<String> hashedGuids = shortTermArchiveEntities.stream()
+                    .map(QuickTestArchiveDataView::getHashedGuid)
+                    .collect(Collectors.toList());
+
+            List<String> existingHashedGuids = longTermArchiveRepository.findAllHashedGuids(hashedGuids);
+            if (!existingHashedGuids.isEmpty()) {
+                log.warn("Found {} QuickTest entities which are both in short-term and long-term archive: {}",
+                        existingHashedGuids.size(), String.join(", ", existingHashedGuids));
+                log.warn("Deleting not properly cleaned up entities.");
+                existingHashedGuids.forEach(shortTermArchiveRepository::deleteByHashedGuid);
+            }
+
+            shortTermArchiveEntities.stream()
+                    .filter(entity -> !existingHashedGuids.contains(entity.getHashedGuid()))
+                    .map(this::convertQuickTest)
+                    .map(this::buildArchive)
+                    .map(longTermArchiveRepository::save)
+                    .map(Archive::getHashedGuid)
+                    .forEach(shortTermArchiveRepository::deleteById);
         } else {
             log.error("Property 'archive.moveToArchiveJob.older-than-in-seconds' not set.");
         }
@@ -115,8 +137,8 @@ public class ArchiveService {
      * Get longterm archives by pocId.
      */
     public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId, final String tenantId)
-      throws JsonProcessingException {
-        List<Archive> allByPocId = repository.findAllByPocId(createHash(pocId));
+            throws JsonProcessingException {
+        List<Archive> allByPocId = longTermArchiveRepository.findAllByPocId(createHash(pocId));
         List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
         for (Archive archive : allByPocId) {
             try {
@@ -136,7 +158,7 @@ public class ArchiveService {
      * Get longterm archives by tenantId.
      */
     public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByTenantId(final String tenantId) {
-        List<Archive> allByPocId = repository.findAllByTenantId(createHash(tenantId));
+        List<Archive> allByPocId = longTermArchiveRepository.findAllByTenantId(createHash(tenantId));
         List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
         for (Archive archive : allByPocId) {
             try {
@@ -165,7 +187,7 @@ public class ArchiveService {
                 .collect(Collectors.toList());
 
         if (excludedPartners.stream().anyMatch(partnerId -> partnerId.equals(archiveData.getTenantId()))) {
-            quickTestArchiveRepository.deleteById(archiveData.getHashedGuid());
+            shortTermArchiveRepository.deleteById(archiveData.getHashedGuid());
             return false;
         } else {
             return true;

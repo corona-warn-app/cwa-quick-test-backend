@@ -106,4 +106,18 @@ public class ArchiveRepository {
         int rows = query.executeUpdate();
         em.getTransaction().commit();
     }
+
+    /**
+     * Returns all matching hashed guids of existing entities.
+     *
+     * @return {@link List} of {@link String}
+     */
+    public List<String> findAllHashedGuids(final List<String> search) {
+        this.em.getTransaction().begin();
+        TypedQuery<String> query =
+                this.em.createQuery("SELECT a.hashedGuid FROM Archive a WHERE a.hashedGuid IN ?1", String.class);
+        final List<String> result = query.setParameter(1, search).getResultList();
+        this.em.getTransaction().commit();
+        return result;
+    }
 }

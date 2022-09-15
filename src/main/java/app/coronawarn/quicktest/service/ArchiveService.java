@@ -123,14 +123,40 @@ public class ArchiveService {
     @Transactional
     public void moveToArchiveByTenantId(String tenantId) {
         final int chunkSize = properties.getCancellationArchiveJob().getChunkSize();
-        quickTestArchiveRepository.findAllByTenantId(tenantId, PageRequest.of(0, chunkSize))
-          .filter(this::checkIsNotOnIgnoreListOrDelete)
-          .map(this::convertQuickTest)
-          .map(this::buildArchive)
-          .map(repository::save)
-          .map(Archive::getHashedGuid)
-          .forEach(quickTestArchiveRepository::deleteById);
-        log.info("Finished move to longterm archive.");
+
+        List<QuickTestArchiveDataView> shortTermArchiveEntities =
+                shortTermArchiveRepository.findAllByTenantId(tenantId, PageRequest.of(0, chunkSize))
+                        .filter(this::checkIsNotOnIgnoreListOrDelete)
+                        .collect(Collectors.toList());
+
+        if (shortTermArchiveEntities.isEmpty()) {
+            log.debug("No (more) ShortTermArchive Data to move.");
+            return;
+        }
+
+        List<String> hashedGuids = shortTermArchiveEntities.stream()
+                .map(QuickTestArchiveDataView::getHashedGuid)
+                .collect(Collectors.toList());
+
+        List<String> existingHashedGuids = longTermArchiveRepository.findAllHashedGuids(hashedGuids);
+        if (!existingHashedGuids.isEmpty()) {
+            log.warn("Found {} QuickTest entities which are both in short-term and long-term archive: {}",
+                    existingHashedGuids.size(), String.join(", ", existingHashedGuids));
+            log.warn("Deleting not properly cleaned up entities.");
+            existingHashedGuids.forEach(shortTermArchiveRepository::deleteByHashedGuid);
+        }
+
+        shortTermArchiveEntities.stream()
+                .filter(entity -> !existingHashedGuids.contains(entity.getHashedGuid()))
+                .map(this::convertQuickTest)
+                .map(this::buildArchive)
+                .map(longTermArchiveRepository::save)
+                .map(Archive::getHashedGuid)
+                .forEach(shortTermArchiveRepository::deleteById);
+        log.info("Chunk Finished move to longterm archive.");
+
+        // Continue with next chunk (Recursion will be stopped when no entities are left)
+        moveToArchiveByTenantId(tenantId);
     }
 
     /**
@@ -195,7 +221,7 @@ public class ArchiveService {
     }
 
     public void deleteByTenantId(String partnerId) {
-        repository.deleteAllByTenantId(createHash(partnerId));
+        longTermArchiveRepository.deleteAllByTenantId(createHash(partnerId));
     }
 
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {
@@ -268,8 +294,8 @@ public class ArchiveService {
     String buildIdentifier(final String birthday, final String lastname) {
         final String lastnameId = StringUtils.rightPad(lastname, 2, 'X');
         final String identifier = String.format("%s%s",
-          LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
-          lastnameId.substring(0, 2).toUpperCase());
+                LocalDate.parse(birthday, BIRTHDAY_FORMATTER).format(IDENTIFIER_FORMATTER),
+                lastnameId.substring(0, 2).toUpperCase());
         return createHash(identifier);
     }
 

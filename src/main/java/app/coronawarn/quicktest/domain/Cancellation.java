@@ -21,6 +21,7 @@
 package app.coronawarn.quicktest.domain;
 
 import app.coronawarn.quicktest.utils.Utilities;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -74,6 +75,14 @@ public class Cancellation {
 
     @Column(name = "bucket_object_id")
     private String bucketObjectId;
+
+    @Column(name = "download_requested_by")
+    @JsonIgnore
+    private String downloadRequestedBy;
+
+    @Column(name = "data_export_error")
+    @JsonIgnore
+    private String dataExportError;
 
     @Transient()
     private LocalDateTime finalDeletion;

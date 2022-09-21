@@ -23,6 +23,7 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TERMINATOR;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -219,10 +220,13 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
       claims = @OpenIdClaims(sub = userId)
     )
     void requestDownload() throws Exception {
+        when(utilities.getUserNameFromToken()).thenReturn(userId);
         createCancellation(LocalDateTime.now().minusDays(1));
         mockMvc().perform(MockMvcRequestBuilders
             .post("/api/cancellation/requestDownload"))
-          .andExpect(status().isOk());
+            .andExpect(status().isOk());
+
+        assertEquals(userId, cancellationRepository.findAll().get(0).getDownloadRequestedBy());
     }
 
     @Test

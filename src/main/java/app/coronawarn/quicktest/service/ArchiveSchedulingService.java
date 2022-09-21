@@ -8,8 +8,6 @@ import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
-import com.opencsv.exceptions.CsvDataTypeMismatchException;
-import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -18,7 +16,6 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -90,8 +87,9 @@ public class ArchiveSchedulingService {
                 s3Client.putObject(s3Config.getBucketName(), id, inputStream, metadata);
                 log.info("File stored to S3 with id {}", id);
                 cancellationService.updateCsvCreated(cancellation, LocalDateTime.now(), id);
-            } catch (CsvDataTypeMismatchException | CsvRequiredFieldEmptyException e) {
+            } catch (Exception e) {
                 log.error("Could not convert Quicktest to CSV: " + e.getLocalizedMessage());
+                cancellationService.updateDataExportError(cancellation, e.getLocalizedMessage());
                 throw new RuntimeException(e);
             }
         }

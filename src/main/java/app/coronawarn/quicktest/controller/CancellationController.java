@@ -124,7 +124,8 @@ public class CancellationController {
 
         if (cancellation.isPresent() && LocalDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
             if (cancellation.get().getDownloadRequested() == null) {
-                cancellationService.updateDownloadRequested(cancellation.get(), LocalDateTime.now());
+                cancellationService.updateDownloadRequested(cancellation.get(), LocalDateTime.now(),
+                        utils.getUserNameFromToken());
 
                 try {
                     userManagementUtils.checkRealm(token);

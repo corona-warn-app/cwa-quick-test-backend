@@ -105,8 +105,9 @@ public class CancellationService {
      * @param cancellation      Cancellation Entity
      * @param downloadRequested timestamp of user interaction
      */
-    public void updateDownloadRequested(Cancellation cancellation, LocalDateTime downloadRequested) {
+    public void updateDownloadRequested(Cancellation cancellation, LocalDateTime downloadRequested, String requester) {
         cancellation.setDownloadRequested(downloadRequested);
+        cancellation.setDownloadRequestedBy(requester);
         cancellationRepository.save(cancellation);
     }
 
@@ -156,6 +157,21 @@ public class CancellationService {
     }
 
     /**
+     * Set DataExportError Value and persist entity.
+     *
+     * @param cancellation Cancellation Entity
+     * @param errorMessage occured error to save in entity
+     */
+    public void updateDataExportError(Cancellation cancellation, String errorMessage) {
+        if (errorMessage.length() > 200) {
+            errorMessage = errorMessage.substring(0, 200);
+        }
+
+        cancellation.setDataExportError(errorMessage);
+        cancellationRepository.save(cancellation);
+    }
+
+    /**
      * Searches in the DB for an existing cancellation entity which download request is older than 48h and not
      * moved_to_longterm_archive.
      *
@@ -193,7 +209,8 @@ public class CancellationService {
         List<Cancellation> cancellations =
                 cancellationRepository.findByDownloadRequestedIsNullAndCancellationDateBefore(triggerThreshold);
 
-        cancellations.forEach(cancellation -> updateDownloadRequested(cancellation, LocalDateTime.now()));
+        cancellations.forEach(cancellation -> updateDownloadRequested(
+                cancellation, LocalDateTime.now(), "triggerDownloadJob"));
 
         log.info("Completed Job: triggerDownloadJob");
     }

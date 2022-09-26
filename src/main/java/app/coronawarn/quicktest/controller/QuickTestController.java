@@ -89,7 +89,7 @@ public class QuickTestController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId() {
-        if (isCancellationStarted()) {
+        if (isCancellationStartedOver24h()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
               "Cancellation already started, endpoint is not available anymore.");
         }

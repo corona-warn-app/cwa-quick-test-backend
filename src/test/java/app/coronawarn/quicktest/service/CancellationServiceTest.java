@@ -149,7 +149,6 @@ class CancellationServiceTest {
         Assertions.assertEquals(CANCELLATION_DATE.truncatedTo(ChronoUnit.MINUTES),
           updatedCancellation.get().getCancellationDate().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
-        Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
         assertNull(updatedCancellation.get().getCsvCreated());
         assertNull(updatedCancellation.get().getDataDeleted());
         assertNull(updatedCancellation.get().getBucketObjectId());
@@ -170,7 +169,6 @@ class CancellationServiceTest {
         Assertions.assertEquals(CANCELLATION_DATE.truncatedTo(ChronoUnit.MINUTES),
           updatedCancellation.get().getCancellationDate().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
-        Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
         assertNull(updatedCancellation.get().getCsvCreated());
         assertNull(updatedCancellation.get().getDataDeleted());
         assertNull(updatedCancellation.get().getBucketObjectId());
@@ -191,7 +189,6 @@ class CancellationServiceTest {
         Assertions.assertEquals(CANCELLATION_DATE.truncatedTo(ChronoUnit.MINUTES),
           updatedCancellation.get().getCancellationDate().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
-        Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
         assertNull(updatedCancellation.get().getMovedToLongtermArchive());
         assertNull(updatedCancellation.get().getDataDeleted());
         Assertions.assertEquals(PARTNER_ID + ".csv", updatedCancellation.get().getBucketObjectId());
@@ -212,7 +209,6 @@ class CancellationServiceTest {
         Assertions.assertEquals(CANCELLATION_DATE.truncatedTo(ChronoUnit.MINUTES),
           updatedCancellation.get().getCancellationDate().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
-        Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
         assertNull(updatedCancellation.get().getCsvCreated());
         assertNull(updatedCancellation.get().getDataDeleted());
         assertNull(updatedCancellation.get().getBucketObjectId());
@@ -233,7 +229,6 @@ class CancellationServiceTest {
         Assertions.assertEquals(CANCELLATION_DATE.truncatedTo(ChronoUnit.MINUTES),
           updatedCancellation.get().getCancellationDate().truncatedTo(ChronoUnit.MINUTES));
         Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
-        Assertions.assertNotEquals(updatedCancellation.get().getCreatedAt(), updatedCancellation.get().getUpdatedAt());
         assertNull(updatedCancellation.get().getCsvCreated());
         assertNull(updatedCancellation.get().getMovedToLongtermArchive());
         assertNull(updatedCancellation.get().getBucketObjectId());

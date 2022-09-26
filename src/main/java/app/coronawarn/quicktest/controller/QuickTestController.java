@@ -305,31 +305,32 @@ public class QuickTestController {
     private boolean isCancellationStarted() {
         Optional<Cancellation> cancellationOptional =
           cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
-        if (cancellationOptional.isPresent()) {
-            Cancellation cancellation = cancellationOptional.get();
-            if (cancellation.getDownloadRequested() != null) {
-                return true;
-            }
-            if (cancellation.getCancellationDate() != null) {
-                return cancellation.getCancellationDate().isBefore(LocalDateTime.now());
-            }
+
+        if (cancellationOptional.isEmpty()) {
+            return false;
         }
 
-        return false;
+        Cancellation cancellation = cancellationOptional.get();
+        if (cancellation.getDownloadRequested() == null) {
+            return false;
+        }
+
+        return LocalDateTime.now().isAfter(cancellation.getDownloadRequested());
     }
 
     private boolean isCancellationStartedOver24h() {
         Optional<Cancellation> cancellationOptional =
                 cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
-        if (cancellationOptional.isPresent()) {
-            Cancellation cancellation = cancellationOptional.get();
-            if (cancellation.getDownloadRequested() != null) {
-                return cancellation.getDownloadRequested().isBefore(LocalDateTime.now().minusDays(1));
-            }
-            if (cancellation.getCancellationDate() != null) {
-                return cancellation.getCancellationDate().isBefore(LocalDateTime.now());
-            }
+
+        if (cancellationOptional.isEmpty()) {
+            return false;
         }
-        return false;
+
+        Cancellation cancellation = cancellationOptional.get();
+        if (cancellation.getDownloadRequested() == null) {
+            return false;
+        }
+
+        return LocalDateTime.now().minusDays(1).isAfter(cancellation.getDownloadRequested());
     }
 }

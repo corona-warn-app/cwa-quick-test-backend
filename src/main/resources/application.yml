@@ -111,10 +111,7 @@ quicktest:
   cancellation:
     final-deletion-days: 28
     ready-to-archive-hours: 48
-    trigger-download-days-before-final-delete: 7
-    trigger-download-job:
-      cron: 0 * * * * *
-      locklimit: 1800000
+    completePendingTestsHours: 24
     final-delete-job:
       cron: 0 * * * * *
       locklimit: 1800000
@@ -124,25 +121,17 @@ archive:
     path: classpath:archive/dev.jks
     password: changeMe
   moveToArchiveJob:
-    # every minute
     cron: 0 * * * * *
     locklimit: 1800000
-    #### 1209600 = 2 weeks
     older-than-in-seconds: 60
     chunkSize: 100
   cancellationArchiveJob:
-    # every minute
     cron: 0 * * * * *
     locklimit: 1800000
-    #### 1209600 = 2 weeks
-    older-than-in-seconds: 60
     chunkSize: 100
   csvUploadJob:
-    # every minute
     cron: 0 * * * * *
     locklimit: 1800000
-    #### 1209600 = 2 weeks
-    older-than-in-seconds: 60
     chunkSize: 100
   hash:
     algorithm: SHA-256

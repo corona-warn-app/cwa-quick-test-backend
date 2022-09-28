@@ -143,20 +143,18 @@ quicktest:
 archive:
   excluded-partners: ${QT_ARCHIVE_EXCLUDED_PARTNERS:}
   moveToArchiveJob:
-    cron: 0 0/5 * * * *
+    cron: ${QT_ARCHIVE_JOB_CRON:0 0/5 * * * *}
     locklimit: 1800000
-    #### 2419200 = 4 weeks, 1209600 = 2 weeks
-    older-than-in-seconds: 1209600
+    older-than-in-seconds: ${QT_ARCHIVE_JOB_OLDER_THAN_IN_SECONDS:1209600}
+    chunkSize: ${QT_ARCHIVE_JOB_CHUNK_SIZE:100}
   cancellationArchiveJob:
-    cron: 0 0/5 * * * *
+    cron: ${QT_CANCELLATION_ARCHIVE_JOB_CRON:0 0/5 * * * *}
     locklimit: 1800000
-    #### 2419200 = 4 weeks, 1209600 = 2 weeks
-    older-than-in-seconds: 1209600
+    chunkSize: ${QT_CANCELLATION_ARCHIVE_JOB_CHUNK_SIZE:100}
   csvUploadJob:
-    cron: 0 0/5 * * * *
+    cron: ${QT_CANCELLATION_UPLOAD_JOB_CRON:0 0/5 * * * *}
     locklimit: 1800000
-    #### 2419200 = 4 weeks, 1209600 = 2 weeks
-    older-than-in-seconds: 1209600
+    chunkSize: ${QT_CANCELLATION_UPLOAD_JOB_CHUNK_SIZE:100}
   hash:
     algorithm: SHA-256
     pepper: ${QT_ARCHIVE_PEPPER:APKzWUszQftHMN5xP9m3E96hCy4znGv7k3Na5zZUHfYgbExCCn}
@@ -173,14 +171,11 @@ archive:
     dek: ${QT_VAULT_DEK:cwa-quick-test-archive-encryption-key}
 
 cancellation:
-  triggerDownloadJob:
-    cron: 0 0/5 * * * *
-    locklimit: 1800000
   finalDeleteJob:
-    cron: 0 0/5 * * * *
+    cron: ${QT_CANCELLATION_FINAL_DELETE_JOB_CRON:0 0/5 * * * *}
     locklimit: 1800000
-  triggerDownloadDaysBeforeFinalDelete: 7
-  readyToArchiveHours: 48
+  completePendingTestsHours: ${QT_CANCELLATION_COMPLETE_PENDING_TESTS_HOURS:24}
+  readyToArchiveHours: ${QT_CANCELLATION_READY_TO_ARCHIVE_HOURS:48}
 
 s3:
   accessKey: ${S3_ACCESS_KEY}

@@ -52,8 +52,8 @@ public class QuickTestConfig {
     public static class CancellationConfig {
 
         private int finalDeletionDays = 28;
+        private int completePendingTestsHours = 24;
         private int readyToArchiveHours = 48;
-        private int triggerDownloadDaysBeforeFinalDelete = 7;
 
     }
 

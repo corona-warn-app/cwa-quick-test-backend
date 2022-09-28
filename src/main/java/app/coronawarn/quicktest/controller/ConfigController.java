@@ -60,7 +60,7 @@ public class ConfigController {
                 new QuickTestContextFile(
                         quickTestConfig.getFrontendContextConfig().getRulesServerUrl(),
                         quickTestConfig.getFrontendContextConfig().getEnvironmentName(),
-                        quickTestConfig.getCleanUpSettings().getMaxAgeInMinutes()
+                        quickTestConfig.getCancellation().getCompletePendingTestsHours()
                   ));
     }
 }

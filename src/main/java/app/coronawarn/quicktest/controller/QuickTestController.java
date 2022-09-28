@@ -326,7 +326,7 @@ public class QuickTestController {
 
         Cancellation cancellation = cancellationOptional.get();
         return ZonedDateTime.now()
-          .minusMinutes(quickTestConfig.getCleanUpSettings().getMaxAgeInMinutes())
+          .minusHours(quickTestConfig.getCancellation().getCompletePendingTestsHours())
           .isAfter(cancellation.getCancellationDate());
     }
 }

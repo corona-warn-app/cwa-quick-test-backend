@@ -29,7 +29,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CancellationRepository extends JpaRepository<Cancellation, String> {
-    List<Cancellation> findByMovedToLongtermArchiveIsNullAndCancellationDateBefore(ZonedDateTime expiryDate, Pageable pageable);
+    List<Cancellation> findByMovedToLongtermArchiveIsNullAndCancellationDateBefore(
+      ZonedDateTime expiryDate, Pageable pageable);
 
     List<Cancellation> findByMovedToLongtermArchiveNotNullAndCsvCreatedIsNull(Pageable pageable);
 

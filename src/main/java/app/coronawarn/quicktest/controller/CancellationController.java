@@ -67,7 +67,8 @@ public class CancellationController {
         List<Cancellation> cancellations = new ArrayList<>();
 
         for (String partnerId : request.getPartnerIds()) {
-            cancellations.add(cancellationService.createCancellation(partnerId, request.getCancellationDate().atZone(ZoneId.of("UTC"))));
+            cancellations.add(cancellationService.createCancellation(
+              partnerId, request.getCancellationDate().atZone(ZoneId.of("UTC"))));
         }
 
         return ResponseEntity.ok(cancellations);
@@ -128,7 +129,8 @@ public class CancellationController {
                   new GeneratePresignedUrlRequest(s3Config.getBucketName(), cancellation.get().getBucketObjectId())
                     .withMethod(HttpMethod.GET)
                     .withExpiration(expiration);
-                cancellationService.updateDownloadLinkRequested(cancellation.get(), ZonedDateTime.now(), utils.getUserNameFromToken());
+                cancellationService.updateDownloadLinkRequested(
+                  cancellation.get(), ZonedDateTime.now(), utils.getUserNameFromToken());
                 return ResponseEntity.ok(s3Client.generatePresignedUrl(generatePresignedUrlRequest));
             } else {
                 throw new ResponseStatusException(

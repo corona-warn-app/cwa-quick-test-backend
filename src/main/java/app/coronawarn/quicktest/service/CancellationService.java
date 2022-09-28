@@ -133,7 +133,8 @@ public class CancellationService {
      * @param downloadLinkRequested timestamp of user interaction
      * @param requester             Username of the user who requested the download link
      */
-    public void updateDownloadLinkRequested(Cancellation cancellation, ZonedDateTime downloadLinkRequested, String requester) {
+    public void updateDownloadLinkRequested(
+      Cancellation cancellation, ZonedDateTime downloadLinkRequested, String requester) {
         cancellation.setDownloadLinkRequested(downloadLinkRequested);
         cancellation.setDownloadLinkRequestedBy(requester);
         cancellationRepository.save(cancellation);

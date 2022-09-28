@@ -1,13 +1,11 @@
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TERMINATOR;
 
 import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.model.cancellation.CancellationRequest;
 import app.coronawarn.quicktest.service.CancellationService;
-import app.coronawarn.quicktest.service.KeycloakService;
 import app.coronawarn.quicktest.utils.Utilities;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
@@ -17,15 +15,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.net.URL;
 import java.time.Instant;
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
-import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -50,10 +47,6 @@ public class CancellationController {
 
     private final CancellationService cancellationService;
 
-    private final KeycloakService keycloakService;
-
-    private final UserManagementControllerUtils userManagementUtils;
-
     private final Utilities utils;
 
     /**
@@ -74,7 +67,7 @@ public class CancellationController {
         List<Cancellation> cancellations = new ArrayList<>();
 
         for (String partnerId : request.getPartnerIds()) {
-            cancellations.add(cancellationService.createCancellation(partnerId, request.getCancellationDate()));
+            cancellations.add(cancellationService.createCancellation(partnerId, request.getCancellationDate().atZone(ZoneId.of("UTC"))));
         }
 
         return ResponseEntity.ok(cancellations);
@@ -97,48 +90,8 @@ public class CancellationController {
     public ResponseEntity<Cancellation> getCancellation() {
         Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
 
-        if (cancellation.isPresent() && LocalDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
+        if (cancellation.isPresent()) {
             return ResponseEntity.ok(cancellation.get());
-        } else {
-            throw new ResponseStatusException(
-              HttpStatus.NOT_FOUND, "No cancellation found for given PartnerId.");
-        }
-    }
-
-    /**
-     * Endpoint for requesting a download.
-     */
-    @Operation(
-      summary = "start the cancellation process",
-      description = "download_requested timestamp will be set to current timestamp for PartnerId of current User."
-    )
-    @ApiResponses(value = {
-      @ApiResponse(responseCode = "200", description = "Successful"),
-      @ApiResponse(responseCode = "404", description = "No cancellation found for given PartnerId."),
-      @ApiResponse(responseCode = "409", description = "Download already requested previously.")
-    })
-    @PostMapping(value = "/requestDownload", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Secured({ROLE_ADMIN})
-    public ResponseEntity<Void> requestDownload(KeycloakAuthenticationToken token) {
-        Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
-
-        if (cancellation.isPresent() && LocalDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
-            if (cancellation.get().getDownloadRequested() == null) {
-                cancellationService.updateDownloadRequested(cancellation.get(), LocalDateTime.now(),
-                        utils.getUserNameFromToken());
-
-                try {
-                    userManagementUtils.checkRealm(token);
-                    GroupRepresentation group = userManagementUtils.checkUserRootGroup();
-                    keycloakService.deleteSubGroupsFromMapService(group);
-                } catch (ResponseStatusException ignored) {
-                    // User is not in the UserManagement Realm
-                }
-                return ResponseEntity.ok().build();
-            } else {
-                throw new ResponseStatusException(
-                  HttpStatus.CONFLICT, "Download already requested previously.");
-            }
         } else {
             throw new ResponseStatusException(
               HttpStatus.NOT_FOUND, "No cancellation found for given PartnerId.");
@@ -164,7 +117,7 @@ public class CancellationController {
     public ResponseEntity<URL> getCsvLink() {
         Optional<Cancellation> cancellation = cancellationService.getByPartnerId(utils.getTenantIdFromToken());
 
-        if (cancellation.isPresent() && LocalDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
+        if (cancellation.isPresent() && ZonedDateTime.now().isAfter(cancellation.get().getCancellationDate())) {
 
             if (cancellation.get().getCsvCreated() != null && cancellation.get().getBucketObjectId() != null) {
                 long expTimeMillis = Instant.now().toEpochMilli();
@@ -175,7 +128,7 @@ public class CancellationController {
                   new GeneratePresignedUrlRequest(s3Config.getBucketName(), cancellation.get().getBucketObjectId())
                     .withMethod(HttpMethod.GET)
                     .withExpiration(expiration);
-                cancellationService.updateDownloadLinkRequested(cancellation.get(), LocalDateTime.now());
+                cancellationService.updateDownloadLinkRequested(cancellation.get(), ZonedDateTime.now(), utils.getUserNameFromToken());
                 return ResponseEntity.ok(s3Client.generatePresignedUrl(generatePresignedUrlRequest));
             } else {
                 throw new ResponseStatusException(

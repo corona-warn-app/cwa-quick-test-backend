@@ -62,3 +62,6 @@ databaseChangeLog:
   - include:
       file: changelog/V021_update_cancellationTable_2.yml
       relativeToChangelogFile: true
+  - include:
+      file: changelog/V022_update_cancellationTable_3.yml
+      relativeToChangelogFile: true

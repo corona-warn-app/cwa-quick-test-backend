@@ -20,12 +20,9 @@
 
 package app.coronawarn.quicktest.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 
@@ -36,6 +33,7 @@ import app.coronawarn.quicktest.repository.CancellationRepository;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import com.amazonaws.services.s3.AmazonS3;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
@@ -69,10 +67,10 @@ class CancellationServiceTest {
         cancellationRepository.deleteAll();
     }
 
-    public static final LocalDateTime CANCELLATION_DATE = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+    public static final ZonedDateTime CANCELLATION_DATE = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
-    public static final LocalDateTime FINAL_DELETION = CANCELLATION_DATE.plusWeeks(4);
-    public static final LocalDateTime NEW_STATE_DATE = LocalDateTime.now().plusDays(10).truncatedTo(ChronoUnit.MINUTES);
+    public static final ZonedDateTime FINAL_DELETION = CANCELLATION_DATE.plusWeeks(4);
+    public static final ZonedDateTime NEW_STATE_DATE = ZonedDateTime.now().plusDays(10).truncatedTo(ChronoUnit.MINUTES);
     public static final String PARTNER_ID = "P10000";
     public static final String PARTNER_ID_UPDATE = "P10099";
 
@@ -95,7 +93,6 @@ class CancellationServiceTest {
         assertNull(createdCancellation.get().getBucketObjectId());
         assertNull(createdCancellation.get().getDownloadLinkRequested());
         assertNull(createdCancellation.get().getMovedToLongtermArchive());
-        assertNull(createdCancellation.get().getDownloadRequested());
 
         returnedCancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE.plusDays(1));
         Assertions.assertEquals(FINAL_DELETION, returnedCancellation.getFinalDeletion());
@@ -111,7 +108,6 @@ class CancellationServiceTest {
         assertNull(createdCancellation.get().getBucketObjectId());
         assertNull(createdCancellation.get().getDownloadLinkRequested());
         assertNull(createdCancellation.get().getMovedToLongtermArchive());
-        assertNull(createdCancellation.get().getDownloadRequested());
     }
 
     @Test
@@ -131,30 +127,8 @@ class CancellationServiceTest {
         assertNull(createdCancellation.get().getBucketObjectId());
         assertNull(createdCancellation.get().getDownloadLinkRequested());
         assertNull(createdCancellation.get().getMovedToLongtermArchive());
-        assertNull(createdCancellation.get().getDownloadRequested());
 
         Assertions.assertTrue(cancellationService.getByPartnerId("NOTEXISTINGPARTNERID").isEmpty());
-    }
-
-    @Test
-    void testUpdateDownloadRequested() {
-        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID_UPDATE, CANCELLATION_DATE);
-        Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
-
-        cancellationService.updateDownloadRequested(cancellation, NEW_STATE_DATE, USER_ID);
-
-        Optional<Cancellation> updatedCancellation = cancellationRepository.findById(PARTNER_ID_UPDATE);
-        Assertions.assertTrue(updatedCancellation.isPresent());
-        Assertions.assertEquals(USER_ID, updatedCancellation.get().getDownloadRequestedBy());
-        Assertions.assertEquals(CANCELLATION_DATE.truncatedTo(ChronoUnit.MINUTES),
-          updatedCancellation.get().getCancellationDate().truncatedTo(ChronoUnit.MINUTES));
-        Assertions.assertNotNull(updatedCancellation.get().getCreatedAt());
-        assertNull(updatedCancellation.get().getCsvCreated());
-        assertNull(updatedCancellation.get().getDataDeleted());
-        assertNull(updatedCancellation.get().getBucketObjectId());
-        assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        assertNull(updatedCancellation.get().getMovedToLongtermArchive());
-        Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getDownloadRequested());
     }
 
     @Test
@@ -173,7 +147,6 @@ class CancellationServiceTest {
         assertNull(updatedCancellation.get().getDataDeleted());
         assertNull(updatedCancellation.get().getBucketObjectId());
         assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        assertNull(updatedCancellation.get().getDownloadRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getMovedToLongtermArchive());
     }
 
@@ -193,7 +166,6 @@ class CancellationServiceTest {
         assertNull(updatedCancellation.get().getDataDeleted());
         Assertions.assertEquals(PARTNER_ID + ".csv", updatedCancellation.get().getBucketObjectId());
         assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        assertNull(updatedCancellation.get().getDownloadRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getCsvCreated());
     }
 
@@ -202,7 +174,7 @@ class CancellationServiceTest {
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
 
-        cancellationService.updateDownloadLinkRequested(cancellation, NEW_STATE_DATE);
+        cancellationService.updateDownloadLinkRequested(cancellation, NEW_STATE_DATE, USER_ID);
 
         Optional<Cancellation> updatedCancellation = cancellationRepository.findById(PARTNER_ID);
         Assertions.assertTrue(updatedCancellation.isPresent());
@@ -212,7 +184,6 @@ class CancellationServiceTest {
         assertNull(updatedCancellation.get().getCsvCreated());
         assertNull(updatedCancellation.get().getDataDeleted());
         assertNull(updatedCancellation.get().getBucketObjectId());
-        assertNull(updatedCancellation.get().getDownloadRequested());
         assertNull(updatedCancellation.get().getMovedToLongtermArchive());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getDownloadLinkRequested());
     }
@@ -233,7 +204,6 @@ class CancellationServiceTest {
         assertNull(updatedCancellation.get().getMovedToLongtermArchive());
         assertNull(updatedCancellation.get().getBucketObjectId());
         assertNull(updatedCancellation.get().getDownloadLinkRequested());
-        assertNull(updatedCancellation.get().getDownloadRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getDataDeleted());
     }
 
@@ -242,8 +212,11 @@ class CancellationServiceTest {
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
         assertNull(cancellation.getMovedToLongtermArchive());
-        cancellationService.updateDownloadRequested(cancellation, LocalDateTime.now().minusHours(48), USER_ID);
-        List<Cancellation> results = cancellationService.getReadyToArchive();
+
+        cancellation.setCancellationDate(CANCELLATION_DATE.minusHours(48));
+        cancellationRepository.save(cancellation);
+
+        List<Cancellation> results = cancellationService.getReadyToArchiveBatch();
         assertFalse(results.isEmpty());
     }
 
@@ -252,8 +225,7 @@ class CancellationServiceTest {
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
         assertNull(cancellation.getMovedToLongtermArchive());
-        cancellationService.updateDownloadRequested(cancellation, LocalDateTime.now(), USER_ID);
-        List<Cancellation> results = cancellationService.getReadyToArchive();
+        List<Cancellation> results = cancellationService.getReadyToArchiveBatch();
         assertTrue(results.isEmpty());
     }
 
@@ -261,45 +233,10 @@ class CancellationServiceTest {
     void testGetReadyToArchiveMovedNotNull() {
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
-        cancellationService.updateDownloadRequested(cancellation, LocalDateTime.now().minusHours(48), USER_ID);
-        cancellationService.updateMovedToLongterm(cancellation, LocalDateTime.now());
-        List<Cancellation> results = cancellationService.getReadyToArchive();
+        cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now());
+        List<Cancellation> results = cancellationService.getReadyToArchiveBatch();
         assertTrue(results.isEmpty());
     }
-
-    @Test
-    void testTriggerDownloadJob() {
-        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
-        Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
-        assertNull(cancellation.getDownloadRequested());
-
-        cancellation.setCancellationDate(LocalDateTime.now().minusWeeks(3));
-        cancellationRepository.save(cancellation);
-
-        cancellationService.triggerDownloadJob();
-        var result = cancellationService.getByPartnerId(PARTNER_ID);
-        if (result.isPresent()) {
-            assertNotNull(result.get().getDownloadRequested());
-            assertEquals("triggerDownloadJob", result.get().getDownloadRequestedBy());
-        } else {
-            fail("No Cancellation was found, test is faulty");
-        }
-    }
-
-    @Test
-    void testTriggerDownloadJobFinalDeletionFarAway() {
-        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
-        Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
-        assertNull(cancellation.getDownloadRequested());
-        cancellationService.triggerDownloadJob();
-        var result = cancellationService.getByPartnerId(PARTNER_ID);
-        if (result.isPresent()) {
-            assertNull(result.get().getDownloadRequested());
-        } else {
-            fail("No Cancellation was found, test is faulty");
-        }
-    }
-
     @Test
     void testFinalDeleteJob() {
         doNothing().when(s3Client).deleteObject(any(),any());
@@ -312,7 +249,7 @@ class CancellationServiceTest {
         cancellationService.finalDeleteJob();
         archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
         assertFalse(archiveEntries.isEmpty());
-        cancellation.setCancellationDate(LocalDateTime.now().minusWeeks(4));
+        cancellation.setCancellationDate(ZonedDateTime.now().minusWeeks(4));
         cancellationRepository.save(cancellation);
         cancellationService.finalDeleteJob();
         archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);

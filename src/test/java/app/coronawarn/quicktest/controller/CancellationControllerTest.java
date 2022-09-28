@@ -20,10 +20,8 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_TERMINATOR;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -197,11 +195,11 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
             authorities = ROLE_TERMINATOR,
             claims = @OpenIdClaims(sub = userId)
     )
-    void getCancellation404IfCancellationDateIsInFuture() throws Exception {
+    void getCancellationIfCancellationDateIsInFuture() throws Exception {
         createCancellation(LocalDateTime.now().plusDays(1));
         mockMvc().perform(MockMvcRequestBuilders
                         .get("/api/cancellation"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk());
     }
     @Test
     @WithMockKeycloakAuth(
@@ -212,57 +210,5 @@ class CancellationControllerTest extends ServletKeycloakAuthUnitTestingSupport {
         mockMvc().perform(MockMvcRequestBuilders
             .get("/api/cancellation"))
           .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithMockKeycloakAuth(
-      authorities = {ROLE_ADMIN, ROLE_TERMINATOR},
-      claims = @OpenIdClaims(sub = userId)
-    )
-    void requestDownload() throws Exception {
-        when(utilities.getUserNameFromToken()).thenReturn(userId);
-        createCancellation(LocalDateTime.now().minusDays(1));
-        mockMvc().perform(MockMvcRequestBuilders
-            .post("/api/cancellation/requestDownload"))
-            .andExpect(status().isOk());
-
-        assertEquals(userId, cancellationRepository.findAll().get(0).getDownloadRequestedBy());
-    }
-
-    @Test
-    @WithMockKeycloakAuth(
-      authorities = ROLE_ADMIN,
-      claims = @OpenIdClaims(sub = userId)
-    )
-    void requestDownloadNotFound() throws Exception {
-        mockMvc().perform(MockMvcRequestBuilders
-            .post("/api/cancellation/requestDownload"))
-          .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @WithMockKeycloakAuth(
-      authorities = ROLE_TERMINATOR,
-      claims = @OpenIdClaims(sub = userId)
-    )
-    void requestDownloadWrongRole() throws Exception {
-        mockMvc().perform(MockMvcRequestBuilders
-            .post("/api/cancellation/requestDownload"))
-          .andExpect(status().isForbidden());
-    }
-
-    @Test
-    @WithMockKeycloakAuth(
-      authorities = {ROLE_ADMIN, ROLE_TERMINATOR},
-      claims = @OpenIdClaims(sub = userId)
-    )
-    void requestDownloadMultipleTimes() throws Exception {
-        createCancellation(LocalDateTime.now().minusDays(1));
-        mockMvc().perform(MockMvcRequestBuilders
-            .post("/api/cancellation/requestDownload"))
-          .andExpect(status().isOk());
-        mockMvc().perform(MockMvcRequestBuilders
-            .post("/api/cancellation/requestDownload"))
-          .andExpect(status().isConflict());
     }
 }

@@ -11,7 +11,7 @@ import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,13 +50,22 @@ public class ArchiveSchedulingService {
       lockAtMostFor = "${archive.cancellationArchiveJob.locklimit}")
     public void cancellationArchiveJob() {
         log.info("Starting Job: cancellationArchiveJob");
-        List<Cancellation> cancellations = cancellationService.getReadyToArchive();
+        processCancellationArchiveBatchRecursion(cancellationService.getReadyToArchiveBatch());
+        log.info("Completed Job: cancellationArchiveJob");
+    }
+
+    private void processCancellationArchiveBatchRecursion(List<Cancellation> cancellations) {
+        log.info("Process Cancellation Archive Batch with size of {}", cancellations.size());
         for (Cancellation cancellation : cancellations) {
             String partnerId = cancellation.getPartnerId();
             archiveService.moveToArchiveByTenantId(partnerId);
-            cancellationService.updateMovedToLongterm(cancellation, LocalDateTime.now());
+            cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now());
         }
-        log.info("Completed Job: cancellationArchiveJob");
+
+        List<Cancellation> nextBatch = cancellationService.getReadyToArchiveBatch();
+        if (!nextBatch.isEmpty()) {
+            processCancellationArchiveBatchRecursion(nextBatch);
+        }
     }
 
     /**
@@ -67,18 +76,23 @@ public class ArchiveSchedulingService {
       lockAtMostFor = "${archive.csvUploadJob.locklimit}")
     public void csvUploadJob() {
         log.info("Starting Job: csvUploadJob");
-        List<Cancellation> cancellations = cancellationService.getReadyToUpload();
+        processCsvUploadBatchRecursion(cancellationService.getReadyToUploadBatch());
+        log.info("Completed Job: csvUploadJob");
+    }
+
+    private void processCsvUploadBatchRecursion(List<Cancellation> cancellations) {
+        log.info("Process CSV Upload Batch with size of {}", cancellations.size());
         for (Cancellation cancellation : cancellations) {
             try {
                 List<ArchiveCipherDtoV1> quicktests =
-                  archiveService.getQuicktestsFromLongtermByTenantId(cancellation.getPartnerId());
+                        archiveService.getQuicktestsFromLongtermByTenantId(cancellation.getPartnerId());
                 StringWriter stringWriter = new StringWriter();
                 CSVWriter csvWriter =
-                  new CSVWriter(stringWriter, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER,
-                    CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+                        new CSVWriter(stringWriter, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER,
+                                CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
                 StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
-                  new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
-                    .build();
+                        new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
+                                .build();
                 beanToCsv.write(quicktests);
                 InputStream inputStream = new ByteArrayInputStream(stringWriter.toString().getBytes());
                 String id = cancellation.getPartnerId() + ".csv";
@@ -86,13 +100,16 @@ public class ArchiveSchedulingService {
                 metadata.setContentLength(stringWriter.toString().getBytes().length);
                 s3Client.putObject(s3Config.getBucketName(), id, inputStream, metadata);
                 log.info("File stored to S3 with id {}", id);
-                cancellationService.updateCsvCreated(cancellation, LocalDateTime.now(), id);
+                cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), id);
             } catch (Exception e) {
                 log.error("Could not convert Quicktest to CSV: " + e.getLocalizedMessage());
                 cancellationService.updateDataExportError(cancellation, e.getLocalizedMessage());
-                throw new RuntimeException(e);
             }
         }
-        log.info("Completed Job: csvUploadJob");
+
+        List<Cancellation> nextBatch = cancellationService.getReadyToUploadBatch();
+        if (!nextBatch.isEmpty()) {
+            processCsvUploadBatchRecursion(nextBatch);
+        }
     }
 }

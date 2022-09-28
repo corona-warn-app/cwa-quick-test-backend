@@ -20,9 +20,8 @@
 
 package app.coronawarn.quicktest.domain;
 
-import app.coronawarn.quicktest.utils.Utilities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -50,46 +49,43 @@ public class Cancellation {
     private String partnerId;
 
     @Column(name = "created_at")
-    private LocalDateTime createdAt;
+    private ZonedDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    private ZonedDateTime updatedAt;
 
     @Column(name = "cancellation_date")
-    private LocalDateTime cancellationDate;
-
-    @Column(name = "download_requested")
-    private LocalDateTime downloadRequested;
+    private ZonedDateTime cancellationDate;
 
     @Column(name = "moved_to_longterm_archive")
-    private LocalDateTime movedToLongtermArchive;
+    private ZonedDateTime movedToLongtermArchive;
 
     @Column(name = "csv_created")
-    private LocalDateTime csvCreated;
+    private ZonedDateTime csvCreated;
 
     @Column(name = "download_link_requested")
-    private LocalDateTime downloadLinkRequested;
+    private ZonedDateTime downloadLinkRequested;
+
+    @Column(name = "download_link_requested_by")
+    @JsonIgnore
+    private String downloadLinkRequestedBy;
 
     @Column(name = "data_deleted")
-    private LocalDateTime dataDeleted;
+    private ZonedDateTime dataDeleted;
 
     @Column(name = "bucket_object_id")
     private String bucketObjectId;
-
-    @Column(name = "download_requested_by")
-    @JsonIgnore
-    private String downloadRequestedBy;
 
     @Column(name = "data_export_error")
     @JsonIgnore
     private String dataExportError;
 
     @Transient()
-    private LocalDateTime finalDeletion;
+    private ZonedDateTime finalDeletion;
 
     @PrePersist
     private void onCreate() {
-        LocalDateTime now = Utilities.getCurrentLocalDateTimeUtc();
+        ZonedDateTime now = ZonedDateTime.now();
         if (createdAt == null) {
             createdAt = now;
         }
@@ -100,6 +96,6 @@ public class Cancellation {
 
     @PreUpdate
     private void onUpdate() {
-        updatedAt = Utilities.getCurrentLocalDateTimeUtc();
+        updatedAt = ZonedDateTime.now();
     }
 }

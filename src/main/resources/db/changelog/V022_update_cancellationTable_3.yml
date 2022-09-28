@@ -1,0 +1,13 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-cancellation-table-3
+      author: f11h
+      changes:
+        - renameColumn:
+            tableName: cancellation
+            newColumnName: download_link_requested_by
+            oldColumnName: download_requested_by
+            columnDataType: varchar(100)
+        - dropColumn:
+            tableName: cancellation
+            columnName: download_requested

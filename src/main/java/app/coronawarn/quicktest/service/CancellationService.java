@@ -20,17 +20,19 @@
 
 package app.coronawarn.quicktest.service;
 
+import app.coronawarn.quicktest.config.ArchiveProperties;
 import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.repository.CancellationRepository;
 import com.amazonaws.services.s3.AmazonS3;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -46,6 +48,8 @@ public class CancellationService {
 
     private final CsvUploadConfig s3Config;
 
+    private final ArchiveProperties archiveProperties;
+
     private final QuickTestConfig quickTestConfig;
 
     /**
@@ -54,7 +58,7 @@ public class CancellationService {
      * @param cancellation Cancellation Entity
      * @return LocalDateTime
      */
-    public LocalDateTime getFinalDeletion(Cancellation cancellation) {
+    public ZonedDateTime getFinalDeletion(Cancellation cancellation) {
         return cancellation.getCancellationDate()
                 .plusDays(quickTestConfig.getCancellation().getFinalDeletionDays());
 
@@ -68,7 +72,7 @@ public class CancellationService {
      * @param cancellationDate Date of cancellation will be active.
      * @return the created and persisted entity.
      */
-    public Cancellation createCancellation(String partnerId, LocalDateTime cancellationDate) {
+    public Cancellation createCancellation(String partnerId, ZonedDateTime cancellationDate) {
         Optional<Cancellation> existingCancellation = getByPartnerId(partnerId);
 
         if (existingCancellation.isPresent()) {
@@ -100,24 +104,12 @@ public class CancellationService {
     }
 
     /**
-     * Set DownloadRequested Flag/Timestamp and persist entity.
-     *
-     * @param cancellation      Cancellation Entity
-     * @param downloadRequested timestamp of user interaction
-     */
-    public void updateDownloadRequested(Cancellation cancellation, LocalDateTime downloadRequested, String requester) {
-        cancellation.setDownloadRequested(downloadRequested);
-        cancellation.setDownloadRequestedBy(requester);
-        cancellationRepository.save(cancellation);
-    }
-
-    /**
      * Set MovedToLongtermArchive Flag/Timestamp and persist entity.
      *
      * @param cancellation           Cancellation Entity
      * @param movedToLongtermArchive timestamp of job completion
      */
-    public void updateMovedToLongterm(Cancellation cancellation, LocalDateTime movedToLongtermArchive) {
+    public void updateMovedToLongterm(Cancellation cancellation, ZonedDateTime movedToLongtermArchive) {
         cancellation.setMovedToLongtermArchive(movedToLongtermArchive);
         cancellationRepository.save(cancellation);
     }
@@ -128,7 +120,7 @@ public class CancellationService {
      * @param cancellation Cancellation Entity
      * @param csvCreated   timestamp of job completion
      */
-    public void updateCsvCreated(Cancellation cancellation, LocalDateTime csvCreated, String bucketObjectId) {
+    public void updateCsvCreated(Cancellation cancellation, ZonedDateTime csvCreated, String bucketObjectId) {
         cancellation.setCsvCreated(csvCreated);
         cancellation.setBucketObjectId(bucketObjectId);
         cancellationRepository.save(cancellation);
@@ -139,9 +131,11 @@ public class CancellationService {
      *
      * @param cancellation          Cancellation Entity
      * @param downloadLinkRequested timestamp of user interaction
+     * @param requester             Username of the user who requested the download link
      */
-    public void updateDownloadLinkRequested(Cancellation cancellation, LocalDateTime downloadLinkRequested) {
+    public void updateDownloadLinkRequested(Cancellation cancellation, ZonedDateTime downloadLinkRequested, String requester) {
         cancellation.setDownloadLinkRequested(downloadLinkRequested);
+        cancellation.setDownloadLinkRequestedBy(requester);
         cancellationRepository.save(cancellation);
     }
 
@@ -151,7 +145,7 @@ public class CancellationService {
      * @param cancellation Cancellation Entity
      * @param dataDeleted  timestamp of complete deletion
      */
-    public void updateDataDeleted(Cancellation cancellation, LocalDateTime dataDeleted) {
+    public void updateDataDeleted(Cancellation cancellation, ZonedDateTime dataDeleted) {
         cancellation.setDataDeleted(dataDeleted);
         cancellationRepository.save(cancellation);
     }
@@ -174,45 +168,28 @@ public class CancellationService {
     /**
      * Searches in the DB for an existing cancellation entity which download request is older than 48h and not
      * moved_to_longterm_archive.
+     * Returns only one batch of entities. Batch Size depends on configuration.
      *
      * @return List holding all entities found.
      */
-    public List<Cancellation> getReadyToArchive() {
-        LocalDateTime ldt = LocalDateTime.now().minusHours(quickTestConfig.getCancellation().getReadyToArchiveHours());
+    public List<Cancellation> getReadyToArchiveBatch() {
+        ZonedDateTime ldt = ZonedDateTime.now()
+                .minusHours(quickTestConfig.getCancellation().getReadyToArchiveHours());
 
-        return cancellationRepository.findByMovedToLongtermArchiveIsNullAndDownloadRequestedBefore(ldt);
+        return cancellationRepository.findByMovedToLongtermArchiveIsNullAndCancellationDateBefore(
+                ldt, PageRequest.of(0, archiveProperties.getCancellationArchiveJob().getChunkSize()));
     }
 
     /**
      * Searches in the DB for an existing cancellation entity which moved_to_longterm_archive is not null but
      * csv_created is null.
+     * Returns only one batch of entities. Batch Size depends on configuration.
      *
      * @return List holding all entities found.
      */
-    public List<Cancellation> getReadyToUpload() {
-        return cancellationRepository.findByMovedToLongtermArchiveNotNullAndCsvCreatedIsNull();
-    }
-
-    /**
-     * Job sets download_requested of all cancellations that end in less then 7 days to current time.
-     */
-    @Scheduled(cron = "${quicktest.cancellation.trigger-download-job.cron}")
-    @SchedulerLock(name = "TriggerDownloadJob", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${quicktest.cancellation.trigger-download-job.locklimit}")
-    public void triggerDownloadJob() {
-        log.info("Starting Job: triggerDownloadJob");
-
-        LocalDateTime triggerThreshold = LocalDateTime.now()
-                .minusDays(quickTestConfig.getCancellation().getFinalDeletionDays())
-                .plusDays(quickTestConfig.getCancellation().getTriggerDownloadDaysBeforeFinalDelete());
-
-        List<Cancellation> cancellations =
-                cancellationRepository.findByDownloadRequestedIsNullAndCancellationDateBefore(triggerThreshold);
-
-        cancellations.forEach(cancellation -> updateDownloadRequested(
-                cancellation, LocalDateTime.now(), "triggerDownloadJob"));
-
-        log.info("Completed Job: triggerDownloadJob");
+    public List<Cancellation> getReadyToUploadBatch() {
+        return cancellationRepository.findByMovedToLongtermArchiveNotNullAndCsvCreatedIsNull(
+                PageRequest.of(0, archiveProperties.getCsvUploadJob().getChunkSize()));
     }
 
     /**
@@ -223,7 +200,7 @@ public class CancellationService {
             lockAtMostFor = "${quicktest.cancellation.final-delete-job.locklimit}")
     public void finalDeleteJob() {
         log.info("Starting Job: finalDeleteJob");
-        LocalDateTime triggerThreshold = LocalDateTime.now()
+        ZonedDateTime triggerThreshold = ZonedDateTime.now()
                 .minusDays(quickTestConfig.getCancellation().getFinalDeletionDays());
 
         List<Cancellation> cancellations =
@@ -231,9 +208,8 @@ public class CancellationService {
 
         cancellations.forEach(cancellation -> {
             archiveService.deleteByTenantId(cancellation.getPartnerId());
-            String id = cancellation.getPartnerId() + ".csv";
-            s3Client.deleteObject(s3Config.getBucketName(), id);
-            updateDataDeleted(cancellation, LocalDateTime.now());
+            s3Client.deleteObject(s3Config.getBucketName(), cancellation.getBucketObjectId());
+            updateDataDeleted(cancellation, ZonedDateTime.now());
         });
 
         log.info("Completed Job: finalDeleteJob");

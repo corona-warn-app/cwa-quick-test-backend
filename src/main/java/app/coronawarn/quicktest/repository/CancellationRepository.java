@@ -21,18 +21,17 @@
 package app.coronawarn.quicktest.repository;
 
 import app.coronawarn.quicktest.domain.Cancellation;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CancellationRepository extends JpaRepository<Cancellation, String> {
-    List<Cancellation> findByMovedToLongtermArchiveIsNullAndDownloadRequestedBefore(LocalDateTime expiryDate);
+    List<Cancellation> findByMovedToLongtermArchiveIsNullAndCancellationDateBefore(ZonedDateTime expiryDate, Pageable pageable);
 
-    List<Cancellation> findByDownloadRequestedIsNullAndCancellationDateBefore(LocalDateTime expiryDate);
+    List<Cancellation> findByMovedToLongtermArchiveNotNullAndCsvCreatedIsNull(Pageable pageable);
 
-    List<Cancellation> findByMovedToLongtermArchiveNotNullAndCsvCreatedIsNull();
-
-    List<Cancellation> findByCancellationDateBeforeAndDataDeletedIsNull(LocalDateTime expiryDate);
+    List<Cancellation> findByCancellationDateBeforeAndDataDeletedIsNull(ZonedDateTime expiryDate);
 }

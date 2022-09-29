@@ -33,6 +33,7 @@ import app.coronawarn.quicktest.service.cryption.CryptionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.junit.jupiter.api.Assertions;
@@ -142,6 +143,73 @@ class ArchiveServiceTest {
     }
 
     @Test
+    void moveToArchiveByTenantId() throws Exception {
+        // GIVEN
+        final int initialArchive = this.archiveRepository.findAll().size();
+        final QuickTestArchive test = this.buildQuickTestArchive("tenant_id2");
+        this.quickTestArchiveRepository.saveAndFlush(test);
+        // WHEN
+        this.archiveService.moveToArchiveByTenantId("tenant_id2");
+        // THEN
+        final List<Archive> results = this.archiveRepository.findAll();
+        assertThat(results).isNotNull().hasSize(initialArchive + 1);
+        // AND result
+        final Archive result = results.stream().filter(it -> test.getHashedGuid().equals(it.getHashedGuid())).findFirst().orElse(null);
+        assertThat(result).isNotNull();
+        assertThat(result.getHashedGuid()).isEqualTo(test.getHashedGuid());
+        assertThat(result.getIdentifier()).isEqualTo(this.archiveService
+                .buildIdentifier(test.getBirthday(), test.getLastName()));
+        assertThat(result.getTenantId()).isEqualTo(this.archiveService.createHash(test.getTenantId()));
+        assertThat(result.getPocId()).isEqualTo(this.archiveService.createHash(test.getPocId()));
+        assertThat(result.getCreatedAt()).isAfterOrEqualTo(LocalDateTime.now().minusMinutes(5));
+        assertThat(result.getUpdatedAt()).isAfterOrEqualTo(LocalDateTime.now().minusMinutes(5));
+        assertThat(result.getVersion()).isNotNull().isNotNegative();
+        // AND RSA encryption
+        assertThat(result.getSecret()).isNotNull();
+        final String secret = this.keyProvider.decrypt(result.getSecret(), result.getPocId());
+        assertThat(secret).isNotBlank();
+        // AND AES encryption
+        assertThat(result.getCiphertext()).isNotNull();
+        final AesCryption aesCryption = this.cryptionService.getAesCryption();
+        final String json = aesCryption.decrypt(secret, result.getCiphertext());
+        assertThat(json).isNotBlank().contains("ArchiveCipherDtoV1");
+        assertThat(result.getAlgorithmAes()).isEqualTo(aesCryption.getAlgorithm());
+        // AND DTO (Ciphertext)
+        final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
+        assertThat(dto).isNotNull();
+        assertThat(dto.getClassName()).isEqualTo(ArchiveCipherDtoV1.class.getSimpleName());
+        assertThat(dto.getHashedGuid()).isEqualTo(test.getHashedGuid());
+        assertThat(dto.getShortHashedGuid()).isEqualTo(test.getShortHashedGuid());
+        assertThat(dto.getTenantId()).isEqualTo(test.getTenantId());
+        assertThat(dto.getPocId()).isEqualTo(test.getPocId());
+        assertThat(dto.getCreatedAt()).isEqualToIgnoringNanos(test.getCreatedAt());
+        assertThat(dto.getUpdatedAt()).isEqualToIgnoringNanos(test.getUpdatedAt());
+        assertThat(dto.getVersion()).isEqualTo(test.getVersion());
+        assertThat(dto.getConfirmationCwa()).isEqualTo(test.getConfirmationCwa());
+        assertThat(dto.getTestResult()).isEqualTo(test.getTestResult());
+        assertThat(dto.getPrivacyAgreement()).isEqualTo(test.getPrivacyAgreement());
+        assertThat(dto.getLastName()).isEqualTo(test.getLastName());
+        assertThat(dto.getFirstName()).isEqualTo(test.getFirstName());
+        assertThat(dto.getEmail()).isEqualTo(test.getEmail());
+        assertThat(dto.getPhoneNumber()).isEqualTo(test.getPhoneNumber());
+        assertThat(dto.getSex()).isEqualTo(test.getSex());
+        assertThat(dto.getStreet()).isEqualTo(test.getStreet());
+        assertThat(dto.getHouseNumber()).isEqualTo(test.getHouseNumber());
+        assertThat(dto.getZipCode()).isEqualTo(test.getZipCode());
+        assertThat(dto.getCity()).isEqualTo(test.getCity());
+        assertThat(dto.getTestBrandId()).isEqualTo(test.getTestBrandId());
+        assertThat(dto.getTestBrandName()).isEqualTo(test.getTestBrandName());
+        assertThat(dto.getBirthday()).isEqualTo(test.getBirthday());
+        assertThat(dto.getTestResultServerHash()).isEqualTo(test.getTestResultServerHash());
+        assertThat(dto.getDcc()).isEqualTo(test.getDcc());
+        assertThat(dto.getAdditionalInfo()).isEqualTo(test.getAdditionalInfo());
+        assertThat(dto.getGroupName()).isEqualTo(test.getGroupName());
+        // AND deleted QuickTestArchive
+        final Optional<QuickTestArchive> deletedTest = this.quickTestArchiveRepository.findById(test.getHashedGuid());
+        assertThat(deletedTest).isEmpty();
+    }
+
+    @Test
     void testFailedArchiveJobCleanup() {
         int initialArchiveEntities = archiveRepository.findAll().size();
 
@@ -229,4 +297,5 @@ class ArchiveServiceTest {
         qta.setGroupName("group_name");
         return qta;
     }
+
 }

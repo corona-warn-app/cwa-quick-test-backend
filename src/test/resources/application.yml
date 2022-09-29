@@ -82,12 +82,29 @@ quicktest:
     max-age-in-minutes: 2
     locklimit: 1800000
     chunk-size: 1000
+  cancellation:
+    trigger-download-job:
+      cron: "-"
+      locklimit: 1800000
+    final-delete-job:
+      cron: "-"
+      locklimit: 1800000
+    trigger-download-days-before-final-delete: 7
+    ready-to-archive-hours: 48
 
 archive:
   jks:
     path: classpath:archive/dev.jks
     password: changeMe
   moveToArchiveJob:
+    cron: "-"
+    locklimit: 1800000
+    older-than-in-seconds: 5000
+  cancellationArchiveJob:
+    cron: "-"
+    locklimit: 1800000
+    older-than-in-seconds: 5000
+  csvUploadJob:
     cron: "-"
     locklimit: 1800000
     older-than-in-seconds: 5000
@@ -122,3 +139,16 @@ dcc:
     cron: "*/2 * * * * *"
     lockLimit: 1800000
     fixedDelayString: 30000
+
+s3:
+  accessKey: minioadmin
+  bucketName: results
+  proxy:
+    enabled: false
+    host:
+    port: -1
+  region:
+    endpoint: http://localhost:9000
+    name: eu-de
+  secretKey: minioadmin
+  expiration: 3600

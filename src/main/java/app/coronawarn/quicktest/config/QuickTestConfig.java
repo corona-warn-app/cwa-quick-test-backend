@@ -45,6 +45,17 @@ public class QuickTestConfig {
     private String pcrEnabledKey;
 
     private FrontendContextConfig frontendContextConfig = new FrontendContextConfig();
+    private CancellationConfig cancellation = new CancellationConfig();
+
+    @Getter
+    @Setter
+    public static class CancellationConfig {
+
+        private int finalDeletionDays = 28;
+        private int completePendingTestsHours = 24;
+        private int readyToArchiveHours = 48;
+
+    }
 
     @Getter
     @Setter

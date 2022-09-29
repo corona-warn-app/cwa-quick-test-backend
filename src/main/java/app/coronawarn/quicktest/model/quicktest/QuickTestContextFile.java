@@ -38,4 +38,7 @@ public class QuickTestContextFile {
     @JsonProperty("environment-name")
     private final String environmentName;
 
+    @JsonProperty("cancellation-complete-pending-tests")
+    private final int cancellationCompletePendingTests;
+
 }

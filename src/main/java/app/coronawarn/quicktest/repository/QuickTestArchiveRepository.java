@@ -57,4 +57,6 @@ public interface QuickTestArchiveRepository extends JpaRepository<QuickTestArchi
     @Modifying
     @Query("DELETE FROM QuickTestArchive q WHERE q.hashedGuid = :hashedGuid")
     int deleteByHashedGuid(@Param("hashedGuid") String hashedGuid);
+
+    Stream<QuickTestArchiveDataView> findAllByTenantId(String tenantId, Pageable pageable);
 }

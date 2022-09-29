@@ -30,6 +30,8 @@ import org.springframework.context.annotation.Configuration;
 public class ArchiveProperties {
     private ArchiveJks jks = new ArchiveJks();
     private Job moveToArchiveJob = new Job();
+    private Job cancellationArchiveJob = new Job();
+    private Job csvUploadJob = new Job();
     private Hash hash = new Hash();
     private Crypt crypt = new Crypt();
     private VaultTransit vaultTransit = new VaultTransit();

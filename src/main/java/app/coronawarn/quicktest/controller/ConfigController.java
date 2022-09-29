@@ -23,7 +23,6 @@ package app.coronawarn.quicktest.controller;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.model.keycloak.KeyCloakConfigFile;
 import app.coronawarn.quicktest.model.quicktest.QuickTestContextFile;
-import app.coronawarn.quicktest.service.MapEntryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
@@ -60,6 +59,8 @@ public class ConfigController {
         return ResponseEntity.ok(
                 new QuickTestContextFile(
                         quickTestConfig.getFrontendContextConfig().getRulesServerUrl(),
-                        quickTestConfig.getFrontendContextConfig().getEnvironmentName()));
+                        quickTestConfig.getFrontendContextConfig().getEnvironmentName(),
+                        quickTestConfig.getCancellation().getCompletePendingTestsHours()
+                  ));
     }
 }

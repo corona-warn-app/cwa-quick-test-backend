@@ -90,14 +90,14 @@ public class KeycloakService {
      * @throws KeycloakServiceException if User Creation has failed.
      */
     public String createNewUserInGroup(
-        String firstName,
-        String lastName,
-        String username,
-        String password,
-        boolean roleCounter,
-        boolean roleLab,
-        String rootGroupPath,
-        String subGroupPath) throws KeycloakServiceException {
+      String firstName,
+      String lastName,
+      String username,
+      String password,
+      boolean roleCounter,
+      boolean roleLab,
+      String rootGroupPath,
+      String subGroupPath) throws KeycloakServiceException {
 
         CredentialRepresentation credentials = new CredentialRepresentation();
         credentials.setType(CredentialRepresentation.PASSWORD);
@@ -126,14 +126,14 @@ public class KeycloakService {
             throw new KeycloakServiceException(KeycloakServiceException.Reason.ALREADY_EXISTS);
         } else if (HttpStatus.valueOf(userCreateResponse.getStatus()).is4xxClientError()) {
             log.error("Failed to create new user: {} {}",
-                userCreateResponse.getStatus(),
-                userCreateResponse.readEntity(String.class));
+              userCreateResponse.getStatus(),
+              userCreateResponse.readEntity(String.class));
 
             throw new KeycloakServiceException(KeycloakServiceException.Reason.BAD_REQUEST);
         } else if (userCreateResponse.getStatus() != HttpStatus.CREATED.value()) {
             log.error("Failed to create new user: {} {}",
-                userCreateResponse.getStatus(),
-                userCreateResponse.readEntity(String.class));
+              userCreateResponse.getStatus(),
+              userCreateResponse.readEntity(String.class));
 
             throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
         }
@@ -181,7 +181,7 @@ public class KeycloakService {
 
         // Delete not anymore needed roles
         Map<String, RoleRepresentation> roles = userResource.roles().realmLevel().listAll().stream()
-            .collect(Collectors.toMap(RoleRepresentation::getName, r -> r));
+          .collect(Collectors.toMap(RoleRepresentation::getName, r -> r));
         List<RoleRepresentation> deleteRoles = new ArrayList<>();
         if (!roleLab && roles.containsKey(ROLE_LAB.replace(ROLE_PREFIX, ""))) {
             deleteRoles.add(roles.get(ROLE_LAB.replace(ROLE_PREFIX, "")));
@@ -198,8 +198,8 @@ public class KeycloakService {
 
         // Add new roles
         addRealmRoles(userId, getRoleNames(
-            (roleCounter && !roles.containsKey(ROLE_COUNTER.replace(ROLE_PREFIX, ""))),
-            (roleLab && !roles.containsKey(ROLE_LAB.replace(ROLE_PREFIX, "")))
+          (roleCounter && !roles.containsKey(ROLE_COUNTER.replace(ROLE_PREFIX, ""))),
+          (roleLab && !roles.containsKey(ROLE_LAB.replace(ROLE_PREFIX, "")))
         ));
 
     }
@@ -250,10 +250,10 @@ public class KeycloakService {
             groupDetails.setEmail(mapEntry.getEmail());
             groupDetails.setWebsite(mapEntry.getWebsite());
             groupDetails.setAppointmentRequired(mapEntryService.convertAppointmentToBoolean(
-                    mapEntry.getAppointment()));
+              mapEntry.getAppointment()));
             if (mapEntry.getOpeningHours() != null) {
                 groupDetails.setOpeningHours(
-                        mapEntry.getOpeningHours().length > 0 ? Arrays.asList(mapEntry.getOpeningHours()) : null);
+                  mapEntry.getOpeningHours().length > 0 ? Arrays.asList(mapEntry.getOpeningHours()) : null);
             }
         } else {
             groupDetails.setSearchPortalConsent(false);
@@ -281,8 +281,8 @@ public class KeycloakService {
 
         try {
             realmRoles = realm().users().get(userId).roles().realmLevel().listAll()
-                .stream().map(RoleRepresentation::getName)
-                .collect(Collectors.toList());
+              .stream().map(RoleRepresentation::getName)
+              .collect(Collectors.toList());
         } catch (ClientErrorException e) {
             log.error("Could not get user roles");
             throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
@@ -309,18 +309,18 @@ public class KeycloakService {
      */
     public List<KeycloakUserResponse> getExtendedUserListForRootGroup(String groupId) {
         return getGroupMembers(groupId).stream()
-            .map(member -> {
-                KeycloakUserResponse userResponse = new KeycloakUserResponse();
-                userResponse.setId(member.getId());
-                userResponse.setFirstName(member.getFirstName());
-                userResponse.setLastName(member.getLastName());
-                userResponse.setUsername(member.getUsername());
-                userResponse.setRoleLab(null);
-                userResponse.setRoleCounter(null);
-                userResponse.setSubGroup(getSubgroupId(member.getId(), groupId));
-                return userResponse;
-            })
-            .collect(Collectors.toList());
+          .map(member -> {
+              KeycloakUserResponse userResponse = new KeycloakUserResponse();
+              userResponse.setId(member.getId());
+              userResponse.setFirstName(member.getFirstName());
+              userResponse.setLastName(member.getLastName());
+              userResponse.setUsername(member.getUsername());
+              userResponse.setRoleLab(null);
+              userResponse.setRoleCounter(null);
+              userResponse.setSubGroup(getSubgroupId(member.getId(), groupId));
+              return userResponse;
+          })
+          .collect(Collectors.toList());
     }
 
     /**
@@ -364,11 +364,11 @@ public class KeycloakService {
         GroupRepresentation group = realm().groups().group(groupId).toRepresentation();
 
         List<String> subGroupPocIds = getSubGroupIds(group).stream()
-            .map(this::getSubGroupDetails)
-            .filter(Objects::nonNull)
-            .map(KeycloakGroupDetails::getPocId)
-            .filter(Objects::nonNull)
-            .collect(Collectors.toList());
+          .map(this::getSubGroupDetails)
+          .filter(Objects::nonNull)
+          .map(KeycloakGroupDetails::getPocId)
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
 
         if (quickTestService.pendingTestsForTenantAndPocsExists(rootGroupName, subGroupPocIds)) {
             log.info("User tried to delete a group with pending quick tests");
@@ -378,7 +378,7 @@ public class KeycloakService {
         try {
             realm().groups().group(groupId).remove();
             mapEntryService.deleteIfExists(groupId);
-            for (String subGroupId:subGroupPocIds) {
+            for (String subGroupId : subGroupPocIds) {
                 mapEntryService.deleteIfExists(subGroupId);
             }
             log.info("Deleted group with id {}", groupId);
@@ -388,6 +388,25 @@ public class KeycloakService {
         } catch (WebApplicationException e) {
             log.error("Failed to delete group: SERVER ERROR {}", e.getResponse().readEntity(String.class));
             throw new KeycloakServiceException(KeycloakServiceException.Reason.SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Deletes all subgroups at the Map Service.
+     *
+     * @param group group which subGroups are to be deleted
+     */
+    public void deleteSubGroupsFromMapService(GroupRepresentation group) {
+
+        List<String> subGroupPocIds = getSubGroupIds(group).stream()
+          .map(this::getSubGroupDetails)
+          .filter(Objects::nonNull)
+          .map(KeycloakGroupDetails::getPocId)
+          .filter(Objects::nonNull)
+          .collect(Collectors.toList());
+
+        for (String subGroupId : subGroupPocIds) {
+            mapEntryService.deleteIfExists(subGroupId);
         }
     }
 
@@ -403,7 +422,7 @@ public class KeycloakService {
         ids.add(group.getId());
 
         group.getSubGroups()
-            .forEach(g -> getSubGroupIdsRecursion(ids, g));
+          .forEach(g -> getSubGroupIdsRecursion(ids, g));
     }
 
     /**
@@ -416,7 +435,7 @@ public class KeycloakService {
     public void moveGroup(String groupId, String newParent) throws KeycloakServiceException {
         try {
             Response response = realm().groups().group(newParent).subGroup(
-                realm().groups().group(groupId).toRepresentation()
+              realm().groups().group(groupId).toRepresentation()
             );
 
             if (response.getStatus() == HttpStatus.CONFLICT.value()) {
@@ -452,8 +471,8 @@ public class KeycloakService {
 
             // Remove user from all groups except root group
             realm().users().get(userId).groups().stream()
-                .filter(group -> !group.getId().equals(rootGroupId))
-                .forEach(group -> userResource.leaveGroup(group.getId()));
+              .filter(group -> !group.getId().equals(rootGroupId))
+              .forEach(group -> userResource.leaveGroup(group.getId()));
 
             realm().users().get(userId).joinGroup(newParent);
             log.info("Moved user {} into group {}", userId, newParent);
@@ -476,21 +495,21 @@ public class KeycloakService {
         List<GroupRepresentation> rootGroups = realm().groups().groups(0, Integer.MAX_VALUE);
 
         List<String> userGroupIds = realm().users().get(userId).groups().stream()
-            .map(GroupRepresentation::getId)
-            .collect(Collectors.toList());
+          .map(GroupRepresentation::getId)
+          .collect(Collectors.toList());
 
         return rootGroups.stream()
-            .filter(rg -> userGroupIds.contains(rg.getId()))
-            .collect(Collectors.toList());
+          .filter(rg -> userGroupIds.contains(rg.getId()))
+          .collect(Collectors.toList());
     }
 
     /**
      * Updates details of a Group.
      *
-     * @param details          The KeycloakGroupDetails object
+     * @param details The KeycloakGroupDetails object
      */
     public void updateGroup(KeycloakGroupDetails details)
-            throws KeycloakServiceException {
+      throws KeycloakServiceException {
         log.info("Updating group with id {}", details.getId());
         GroupResource groupResource = realm().groups().group(details.getId());
         GroupRepresentation group;
@@ -503,8 +522,8 @@ public class KeycloakService {
         group.setName(details.getName());
         // do not update POC ID
         group.setAttributes(getGroupAttributes(details.getPocDetails(),
-                getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE), details.getBsnr(),
-                details.getEnablePcr()));
+          getFromAttributes(group.getAttributes(), POC_ID_ATTRIBUTE), details.getBsnr(),
+          details.getEnablePcr()));
 
         try {
             groupResource.update(group);
@@ -531,10 +550,10 @@ public class KeycloakService {
     /**
      * Create a new subgroup.
      *
-     * @param details          The KeycloakGroupDetails object
+     * @param details The KeycloakGroupDetails object
      */
     public void createGroup(KeycloakGroupDetails details, String parent)
-        throws KeycloakServiceException {
+      throws KeycloakServiceException {
         log.info("Creating new group");
         GroupRepresentation newGroup = new GroupRepresentation();
         newGroup.setName(details.getName());
@@ -575,9 +594,9 @@ public class KeycloakService {
         String path = name.startsWith("/") ? name : "/" + name;
         log.debug("Getting group: [{}]", path);
         return realm().groups().groups(name, 0, Integer.MAX_VALUE)
-            .stream()
-            .filter(group -> group.getPath().equals(path))
-            .findFirst();
+          .stream()
+          .filter(group -> group.getPath().equals(path))
+          .findFirst();
     }
 
     /**
@@ -589,10 +608,10 @@ public class KeycloakService {
      */
     private String getSubgroupId(String userId, String rootGroupId) {
         return realm().users().get(userId).groups().stream()
-            .filter(group -> !group.getId().equals(rootGroupId))
-            .findFirst()
-            .map(GroupRepresentation::getId)
-            .orElse(null);
+          .filter(group -> !group.getId().equals(rootGroupId))
+          .findFirst()
+          .map(GroupRepresentation::getId)
+          .orElse(null);
     }
 
     private List<String> getRoleNames(boolean roleCounter, boolean roleLab) {
@@ -620,8 +639,8 @@ public class KeycloakService {
 
     private void addRealmRoles(String userId, List<String> roleNames) {
         List<RoleRepresentation> roles = roleNames.stream()
-            .map(roleName -> realm().roles().get(roleName).toRepresentation())
-            .collect(Collectors.toList());
+          .map(roleName -> realm().roles().get(roleName).toRepresentation())
+          .collect(Collectors.toList());
 
         if (!roles.isEmpty()) {
             realm().users().get(userId).roles().realmLevel().add(roles);

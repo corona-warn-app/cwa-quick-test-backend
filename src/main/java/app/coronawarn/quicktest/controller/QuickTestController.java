@@ -23,6 +23,8 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
+import app.coronawarn.quicktest.config.QuickTestConfig;
+import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
@@ -31,13 +33,16 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.repository.QuicktestView;
+import app.coronawarn.quicktest.service.CancellationService;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.utils.TestTypeUtils;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -64,6 +69,9 @@ import org.springframework.web.server.ResponseStatusException;
 public class QuickTestController {
 
     private final QuickTestService quickTestService;
+
+    private final QuickTestConfig quickTestConfig;
+    private final CancellationService cancellationService;
     private final ModelMapper modelMapper;
     private final Utilities utilities;
 
@@ -71,16 +79,22 @@ public class QuickTestController {
      * Endpoint for getting pending (registration with name, etc. completed) quicktests for poc and tenant.
      */
     @Operation(
-        summary = "Get poc specific quicktests",
-        description = "Returns all found (pending) quicktests containing personal data for a specific poc"
+      summary = "Get poc specific quicktests",
+      description = "Returns all found (pending) quicktests containing personal data for a specific poc"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "OK"),
+      @ApiResponse(responseCode = "403", description =
+        "Cancellation already started, endpoint is not available anymore."),
       @ApiResponse(responseCode = "500", description = "Query failed due to an internal server error")
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId() {
+        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+              "Cancellation already started, endpoint is not available anymore.");
+        }
         try {
             List<QuickTestResponse> quickTests =
               quickTestService.findAllPendingQuickTestsByTenantIdAndPocId(utilities.getIdsFromToken())
@@ -107,19 +121,25 @@ public class QuickTestController {
      * @return Empty Response
      */
     @Operation(
-        summary = "Creates a quicktest",
-        description = "Creates a quicktest and a pending testresult"
+      summary = "Creates a quicktest",
+      description = "Creates a quicktest and a pending testresult"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Quicktest is created"),
+      @ApiResponse(responseCode = "403", description =
+        "Cancellation already started, endpoint is not available anymore."),
       @ApiResponse(responseCode = "409", description = "Quicktest with short hash already exists"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> createQuickTest(@Valid @RequestBody QuickTestCreationRequest quicktestCreationRequest) {
+        if (isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+              "Cancellation already started, endpoint is not available anymore.");
+        }
         try {
             quickTestService.createNewQuickTest(utilities.getIdsFromToken(),
-                quicktestCreationRequest.getHashedGuid());
+              quicktestCreationRequest.getHashedGuid());
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
@@ -137,16 +157,22 @@ public class QuickTestController {
      * @return ResponseEntity with status code.
      */
     @Operation(
-            summary = "Deletes a quicktest",
-            description = "Deletes a quicktest"
+      summary = "Deletes a quicktest",
+      description = "Deletes a quicktest"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200 ", description = "Deletion successful."),
       @ApiResponse(responseCode = "403", description = "Deletion of updated Quicktests not allowed."),
+      @ApiResponse(responseCode = "403", description =
+        "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @DeleteMapping(value = "/{shortHash}")
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> deleteEmptyQuickTest(@Valid @PathVariable("shortHash") String shortHash) {
+        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+              "Cancellation started more then 24 hours ago, endpoint is not available anymore.");
+        }
         quickTestService.deleteQuicktest(utilities.getIdsFromToken(), shortHash, utilities.getUserNameFromToken());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
@@ -159,25 +185,27 @@ public class QuickTestController {
      * @return ResponseEntity with binary data.
      */
     @Operation(
-        summary = "Updates the test result of a quicktest",
-        description = "Updates the test result of a quicktest"
+      summary = "Updates the test result of a quicktest",
+      description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
+      @ApiResponse(responseCode = "403", description =
+        "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
       @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists"),
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @PutMapping(value = "/{shortHash}/testResult", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<Void> updateQuickTestStatus(
-        @PathVariable("shortHash") String shortHash,
-        @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
+      @PathVariable("shortHash") String shortHash,
+      @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
+        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+              "Cancellation started more then 24 hours ago, endpoint is not available anymore.");
+        }
         try {
-            quickTestService.updateQuickTest(
-                utilities.getIdsFromToken(),
-                shortHash,
-                quickTestUpdateRequest,
-                utilities.getPocInformationFromToken(),
-                utilities.getUserNameFromToken()
+            quickTestService.updateQuickTest(utilities.getIdsFromToken(), shortHash, quickTestUpdateRequest,
+              utilities.getPocInformationFromToken(), utilities.getUserNameFromToken()
             );
         } catch (ResponseStatusException e) {
             throw e;
@@ -196,19 +224,25 @@ public class QuickTestController {
      * @return ResponseEntity with dcc status.
      */
     @Operation(
-            summary = "Updates the test result of a quicktest",
-            description = "Updates the test result of a quicktest"
+      summary = "Updates the test result of a quicktest",
+      description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "test found"),
+      @ApiResponse(responseCode = "403", description =
+        "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
       @ApiResponse(responseCode = "404", description = "test not found"),
       @ApiResponse(responseCode = "500", description = "internal error.")})
     @GetMapping(value = "/{shortHash}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestDccConsent> getDccConsent(
-            @PathVariable("shortHash") String shortHash) {
+      @PathVariable("shortHash") String shortHash) {
+        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+              "Cancellation started more then 24 hours ago, endpoint is not available anymore.");
+        }
         try {
-            return ResponseEntity.ok(quickTestService.getDccConsent(utilities.getIdsFromToken(),shortHash));
+            return ResponseEntity.ok(quickTestService.getDccConsent(utilities.getIdsFromToken(), shortHash));
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
@@ -225,18 +259,24 @@ public class QuickTestController {
      * @return ResponseEntity with binary data.
      */
     @Operation(
-        summary = "Updates the test result of a quicktest",
-        description = "Updates the test result of a quicktest"
+      summary = "Updates the test result of a quicktest",
+      description = "Updates the test result of a quicktest"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
+      @ApiResponse(responseCode = "403", description =
+        "Cancellation already started, endpoint is not available anymore."),
       @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists"),
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @PutMapping(value = "/{shortHash}/personalData", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> updateQuickTestWithPersonalData(
-        @PathVariable("shortHash") String shortHash,
-        @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
+      @PathVariable("shortHash") String shortHash,
+      @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
+        if (isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+              "Cancellation already started, endpoint is not available anymore.");
+        }
         if (quickTestPersonalDataRequest.getConfirmationCwa()
             && quickTestPersonalDataRequest.getTestResultServerHash() == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
@@ -246,8 +286,8 @@ public class QuickTestController {
         }
         try {
             quickTestService.updateQuickTestWithPersonalData(
-                utilities.getIdsFromToken(), shortHash,
-                modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
+              utilities.getIdsFromToken(), shortHash,
+              modelMapper.map(quickTestPersonalDataRequest, QuickTest.class));
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
@@ -262,5 +302,31 @@ public class QuickTestController {
         QuickTestResponse response = new QuickTestResponse();
         response.setShortHashedGuid(quicktestView.getShortHashedGuid());
         return response;
+    }
+
+    private boolean isCancellationStarted() {
+        Optional<Cancellation> cancellationOptional =
+          cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
+
+        if (cancellationOptional.isEmpty()) {
+            return false;
+        }
+
+        Cancellation cancellation = cancellationOptional.get();
+        return ZonedDateTime.now().isAfter(cancellation.getCancellationDate());
+    }
+
+    private boolean isCancellationStartedAndTestResultSubmittingDenied() {
+        Optional<Cancellation> cancellationOptional =
+                cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
+
+        if (cancellationOptional.isEmpty()) {
+            return false;
+        }
+
+        Cancellation cancellation = cancellationOptional.get();
+        return ZonedDateTime.now()
+          .minusHours(quickTestConfig.getCancellation().getCompletePendingTestsHours())
+          .isAfter(cancellation.getCancellationDate());
     }
 }

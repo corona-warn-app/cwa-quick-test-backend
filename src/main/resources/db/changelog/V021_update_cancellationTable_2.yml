@@ -1,0 +1,19 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-cancellation-table-2
+      author: f11h
+      changes:
+        - addColumn:
+            tableName: cancellation
+            column:
+              name: download_requested_by
+              type: varchar(100)
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: cancellation
+            column:
+              name: data_export_error
+              type: varchar(200)
+              constraints:
+                nullable: true

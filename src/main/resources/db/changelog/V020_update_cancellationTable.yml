@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-cancellation-table
+      author: f11h
+      changes:
+        - delete:
+            tableName: cancellation
+        - renameColumn:
+            tableName: cancellation
+            oldColumnName: final_deletion
+            newColumnName: cancellation_date
+            columnDataType: datetime

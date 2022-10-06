@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.Mockito.doNothing;
 
 import app.coronawarn.quicktest.domain.Cancellation;
@@ -155,7 +156,8 @@ class CancellationServiceTest {
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
 
-        cancellationService.updateCsvCreated(cancellation, NEW_STATE_DATE, PARTNER_ID + ".csv");
+        cancellationService.updateCsvCreated(cancellation, NEW_STATE_DATE, PARTNER_ID + ".csv",
+          "hash", 10, 200);
 
         Optional<Cancellation> updatedCancellation = cancellationRepository.findById(PARTNER_ID);
         Assertions.assertTrue(updatedCancellation.isPresent());
@@ -167,6 +169,9 @@ class CancellationServiceTest {
         Assertions.assertEquals(PARTNER_ID + ".csv", updatedCancellation.get().getBucketObjectId());
         assertNull(updatedCancellation.get().getDownloadLinkRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getCsvCreated());
+        Assertions.assertEquals("hash", updatedCancellation.get().getCsvHash());
+        Assertions.assertEquals(10, updatedCancellation.get().getCsvEntityCount());
+        Assertions.assertEquals(200, updatedCancellation.get().getCsvSize());
     }
 
     @Test

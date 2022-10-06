@@ -20,13 +20,9 @@
 
 package app.coronawarn.quicktest.service;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -36,11 +32,16 @@ import app.coronawarn.quicktest.domain.QuickTestArchive;
 import app.coronawarn.quicktest.model.Sex;
 import app.coronawarn.quicktest.repository.CancellationRepository;
 import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
-import app.coronawarn.quicktest.utils.Utilities;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.PutObjectResult;
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -48,20 +49,17 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.tomcat.util.buf.HexUtils;
 import org.bouncycastle.util.encoders.Hex;
-import org.h2.security.SHA256;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.keycloak.jose.jws.crypto.HashUtils;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,25 +92,26 @@ class CancellationCsvTest {
     public static final String PARTNER_ID = "P10000";
     public static final String PARTNER_ID_HASH = "212e58b487b6d6b486b71c6ebb3fedc0db3c69114f125fb3cd2fbc72e6ffc25f";
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(ints = {1, 5000})
     @Transactional
-    void testCsvExport() throws IOException, NoSuchAlgorithmException {
+    void testCsvExport(int n) throws IOException, NoSuchAlgorithmException, CsvException {
         Cancellation cancellation = new Cancellation();
         cancellation.setPartnerId(PARTNER_ID);
         cancellation.setCancellationDate(CANCELLATION_DATE);
         cancellationRepository.save(cancellation);
 
-        shortTermArchiveRepository.save(buildQuickTestArchive(PARTNER_ID));
-        shortTermArchiveRepository.save(buildQuickTestArchive(PARTNER_ID));
-        shortTermArchiveRepository.save(buildQuickTestArchive(PARTNER_ID));
+        for (int i = 0; i < n; i++) {
+            shortTermArchiveRepository.save(buildQuickTestArchive(PARTNER_ID));
+        }
 
-        Assertions.assertEquals(3, shortTermArchiveRepository.findAllByTenantId(PARTNER_ID, Pageable.unpaged()).count());
+        Assertions.assertEquals(n, shortTermArchiveRepository.findAllByTenantId(PARTNER_ID, Pageable.unpaged()).count());
         Assertions.assertEquals(0, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH).size());
 
         archiveSchedulingService.cancellationArchiveJob();
 
         Assertions.assertEquals(0, shortTermArchiveRepository.findAllByTenantId(PARTNER_ID, Pageable.unpaged()).count());
-        Assertions.assertEquals(3, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH).size());
+        Assertions.assertEquals(n, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH).size());
 
         ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
         String expectedFileName = PARTNER_ID + ".csv";
@@ -128,11 +127,24 @@ class CancellationCsvTest {
 
         cancellation = cancellationRepository.findById(PARTNER_ID).orElseThrow();
 
-        Assertions.assertEquals(3, cancellation.getCsvEntityCount());
+        Assertions.assertEquals(n, cancellation.getCsvEntityCount());
         Assertions.assertEquals(csvBytes.length, cancellation.getCsvSize());
         Assertions.assertEquals(getHash(csvBytes), cancellation.getCsvHash());
 
-        Assertions.assertTrue(true);
+        CSVParser csvParser = new CSVParserBuilder()
+                .withSeparator('\t')
+                .build();
+
+        try (CSVReader csvReader = new CSVReaderBuilder(new StringReader(csv))
+                .withCSVParser(csvParser)
+                .build()
+        ) {
+            List<String[]> csvEntries = csvReader.readAll();
+            Assertions.assertEquals(n + 1, csvEntries.size());
+            Assertions.assertEquals(27, csvEntries.get(0).length);
+        }
+
+        longTermArchiveRepository.deleteAllByTenantId(PARTNER_ID_HASH);
     }
 
     private String getHash(byte[] bytes) throws NoSuchAlgorithmException {
@@ -159,7 +171,7 @@ class CancellationCsvTest {
         qta.setZipCode("zip_code");
         qta.setCity("city");
         qta.setTestBrandId("test_brand_id");
-        qta.setTestBrandName("Assure Tech. (Hangzhou) Co., Ltd, ECOTEST COVID-19 Antigen Rapid Test Device");
+        qta.setTestBrandName("test_brand_name, Ltd, another_part_of_test_brand_name");
         qta.setBirthday("2000-01-01");
         qta.setPdf("PDF".getBytes());
         qta.setTestResultServerHash("test_result_server_hash");

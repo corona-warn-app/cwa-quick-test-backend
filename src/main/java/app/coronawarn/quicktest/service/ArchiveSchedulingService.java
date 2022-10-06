@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -131,7 +130,7 @@ public class ArchiveSchedulingService {
 
     private String getHash(byte[] bytes) {
         try {
-            MessageDigest sha256 = MessageDigest.getInstance("SHA256");
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
             byte[] hashBytes = sha256.digest(bytes);
             return String.valueOf(Hex.encode(hashBytes));
         } catch (NoSuchAlgorithmException e) {

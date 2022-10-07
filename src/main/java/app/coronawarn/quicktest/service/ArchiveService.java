@@ -31,6 +31,12 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.cryption.CryptionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -160,13 +166,18 @@ public class ArchiveService {
     }
 
     /**
-     * Get longterm archives by pocId.
+     * Get decrypted entities from longterm archive.
+     *
+     * @param pocId    (optional) pocId to filter for
+     * @param tenantId tenantID to filter for
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId, final String tenantId)
-            throws JsonProcessingException {
-        List<Archive> allByPocId = longTermArchiveRepository.findAllByPocId(createHash(pocId));
-        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
-        for (Archive archive : allByPocId) {
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId, final String tenantId) {
+        List<Archive> entities = pocId != null
+                ? longTermArchiveRepository.findAllByPocId(createHash(pocId), createHash(tenantId))
+                : longTermArchiveRepository.findAllByTenantId(createHash(tenantId));
+
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(entities.size());
+        for (Archive archive : entities) {
             try {
                 final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
                 final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
@@ -181,23 +192,22 @@ public class ArchiveService {
     }
 
     /**
-     * Get longterm archives by tenantId.
+     * Create a CSV containing given Quicktest-Archive-Entities.
+     *
+     * @param quicktests List with quicktest entities
+     * @return byte-array representing a CSV.
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByTenantId(final String tenantId) {
-        List<Archive> allByPocId = longTermArchiveRepository.findAllByTenantId(createHash(tenantId));
-        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
-        for (Archive archive : allByPocId) {
-            try {
-                final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
-                final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
-                final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
-                dtos.add(dto);
-            } catch (final Exception e) {
-                log.warn("Could not decrypt archive {}", archive.getHashedGuid());
-                log.warn("Cause: {}", e.getLocalizedMessage());
-            }
-        }
-        return dtos;
+    public byte[] createCsv(List<ArchiveCipherDtoV1> quicktests)
+            throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+        StringWriter stringWriter = new StringWriter();
+        CSVWriter csvWriter =
+                new CSVWriter(stringWriter, '\t', CSVWriter.NO_QUOTE_CHARACTER,
+                        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+        StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
+                new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
+                        .build();
+        beanToCsv.write(quicktests);
+        return stringWriter.toString().getBytes(StandardCharsets.UTF_8);
     }
 
     /**

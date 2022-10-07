@@ -24,7 +24,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.Mockito.doNothing;
 
 import app.coronawarn.quicktest.domain.Cancellation;
@@ -248,16 +247,16 @@ class CancellationServiceTest {
         final QuickTestArchive test = buildCancellationQuickTestArchive();
         quickTestArchiveRepository.saveAndFlush(test);
         archiveService.moveToArchiveByTenantId(PARTNER_ID);
-        var archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        var archiveEntries = archiveService.getQuicktestsFromLongterm(null, PARTNER_ID);
         assertFalse(archiveEntries.isEmpty());
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         cancellationService.finalDeleteJob();
-        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        archiveEntries = archiveService.getQuicktestsFromLongterm(null, PARTNER_ID);
         assertFalse(archiveEntries.isEmpty());
         cancellation.setCancellationDate(ZonedDateTime.now().minusWeeks(4));
         cancellationRepository.save(cancellation);
         cancellationService.finalDeleteJob();
-        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        archiveEntries = archiveService.getQuicktestsFromLongterm(null, PARTNER_ID);
         assertTrue(archiveEntries.isEmpty());
     }
 

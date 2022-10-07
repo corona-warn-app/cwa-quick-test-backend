@@ -75,10 +75,16 @@ public class ArchiveRepository {
      *
      * @return {@link List} of {@link Archive}
      */
-    public List<Archive> findAllByPocId(final String pocId) {
+    public List<Archive> findAllByPocId(final String pocId, final String tenantId) {
         this.em.getTransaction().begin();
-        TypedQuery<Archive> query = this.em.createQuery("SELECT a FROM Archive a WHERE a.pocId = ?1", Archive.class);
-        final List<Archive> result = query.setParameter(1, pocId).getResultList();
+
+        TypedQuery<Archive> query = this.em.createQuery(
+                "SELECT a FROM Archive a WHERE a.pocId = ?1 AND a.tenantId = ?2", Archive.class);
+        final List<Archive> result = query
+                .setParameter(1, pocId)
+                .setParameter(2, tenantId)
+                .getResultList();
+
         this.em.getTransaction().commit();
         return result;
     }
@@ -90,8 +96,10 @@ public class ArchiveRepository {
      */
     public List<Archive> findAllByTenantId(final String tenantId) {
         em.getTransaction().begin();
+
         TypedQuery<Archive> query = em.createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class);
         final List<Archive> result = query.setParameter(1, tenantId).getResultList();
+
         em.getTransaction().commit();
         return result;
     }

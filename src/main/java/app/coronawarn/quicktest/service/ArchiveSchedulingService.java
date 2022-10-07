@@ -5,12 +5,7 @@ import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
@@ -88,22 +83,14 @@ public class ArchiveSchedulingService {
         for (Cancellation cancellation : cancellations) {
             try {
                 List<ArchiveCipherDtoV1> quicktests =
-                  archiveService.getQuicktestsFromLongtermByTenantId(cancellation.getPartnerId());
+                  archiveService.getQuicktestsFromLongterm(null, cancellation.getPartnerId());
 
-                StringWriter stringWriter = new StringWriter();
-                CSVWriter csvWriter =
-                  new CSVWriter(stringWriter, '\t', CSVWriter.NO_QUOTE_CHARACTER,
-                    CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
-                StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
-                  new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
-                    .build();
-                beanToCsv.write(quicktests);
-                byte[] csvBytes = stringWriter.toString().getBytes(StandardCharsets.UTF_8);
-
-                String objectId = cancellation.getPartnerId() + ".csv";
+                byte[] csvBytes = archiveService.createCsv(quicktests);
 
                 ObjectMetadata metadata = new ObjectMetadata();
                 metadata.setContentLength(csvBytes.length);
+
+                String objectId = cancellation.getPartnerId() + ".csv";
 
                 s3Client.putObject(
                     s3Config.getBucketName(),

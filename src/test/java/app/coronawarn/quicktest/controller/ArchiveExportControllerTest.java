@@ -57,12 +57,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(properties = "keycloak-admin.realm=REALM")
+@ActiveProfiles({"test", "archive_export"})
 @AutoConfigureMockMvc
 @Import({UserManagementControllerUtils.class, Utilities.class})
 @ComponentScan(basePackageClasses = {KeycloakSecurityComponents.class, QuicktestKeycloakSpringBootConfigResolver.class})
@@ -77,16 +79,12 @@ class ArchiveExportControllerTest extends ServletKeycloakAuthUnitTestingSupport 
     private final static String userId = "user-id";
 
     public static final String PARTNER_ID_1 = "P10000";
-    public static final String PARTNER_ID_1_HASH = "212e58b487b6d6b486b71c6ebb3fedc0db3c69114f125fb3cd2fbc72e6ffc25f";
 
     public static final String PARTNER_ID_2 = "P10001";
-    public static final String PARTNER_ID_2_HASH = "212e58b487b6d6b486b71c6ebb3fedc0db3c69114f125fb3cd2fbc72e6ffc25f";
 
     public static final String POC_ID_1 = "Poc_42";
-    public static final String POC_ID_1_HASH = "212e58b487b6d6b486b71c6ebb3fedc0db3c69114f125fb3cd2fbc72e6ffc25f";
 
     public static final String POC_ID_2 = "Poc_43";
-    public static final String POC_ID_2_HASH = "212e58b487b6d6b486b71c6ebb3fedc0db3c69114f125fb3cd2fbc72e6ffc25f";
 
     @Test
     @WithMockKeycloakAuth(

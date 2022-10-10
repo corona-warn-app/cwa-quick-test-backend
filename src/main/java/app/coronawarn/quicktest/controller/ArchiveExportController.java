@@ -1,6 +1,6 @@
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ARCHIVE_DOWNLOADER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ARCHIVE_OPERATOR;
 
 import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
 import app.coronawarn.quicktest.service.ArchiveService;
@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,6 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping(value = "/api/archive")
 @RequiredArgsConstructor
+@Profile("archive_export")
 public class ArchiveExportController {
 
     private final ArchiveService archiveService;
@@ -59,7 +61,7 @@ public class ArchiveExportController {
       @ApiResponse(responseCode = "200", description = "Successful")
     })
     @GetMapping(value = "/{partnerId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
-    @Secured({ROLE_ARCHIVE_DOWNLOADER})
+    @Secured({ROLE_ARCHIVE_OPERATOR})
     public ResponseEntity<byte[]> exportArchive(
             @PathVariable("partnerId") String partnerId,
             @RequestParam(value = "pocId", required = false) String pocId

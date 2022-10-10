@@ -20,7 +20,7 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ARCHIVE_DOWNLOADER;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ARCHIVE_OPERATOR;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -90,7 +90,7 @@ class ArchiveExportControllerTest extends ServletKeycloakAuthUnitTestingSupport 
 
     @Test
     @WithMockKeycloakAuth(
-      authorities = ROLE_ARCHIVE_DOWNLOADER,
+      authorities = ROLE_ARCHIVE_OPERATOR,
       claims = @OpenIdClaims(sub = userId)
     )
     void downloadArchiveByPartnerId() throws Exception {

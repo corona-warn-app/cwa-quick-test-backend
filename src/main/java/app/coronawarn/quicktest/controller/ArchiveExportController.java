@@ -71,6 +71,9 @@ public class ArchiveExportController {
         try {
             byte[] csv = archiveService.createCsv(quicktests);
 
+            log.info("Archive Export triggered for PartnerId: {}, PocId: {}, FileSize: {}",
+                    partnerId, pocId, csv.length);
+
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .contentLength(csv.length)

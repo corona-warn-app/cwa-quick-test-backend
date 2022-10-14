@@ -85,7 +85,7 @@ public class QuickTestController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "OK"),
       @ApiResponse(responseCode = "403", description =
-        "Cancellation already started, endpoint is not available anymore."),
+          "Cancellation already started, endpoint is not available anymore."),
       @ApiResponse(responseCode = "500", description = "Query failed due to an internal server error")
     })
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -127,7 +127,7 @@ public class QuickTestController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "201", description = "Quicktest is created"),
       @ApiResponse(responseCode = "403", description =
-        "Cancellation already started, endpoint is not available anymore."),
+          "Cancellation already started, endpoint is not available anymore."),
       @ApiResponse(responseCode = "409", description = "Quicktest with short hash already exists"),
       @ApiResponse(responseCode = "500", description = "Inserting failed because of internal error.")})
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -164,7 +164,7 @@ public class QuickTestController {
       @ApiResponse(responseCode = "200 ", description = "Deletion successful."),
       @ApiResponse(responseCode = "403", description = "Deletion of updated Quicktests not allowed."),
       @ApiResponse(responseCode = "403", description =
-        "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
+          "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @DeleteMapping(value = "/{shortHash}")
     @Secured(ROLE_COUNTER)
@@ -191,7 +191,7 @@ public class QuickTestController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
       @ApiResponse(responseCode = "403", description =
-        "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
+          "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
       @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists"),
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @PutMapping(value = "/{shortHash}/testResult", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -230,7 +230,7 @@ public class QuickTestController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "test found"),
       @ApiResponse(responseCode = "403", description =
-        "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
+          "Cancellation started more then 24 hours ago, endpoint is not available anymore."),
       @ApiResponse(responseCode = "404", description = "test not found"),
       @ApiResponse(responseCode = "500", description = "internal error.")})
     @GetMapping(value = "/{shortHash}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -265,7 +265,7 @@ public class QuickTestController {
     @ApiResponses(value = {
       @ApiResponse(responseCode = "204 ", description = "Update successful"),
       @ApiResponse(responseCode = "403", description =
-        "Cancellation already started, endpoint is not available anymore."),
+          "Cancellation already started, endpoint is not available anymore."),
       @ApiResponse(responseCode = "404", description = "Short Hash doesn't exists"),
       @ApiResponse(responseCode = "500", description = "Updating failed because of internal error.")})
     @PutMapping(value = "/{shortHash}/personalData", consumes = MediaType.APPLICATION_JSON_VALUE)

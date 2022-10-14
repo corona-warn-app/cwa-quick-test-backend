@@ -76,6 +76,18 @@ public class Cancellation {
     @Column(name = "bucket_object_id")
     private String bucketObjectId;
 
+    @Column(name = "csv_entity_count")
+    @JsonIgnore
+    private Integer csvEntityCount;
+
+    @Column(name = "csv_hash")
+    @JsonIgnore
+    private String csvHash;
+
+    @Column(name = "csv_size")
+    @JsonIgnore
+    private Integer csvSize;
+
     @Column(name = "data_export_error")
     @JsonIgnore
     private String dataExportError;

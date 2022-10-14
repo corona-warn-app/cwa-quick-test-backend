@@ -120,9 +120,13 @@ public class CancellationService {
      * @param cancellation Cancellation Entity
      * @param csvCreated   timestamp of job completion
      */
-    public void updateCsvCreated(Cancellation cancellation, ZonedDateTime csvCreated, String bucketObjectId) {
+    public void updateCsvCreated(Cancellation cancellation, ZonedDateTime csvCreated, String bucketObjectId,
+                                 String hash, int entityCount, int fileSize) {
         cancellation.setCsvCreated(csvCreated);
         cancellation.setBucketObjectId(bucketObjectId);
+        cancellation.setCsvHash(hash);
+        cancellation.setCsvEntityCount(entityCount);
+        cancellation.setCsvSize(fileSize);
         cancellationRepository.save(cancellation);
     }
 

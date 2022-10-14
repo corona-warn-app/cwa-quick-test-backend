@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-cancellation-table-4
+      author: f11h
+      changes:
+        - addColumn:
+            tableName: cancellation
+            column:
+              name: csv_size
+              type: int
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: cancellation
+            column:
+              name: csv_hash
+              type: varchar(64)
+              constraints:
+                nullable: true
+        - addColumn:
+            tableName: cancellation
+            column:
+              name: csv_entity_count
+              type: int
+              constraints:
+                nullable: true

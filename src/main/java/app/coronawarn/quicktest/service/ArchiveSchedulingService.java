@@ -9,14 +9,17 @@ import com.opencsv.CSVWriter;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.crypto.codec.Hex;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -85,31 +88,53 @@ public class ArchiveSchedulingService {
         for (Cancellation cancellation : cancellations) {
             try {
                 List<ArchiveCipherDtoV1> quicktests =
-                        archiveService.getQuicktestsFromLongtermByTenantId(cancellation.getPartnerId());
+                  archiveService.getQuicktestsFromLongtermByTenantId(cancellation.getPartnerId());
+
                 StringWriter stringWriter = new StringWriter();
                 CSVWriter csvWriter =
-                        new CSVWriter(stringWriter, CSVWriter.DEFAULT_SEPARATOR, CSVWriter.NO_QUOTE_CHARACTER,
-                                CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+                  new CSVWriter(stringWriter, '\t', CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
                 StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
-                        new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
-                                .build();
+                  new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
+                    .build();
                 beanToCsv.write(quicktests);
-                InputStream inputStream = new ByteArrayInputStream(stringWriter.toString().getBytes());
-                String id = cancellation.getPartnerId() + ".csv";
+                byte[] csvBytes = stringWriter.toString().getBytes(StandardCharsets.UTF_8);
+
+                String objectId = cancellation.getPartnerId() + ".csv";
+
                 ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentLength(stringWriter.toString().getBytes().length);
-                s3Client.putObject(s3Config.getBucketName(), id, inputStream, metadata);
-                log.info("File stored to S3 with id {}", id);
-                cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), id);
+                metadata.setContentLength(csvBytes.length);
+
+                s3Client.putObject(
+                    s3Config.getBucketName(),
+                    objectId,
+                    new ByteArrayInputStream(csvBytes), metadata);
+
+                log.info("File stored to S3 with id {}", objectId);
+
+                cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
+                    getHash(csvBytes), quicktests.size(), csvBytes.length);
             } catch (Exception e) {
-                log.error("Could not convert Quicktest to CSV: " + e.getLocalizedMessage());
-                cancellationService.updateDataExportError(cancellation, e.getLocalizedMessage());
+                String errorMessage = e.getClass().getName() + ": " + e.getMessage();
+
+                log.error("Could not convert Quicktest to CSV: " + errorMessage);
+                cancellationService.updateDataExportError(cancellation, errorMessage);
             }
         }
 
         List<Cancellation> nextBatch = cancellationService.getReadyToUploadBatch();
         if (!nextBatch.isEmpty()) {
             processCsvUploadBatchRecursion(nextBatch);
+        }
+    }
+
+    private String getHash(byte[] bytes) {
+        try {
+            MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = sha256.digest(bytes);
+            return String.valueOf(Hex.encode(hashBytes));
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Failed to load SHA-256 Message Digest");
         }
     }
 }

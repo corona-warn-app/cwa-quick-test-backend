@@ -38,6 +38,7 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
+import com.opencsv.CSVWriter;
 import com.opencsv.exceptions.CsvException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -132,7 +133,9 @@ class CancellationCsvTest {
         Assertions.assertEquals(getHash(csvBytes), cancellation.getCsvHash());
 
         CSVParser csvParser = new CSVParserBuilder()
+                .withEscapeChar('\\')
                 .withSeparator('\t')
+                .withQuoteChar(CSVWriter.DEFAULT_QUOTE_CHARACTER)
                 .build();
 
         try (CSVReader csvReader = new CSVReaderBuilder(new StringReader(csv))
@@ -161,17 +164,17 @@ class CancellationCsvTest {
         qta.setConfirmationCwa(Boolean.TRUE);
         qta.setTestResult(Short.valueOf("6"));
         qta.setPrivacyAgreement(Boolean.TRUE);
-        qta.setLastName("last_name");
-        qta.setFirstName("first_name");
+        qta.setLastName("last\n_na\"me");
+        qta.setFirstName("fir\rst_name");
         qta.setEmail("email");
         qta.setPhoneNumber("phone_number");
         qta.setSex(Sex.MALE);
         qta.setStreet("street");
         qta.setHouseNumber("house_number");
         qta.setZipCode("zip_code");
-        qta.setCity("city");
+        qta.setCity("Düßeldorf");
         qta.setTestBrandId("test_brand_id");
-        qta.setTestBrandName("test_brand_name, Ltd, another_part_of_test_brand_name");
+        qta.setTestBrandName("test_brand_name, \"Ltd\", another_part_of_test_brand_name");
         qta.setBirthday("2000-01-01");
         qta.setPdf("PDF".getBytes());
         qta.setTestResultServerHash("test_result_server_hash");

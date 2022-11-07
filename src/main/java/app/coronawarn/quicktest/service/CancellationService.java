@@ -138,7 +138,7 @@ public class CancellationService {
      * @param requester             Username of the user who requested the download link
      */
     public void updateDownloadLinkRequested(
-      Cancellation cancellation, ZonedDateTime downloadLinkRequested, String requester) {
+            Cancellation cancellation, ZonedDateTime downloadLinkRequested, String requester) {
         cancellation.setDownloadLinkRequested(downloadLinkRequested);
         cancellation.setDownloadLinkRequestedBy(requester);
         cancellationRepository.save(cancellation);
@@ -167,6 +167,17 @@ public class CancellationService {
         }
 
         cancellation.setDataExportError(errorMessage);
+        cancellationRepository.save(cancellation);
+    }
+
+    /**
+     * Set SearchPortalDeleted Flag/Timestamp and persist entity.
+     *
+     * @param cancellation Cancellation Entity
+     * @param dataDeleted  timestamp of search portal deletion
+     */
+    public void updateSearchPortalDeleted(Cancellation cancellation, ZonedDateTime dataDeleted) {
+        cancellation.setSearchPortalDeleted(dataDeleted);
         cancellationRepository.save(cancellation);
     }
 

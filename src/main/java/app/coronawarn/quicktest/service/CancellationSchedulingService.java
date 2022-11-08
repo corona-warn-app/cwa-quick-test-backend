@@ -17,6 +17,7 @@
  * limitations under the License.
  * ---license-end
  */
+
 package app.coronawarn.quicktest.service;
 
 import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;

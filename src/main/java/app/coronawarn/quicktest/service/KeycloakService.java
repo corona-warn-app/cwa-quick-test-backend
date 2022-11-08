@@ -335,8 +335,16 @@ public class KeycloakService {
         int page = 0;
 
         do {
-            foundGroup = realm().groups().groups(groupName, page * pageSize, pageSize).stream()
-                    .dropWhile(g -> !g.getPath().equals("/" + groupName))
+            List<GroupRepresentation> matchingGroups = realm().groups().groups(groupName, page * pageSize, pageSize);
+
+            if (matchingGroups.isEmpty()) {
+                // Result of search is empty -> not matching group exists
+                break;
+            }
+
+            // Search for groups having Path starting with "/" followed by GroupName --> Root Group
+            foundGroup = matchingGroups.stream()
+                    .dropWhile(group -> !group.getPath().equals("/" + groupName))
                     .findAny().orElse(null);
 
             page++;

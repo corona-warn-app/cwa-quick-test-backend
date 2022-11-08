@@ -197,6 +197,20 @@ public class CancellationService {
     }
 
     /**
+     * Searches in the DB for an existing cancellation entity with searchPortalDeleted null and
+     * cancellation_date in past.
+     * Returns only one batch of entities. Batch Size depends on configuration.
+     *
+     * @return List holding all entities found.
+     */
+    public List<Cancellation> getReadyToDeleteSearchPortal() {
+        ZonedDateTime ldt = ZonedDateTime.now();
+
+        return cancellationRepository.findBySearchPortalDeletedIsNullAndCancellationDateBefore(
+                ldt, PageRequest.of(0, archiveProperties.getCancellationArchiveJob().getChunkSize()));
+    }
+
+    /**
      * Searches in the DB for an existing cancellation entity which moved_to_longterm_archive is not null but
      * csv_created is null.
      * Returns only one batch of entities. Batch Size depends on configuration.

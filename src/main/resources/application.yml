@@ -129,6 +129,10 @@ archive:
     cron: 0 * * * * *
     locklimit: 1800000
     chunkSize: 100
+  cancellationSearchPortalDeleteJob:
+    cron: 0 * * * * *
+    locklimit: 1800000
+    chunkSize: 100
   csvUploadJob:
     cron: 0 * * * * *
     locklimit: 1800000

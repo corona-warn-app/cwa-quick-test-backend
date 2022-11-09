@@ -23,8 +23,6 @@ package app.coronawarn.quicktest.controller;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_COUNTER;
 import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
 
-import app.coronawarn.quicktest.config.QuickTestConfig;
-import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.domain.QuickTest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestCreationRequest;
 import app.coronawarn.quicktest.model.quicktest.QuickTestDccConsent;
@@ -33,16 +31,13 @@ import app.coronawarn.quicktest.model.quicktest.QuickTestResponse;
 import app.coronawarn.quicktest.model.quicktest.QuickTestResponseList;
 import app.coronawarn.quicktest.model.quicktest.QuickTestUpdateRequest;
 import app.coronawarn.quicktest.repository.QuicktestView;
-import app.coronawarn.quicktest.service.CancellationService;
 import app.coronawarn.quicktest.service.QuickTestService;
 import app.coronawarn.quicktest.utils.TestTypeUtils;
 import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -69,11 +64,10 @@ import org.springframework.web.server.ResponseStatusException;
 public class QuickTestController {
 
     private final QuickTestService quickTestService;
-
-    private final QuickTestConfig quickTestConfig;
-    private final CancellationService cancellationService;
     private final ModelMapper modelMapper;
     private final Utilities utilities;
+    
+    private final CancellationUtils cancellationUtils;
 
     /**
      * Endpoint for getting pending (registration with name, etc. completed) quicktests for poc and tenant.
@@ -91,7 +85,7 @@ public class QuickTestController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestResponseList> getQuickTestsForTenantIdAndPocId() {
-        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+        if (cancellationUtils.isCancellationStartedAndTestResultSubmittingDenied()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
               "Cancellation already started, endpoint is not available anymore.");
         }
@@ -133,7 +127,7 @@ public class QuickTestController {
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> createQuickTest(@Valid @RequestBody QuickTestCreationRequest quicktestCreationRequest) {
-        if (isCancellationStarted()) {
+        if (cancellationUtils.isCancellationStarted()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
               "Cancellation already started, endpoint is not available anymore.");
         }
@@ -169,7 +163,7 @@ public class QuickTestController {
     @DeleteMapping(value = "/{shortHash}")
     @Secured(ROLE_COUNTER)
     public ResponseEntity<Void> deleteEmptyQuickTest(@Valid @PathVariable("shortHash") String shortHash) {
-        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+        if (cancellationUtils.isCancellationStartedAndTestResultSubmittingDenied()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
               "Cancellation started more then 24 hours ago, endpoint is not available anymore.");
         }
@@ -199,7 +193,7 @@ public class QuickTestController {
     public ResponseEntity<Void> updateQuickTestStatus(
       @PathVariable("shortHash") String shortHash,
       @Valid @RequestBody QuickTestUpdateRequest quickTestUpdateRequest) {
-        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+        if (cancellationUtils.isCancellationStartedAndTestResultSubmittingDenied()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
               "Cancellation started more then 24 hours ago, endpoint is not available anymore.");
         }
@@ -237,7 +231,7 @@ public class QuickTestController {
     @Secured(ROLE_LAB)
     public ResponseEntity<QuickTestDccConsent> getDccConsent(
       @PathVariable("shortHash") String shortHash) {
-        if (isCancellationStartedAndTestResultSubmittingDenied()) {
+        if (cancellationUtils.isCancellationStartedAndTestResultSubmittingDenied()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
               "Cancellation started more then 24 hours ago, endpoint is not available anymore.");
         }
@@ -273,7 +267,7 @@ public class QuickTestController {
     public ResponseEntity<Void> updateQuickTestWithPersonalData(
       @PathVariable("shortHash") String shortHash,
       @Valid @RequestBody QuickTestPersonalDataRequest quickTestPersonalDataRequest) {
-        if (isCancellationStarted()) {
+        if (cancellationUtils.isCancellationStarted()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN,
               "Cancellation already started, endpoint is not available anymore.");
         }
@@ -304,29 +298,4 @@ public class QuickTestController {
         return response;
     }
 
-    private boolean isCancellationStarted() {
-        Optional<Cancellation> cancellationOptional =
-          cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
-
-        if (cancellationOptional.isEmpty()) {
-            return false;
-        }
-
-        Cancellation cancellation = cancellationOptional.get();
-        return ZonedDateTime.now().isAfter(cancellation.getCancellationDate());
-    }
-
-    private boolean isCancellationStartedAndTestResultSubmittingDenied() {
-        Optional<Cancellation> cancellationOptional =
-                cancellationService.getByPartnerId(utilities.getTenantIdFromToken());
-
-        if (cancellationOptional.isEmpty()) {
-            return false;
-        }
-
-        Cancellation cancellation = cancellationOptional.get();
-        return ZonedDateTime.now()
-          .minusHours(quickTestConfig.getCancellation().getCompletePendingTestsHours())
-          .isAfter(cancellation.getCancellationDate());
-    }
 }

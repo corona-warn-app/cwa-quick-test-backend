@@ -138,7 +138,7 @@ public class CancellationService {
      * @param requester             Username of the user who requested the download link
      */
     public void updateDownloadLinkRequested(
-      Cancellation cancellation, ZonedDateTime downloadLinkRequested, String requester) {
+            Cancellation cancellation, ZonedDateTime downloadLinkRequested, String requester) {
         cancellation.setDownloadLinkRequested(downloadLinkRequested);
         cancellation.setDownloadLinkRequestedBy(requester);
         cancellationRepository.save(cancellation);
@@ -171,6 +171,17 @@ public class CancellationService {
     }
 
     /**
+     * Set SearchPortalDeleted Flag/Timestamp and persist entity.
+     *
+     * @param cancellation Cancellation Entity
+     * @param dataDeleted  timestamp of search portal deletion
+     */
+    public void updateSearchPortalDeleted(Cancellation cancellation, ZonedDateTime dataDeleted) {
+        cancellation.setSearchPortalDeleted(dataDeleted);
+        cancellationRepository.save(cancellation);
+    }
+
+    /**
      * Searches in the DB for an existing cancellation entity which download request is older than 48h and not
      * moved_to_longterm_archive.
      * Returns only one batch of entities. Batch Size depends on configuration.
@@ -182,6 +193,20 @@ public class CancellationService {
                 .minusHours(quickTestConfig.getCancellation().getReadyToArchiveHours());
 
         return cancellationRepository.findByMovedToLongtermArchiveIsNullAndCancellationDateBefore(
+                ldt, PageRequest.of(0, archiveProperties.getCancellationArchiveJob().getChunkSize()));
+    }
+
+    /**
+     * Searches in the DB for an existing cancellation entity with searchPortalDeleted null and
+     * cancellation_date in past.
+     * Returns only one batch of entities. Batch Size depends on configuration.
+     *
+     * @return List holding all entities found.
+     */
+    public List<Cancellation> getReadyToDeleteSearchPortal() {
+        ZonedDateTime ldt = ZonedDateTime.now();
+
+        return cancellationRepository.findBySearchPortalDeletedIsNullAndCancellationDateBefore(
                 ldt, PageRequest.of(0, archiveProperties.getCancellationArchiveJob().getChunkSize()));
     }
 

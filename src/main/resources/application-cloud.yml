@@ -151,6 +151,10 @@ archive:
     cron: ${QT_CANCELLATION_ARCHIVE_JOB_CRON:0 0/5 * * * *}
     locklimit: 1800000
     chunkSize: ${QT_CANCELLATION_ARCHIVE_JOB_CHUNK_SIZE:100}
+  cancellationSearchPortalDeleteJob:
+    cron: ${QT_CANCELLATION_SEARCH_PORTAL_DELETE_JOB_CRON:0 0/5 * * * *}
+    locklimit: 1800000
+    chunkSize: ${QT_CANCELLATION_SEARCH_PORTAL_JOB_CHUNK_SIZE:100}
   csvUploadJob:
     cron: ${QT_CANCELLATION_UPLOAD_JOB_CRON:0 0/5 * * * *}
     locklimit: 1800000

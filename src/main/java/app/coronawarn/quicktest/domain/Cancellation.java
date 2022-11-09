@@ -92,6 +92,9 @@ public class Cancellation {
     @JsonIgnore
     private String dataExportError;
 
+    @Column(name = "search_portal_deleted")
+    private ZonedDateTime searchPortalDeleted;
+
     @Transient()
     private ZonedDateTime finalDeletion;
 

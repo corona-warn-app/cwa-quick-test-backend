@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-cancellation-table-5
+      author: f11h
+      changes:
+        - addColumn:
+            tableName: cancellation
+            column:
+              name: search_portal_deleted
+              type: datetime
+              constraints:
+                nullable: true

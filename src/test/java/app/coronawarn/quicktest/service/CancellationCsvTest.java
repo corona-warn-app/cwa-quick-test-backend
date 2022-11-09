@@ -68,7 +68,7 @@ import org.springframework.transaction.annotation.Transactional;
 class CancellationCsvTest {
 
     @Autowired
-    private ArchiveSchedulingService archiveSchedulingService;
+    private CancellationSchedulingService cancellationSchedulingService;
 
     @Autowired
     private QuickTestArchiveRepository shortTermArchiveRepository;
@@ -109,7 +109,7 @@ class CancellationCsvTest {
         Assertions.assertEquals(n, shortTermArchiveRepository.findAllByTenantId(PARTNER_ID, Pageable.unpaged()).count());
         Assertions.assertEquals(0, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH).size());
 
-        archiveSchedulingService.cancellationArchiveJob();
+        cancellationSchedulingService.cancellationArchiveJob();
 
         Assertions.assertEquals(0, shortTermArchiveRepository.findAllByTenantId(PARTNER_ID, Pageable.unpaged()).count());
         Assertions.assertEquals(n, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH).size());
@@ -119,7 +119,7 @@ class CancellationCsvTest {
         when(s3Client.putObject(anyString(), eq(expectedFileName), inputStreamArgumentCaptor.capture(), any()))
           .thenReturn(new PutObjectResult());
 
-        archiveSchedulingService.csvUploadJob();
+        cancellationSchedulingService.csvUploadJob();
 
         verify(s3Client).putObject(anyString(), eq(expectedFileName), any(), any());
 

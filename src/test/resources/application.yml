@@ -100,6 +100,9 @@ archive:
     cron: "-"
     locklimit: 1800000
     older-than-in-seconds: 5000
+  cancellationSearchPortalDeleteJob:
+    cron: '-'
+    locklimit: 1800000
   cancellationArchiveJob:
     cron: "-"
     locklimit: 1800000

@@ -58,7 +58,6 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -113,6 +112,8 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
 
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId));
         when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(Optional.of(rootGroup));
+
+        when(utilities.getTenantIdFromToken()).thenReturn("PartnerId");
 
         // Inject Realm Name into Security Context
         SecurityContext originalContext = TestSecurityContextHolder.getContext();

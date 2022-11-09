@@ -201,8 +201,8 @@ public class ArchiveService {
             throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
         StringWriter stringWriter = new StringWriter();
         CSVWriter csvWriter =
-                new CSVWriter(stringWriter, '\t', CSVWriter.NO_QUOTE_CHARACTER,
-                        CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
+                new CSVWriter(stringWriter, '\t', CSVWriter.DEFAULT_QUOTE_CHARACTER,
+                        '\\', CSVWriter.DEFAULT_LINE_END);
         StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
                 new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
                         .build();

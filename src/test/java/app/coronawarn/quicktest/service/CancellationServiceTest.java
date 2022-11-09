@@ -20,11 +20,16 @@
 
 package app.coronawarn.quicktest.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import app.coronawarn.quicktest.domain.Cancellation;
 import app.coronawarn.quicktest.domain.QuickTestArchive;
@@ -40,6 +45,7 @@ import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -58,6 +64,12 @@ class CancellationServiceTest {
 
     @Autowired
     private CancellationRepository cancellationRepository;
+
+    @Autowired
+    private CancellationSchedulingService cancellationSchedulingService;
+
+    @MockBean
+    private KeycloakService keycloakServiceMock;
 
     @MockBean
     private AmazonS3 s3Client;
@@ -222,6 +234,49 @@ class CancellationServiceTest {
 
         List<Cancellation> results = cancellationService.getReadyToArchiveBatch();
         assertFalse(results.isEmpty());
+    }
+
+    @Test
+    void testGetReadyForSearchPortalDeletion() {
+        Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, ZonedDateTime.now().plusDays(1));
+        assertTrue(cancellationService.getReadyToDeleteSearchPortal().isEmpty());
+
+        cancellation.setCancellationDate(ZonedDateTime.now().minusDays(1));
+        cancellationRepository.save(cancellation);
+
+        List<Cancellation> results = cancellationService.getReadyToDeleteSearchPortal();
+        assertEquals(1, results.size());
+    }
+
+    @Test
+    void testDeleteSearchPortalEntries() {
+        Cancellation cancellation1 = cancellationService
+                .createCancellation("PARTNER_1", ZonedDateTime.now().minusDays(1));
+        GroupRepresentation groupRepresentation1 = new GroupRepresentation();
+
+        Cancellation cancellation2 = cancellationService
+                .createCancellation("PARTNER_2", ZonedDateTime.now().plusDays(1));
+        GroupRepresentation groupRepresentation2 = new GroupRepresentation();
+
+        Cancellation cancellation3 = cancellationService
+                .createCancellation("PARTNER_3", ZonedDateTime.now().minusDays(1));
+        GroupRepresentation groupRepresentation3 = new GroupRepresentation();
+
+        Cancellation cancellation4 = cancellationService
+                .createCancellation("PARTNER_4", ZonedDateTime.now().plusDays(1));
+        GroupRepresentation groupRepresentation4 = new GroupRepresentation();
+
+        when(keycloakServiceMock.getRootGroupByName(eq(cancellation1.getPartnerId()))).thenReturn(groupRepresentation1);
+        when(keycloakServiceMock.getRootGroupByName(eq(cancellation2.getPartnerId()))).thenReturn(groupRepresentation2);
+        when(keycloakServiceMock.getRootGroupByName(eq(cancellation3.getPartnerId()))).thenReturn(groupRepresentation3);
+        when(keycloakServiceMock.getRootGroupByName(eq(cancellation4.getPartnerId()))).thenReturn(groupRepresentation4);
+
+        cancellationSchedulingService.cancellationSearchPortalDeleteJob();
+
+        verify(keycloakServiceMock).deleteSubGroupsFromMapService(groupRepresentation1);
+        verify(keycloakServiceMock, never()).deleteSubGroupsFromMapService(groupRepresentation2);
+        verify(keycloakServiceMock).deleteSubGroupsFromMapService(groupRepresentation3);
+        verify(keycloakServiceMock, never()).deleteSubGroupsFromMapService(groupRepresentation4);
     }
 
     @Test

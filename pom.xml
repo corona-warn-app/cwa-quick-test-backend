@@ -72,6 +72,16 @@
             <artifactId>cwa-parent-keycloak</artifactId>
             <version>${project.parent.version}</version>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.keycloak</groupId>
+                    <artifactId>keycloak-spring-boot-starter</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.keycloak</groupId>
+                    <artifactId>keycloak-admin-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -81,7 +91,14 @@
 
         <dependency>
             <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-spring-boot-starter</artifactId>
+            <version>20.0.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>
+            <version>20.0.1</version>
         </dependency>
 
         <dependency>

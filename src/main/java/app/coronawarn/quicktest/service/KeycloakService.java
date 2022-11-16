@@ -626,7 +626,15 @@ public class KeycloakService {
         return realm().groups().groups(name, 0, Integer.MAX_VALUE)
                 .stream()
                 .filter(group -> group.getPath().equals(path))
-                .findFirst();
+                .findFirst()
+                /*
+                    The following call is required because found Search Result will
+                    not return whole Sub-Group Structure
+
+                    https://github.com/keycloak/keycloak/pull/8134
+                    https://github.com/keycloak/keycloak/pull/11778
+                 */
+                .map(group -> realm().groups().group(group.getId()).toRepresentation());
     }
 
     /**

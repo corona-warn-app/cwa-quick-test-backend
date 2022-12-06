@@ -68,7 +68,7 @@ public class CancellationController {
 
         for (String partnerId : request.getPartnerIds()) {
             cancellations.add(cancellationService.createCancellation(
-              partnerId, request.getCancellationDate().atZone(ZoneId.of("UTC"))));
+              partnerId, request.getCancellationDate().atZone(ZoneId.of("CET"))));
         }
 
         return ResponseEntity.ok(cancellations);

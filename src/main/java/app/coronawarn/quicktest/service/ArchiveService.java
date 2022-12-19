@@ -183,8 +183,9 @@ public class ArchiveService {
     /**
      * Get longterm archives by tenantId.
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByTenantId(final String tenantId) {
-        List<Archive> allByPocId = longTermArchiveRepository.findAllByTenantId(createHash(tenantId));
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByTenantId(final String tenantId, int page, int pageSize) {
+        List<Archive> allByPocId = longTermArchiveRepository
+            .findAllByTenantId(createHash(tenantId), PageRequest.of(page, pageSize));
         List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
         for (Archive archive : allByPocId) {
             try {

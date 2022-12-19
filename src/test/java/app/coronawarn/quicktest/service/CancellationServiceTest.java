@@ -302,16 +302,16 @@ class CancellationServiceTest {
         final QuickTestArchive test = buildCancellationQuickTestArchive();
         quickTestArchiveRepository.saveAndFlush(test);
         archiveService.moveToArchiveByTenantId(PARTNER_ID);
-        var archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        var archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID, 0, Integer.MAX_VALUE);
         assertFalse(archiveEntries.isEmpty());
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         cancellationService.finalDeleteJob();
-        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID, 0, Integer.MAX_VALUE);
         assertFalse(archiveEntries.isEmpty());
         cancellation.setCancellationDate(ZonedDateTime.now().minusWeeks(4));
         cancellationRepository.save(cancellation);
         cancellationService.finalDeleteJob();
-        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID);
+        archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID, 0, Integer.MAX_VALUE);
         assertTrue(archiveEntries.isEmpty());
     }
 

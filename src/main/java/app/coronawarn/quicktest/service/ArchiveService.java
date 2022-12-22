@@ -34,6 +34,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -43,6 +44,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockExtender;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.core.convert.ConversionService;
@@ -156,6 +158,12 @@ public class ArchiveService {
         log.info("Chunk Finished move to longterm archive.");
 
         // Continue with next chunk (Recursion will be stopped when no entities are left)
+        try {
+            LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
+        } catch (LockExtender.NoActiveLockException ignored) {
+            // Exception will be thrown if Job is executed out of Sheduler Context
+        }
+
         moveToArchiveByTenantId(tenantId);
     }
 

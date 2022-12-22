@@ -33,10 +33,12 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockExtender;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -124,6 +126,12 @@ public class CancellationSchedulingService {
                         quicktests.size(), page, cancellation.getPartnerId());
                     beanToCsv.write(quicktests);
                     page++;
+
+                    try {
+                        LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
+                    } catch (LockExtender.NoActiveLockException ignored) {
+                        // Exception will be thrown if Job is executed out of Sheduler Context
+                    }
                 } while (!quicktests.isEmpty());
                 log.info("Got {} Quicktests for Partner {}", totalEntityCount, cancellation.getPartnerId());
 

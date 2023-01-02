@@ -2,3 +2,6 @@ databaseChangeLog:
   - include:
       file: archive-changelog/V001_create_archiveTable.yml
       relativeToChangelogFile: true
+  - include:
+      file: archive-changelog/V002_add_index.yml
+      relativeToChangelogFile: true

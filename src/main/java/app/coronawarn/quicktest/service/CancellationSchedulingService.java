@@ -61,7 +61,7 @@ public class CancellationSchedulingService {
      */
     @Scheduled(cron = "${archive.cancellationArchiveJob.cron}")
     @SchedulerLock(name = "CancellationArchiveJob", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${archive.cancellationArchiveJob.locklimit}")
+        lockAtMostFor = "${archive.cancellationArchiveJob.locklimit}")
     public void cancellationArchiveJob() {
         log.info("Starting Job: cancellationArchiveJob");
         processCancellationArchiveBatchRecursion(cancellationService.getReadyToArchiveBatch());
@@ -87,7 +87,7 @@ public class CancellationSchedulingService {
      */
     @Scheduled(cron = "${archive.csvUploadJob.cron}")
     @SchedulerLock(name = "CsvUploadJob", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${archive.csvUploadJob.locklimit}")
+        lockAtMostFor = "${archive.csvUploadJob.locklimit}")
     public void csvUploadJob() {
         log.info("Starting Job: csvUploadJob");
         processCsvUploadBatchRecursion(cancellationService.getReadyToUploadBatch());
@@ -97,34 +97,51 @@ public class CancellationSchedulingService {
     private void processCsvUploadBatchRecursion(List<Cancellation> cancellations) {
         log.info("Process CSV Upload Batch with size of {}", cancellations.size());
         for (Cancellation cancellation : cancellations) {
+            log.info("Processing CSV for Partner {}", cancellation.getPartnerId());
             try {
-                List<ArchiveCipherDtoV1> quicktests =
-                        archiveService.getQuicktestsFromLongtermByTenantId(cancellation.getPartnerId());
-
                 StringWriter stringWriter = new StringWriter();
-                CSVWriter csvWriter =
-                        new CSVWriter(stringWriter, '\t', CSVWriter.DEFAULT_QUOTE_CHARACTER,
-                                '\\', CSVWriter.DEFAULT_LINE_END);
+                CSVWriter csvWriter = new CSVWriter(
+                    stringWriter,
+                    '\t',
+                    CSVWriter.DEFAULT_QUOTE_CHARACTER,
+
+                    '\\',
+                    CSVWriter.DEFAULT_LINE_END);
+
                 StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
-                        new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
-                                .build();
-                beanToCsv.write(quicktests);
+                    new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter).build();
+
+                int page = 0;
+                int pageSize = 500;
+                int totalEntityCount = 0;
+                List<ArchiveCipherDtoV1> quicktests;
+                do {
+                    log.info("Loading Archive Chunk {} for Partner {}", page, cancellation.getPartnerId());
+                    quicktests = archiveService.getQuicktestsFromLongtermByTenantId(
+                        cancellation.getPartnerId(), page, pageSize);
+                    totalEntityCount += quicktests.size();
+                    log.info("Found {} Quicktests in Archive for Chunk {} for Partner {}",
+                        quicktests.size(), page, cancellation.getPartnerId());
+                    beanToCsv.write(quicktests);
+                    page++;
+                } while (!quicktests.isEmpty());
+                log.info("Got {} Quicktests for Partner {}", totalEntityCount, cancellation.getPartnerId());
+
                 byte[] csvBytes = stringWriter.toString().getBytes(StandardCharsets.UTF_8);
-
                 String objectId = cancellation.getPartnerId() + ".csv";
-
                 ObjectMetadata metadata = new ObjectMetadata();
                 metadata.setContentLength(csvBytes.length);
 
                 s3Client.putObject(
-                        s3Config.getBucketName(),
-                        objectId,
-                        new ByteArrayInputStream(csvBytes), metadata);
+                    s3Config.getBucketName(),
+                    objectId,
+                    new ByteArrayInputStream(csvBytes), metadata);
 
-                log.info("File stored to S3 with id {}", objectId);
+                log.info("File stored to S3 with id: {}, size: {}, hash: {}",
+                    objectId, csvBytes.length, getHash(csvBytes));
 
                 cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
-                        getHash(csvBytes), quicktests.size(), csvBytes.length);
+                    getHash(csvBytes), totalEntityCount, csvBytes.length);
             } catch (Exception e) {
                 String errorMessage = e.getClass().getName() + ": " + e.getMessage();
 
@@ -144,7 +161,7 @@ public class CancellationSchedulingService {
      */
     @Scheduled(cron = "${archive.cancellationSearchPortalDeleteJob.cron}")
     @SchedulerLock(name = "CancellationSearchPortalDeleteJob", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${archive.cancellationSearchPortalDeleteJob.locklimit}")
+        lockAtMostFor = "${archive.cancellationSearchPortalDeleteJob.locklimit}")
     public void cancellationSearchPortalDeleteJob() {
         log.info("Starting Job: cancellationSearchPortalDeleteJob");
         processCancellationDeleteSearchPortalBatch(cancellationService.getReadyToDeleteSearchPortal());

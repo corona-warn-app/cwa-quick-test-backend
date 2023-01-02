@@ -61,6 +61,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,7 +95,7 @@ class CancellationCsvTest {
     public static final String PARTNER_ID_HASH = "212e58b487b6d6b486b71c6ebb3fedc0db3c69114f125fb3cd2fbc72e6ffc25f";
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 5000})
+    @ValueSource(ints = {1, 5_000})
     @Transactional
     void testCsvExport(int n) throws IOException, NoSuchAlgorithmException, CsvException {
         Cancellation cancellation = new Cancellation();
@@ -107,12 +108,12 @@ class CancellationCsvTest {
         }
 
         Assertions.assertEquals(n, shortTermArchiveRepository.findAllByTenantId(PARTNER_ID, Pageable.unpaged()).count());
-        Assertions.assertEquals(0, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH).size());
+        Assertions.assertEquals(0, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH, PageRequest.of(0, Integer.MAX_VALUE)).size());
 
         cancellationSchedulingService.cancellationArchiveJob();
 
         Assertions.assertEquals(0, shortTermArchiveRepository.findAllByTenantId(PARTNER_ID, Pageable.unpaged()).count());
-        Assertions.assertEquals(n, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH).size());
+        Assertions.assertEquals(n, longTermArchiveRepository.findAllByTenantId(PARTNER_ID_HASH, PageRequest.of(0, Integer.MAX_VALUE)).size());
 
         ArgumentCaptor<InputStream> inputStreamArgumentCaptor = ArgumentCaptor.forClass(InputStream.class);
         String expectedFileName = PARTNER_ID + ".csv";

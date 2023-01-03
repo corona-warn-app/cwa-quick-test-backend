@@ -130,7 +130,7 @@ public class CancellationSchedulingService {
                     try {
                         LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
                     } catch (LockExtender.NoActiveLockException ignored) {
-                        // Exception will be thrown if Job is executed out of Sheduler Context
+                        // Exception will be thrown if Job is executed outside Sheduler Context
                     }
                 } while (!quicktests.isEmpty());
                 log.info("Got {} Quicktests for Partner {}", totalEntityCount, cancellation.getPartnerId());

@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-cancellation-table-6
+      author: f11h
+      changes:
+        - addColumn:
+            tableName: cancellation
+            column:
+              name: db_entity_count
+              type: int
+              constraints:
+                nullable: true

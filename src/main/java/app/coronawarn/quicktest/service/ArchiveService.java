@@ -233,6 +233,16 @@ public class ArchiveService {
         longTermArchiveRepository.deleteAllByTenantId(createHash(partnerId));
     }
 
+    /**
+     * Counts the existing entities in Long Term Archive by given TenantId.
+     *
+     * @param tenantId Tenant ID to search for.
+     * @return Amount of found entities
+     */
+    public Integer countByTenantId(String tenantId) {
+        return longTermArchiveRepository.countAllByTenantId(createHash(tenantId));
+    }
+
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {
         final ArchiveCipherDtoV1 archive = new ArchiveCipherDtoV1();
 

@@ -75,7 +75,8 @@ public class CancellationSchedulingService {
         for (Cancellation cancellation : cancellations) {
             String partnerId = cancellation.getPartnerId();
             archiveService.moveToArchiveByTenantId(partnerId);
-            cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now());
+            Integer entityCount = archiveService.countByTenantId(partnerId);
+            cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now(), entityCount);
         }
 
         List<Cancellation> nextBatch = cancellationService.getReadyToArchiveBatch();
@@ -148,8 +149,17 @@ public class CancellationSchedulingService {
                 log.info("File stored to S3 with id: {}, size: {}, hash: {}",
                     objectId, csvBytes.length, getHash(csvBytes));
 
-                cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
-                    getHash(csvBytes), totalEntityCount, csvBytes.length);
+                if (cancellation.getDbEntityCount() == totalEntityCount) {
+                    cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
+                        getHash(csvBytes), totalEntityCount, csvBytes.length);
+                } else {
+                    log.error("Difference between actual and expected EntityCount in CSV File for partner {}. "
+                            + "Expected: {}, Acutal: {}, CSV Export will not be marked as finished.",
+                        cancellation.getPartnerId(), cancellation.getDbEntityCount(), totalEntityCount);
+
+                    cancellationService.updateDataExportError(cancellation, "CSV Export Delta detected. "
+                        + "Expected: " + cancellation.getDbEntityCount() + " Actual: " + totalEntityCount);
+                }
             } catch (Exception e) {
                 String errorMessage = e.getClass().getName() + ": " + e.getMessage();
 

@@ -138,4 +138,23 @@ public class ArchiveRepository {
         this.em.getTransaction().commit();
         return result;
     }
+
+    /**
+     * Count entities by tenantId.
+     *
+     * @param tenantId SHA256 Hash of TenantId to search for
+     * @return amount of found entities.
+     */
+    public Integer countAllByTenantId(final String tenantId) {
+        em.getTransaction().begin();
+
+        final Integer result = em
+            .createQuery("SELECT COUNT(*) FROM Archive a WHERE a.tenantId = ?1", Long.class)
+            .setParameter(1, tenantId)
+            .getSingleResult()
+            .intValue();
+
+        em.getTransaction().commit();
+        return result;
+    }
 }

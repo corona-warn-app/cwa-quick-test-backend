@@ -109,8 +109,10 @@ public class CancellationService {
      * @param cancellation           Cancellation Entity
      * @param movedToLongtermArchive timestamp of job completion
      */
-    public void updateMovedToLongterm(Cancellation cancellation, ZonedDateTime movedToLongtermArchive) {
+    public void updateMovedToLongterm(Cancellation cancellation, ZonedDateTime movedToLongtermArchive,
+                                      Integer entityCount) {
         cancellation.setMovedToLongtermArchive(movedToLongtermArchive);
+        cancellation.setDbEntityCount(entityCount);
         cancellationRepository.save(cancellation);
     }
 

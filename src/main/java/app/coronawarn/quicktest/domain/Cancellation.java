@@ -80,6 +80,10 @@ public class Cancellation {
     @JsonIgnore
     private Integer csvEntityCount;
 
+    @Column(name = "db_entity_count")
+    @JsonIgnore
+    private Integer dbEntityCount;
+
     @Column(name = "csv_hash")
     @JsonIgnore
     private String csvHash;

@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,6 +40,7 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -47,8 +48,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockExtender;
 import org.apache.commons.lang3.StringUtils;
 import org.bouncycastle.util.encoders.Hex;
 import org.springframework.core.convert.ConversionService;
@@ -162,6 +165,12 @@ public class ArchiveService {
         log.info("Chunk Finished move to longterm archive.");
 
         // Continue with next chunk (Recursion will be stopped when no entities are left)
+        try {
+            LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
+        } catch (LockExtender.NoActiveLockException ignored) {
+            // Exception will be thrown if Job is executed outside Sheduler Context
+        }
+
         moveToArchiveByTenantId(tenantId);
     }
 
@@ -191,23 +200,76 @@ public class ArchiveService {
         return dtos;
     }
 
+    @RequiredArgsConstructor
+    @Getter
+    public static class CsvExportFile {
+        private final byte[] csvBytes;
+        private final int totalEntityCount;
+    }
+
     /**
      * Create a CSV containing given Quicktest-Archive-Entities.
      *
-     * @param quicktests List with quicktest entities
+     * @param partnerId Partner for which the CSV should be created.
      * @return byte-array representing a CSV.
      */
-    public byte[] createCsv(List<ArchiveCipherDtoV1> quicktests)
-            throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+    public CsvExportFile createCsv(String partnerId)
+        throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+
         StringWriter stringWriter = new StringWriter();
-        CSVWriter csvWriter =
-                new CSVWriter(stringWriter, '\t', CSVWriter.DEFAULT_QUOTE_CHARACTER,
-                        '\\', CSVWriter.DEFAULT_LINE_END);
+        CSVWriter csvWriter = new CSVWriter(
+            stringWriter,
+            '\t',
+            CSVWriter.DEFAULT_QUOTE_CHARACTER,
+
+            '\\',
+            CSVWriter.DEFAULT_LINE_END);
+
         StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
-                new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter)
-                        .build();
-        beanToCsv.write(quicktests);
-        return stringWriter.toString().getBytes(StandardCharsets.UTF_8);
+            new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter).build();
+
+        int page = 0;
+        int pageSize = 500;
+        int totalEntityCount = 0;
+        List<ArchiveCipherDtoV1> quicktests;
+        do {
+            log.info("Loading Archive Chunk {} for Partner {}", page, partnerId);
+            quicktests = getQuicktestsFromLongtermByTenantId(partnerId, page, pageSize);
+            totalEntityCount += quicktests.size();
+            log.info("Found {} Quicktests in Archive for Chunk {} for Partner {}", quicktests.size(), page, partnerId);
+            beanToCsv.write(quicktests);
+            page++;
+
+            try {
+                LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
+            } catch (LockExtender.NoActiveLockException ignored) {
+                // Exception will be thrown if Job is executed outside Scheduler Context
+            }
+        } while (!quicktests.isEmpty());
+        log.info("Got {} Quicktests for Partner {}", totalEntityCount, partnerId);
+
+        return new CsvExportFile(stringWriter.toString().getBytes(StandardCharsets.UTF_8), totalEntityCount);
+    }
+
+    /**
+     * Get longterm archives by tenantId.
+     */
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongtermByTenantId(final String tenantId, int page, int pageSize) {
+        List<Archive> allByPocId = longTermArchiveRepository
+            .findAllByTenantId(createHash(tenantId), PageRequest.of(page, pageSize));
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
+        for (Archive archive : allByPocId) {
+            try {
+                final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
+                final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
+                final ArchiveCipherDtoV1 dto = this.mapper.readValue(json, ArchiveCipherDtoV1.class);
+                dtos.add(dto);
+            } catch (final Exception e) {
+                log.warn("Could not decrypt archive {}", archive.getHashedGuid());
+                log.warn("Cause: {}", e.getLocalizedMessage());
+            }
+        }
+        return dtos;
     }
 
     /**
@@ -232,6 +294,16 @@ public class ArchiveService {
 
     public void deleteByTenantId(String partnerId) {
         longTermArchiveRepository.deleteAllByTenantId(createHash(partnerId));
+    }
+
+    /**
+     * Counts the existing entities in Long Term Archive by given TenantId.
+     *
+     * @param tenantId Tenant ID to search for.
+     * @return Amount of found entities
+     */
+    public Integer countByTenantId(String tenantId) {
+        return longTermArchiveRepository.countAllByTenantId(createHash(tenantId));
     }
 
     private ArchiveCipherDtoV1 convertQuickTest(final QuickTestArchiveDataView quickTestArchive) {

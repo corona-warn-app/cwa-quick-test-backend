@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - changeSet:
+      id: add-index-on-archive-tenant-id
+      author: f11h
+      changes:
+        - createIndex:
+            tableName: archive
+            indexName: idx_tenant_archive
+            columns:
+              - column:
+                  name: tenant_id

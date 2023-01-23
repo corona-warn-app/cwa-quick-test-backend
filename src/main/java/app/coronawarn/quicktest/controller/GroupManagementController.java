@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,6 +70,8 @@ public class GroupManagementController {
     private final UserManagementControllerUtils utils;
 
     private final KeycloakService keycloakService;
+
+    private final CancellationUtils cancellationUtils;
 
     /**
      * Endpoint to get groups in Root Group of User.
@@ -159,6 +161,11 @@ public class GroupManagementController {
         KeycloakAuthenticationToken token,
         @Valid @RequestBody KeycloakGroupDetails body
     ) {
+        if (cancellationUtils.isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Cancellation already started, endpoint is not available anymore.");
+        }
+
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
@@ -207,6 +214,11 @@ public class GroupManagementController {
         @PathVariable("id") String id,
         @Valid @RequestBody KeycloakGroupDetails body
     ) {
+        if (cancellationUtils.isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Cancellation already started, endpoint is not available anymore.");
+        }
+
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         utils.checkGroupIsInSubgroups(userRootGroup, id);
@@ -261,6 +273,11 @@ public class GroupManagementController {
         @PathVariable("parentId") String parentId,
         @Valid @RequestBody KeycloakGroupId body
     ) {
+        if (cancellationUtils.isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Cancellation already started, endpoint is not available anymore.");
+        }
+
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
@@ -316,6 +333,11 @@ public class GroupManagementController {
         @PathVariable("parentId") String parentId,
         @Valid @RequestBody KeycloakUserId body
     ) {
+        if (cancellationUtils.isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Cancellation already started, endpoint is not available anymore.");
+        }
+
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
 
@@ -373,6 +395,11 @@ public class GroupManagementController {
         KeycloakAuthenticationToken token,
         @PathVariable("id") String id
     ) {
+        if (cancellationUtils.isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Cancellation already started, endpoint is not available anymore.");
+        }
+
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();
         utils.checkGroupIsInSubgroups(userRootGroup, id);

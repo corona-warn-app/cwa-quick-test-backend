@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 
 package app.coronawarn.quicktest.service;
 
-import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
 import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import com.amazonaws.services.s3.AmazonS3;
@@ -56,7 +55,7 @@ public class CancellationSchedulingService {
      */
     @Scheduled(cron = "${archive.cancellationArchiveJob.cron}")
     @SchedulerLock(name = "CancellationArchiveJob", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${archive.cancellationArchiveJob.locklimit}")
+        lockAtMostFor = "${archive.cancellationArchiveJob.locklimit}")
     public void cancellationArchiveJob() {
         log.info("Starting Job: cancellationArchiveJob");
         processCancellationArchiveBatchRecursion(cancellationService.getReadyToArchiveBatch());
@@ -68,7 +67,8 @@ public class CancellationSchedulingService {
         for (Cancellation cancellation : cancellations) {
             String partnerId = cancellation.getPartnerId();
             archiveService.moveToArchiveByTenantId(partnerId);
-            cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now());
+            Integer entityCount = archiveService.countByTenantId(partnerId);
+            cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now(), entityCount);
         }
 
         List<Cancellation> nextBatch = cancellationService.getReadyToArchiveBatch();
@@ -82,7 +82,7 @@ public class CancellationSchedulingService {
      */
     @Scheduled(cron = "${archive.csvUploadJob.cron}")
     @SchedulerLock(name = "CsvUploadJob", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${archive.csvUploadJob.locklimit}")
+        lockAtMostFor = "${archive.csvUploadJob.locklimit}")
     public void csvUploadJob() {
         log.info("Starting Job: csvUploadJob");
         processCsvUploadBatchRecursion(cancellationService.getReadyToUploadBatch());
@@ -92,26 +92,32 @@ public class CancellationSchedulingService {
     private void processCsvUploadBatchRecursion(List<Cancellation> cancellations) {
         log.info("Process CSV Upload Batch with size of {}", cancellations.size());
         for (Cancellation cancellation : cancellations) {
+            log.info("Processing CSV for Partner {}", cancellation.getPartnerId());
             try {
-                List<ArchiveCipherDtoV1> quicktests =
-                        archiveService.getQuicktestsFromLongterm(null, cancellation.getPartnerId());
-
-                byte[] csvBytes = archiveService.createCsv(quicktests);
-
-                ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentLength(csvBytes.length);
-
+                ArchiveService.CsvExportFile csv = archiveService.createCsv(cancellation.getPartnerId());
                 String objectId = cancellation.getPartnerId() + ".csv";
+                ObjectMetadata metadata = new ObjectMetadata();
+                metadata.setContentLength(csv.getCsvBytes().length);
 
                 s3Client.putObject(
-                        s3Config.getBucketName(),
-                        objectId,
-                        new ByteArrayInputStream(csvBytes), metadata);
+                    s3Config.getBucketName(),
+                    objectId,
+                    new ByteArrayInputStream(csv.getCsvBytes()), metadata);
 
-                log.info("File stored to S3 with id {}", objectId);
+                log.info("File stored to S3 with id: {}, size: {}, hash: {}",
+                    objectId, csv.getCsvBytes().length, getHash(csv.getCsvBytes()));
 
-                cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
-                        getHash(csvBytes), quicktests.size(), csvBytes.length);
+                if (cancellation.getDbEntityCount() == csv.getTotalEntityCount()) {
+                    cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
+                        getHash(csv.getCsvBytes()), csv.getTotalEntityCount(), csv.getCsvBytes().length);
+                } else {
+                    log.error("Difference between actual and expected EntityCount in CSV File for partner {}. "
+                            + "Expected: {}, Actual: {}, CSV Export will not be marked as finished.",
+                        cancellation.getPartnerId(), cancellation.getDbEntityCount(), csv.getTotalEntityCount());
+
+                    cancellationService.updateDataExportError(cancellation, "CSV Export Delta detected. "
+                        + "Expected: " + cancellation.getDbEntityCount() + " Actual: " + csv.getTotalEntityCount());
+                }
             } catch (Exception e) {
                 String errorMessage = e.getClass().getName() + ": " + e.getMessage();
 
@@ -131,7 +137,7 @@ public class CancellationSchedulingService {
      */
     @Scheduled(cron = "${archive.cancellationSearchPortalDeleteJob.cron}")
     @SchedulerLock(name = "CancellationSearchPortalDeleteJob", lockAtLeastFor = "PT0S",
-            lockAtMostFor = "${archive.cancellationSearchPortalDeleteJob.locklimit}")
+        lockAtMostFor = "${archive.cancellationSearchPortalDeleteJob.locklimit}")
     public void cancellationSearchPortalDeleteJob() {
         log.info("Starting Job: cancellationSearchPortalDeleteJob");
         processCancellationDeleteSearchPortalBatch(cancellationService.getReadyToDeleteSearchPortal());

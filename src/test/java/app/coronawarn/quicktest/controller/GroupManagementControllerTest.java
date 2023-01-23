@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,9 @@
 
 package app.coronawarn.quicktest.controller;
 
-import static app.coronawarn.quicktest.config.SecurityConfig.*;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_ADMIN;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_LAB;
+import static app.coronawarn.quicktest.config.SecurityConfig.ROLE_POC_NAT_ADMIN;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -56,7 +58,6 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -112,6 +113,7 @@ class GroupManagementControllerTest extends ServletKeycloakAuthUnitTestingSuppor
         when(keycloakServiceMock.getGroupMembers(rootGroupId)).thenReturn(List.of(user1));
 
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId));
+        when(utilities.getTenantIdFromToken()).thenReturn("partnerId");
         when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(Optional.of(rootGroup));
 
         // Inject Realm Name into Security Context

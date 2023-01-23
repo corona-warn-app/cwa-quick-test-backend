@@ -121,47 +121,7 @@ class ArchiveExportControllerTest extends ServletKeycloakAuthUnitTestingSupport 
         checkCsv(mvcResult.getResponse().getContentAsByteArray(), 27, 4);
 
         mvcResult = mockMvc().perform(MockMvcRequestBuilders
-                        .get("/api/archive/" + PARTNER_ID_1 + "?pocId=" + POC_ID_1))
-                .andReturn();
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
-        Assertions.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("attachment; filename=quicktest_export.csv", mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
-        checkCsv(mvcResult.getResponse().getContentAsByteArray(), 27, 4);
-
-        mvcResult = mockMvc().perform(MockMvcRequestBuilders
-                        .get("/api/archive/" + PARTNER_ID_1 + "?pocId=" + POC_ID_2))
-                .andReturn();
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
-        Assertions.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("attachment; filename=quicktest_export.csv", mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
-        checkCsv(mvcResult.getResponse().getContentAsByteArray(), 27, 2);
-
-        mvcResult = mockMvc().perform(MockMvcRequestBuilders
-                        .get("/api/archive/" + PARTNER_ID_2 + "?pocId=" + POC_ID_1))
-                .andReturn();
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
-        Assertions.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("attachment; filename=quicktest_export.csv", mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
-        checkCsv(mvcResult.getResponse().getContentAsByteArray(), 27, 3);
-
-        mvcResult = mockMvc().perform(MockMvcRequestBuilders
-                        .get("/api/archive/" + PARTNER_ID_2 + "?pocId=" + POC_ID_2))
-                .andReturn();
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
-        Assertions.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("attachment; filename=quicktest_export.csv", mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
-        checkCsv(mvcResult.getResponse().getContentAsByteArray(), 27, 2);
-
-        mvcResult = mockMvc().perform(MockMvcRequestBuilders
                         .get("/api/archive/randomPartnerId"))
-                .andReturn();
-        Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
-        Assertions.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_TYPE));
-        Assertions.assertEquals("attachment; filename=quicktest_export.csv", mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_DISPOSITION));
-        checkCsv(mvcResult.getResponse().getContentAsByteArray(), 0, 0);
-
-        mvcResult = mockMvc().perform(MockMvcRequestBuilders
-                        .get("/api/archive/" + PARTNER_ID_1 + "?pocId=randomPocId"))
                 .andReturn();
         Assertions.assertEquals(HttpStatus.OK.value(), mvcResult.getResponse().getStatus());
         Assertions.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, mvcResult.getResponse().getHeader(HttpHeaders.CONTENT_TYPE));

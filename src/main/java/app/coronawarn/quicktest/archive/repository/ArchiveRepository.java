@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,12 +23,11 @@ package app.coronawarn.quicktest.archive.repository;
 import app.coronawarn.quicktest.archive.domain.Archive;
 import java.util.List;
 import javax.persistence.EntityManager;
-import javax.persistence.Query;
 import javax.persistence.RollbackException;
-import javax.persistence.TypedQuery;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.data.domain.PageRequest;
 
 // see app.coronawarn.quicktest.config.ArchiveEntityManagerConfig
 @RequiredArgsConstructor
@@ -65,7 +64,11 @@ public class ArchiveRepository {
      */
     public List<Archive> findAll() {
         this.em.getTransaction().begin();
-        final List<Archive> result = this.em.createQuery("SELECT a FROM Archive a", Archive.class).getResultList();
+
+        final List<Archive> result = em
+            .createQuery("SELECT a FROM Archive a", Archive.class)
+            .getResultList();
+
         this.em.getTransaction().commit();
         return result;
     }
@@ -76,16 +79,15 @@ public class ArchiveRepository {
      * @return {@link List} of {@link Archive}
      */
     public List<Archive> findAllByPocId(final String pocId, final String tenantId) {
-        this.em.getTransaction().begin();
+        em.getTransaction().begin();
 
-        TypedQuery<Archive> query = this.em.createQuery(
-                "SELECT a FROM Archive a WHERE a.pocId = ?1 AND a.tenantId = ?2", Archive.class);
-        final List<Archive> result = query
-                .setParameter(1, pocId)
-                .setParameter(2, tenantId)
-                .getResultList();
+        final List<Archive> result = em
+            .createQuery("SELECT a FROM Archive a WHERE a.pocId = ?1 AND a.tenantId = ?2", Archive.class)
+            .setParameter(1, pocId)
+            .setParameter(2, tenantId)
+            .getResultList();
 
-        this.em.getTransaction().commit();
+        em.getTransaction().commit();
         return result;
     }
 
@@ -97,8 +99,28 @@ public class ArchiveRepository {
     public List<Archive> findAllByTenantId(final String tenantId) {
         em.getTransaction().begin();
 
-        TypedQuery<Archive> query = em.createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class);
-        final List<Archive> result = query.setParameter(1, tenantId).getResultList();
+        final List<Archive> result = em
+            .createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class)
+            .setParameter(1, tenantId).getResultList();
+
+        em.getTransaction().commit();
+        return result;
+    }
+
+    /**
+     * Returns all entries by tenantId.
+     *
+     * @return {@link List} of {@link Archive}
+     */
+    public List<Archive> findAllByTenantId(final String tenantId, PageRequest pageRequest) {
+        em.getTransaction().begin();
+
+        final List<Archive> result = em
+            .createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class)
+            .setFirstResult(pageRequest.getPageNumber() * pageRequest.getPageSize())
+            .setMaxResults(pageRequest.getPageSize())
+            .setParameter(1, tenantId)
+            .getResultList();
 
         em.getTransaction().commit();
         return result;
@@ -109,9 +131,12 @@ public class ArchiveRepository {
      */
     public void deleteAllByTenantId(final String tenantId) {
         em.getTransaction().begin();
-        Query query = em.createQuery("DELETE FROM Archive a WHERE a.tenantId = ?1");
-        query.setParameter(1, tenantId);
-        int rows = query.executeUpdate();
+
+        em
+            .createQuery("DELETE FROM Archive a WHERE a.tenantId = ?1")
+            .setParameter(1, tenantId)
+            .executeUpdate();
+
         em.getTransaction().commit();
     }
 
@@ -122,10 +147,32 @@ public class ArchiveRepository {
      */
     public List<String> findAllHashedGuids(final List<String> search) {
         this.em.getTransaction().begin();
-        TypedQuery<String> query =
-                this.em.createQuery("SELECT a.hashedGuid FROM Archive a WHERE a.hashedGuid IN ?1", String.class);
-        final List<String> result = query.setParameter(1, search).getResultList();
+
+        final List<String> result = em
+            .createQuery("SELECT a.hashedGuid FROM Archive a WHERE a.hashedGuid IN ?1", String.class)
+            .setParameter(1, search)
+            .getResultList();
+
         this.em.getTransaction().commit();
+        return result;
+    }
+
+    /**
+     * Count entities by tenantId.
+     *
+     * @param tenantId SHA256 Hash of TenantId to search for
+     * @return amount of found entities.
+     */
+    public Integer countAllByTenantId(final String tenantId) {
+        em.getTransaction().begin();
+
+        final Integer result = em
+            .createQuery("SELECT COUNT(*) FROM Archive a WHERE a.tenantId = ?1", Long.class)
+            .setParameter(1, tenantId)
+            .getSingleResult()
+            .intValue();
+
+        em.getTransaction().commit();
         return result;
     }
 }

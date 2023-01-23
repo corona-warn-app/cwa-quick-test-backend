@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,6 @@ import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
@@ -113,6 +112,8 @@ class UserManagementControllerTest extends ServletKeycloakAuthUnitTestingSupport
 
         when(utilities.getRootGroupsFromTokenAsList()).thenReturn(List.of(rootGroupId));
         when(keycloakServiceMock.getGroup(rootGroupId)).thenReturn(Optional.of(rootGroup));
+
+        when(utilities.getTenantIdFromToken()).thenReturn("PartnerId");
 
         // Inject Realm Name into Security Context
         SecurityContext originalContext = TestSecurityContextHolder.getContext();

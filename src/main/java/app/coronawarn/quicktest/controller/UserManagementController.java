@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -68,6 +68,8 @@ public class UserManagementController {
     private final UserManagementControllerUtils utils;
 
     private final KeycloakService keycloakService;
+
+    private final CancellationUtils cancellationUtils;
 
     /**
      * Endpoint to get all users in root group of logged in user.
@@ -273,6 +275,11 @@ public class UserManagementController {
     @Secured(ROLE_ADMIN)
     public ResponseEntity<KeycloakUserResponse> createNewUser(
         KeycloakAuthenticationToken token, @Valid @RequestBody KeycloakCreateUserRequest body) {
+
+        if (cancellationUtils.isCancellationStarted()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN,
+                    "Cancellation already started, endpoint is not available anymore.");
+        }
 
         utils.checkRealm(token);
         GroupRepresentation userRootGroup = utils.checkUserRootGroup();

@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,10 +33,12 @@ import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import net.javacrumbs.shedlock.core.LockExtender;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -73,7 +75,8 @@ public class CancellationSchedulingService {
         for (Cancellation cancellation : cancellations) {
             String partnerId = cancellation.getPartnerId();
             archiveService.moveToArchiveByTenantId(partnerId);
-            cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now());
+            Integer entityCount = archiveService.countByTenantId(partnerId);
+            cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now(), entityCount);
         }
 
         List<Cancellation> nextBatch = cancellationService.getReadyToArchiveBatch();
@@ -124,6 +127,12 @@ public class CancellationSchedulingService {
                         quicktests.size(), page, cancellation.getPartnerId());
                     beanToCsv.write(quicktests);
                     page++;
+
+                    try {
+                        LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
+                    } catch (LockExtender.NoActiveLockException ignored) {
+                        // Exception will be thrown if Job is executed outside Sheduler Context
+                    }
                 } while (!quicktests.isEmpty());
                 log.info("Got {} Quicktests for Partner {}", totalEntityCount, cancellation.getPartnerId());
 
@@ -140,8 +149,17 @@ public class CancellationSchedulingService {
                 log.info("File stored to S3 with id: {}, size: {}, hash: {}",
                     objectId, csvBytes.length, getHash(csvBytes));
 
-                cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
-                    getHash(csvBytes), totalEntityCount, csvBytes.length);
+                if (cancellation.getDbEntityCount() == totalEntityCount) {
+                    cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
+                        getHash(csvBytes), totalEntityCount, csvBytes.length);
+                } else {
+                    log.error("Difference between actual and expected EntityCount in CSV File for partner {}. "
+                            + "Expected: {}, Acutal: {}, CSV Export will not be marked as finished.",
+                        cancellation.getPartnerId(), cancellation.getDbEntityCount(), totalEntityCount);
+
+                    cancellationService.updateDataExportError(cancellation, "CSV Export Delta detected. "
+                        + "Expected: " + cancellation.getDbEntityCount() + " Actual: " + totalEntityCount);
+                }
             } catch (Exception e) {
                 String errorMessage = e.getClass().getName() + ": " + e.getMessage();
 

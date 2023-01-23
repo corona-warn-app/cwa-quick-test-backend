@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -136,6 +136,25 @@ public class ArchiveRepository {
             .getResultList();
 
         this.em.getTransaction().commit();
+        return result;
+    }
+
+    /**
+     * Count entities by tenantId.
+     *
+     * @param tenantId SHA256 Hash of TenantId to search for
+     * @return amount of found entities.
+     */
+    public Integer countAllByTenantId(final String tenantId) {
+        em.getTransaction().begin();
+
+        final Integer result = em
+            .createQuery("SELECT COUNT(*) FROM Archive a WHERE a.tenantId = ?1", Long.class)
+            .setParameter(1, tenantId)
+            .getSingleResult()
+            .intValue();
+
+        em.getTransaction().commit();
         return result;
     }
 }

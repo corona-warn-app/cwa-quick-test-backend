@@ -2,7 +2,7 @@
  * ---license-start
  * Corona-Warn-App / cwa-quick-test-backend
  * ---
- * Copyright (C) 2021 T-Systems International GmbH and all other contributors
+ * Copyright (C) 2021 - 2023 T-Systems International GmbH and all other contributors
  * ---
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -148,7 +148,7 @@ class CancellationServiceTest {
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
 
-        cancellationService.updateMovedToLongterm(cancellation, NEW_STATE_DATE);
+        cancellationService.updateMovedToLongterm(cancellation, NEW_STATE_DATE, 42);
 
         Optional<Cancellation> updatedCancellation = cancellationRepository.findById(PARTNER_ID);
         Assertions.assertTrue(updatedCancellation.isPresent());
@@ -160,6 +160,7 @@ class CancellationServiceTest {
         assertNull(updatedCancellation.get().getBucketObjectId());
         assertNull(updatedCancellation.get().getDownloadLinkRequested());
         Assertions.assertEquals(NEW_STATE_DATE, updatedCancellation.get().getMovedToLongtermArchive());
+        Assertions.assertEquals(42, updatedCancellation.get().getDbEntityCount());
     }
 
     @Test
@@ -292,7 +293,7 @@ class CancellationServiceTest {
     void testGetReadyToArchiveMovedNotNull() {
         Cancellation cancellation = cancellationService.createCancellation(PARTNER_ID, CANCELLATION_DATE);
         Assertions.assertEquals(FINAL_DELETION, cancellation.getFinalDeletion());
-        cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now());
+        cancellationService.updateMovedToLongterm(cancellation, ZonedDateTime.now(), 0);
         List<Cancellation> results = cancellationService.getReadyToArchiveBatch();
         assertTrue(results.isEmpty());
     }

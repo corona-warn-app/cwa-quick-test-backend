@@ -44,19 +44,19 @@ public class ArchiveExportController {
         summary = "Download Archive CSV-File",
         description = "Creates a CSV-File with all archived data for whole Partner or just one POC ID.",
         parameters = {
-            @Parameter(
+          @Parameter(
                 in = ParameterIn.PATH,
                 name = "partnerId",
                 description = "Partner ID of the PArtner to download data of",
                 required = true),
-            @Parameter(
+          @Parameter(
                 in = ParameterIn.QUERY,
                 name = "pocId",
                 description = "Filter for entities with given pocId")
         }
     )
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successful")
+      @ApiResponse(responseCode = "200", description = "Successful")
     })
     @GetMapping(value = "/{partnerId}", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @Secured({ROLE_ARCHIVE_OPERATOR})

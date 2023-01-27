@@ -20,25 +20,17 @@
 
 package app.coronawarn.quicktest.service;
 
-import app.coronawarn.quicktest.archive.domain.ArchiveCipherDtoV1;
 import app.coronawarn.quicktest.config.CsvUploadConfig;
 import app.coronawarn.quicktest.domain.Cancellation;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.opencsv.CSVWriter;
-import com.opencsv.bean.StatefulBeanToCsv;
-import com.opencsv.bean.StatefulBeanToCsvBuilder;
 import java.io.ByteArrayInputStream;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.javacrumbs.shedlock.core.LockExtender;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -102,63 +94,29 @@ public class CancellationSchedulingService {
         for (Cancellation cancellation : cancellations) {
             log.info("Processing CSV for Partner {}", cancellation.getPartnerId());
             try {
-                StringWriter stringWriter = new StringWriter();
-                CSVWriter csvWriter = new CSVWriter(
-                    stringWriter,
-                    '\t',
-                    CSVWriter.DEFAULT_QUOTE_CHARACTER,
-
-                    '\\',
-                    CSVWriter.DEFAULT_LINE_END);
-
-                StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
-                    new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter).build();
-
-                int page = 0;
-                int pageSize = 500;
-                int totalEntityCount = 0;
-                List<ArchiveCipherDtoV1> quicktests;
-                do {
-                    log.info("Loading Archive Chunk {} for Partner {}", page, cancellation.getPartnerId());
-                    quicktests = archiveService.getQuicktestsFromLongtermByTenantId(
-                        cancellation.getPartnerId(), page, pageSize);
-                    totalEntityCount += quicktests.size();
-                    log.info("Found {} Quicktests in Archive for Chunk {} for Partner {}",
-                        quicktests.size(), page, cancellation.getPartnerId());
-                    beanToCsv.write(quicktests);
-                    page++;
-
-                    try {
-                        LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
-                    } catch (LockExtender.NoActiveLockException ignored) {
-                        // Exception will be thrown if Job is executed outside Sheduler Context
-                    }
-                } while (!quicktests.isEmpty());
-                log.info("Got {} Quicktests for Partner {}", totalEntityCount, cancellation.getPartnerId());
-
-                byte[] csvBytes = stringWriter.toString().getBytes(StandardCharsets.UTF_8);
+                ArchiveService.CsvExportFile csv = archiveService.createCsv(cancellation.getPartnerId());
                 String objectId = cancellation.getPartnerId() + ".csv";
                 ObjectMetadata metadata = new ObjectMetadata();
-                metadata.setContentLength(csvBytes.length);
+                metadata.setContentLength(csv.getCsvBytes().length);
 
                 s3Client.putObject(
                     s3Config.getBucketName(),
                     objectId,
-                    new ByteArrayInputStream(csvBytes), metadata);
+                    new ByteArrayInputStream(csv.getCsvBytes()), metadata);
 
                 log.info("File stored to S3 with id: {}, size: {}, hash: {}",
-                    objectId, csvBytes.length, getHash(csvBytes));
+                    objectId, csv.getCsvBytes().length, getHash(csv.getCsvBytes()));
 
-                if (cancellation.getDbEntityCount() == totalEntityCount) {
+                if (cancellation.getDbEntityCount() == csv.getTotalEntityCount()) {
                     cancellationService.updateCsvCreated(cancellation, ZonedDateTime.now(), objectId,
-                        getHash(csvBytes), totalEntityCount, csvBytes.length);
+                        getHash(csv.getCsvBytes()), csv.getTotalEntityCount(), csv.getCsvBytes().length);
                 } else {
                     log.error("Difference between actual and expected EntityCount in CSV File for partner {}. "
-                            + "Expected: {}, Acutal: {}, CSV Export will not be marked as finished.",
-                        cancellation.getPartnerId(), cancellation.getDbEntityCount(), totalEntityCount);
+                            + "Expected: {}, Actual: {}, CSV Export will not be marked as finished.",
+                        cancellation.getPartnerId(), cancellation.getDbEntityCount(), csv.getTotalEntityCount());
 
                     cancellationService.updateDataExportError(cancellation, "CSV Export Delta detected. "
-                        + "Expected: " + cancellation.getDbEntityCount() + " Actual: " + totalEntityCount);
+                        + "Expected: " + cancellation.getDbEntityCount() + " Actual: " + csv.getTotalEntityCount());
                 }
             } catch (Exception e) {
                 String errorMessage = e.getClass().getName() + ": " + e.getMessage();

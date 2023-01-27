@@ -31,6 +31,12 @@ import app.coronawarn.quicktest.repository.QuickTestArchiveRepository;
 import app.coronawarn.quicktest.service.cryption.CryptionService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.opencsv.CSVWriter;
+import com.opencsv.bean.StatefulBeanToCsv;
+import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.exceptions.CsvDataTypeMismatchException;
+import com.opencsv.exceptions.CsvRequiredFieldEmptyException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -42,6 +48,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.javacrumbs.shedlock.core.LockExtender;
@@ -168,13 +175,18 @@ public class ArchiveService {
     }
 
     /**
-     * Get longterm archives by pocId.
+     * Get decrypted entities from longterm archive.
+     *
+     * @param pocId    (optional) pocId to filter for
+     * @param tenantId tenantID to filter for
      */
-    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId, final String tenantId)
-            throws JsonProcessingException {
-        List<Archive> allByPocId = longTermArchiveRepository.findAllByPocId(createHash(pocId));
-        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(allByPocId.size());
-        for (Archive archive : allByPocId) {
+    public List<ArchiveCipherDtoV1> getQuicktestsFromLongterm(final String pocId, final String tenantId) {
+        List<Archive> entities = pocId != null
+                ? longTermArchiveRepository.findAllByPocId(createHash(pocId), createHash(tenantId))
+                : longTermArchiveRepository.findAllByTenantId(createHash(tenantId));
+
+        List<ArchiveCipherDtoV1> dtos = new ArrayList<>(entities.size());
+        for (Archive archive : entities) {
             try {
                 final String decrypt = keyProvider.decrypt(archive.getSecret(), tenantId);
                 final String json = cryptionService.getAesCryption().decrypt(decrypt, archive.getCiphertext());
@@ -186,6 +198,57 @@ public class ArchiveService {
             }
         }
         return dtos;
+    }
+
+    @RequiredArgsConstructor
+    @Getter
+    public static class CsvExportFile {
+        private final byte[] csvBytes;
+        private final int totalEntityCount;
+    }
+
+    /**
+     * Create a CSV containing given Quicktest-Archive-Entities.
+     *
+     * @param partnerId Partner for which the CSV should be created.
+     * @return byte-array representing a CSV.
+     */
+    public CsvExportFile createCsv(String partnerId)
+        throws CsvRequiredFieldEmptyException, CsvDataTypeMismatchException {
+
+        StringWriter stringWriter = new StringWriter();
+        CSVWriter csvWriter = new CSVWriter(
+            stringWriter,
+            '\t',
+            CSVWriter.DEFAULT_QUOTE_CHARACTER,
+
+            '\\',
+            CSVWriter.DEFAULT_LINE_END);
+
+        StatefulBeanToCsv<ArchiveCipherDtoV1> beanToCsv =
+            new StatefulBeanToCsvBuilder<ArchiveCipherDtoV1>(csvWriter).build();
+
+        int page = 0;
+        int pageSize = 500;
+        int totalEntityCount = 0;
+        List<ArchiveCipherDtoV1> quicktests;
+        do {
+            log.info("Loading Archive Chunk {} for Partner {}", page, partnerId);
+            quicktests = getQuicktestsFromLongtermByTenantId(partnerId, page, pageSize);
+            totalEntityCount += quicktests.size();
+            log.info("Found {} Quicktests in Archive for Chunk {} for Partner {}", quicktests.size(), page, partnerId);
+            beanToCsv.write(quicktests);
+            page++;
+
+            try {
+                LockExtender.extendActiveLock(Duration.ofMinutes(10), Duration.ZERO);
+            } catch (LockExtender.NoActiveLockException ignored) {
+                // Exception will be thrown if Job is executed outside Scheduler Context
+            }
+        } while (!quicktests.isEmpty());
+        log.info("Got {} Quicktests for Partner {}", totalEntityCount, partnerId);
+
+        return new CsvExportFile(stringWriter.toString().getBytes(StandardCharsets.UTF_8), totalEntityCount);
     }
 
     /**

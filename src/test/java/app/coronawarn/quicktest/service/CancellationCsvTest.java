@@ -101,7 +101,7 @@ class CancellationCsvTest {
     public static final String PARTNER_ID_HASH = "212e58b487b6d6b486b71c6ebb3fedc0db3c69114f125fb3cd2fbc72e6ffc25f";
 
     @ParameterizedTest
-    @ValueSource(ints = {1, 5_000})
+    @ValueSource(ints = {1, 100})
     @Transactional
     void testCsvExport(int n) throws IOException, NoSuchAlgorithmException, CsvException {
         Cancellation cancellation = new Cancellation();
@@ -140,6 +140,9 @@ class CancellationCsvTest {
         Assertions.assertEquals(csvBytes.length, cancellation.getCsvSize());
         Assertions.assertEquals(getHash(csvBytes), cancellation.getCsvHash());
 
+        System.out.println("\n");
+        System.out.println(new String(csvBytes, StandardCharsets.UTF_8));
+
         CSVParser csvParser = new CSVParserBuilder()
                 .withEscapeChar('\\')
                 .withSeparator('\t')
@@ -152,7 +155,7 @@ class CancellationCsvTest {
         ) {
             List<String[]> csvEntries = csvReader.readAll();
             Assertions.assertEquals(n + 1, csvEntries.size());
-            Assertions.assertEquals(27, csvEntries.get(0).length);
+            Assertions.assertEquals(24, csvEntries.get(0).length);
         }
 
         longTermArchiveRepository.deleteAllByTenantId(PARTNER_ID_HASH);

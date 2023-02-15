@@ -4,7 +4,7 @@
     <parent>
         <groupId>app.coronawarn</groupId>
         <artifactId>cwa-parent</artifactId>
-        <version>1.7.1</version>
+        <version>1.8</version>
     </parent>
     <artifactId>cwa-quick-test-backend</artifactId>
     <version>1.0.0-SNAPSHOT</version>
@@ -75,13 +75,13 @@
         </dependency>
 
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
         </dependency>
 
         <dependency>
-            <groupId>org.keycloak</groupId>
-            <artifactId>keycloak-admin-client</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
 
         <dependency>

@@ -139,6 +139,7 @@ quicktest:
     environment-name: ${QUICK_TEST_ENVIRONMENT_NAME:unknown}
   cancellation:
     final-deletion-days: ${QUICK_TEST_CANCELLATION_FINAL_DELETION_DAYS:28}
+  sharedRealms: ${QUICK_TEST_SHARED_REALMS}
 
 archive:
   excluded-partners: ${QT_ARCHIVE_EXCLUDED_PARTNERS:}

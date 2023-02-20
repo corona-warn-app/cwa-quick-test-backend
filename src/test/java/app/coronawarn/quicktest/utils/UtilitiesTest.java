@@ -149,6 +149,47 @@ class UtilitiesTest {
 
     @Test
     @WithMockUser(username = "myUser", roles = {"myAuthority"})
+    public void testGetIdsFromTokenForNonAdminSelfServiceRealm() {
+        final String pocId = "testPOC";
+        final String userId = "userId";
+        final String tokenGroupString = "[" +
+            "/rootGroup/NRW/Wuppertal/Barmen," +
+            "/rootGroup" +
+            "]";
+        GroupRepresentation rootGroup = new GroupRepresentation();
+        rootGroup.setName("rootGroup");
+
+        when(keycloakServiceMock.getRootGroupsOfUser(userId)).thenReturn(List.of(rootGroup));
+
+        SecurityContext springSecurityContext = SecurityContextHolder.createEmptyContext();
+        SecurityContextHolder.setContext(springSecurityContext);
+        Set<String> roles = Sets.newSet("user");
+
+        KeycloakPrincipal principal = mock(KeycloakPrincipal.class);
+        RefreshableKeycloakSecurityContext keycloakSecurityContext = mock(RefreshableKeycloakSecurityContext.class);
+        when(principal.getKeycloakSecurityContext()).thenReturn(keycloakSecurityContext);
+        when(principal.getKeycloakSecurityContext().getRealm()).thenReturn("qt-alt");
+
+        AccessToken idToken = mock(AccessToken.class);
+        when(idToken.getSubject()).thenReturn(userId);
+        when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
+        Map<String, Object> mockTokens = new HashMap<>();
+        mockTokens.put(quickTestConfig.getPointOfCareIdName(), pocId);
+        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroupString);
+        when(idToken.getOtherClaims()).thenReturn(mockTokens);
+
+        KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);
+        KeycloakAuthenticationToken token = new KeycloakAuthenticationToken(account, false);
+        springSecurityContext.setAuthentication(token);
+
+        Map<String, Object> expectedTokens = new HashMap<>();
+        expectedTokens.put(quickTestConfig.getTenantPointOfCareIdKey(), pocId);
+        expectedTokens.put(quickTestConfig.getTenantIdKey(), rootGroup.getName());
+        assertEquals(expectedTokens, utilities.getIdsFromToken());
+    }
+
+    @Test
+    @WithMockUser(username = "myUser", roles = {"myAuthority"})
     public void testGetIdsFromTokenFailed() {
         final String pocId = "testPOC";
 

@@ -54,7 +54,7 @@ public abstract class ArchiveCipherDto {
     @CsvBindByName(column = "31_Einwilligung zur Testergebnisübertragung (in CWA)")
     private Boolean confirmationCwa;
 
-    @CsvBindByName(column = "44_Testergebnis")
+    @CsvBindByName(column = "44_Testergebnis (6=negativ 7=positiv 8=ungültig)")
     private Short testResult;
 
     @CsvBindByName(column = "32_Datenschutzhinweis übergeben")

@@ -20,6 +20,8 @@
 
 package app.coronawarn.quicktest.config;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -43,6 +45,8 @@ public class QuickTestConfig {
     private String dbEncryptionKey;
     private String labId;
     private String pcrEnabledKey;
+
+    private List<String> sharedRealms = new ArrayList<>();
 
     private FrontendContextConfig frontendContextConfig = new FrontendContextConfig();
     private CancellationConfig cancellation = new CancellationConfig();

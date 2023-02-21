@@ -94,7 +94,7 @@ public class Utilities {
             KeycloakPrincipal keycloakPrincipal = (KeycloakPrincipal) principal;
             String realmName = keycloakPrincipal.getKeycloakSecurityContext().getRealm();
 
-            if (realmName != null && realmName.equals(keycloakAdminProperties.getRealm())) {
+            if (isSharedRealm(realmName)) {
                 String rootGroupNames = getRootGroupsFromToken();
                 ids.put(quickTestConfig.getTenantIdKey(), rootGroupNames);
             } else {
@@ -116,6 +116,17 @@ public class Utilities {
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "User has no Group assigned");
         }
         return ids;
+    }
+
+    /**
+     * Check if Realm is Realm with User Management via QT-Portal or is another shared realm.
+     *
+     * @param realmName Name of the Realm to check
+     * @return if realm is shared.
+     */
+    private boolean isSharedRealm(String realmName) {
+        return realmName != null && (quickTestConfig.getSharedRealms().contains(realmName)
+            || keycloakAdminProperties.getRealm().equals(realmName));
     }
 
     /**

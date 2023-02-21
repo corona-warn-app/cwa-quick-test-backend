@@ -22,6 +22,7 @@ package app.coronawarn.quicktest.model.quicktest;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.util.List;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
@@ -40,5 +41,8 @@ public class QuickTestContextFile {
 
     @JsonProperty("cancellation-complete-pending-tests")
     private final int cancellationCompletePendingTests;
+
+    @JsonProperty("disable-user-management")
+    private final List<String> disableUserManagement;
 
 }

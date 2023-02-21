@@ -20,6 +20,7 @@
 
 package app.coronawarn.quicktest.controller;
 
+import app.coronawarn.quicktest.config.KeycloakAdminProperties;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.model.keycloak.KeyCloakConfigFile;
 import app.coronawarn.quicktest.model.quicktest.QuickTestContextFile;
@@ -42,6 +43,8 @@ public class ConfigController {
 
     private final QuickTestConfig quickTestConfig;
 
+    private final KeycloakAdminProperties keycloakAdminProperties;
+
     /**
      * Endpoint to get Keycloak-Config for Frontend.
      */
@@ -61,7 +64,7 @@ public class ConfigController {
                         quickTestConfig.getFrontendContextConfig().getRulesServerUrl(),
                         quickTestConfig.getFrontendContextConfig().getEnvironmentName(),
                         quickTestConfig.getCancellation().getCompletePendingTestsHours(),
-                    quickTestConfig.getSharedRealms()
+                    keycloakAdminProperties.getRealm()
                   ));
     }
 }

@@ -45,7 +45,7 @@ public class Cancellation {
     static final long SERIAL_VERSION_UID = 1L;
 
     @Id
-    @Column(name = "partner_id", length = 20)
+    @Column(name = "partner_id", length = 64)
     private String partnerId;
 
     @Column(name = "created_at")

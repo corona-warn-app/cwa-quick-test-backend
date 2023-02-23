@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - changeSet:
+      id: update-cancellation-table-7
+      author: f11h
+      changes:
+        - modifyDataType:
+            tableName: cancellation
+            columnName: partner_id
+            newDataType: varchar(64)

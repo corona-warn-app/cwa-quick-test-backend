@@ -81,7 +81,7 @@ class CancellationServiceTest {
 
     public static final ZonedDateTime CANCELLATION_DATE = ZonedDateTime.now().truncatedTo(ChronoUnit.MINUTES);
 
-    public static final ZonedDateTime FINAL_DELETION = CANCELLATION_DATE.plusDays(33);
+    public static final ZonedDateTime FINAL_DELETION = CANCELLATION_DATE.plusDays(35);
     public static final ZonedDateTime NEW_STATE_DATE = ZonedDateTime.now().plusDays(10).truncatedTo(ChronoUnit.MINUTES);
     public static final String PARTNER_ID = "P10000";
     public static final String PARTNER_ID_UPDATE = "P10099";
@@ -309,7 +309,7 @@ class CancellationServiceTest {
         cancellationService.finalDeleteJob();
         archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID, 0, Integer.MAX_VALUE);
         assertFalse(archiveEntries.isEmpty());
-        cancellation.setCancellationDate(ZonedDateTime.now().minusDays(33));
+        cancellation.setCancellationDate(ZonedDateTime.now().minusDays(35));
         cancellationRepository.save(cancellation);
         cancellationService.finalDeleteJob();
         archiveEntries = archiveService.getQuicktestsFromLongtermByTenantId(PARTNER_ID, 0, Integer.MAX_VALUE);

@@ -29,6 +29,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -145,10 +146,8 @@ public class Utilities {
      * @throws ResponseStatusException 500 if not found in token
      */
     public List<String> getRootGroupsFromTokenAsList() throws ResponseStatusException {
-        String information = getGroupsFromToken();
-        List<String> groups = Arrays.asList(information.split(quickTestConfig.getGroupInformationDelimiter()));
-        return groups.stream().filter(it -> StringUtils.countMatches(it, "/") == 1)
-          .map(group -> group.replaceAll("[\\[\\]/]",""))
+        return getGroupsFromToken().stream().filter(it -> StringUtils.countMatches(it, "/") == 1)
+          .map(group -> group.replaceAll("/", ""))
           .map(String::trim)
           .collect(Collectors.toList());
     }
@@ -159,10 +158,10 @@ public class Utilities {
      * @throws ResponseStatusException 500 if not found in token
      */
     public Optional<String> getSubGroupFromToken() throws ResponseStatusException {
-        return Arrays.stream(getGroupsFromToken().split(quickTestConfig.getGroupInformationDelimiter()))
+        return getGroupsFromToken().stream()
           .filter(it -> StringUtils.countMatches(it, "/") > 1)
           .map(group -> StringUtils.substringAfterLast(group, "/"))
-          .map(group -> group.replaceAll("[\\[\\]/]",""))
+          .map(group -> group.replaceAll("/", ""))
           .map(String::trim)
           .collect(Collectors.reducing((a, b) -> null));
     }
@@ -232,22 +231,27 @@ public class Utilities {
         return authentication != null ? (Principal) authentication.getPrincipal() : null;
     }
 
-    private String getGroupsFromToken() {
-        String information = null;
+    private List<String> getGroupsFromToken() {
         Principal principal = getPrincipal();
 
         if (principal instanceof KeycloakPrincipal) {
             Map<String, Object> customClaims = getCustomClaims((KeycloakPrincipal) principal);
             if (customClaims.containsKey(quickTestConfig.getGroupKey())) {
-                information = String.valueOf(customClaims.get(quickTestConfig.getGroupKey()));
+                Object claim = customClaims.get(quickTestConfig.getGroupKey());
+
+                if (claim instanceof List) {
+                    return ((List<Object>) claim).stream()
+                        .map(String::valueOf)
+                        .collect(Collectors.toList());
+                } else {
+                    return Collections.singletonList(String.valueOf(claim));
+                }
             }
         }
-        if (information == null) {
-            log.warn("Group not found in User-Token");
-            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-              "Group not found in User-Token");
-        }
-        return information;
+
+        log.warn("Group not found in User-Token");
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Group not found in User-Token");
+
     }
 
     /**

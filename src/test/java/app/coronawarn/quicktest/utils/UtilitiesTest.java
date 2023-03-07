@@ -110,10 +110,7 @@ class UtilitiesTest {
     public void testGetIdsFromTokenForSelfServiceRealm() {
         final String pocId = "testPOC";
         final String userId = "userId";
-        final String tokenGroupString = "[" +
-                "/rootGroup/NRW/Wuppertal/Barmen," +
-                "/rootGroup" +
-                "]";
+        final List<String> tokenGroups = List.of("/rootGroup/NRW/Wuppertal/Barmen", "/rootGroup");
         GroupRepresentation rootGroup = new GroupRepresentation();
         rootGroup.setName("rootGroup");
 
@@ -133,7 +130,7 @@ class UtilitiesTest {
         when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
         Map<String, Object> mockTokens = new HashMap<>();
         mockTokens.put(quickTestConfig.getPointOfCareIdName(), pocId);
-        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroupString);
+        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroups);
         when(idToken.getOtherClaims()).thenReturn(mockTokens);
 
         KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);
@@ -152,10 +149,7 @@ class UtilitiesTest {
     public void testGetIdsFromTokenForNonAdminSelfServiceRealm() {
         final String pocId = "testPOC";
         final String userId = "userId";
-        final String tokenGroupString = "[" +
-            "/rootGroup/NRW/Wuppertal/Barmen," +
-            "/rootGroup" +
-            "]";
+        final List<String> tokenGroups = List.of("/rootGroup/NRW/Wuppertal/Barmen", "/rootGroup");
         GroupRepresentation rootGroup = new GroupRepresentation();
         rootGroup.setName("rootGroup");
 
@@ -175,7 +169,7 @@ class UtilitiesTest {
         when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
         Map<String, Object> mockTokens = new HashMap<>();
         mockTokens.put(quickTestConfig.getPointOfCareIdName(), pocId);
-        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroupString);
+        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroups);
         when(idToken.getOtherClaims()).thenReturn(mockTokens);
 
         KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);
@@ -321,10 +315,7 @@ class UtilitiesTest {
 
     @Test
     void testGetSubgroupFromToken() {
-        final String tokenGroupString = "[" +
-          "/rootGroup/NRW/Wuppertal/Barmen," +
-          "/rootGroup" +
-          "]";
+        final List<String> tokenGroups = List.of("/rootGroup/NRW/Wuppertal/Barmen","/rootGroup");
 
         SecurityContext springSecurityContext = SecurityContextHolder.createEmptyContext();
         SecurityContextHolder.setContext(springSecurityContext);
@@ -340,7 +331,7 @@ class UtilitiesTest {
         when(principal.getKeycloakSecurityContext().getToken()).thenReturn(idToken);
         Map<String, Object> mockTokens = new HashMap<>();
         mockTokens.put(quickTestConfig.getPointOfCareIdName(), "pocId");
-        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroupString);
+        mockTokens.put(quickTestConfig.getGroupKey(), tokenGroups);
         when(idToken.getOtherClaims()).thenReturn(mockTokens);
 
         KeycloakAccount account = new SimpleKeycloakAccount(principal, roles, keycloakSecurityContext);

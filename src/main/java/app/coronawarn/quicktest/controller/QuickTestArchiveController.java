@@ -31,12 +31,12 @@ import app.coronawarn.quicktest.utils.Utilities;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.List;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -74,8 +74,8 @@ public class QuickTestArchiveController {
      * @return PDF
      */
     @Operation(
-            summary = "Response quicktest as PDF",
-            description = "PDF stored in DB will be responsed for download if found."
+      summary = "Response quicktest as PDF",
+      description = "PDF stored in DB will be responsed for download if found."
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "PDF found"),
@@ -84,13 +84,13 @@ public class QuickTestArchiveController {
     @RequestMapping(path = "/{hashedGuid}/pdf", method = RequestMethod.GET, produces = MediaType.APPLICATION_PDF_VALUE)
     @Secured({ROLE_COUNTER, ROLE_LAB})
     public ResponseEntity<byte[]> getQuickTestPdf(
-            @PathVariable("hashedGuid") String hashedGuid) {
+      @PathVariable("hashedGuid") String hashedGuid) {
         try {
             ResponseEntity<byte[]> responseEntity = ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
-                    + "Schnelltest_" + hashedGuid + ".pdf\"")
-                .contentType(MediaType.APPLICATION_PDF)
-                .body(quickTestArchiveService.getPdf(hashedGuid));
+              .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""
+                + "Schnelltest_" + hashedGuid + ".pdf\"")
+              .contentType(MediaType.APPLICATION_PDF)
+              .body(quickTestArchiveService.getPdf(hashedGuid));
             log.info("pdf successfully downloaded.");
             return responseEntity;
         } catch (ResponseStatusException e) {
@@ -108,8 +108,8 @@ public class QuickTestArchiveController {
      * @return QuickTestArchiveListResponse with all found archives
      */
     @Operation(
-            summary = "Find quicktests in archive",
-            description = "Returns all found quicktests in archive for search parameters"
+      summary = "Find quicktests in archive",
+      description = "Returns all found quicktests in archive for search parameters"
     )
     @ApiResponses(value = {
       @ApiResponse(responseCode = "200", description = "Successful"),
@@ -118,21 +118,22 @@ public class QuickTestArchiveController {
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
     @Secured({ROLE_COUNTER, ROLE_LAB})
     public ResponseEntity<QuickTestArchiveResponseList> findArchivesByTestResultAndUpdatedAtBetween(
-            @RequestParam(required = false) @Min(0) @Max(8) Short testResult,
-            @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateFrom,
-            @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateTo) {
+      @RequestParam(required = false) @Min(0) @Max(8) Short testResult,
+      @RequestParam("dateFrom") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateFrom,
+      @RequestParam("dateTo") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) ZonedDateTime zonedDateTo) {
         try {
             LocalDateTime utcDateFrom = LocalDateTime.ofInstant(zonedDateFrom.toInstant(), ZoneOffset.UTC);
             LocalDateTime utcDateTo = LocalDateTime.ofInstant(zonedDateTo.toInstant(), ZoneOffset.UTC);
             List<QuickTestArchiveView> archives = quickTestArchiveService.findByTestResultAndUpdatedAtBetween(
-                utilities.getIdsFromToken(),
-                testResult,
-                utcDateFrom,
-                utcDateTo);
-            TypeToken<List<QuickTestArchiveResponse>> typeToken = new TypeToken<>(){};
+              utilities.getIdsFromToken(),
+              testResult,
+              utcDateFrom,
+              utcDateTo);
+            TypeToken<List<QuickTestArchiveResponse>> typeToken = new TypeToken<>() {
+            };
             List<QuickTestArchiveResponse> quickTestArchiveResponses = modelMapper.map(
-                    archives,
-                    typeToken.getType()
+              archives,
+              typeToken.getType()
             );
             QuickTestArchiveResponseList response = new QuickTestArchiveResponseList();
             response.setQuickTestArchives(quickTestArchiveResponses);
@@ -142,10 +143,10 @@ public class QuickTestArchiveController {
             throw e;
         } catch (Exception e) {
             log.debug("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween."
-                    + " Message: {}", e.getMessage());
+              + " Message: {}", e.getMessage());
             log.error("Couldn't execute findArchivesByTestResultAndUpdatedAtBetween.");
             throw new ResponseStatusException(
-                    HttpStatus.INTERNAL_SERVER_ERROR, "trying to find quicktests failed");
+              HttpStatus.INTERNAL_SERVER_ERROR, "trying to find quicktests failed");
         }
     }
 

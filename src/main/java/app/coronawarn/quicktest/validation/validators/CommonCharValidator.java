@@ -21,14 +21,14 @@
 package app.coronawarn.quicktest.validation.validators;
 
 import app.coronawarn.quicktest.validation.ValidCommonChar;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 import java.util.regex.Pattern;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import org.apache.commons.lang3.StringUtils;
 
 public class CommonCharValidator implements ConstraintValidator<ValidCommonChar, String> {
     private static final Pattern CONTAINS_SPECIAL_CHARACTERS_EXCEPT_WHITESPACE =
-            Pattern.compile("[\\^\\p{IsCommon}\\ ]");
+      Pattern.compile("[\\^\\p{IsCommon}\\ ]");
 
     @Override
     public boolean isValid(String string, ConstraintValidatorContext constraintValidatorContext) {

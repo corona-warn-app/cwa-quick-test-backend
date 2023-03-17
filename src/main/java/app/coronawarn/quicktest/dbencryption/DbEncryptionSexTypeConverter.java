@@ -21,13 +21,13 @@
 package app.coronawarn.quicktest.dbencryption;
 
 import app.coronawarn.quicktest.model.Sex;
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.Converter;
+import jakarta.persistence.PersistenceException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import javax.persistence.PersistenceException;
 
 @Converter
 public class DbEncryptionSexTypeConverter implements AttributeConverter<Sex, String> {
@@ -37,7 +37,7 @@ public class DbEncryptionSexTypeConverter implements AttributeConverter<Sex, Str
         try {
             return s == null ? null : DbEncryptionService.getInstance().encryptString(s.name());
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-            | BadPaddingException | IllegalBlockSizeException e) {
+                 | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }
@@ -47,7 +47,7 @@ public class DbEncryptionSexTypeConverter implements AttributeConverter<Sex, Str
         try {
             return s == null ? null : Sex.valueOf(DbEncryptionService.getInstance().decryptString(s));
         } catch (InvalidAlgorithmParameterException | InvalidKeyException
-            | BadPaddingException | IllegalBlockSizeException e) {
+                 | BadPaddingException | IllegalBlockSizeException e) {
             throw new PersistenceException(e);
         }
     }

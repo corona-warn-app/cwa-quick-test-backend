@@ -21,9 +21,9 @@
 package app.coronawarn.quicktest.archive.repository;
 
 import app.coronawarn.quicktest.archive.domain.Archive;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.RollbackException;
 import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.RollbackException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
@@ -66,8 +66,8 @@ public class ArchiveRepository {
         this.em.getTransaction().begin();
 
         final List<Archive> result = em
-            .createQuery("SELECT a FROM Archive a", Archive.class)
-            .getResultList();
+          .createQuery("SELECT a FROM Archive a", Archive.class)
+          .getResultList();
 
         this.em.getTransaction().commit();
         return result;
@@ -82,10 +82,10 @@ public class ArchiveRepository {
         em.getTransaction().begin();
 
         final List<Archive> result = em
-            .createQuery("SELECT a FROM Archive a WHERE a.pocId = ?1 AND a.tenantId = ?2", Archive.class)
-            .setParameter(1, pocId)
-            .setParameter(2, tenantId)
-            .getResultList();
+          .createQuery("SELECT a FROM Archive a WHERE a.pocId = ?1 AND a.tenantId = ?2", Archive.class)
+          .setParameter(1, pocId)
+          .setParameter(2, tenantId)
+          .getResultList();
 
         em.getTransaction().commit();
         return result;
@@ -100,8 +100,8 @@ public class ArchiveRepository {
         em.getTransaction().begin();
 
         final List<Archive> result = em
-            .createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class)
-            .setParameter(1, tenantId).getResultList();
+          .createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class)
+          .setParameter(1, tenantId).getResultList();
 
         em.getTransaction().commit();
         return result;
@@ -116,11 +116,11 @@ public class ArchiveRepository {
         em.getTransaction().begin();
 
         final List<Archive> result = em
-            .createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class)
-            .setFirstResult(pageRequest.getPageNumber() * pageRequest.getPageSize())
-            .setMaxResults(pageRequest.getPageSize())
-            .setParameter(1, tenantId)
-            .getResultList();
+          .createQuery("SELECT a FROM Archive a WHERE a.tenantId = ?1", Archive.class)
+          .setFirstResult(pageRequest.getPageNumber() * pageRequest.getPageSize())
+          .setMaxResults(pageRequest.getPageSize())
+          .setParameter(1, tenantId)
+          .getResultList();
 
         em.getTransaction().commit();
         return result;
@@ -133,9 +133,9 @@ public class ArchiveRepository {
         em.getTransaction().begin();
 
         em
-            .createQuery("DELETE FROM Archive a WHERE a.tenantId = ?1")
-            .setParameter(1, tenantId)
-            .executeUpdate();
+          .createQuery("DELETE FROM Archive a WHERE a.tenantId = ?1")
+          .setParameter(1, tenantId)
+          .executeUpdate();
 
         em.getTransaction().commit();
     }
@@ -149,9 +149,9 @@ public class ArchiveRepository {
         this.em.getTransaction().begin();
 
         final List<String> result = em
-            .createQuery("SELECT a.hashedGuid FROM Archive a WHERE a.hashedGuid IN ?1", String.class)
-            .setParameter(1, search)
-            .getResultList();
+          .createQuery("SELECT a.hashedGuid FROM Archive a WHERE a.hashedGuid IN ?1", String.class)
+          .setParameter(1, search)
+          .getResultList();
 
         this.em.getTransaction().commit();
         return result;
@@ -167,10 +167,10 @@ public class ArchiveRepository {
         em.getTransaction().begin();
 
         final Integer result = em
-            .createQuery("SELECT COUNT(*) FROM Archive a WHERE a.tenantId = ?1", Long.class)
-            .setParameter(1, tenantId)
-            .getSingleResult()
-            .intValue();
+          .createQuery("SELECT COUNT(*) FROM Archive a WHERE a.tenantId = ?1", Long.class)
+          .setParameter(1, tenantId)
+          .getSingleResult()
+          .intValue();
 
         em.getTransaction().commit();
         return result;

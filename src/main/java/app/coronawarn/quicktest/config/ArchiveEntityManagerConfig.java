@@ -21,8 +21,8 @@
 package app.coronawarn.quicktest.config;
 
 import app.coronawarn.quicktest.archive.repository.ArchiveRepository;
+import jakarta.persistence.EntityManager;
 import java.util.Properties;
-import javax.persistence.EntityManager;
 import javax.sql.DataSource;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.cfg.AvailableSettings;
@@ -40,7 +40,7 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 @Configuration
 public class ArchiveEntityManagerConfig {
 
-    private static final String[] ENTITY_PACKAGES = { "app.coronawarn.quicktest.archive.domain" };
+    private static final String[] ENTITY_PACKAGES = {"app.coronawarn.quicktest.archive.domain"};
 
     @Value("${spring.profiles.active:}")
     private String activeProfile;
@@ -51,8 +51,8 @@ public class ArchiveEntityManagerConfig {
 
     @Autowired
     public ArchiveEntityManagerConfig(
-            @Qualifier("archiveDataSource") final DataSource archiveDataSource,
-            final JpaHibernateProperties jpaHibernateProperties) {
+      @Qualifier("archiveDataSource") final DataSource archiveDataSource,
+      final JpaHibernateProperties jpaHibernateProperties) {
         this.archiveDataSource = archiveDataSource;
         this.jpaHibernateProperties = jpaHibernateProperties;
     }
@@ -66,8 +66,8 @@ public class ArchiveEntityManagerConfig {
     private EntityManager archiveEntityManager() {
         log.debug("Creating Archive EntityManager");
         return this.archiveJpaTransactionManager()
-                .getEntityManagerFactory()
-                .createEntityManager();
+          .getEntityManagerFactory()
+          .createEntityManager();
     }
 
     private JpaTransactionManager archiveJpaTransactionManager() {
@@ -107,11 +107,11 @@ public class ArchiveEntityManagerConfig {
         }
         if (this.jpaHibernateProperties.getJdbc().getFetchSize() != null) {
             properties.put(AvailableSettings.STATEMENT_FETCH_SIZE,
-                    this.jpaHibernateProperties.getJdbc().getFetchSize());
+              this.jpaHibernateProperties.getJdbc().getFetchSize());
         }
         if (this.jpaHibernateProperties.getJdbc().getBatchSize() != null) {
             properties.put(AvailableSettings.STATEMENT_BATCH_SIZE,
-                    this.jpaHibernateProperties.getJdbc().getBatchSize());
+              this.jpaHibernateProperties.getJdbc().getBatchSize());
         }
         if (this.jpaHibernateProperties.getShowSql() != null) {
             properties.put(AvailableSettings.SHOW_SQL, this.jpaHibernateProperties.getShowSql());

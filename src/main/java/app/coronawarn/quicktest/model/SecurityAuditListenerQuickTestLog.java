@@ -23,7 +23,7 @@ package app.coronawarn.quicktest.model;
 import app.coronawarn.quicktest.config.QuickTestConfig;
 import app.coronawarn.quicktest.domain.QuickTestLog;
 import app.coronawarn.quicktest.utils.Utilities;
-import javax.persistence.PostLoad;
+import jakarta.persistence.PostLoad;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;

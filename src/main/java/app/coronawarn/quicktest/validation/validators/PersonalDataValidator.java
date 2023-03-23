@@ -22,8 +22,8 @@ package app.coronawarn.quicktest.validation.validators;
 
 import app.coronawarn.quicktest.model.quicktest.QuickTestPersonalDataRequest;
 import app.coronawarn.quicktest.validation.ValidPersonalData;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 public class PersonalDataValidator implements ConstraintValidator<ValidPersonalData, QuickTestPersonalDataRequest> {
 

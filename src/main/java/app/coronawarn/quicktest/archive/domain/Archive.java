@@ -20,20 +20,20 @@
 
 package app.coronawarn.quicktest.archive.domain;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+import jakarta.persistence.Version;
 import java.time.LocalDateTime;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Lob;
-import javax.persistence.Table;
-import javax.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Setter;
 import lombok.ToString;
 
 @Data
-@ToString(exclude = { "secret", "ciphertext" })
+@ToString(exclude = {"secret", "ciphertext"})
 @Entity
 @Table(name = "archive")
 public class Archive {
@@ -44,7 +44,7 @@ public class Archive {
 
     @Column(name = "identifier", columnDefinition = "varchar(255)", nullable = false)
     private String identifier;
-    
+
     @Column(name = "tenant_id", columnDefinition = "varchar(255)", nullable = false)
     private String tenantId;
 

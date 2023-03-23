@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.KeycloakSecurityContext;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

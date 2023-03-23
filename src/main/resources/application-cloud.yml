@@ -13,6 +13,21 @@ spring:
       "[mail.smtp.auth]": true
       "[mail.smtp.starttls.enable]": true
       "[mail.smtp.starttls.required]": true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: quick-test-portal
+            authorization-grant-type: authorization_code
+            scope: openid
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/cwa
+            user-name-attribute: preferred_username
+        resourceserver:
+          jwt:
+            issuer-uri: http://localhost:8080/realms/cwa
 
 jdbc:
   min-pool: 20

@@ -21,12 +21,12 @@
 package app.coronawarn.quicktest.validation;
 
 import app.coronawarn.quicktest.validation.validators.PersonalDataValidator;
+import jakarta.validation.Constraint;
+import jakarta.validation.Payload;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import javax.validation.Constraint;
-import javax.validation.Payload;
 
 /**
  * Valid Personal Data.
@@ -37,20 +37,23 @@ import javax.validation.Payload;
 public @interface ValidPersonalData {
     /**
      * the message.
+     *
      * @return message
      */
-    String message () default "missing standardized names for dcc";
+    String message() default "missing standardized names for dcc";
 
     /**
      * group.
+     *
      * @return groups.
      */
-    Class<?>[] groups () default {};
+    Class<?>[] groups() default {};
 
     /**
      * payload.
+     *
      * @return payload.
      */
-    Class<? extends Payload>[] payload () default {};
+    Class<? extends Payload>[] payload() default {};
 }
 

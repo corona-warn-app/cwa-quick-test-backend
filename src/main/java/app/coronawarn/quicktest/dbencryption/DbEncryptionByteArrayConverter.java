@@ -20,12 +20,12 @@
 
 package app.coronawarn.quicktest.dbencryption;
 
+import jakarta.persistence.AttributeConverter;
+import jakarta.persistence.PersistenceException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
-import javax.persistence.AttributeConverter;
-import javax.persistence.PersistenceException;
 
 public class DbEncryptionByteArrayConverter implements AttributeConverter<byte[], String> {
 

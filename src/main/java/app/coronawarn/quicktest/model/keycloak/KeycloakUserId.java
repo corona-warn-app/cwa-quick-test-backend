@@ -21,12 +21,12 @@
 package app.coronawarn.quicktest.model.keycloak;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Schema(
-    description = "Request model for user id."
+  description = "Request model for user id."
 )
 @Data
 public class KeycloakUserId {

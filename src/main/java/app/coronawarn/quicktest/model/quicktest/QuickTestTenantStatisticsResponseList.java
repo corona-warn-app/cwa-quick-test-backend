@@ -21,15 +21,15 @@
 package app.coronawarn.quicktest.model.quicktest;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 
 @Schema(
-    description = "The quick test tenant statistics model list."
+  description = "The quick test tenant statistics model list."
 )
 
 @Getter
@@ -40,7 +40,7 @@ public class QuickTestTenantStatisticsResponseList {
     private List<@Valid QuickTestTenantStatisticsResponse> quickTestTenantStatistics;
 
     public QuickTestTenantStatisticsResponseList setQuickTestTenantStatistics(
-        List<QuickTestTenantStatisticsResponse> quickTestTenantStatistics) {
+      List<QuickTestTenantStatisticsResponse> quickTestTenantStatistics) {
         this.quickTestTenantStatistics = quickTestTenantStatistics;
         return this;
     }

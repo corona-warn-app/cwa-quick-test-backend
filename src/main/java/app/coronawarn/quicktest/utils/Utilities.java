@@ -38,9 +38,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.keycloak.KeycloakPrincipal;
-import org.keycloak.adapters.springsecurity.token.KeycloakAuthenticationToken;
 import org.keycloak.representations.IDToken;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -66,7 +66,7 @@ public class Utilities {
      */
     public static ZonedDateTime getStartTimeForLocalDateInGermanyInUtc() {
         ZonedDateTime time = ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
-            .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay());
+          .with(ChronoField.NANO_OF_DAY, LocalTime.MIN.toNanoOfDay());
         return time.withZoneSameInstant(ZoneId.of("UTC"));
     }
 
@@ -75,7 +75,7 @@ public class Utilities {
      */
     public static ZonedDateTime getEndTimeForLocalDateInGermanyInUtc() {
         ZonedDateTime time = ZonedDateTime.now(ZoneId.of("Europe/Berlin"))
-            .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay());
+          .with(ChronoField.NANO_OF_DAY, LocalTime.MAX.toNanoOfDay());
         return time.withZoneSameInstant(ZoneId.of("UTC"));
     }
 
@@ -106,12 +106,12 @@ public class Utilities {
 
             if (customClaims.containsKey(quickTestConfig.getPointOfCareIdName())) {
                 ids.put(quickTestConfig.getTenantPointOfCareIdKey(),
-                    String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
+                  String.valueOf(customClaims.get(quickTestConfig.getPointOfCareIdName())));
             }
 
         }
         if (!ids.containsKey(quickTestConfig.getTenantIdKey())
-            || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
+          || !ids.containsKey(quickTestConfig.getTenantPointOfCareIdKey())) {
             log.warn("Ids not found in User-Token");
             throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, "User has no Group assigned");
         }
@@ -126,7 +126,7 @@ public class Utilities {
      */
     private boolean isSharedRealm(String realmName) {
         return realmName != null && (quickTestConfig.getSharedRealms().contains(realmName)
-            || keycloakAdminProperties.getRealm().equals(realmName));
+          || keycloakAdminProperties.getRealm().equals(realmName));
     }
 
     /**
@@ -141,6 +141,7 @@ public class Utilities {
 
     /**
      * Get root Groups from token as list.
+     *
      * @return List of rootGroup Ids
      * @throws ResponseStatusException 500 if not found in token
      */
@@ -148,13 +149,14 @@ public class Utilities {
         String information = getGroupsFromToken();
         List<String> groups = Arrays.asList(information.split(quickTestConfig.getGroupInformationDelimiter()));
         return groups.stream().filter(it -> StringUtils.countMatches(it, "/") == 1)
-          .map(group -> group.replaceAll("[\\[\\]/]",""))
+          .map(group -> group.replaceAll("[\\[\\]/]", ""))
           .map(String::trim)
           .collect(Collectors.toList());
     }
 
     /**
      * Get the subgroup from token if present.
+     *
      * @return Optional of subgroup.
      * @throws ResponseStatusException 500 if not found in token
      */
@@ -162,7 +164,7 @@ public class Utilities {
         return Arrays.stream(getGroupsFromToken().split(quickTestConfig.getGroupInformationDelimiter()))
           .filter(it -> StringUtils.countMatches(it, "/") > 1)
           .map(group -> StringUtils.substringAfterLast(group, "/"))
-          .map(group -> group.replaceAll("[\\[\\]/]",""))
+          .map(group -> group.replaceAll("[\\[\\]/]", ""))
           .map(String::trim)
           .collect(Collectors.reducing((a, b) -> null));
     }
@@ -198,7 +200,7 @@ public class Utilities {
         if (information == null) {
             log.warn("Poc Information not found in User-Token");
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    "Poc Information not found in User-Token");
+              "Poc Information not found in User-Token");
         }
         return Arrays.asList(information.split(quickTestConfig.getPointOfCareInformationDelimiter()));
     }
@@ -226,8 +228,7 @@ public class Utilities {
     }
 
     private Principal getPrincipal() {
-        KeycloakAuthenticationToken authentication = (KeycloakAuthenticationToken)
-            SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         return authentication != null ? (Principal) authentication.getPrincipal() : null;
     }

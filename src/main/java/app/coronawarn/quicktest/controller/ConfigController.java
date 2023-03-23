@@ -26,7 +26,6 @@ import app.coronawarn.quicktest.model.keycloak.KeyCloakConfigFile;
 import app.coronawarn.quicktest.model.quicktest.QuickTestContextFile;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

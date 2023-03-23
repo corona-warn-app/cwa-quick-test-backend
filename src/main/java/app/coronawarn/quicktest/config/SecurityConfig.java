@@ -20,30 +20,36 @@
 
 package app.coronawarn.quicktest.config;
 
-import java.util.Collection;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
-import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
-import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
-import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.authority.mapping.GrantedAuthoritiesMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
+import org.springframework.security.oauth2.core.oidc.user.OidcUserAuthority;
+import org.springframework.security.oauth2.core.user.OAuth2UserAuthority;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.session.RegisterSessionAuthenticationStrategy;
 import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
-
+@RequiredArgsConstructor
+public class SecurityConfig {
+    private static final String REALM_ACCESS_CLAIM = "realm_access";
+    private static final String ROLES_CLAIM = "roles";
     public static final String ROLE_PREFIX = "ROLE_";
     public static final String ROLE_LAB = "ROLE_c19_quick_test_lab";
     public static final String ROLE_COUNTER = "ROLE_c19_quick_test_counter";
@@ -57,42 +63,68 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     private static final String CONFIG_ROUTE = "/api/config/*";
     private static final String SAMESITE_LAX = "Lax";
     private static final String OAUTH_TOKEN_REQUEST_STATE_COOKIE = "OAuth_Token_Request_State";
+    private final KeycloakLogoutHandler keycloakLogoutHandler;
 
-    @Override
+    @Bean
     protected SessionAuthenticationStrategy sessionAuthenticationStrategy() {
         return new RegisterSessionAuthenticationStrategy(new SessionRegistryImpl());
     }
 
     @Bean
-    public KeycloakSpringBootConfigResolver keycloakConfigResolver(KeycloakSpringBootProperties properties) {
-        return new QuicktestKeycloakSpringBootConfigResolver(properties);
+    @SuppressWarnings("unchecked")
+    public GrantedAuthoritiesMapper userAuthoritiesMapperForKeycloak() {
+        return authorities -> {
+            Set<GrantedAuthority> mappedAuthorities = new HashSet<>();
+            var authority = authorities.iterator().next();
+            boolean isOidc = authority instanceof OidcUserAuthority;
+
+            if (isOidc) {
+                var oidcUserAuthority = (OidcUserAuthority) authority;
+                var userInfo = oidcUserAuthority.getUserInfo();
+
+                if (userInfo.hasClaim(REALM_ACCESS_CLAIM)) {
+                    var realmAccess = userInfo.getClaimAsMap(REALM_ACCESS_CLAIM);
+                    var roles = (Collection<String>) realmAccess.get(ROLES_CLAIM);
+                    mappedAuthorities.addAll(generateAuthoritiesFromClaim(roles));
+                }
+            } else {
+                var oauth2UserAuthority = (OAuth2UserAuthority) authority;
+                Map<String, Object> userAttributes = oauth2UserAuthority.getAttributes();
+
+                if (userAttributes.containsKey(REALM_ACCESS_CLAIM)) {
+                    var realmAccess = (Map<String, Object>) userAttributes.get(REALM_ACCESS_CLAIM);
+                    var roles = (Collection<String>) realmAccess.get(ROLES_CLAIM);
+                    mappedAuthorities.addAll(generateAuthoritiesFromClaim(roles));
+                }
+            }
+            return mappedAuthorities;
+        };
     }
 
-    /**
-     * Global Keycloak Configuration for CWA-Quick-Test-Backend.
-     *
-     * @param auth AuthenticationManagerBuilder
-     */
-    @Autowired
-    public void configureGlobal(AuthenticationManagerBuilder auth) {
-        KeycloakAuthenticationProvider keycloakAuthenticationProvider = keycloakAuthenticationProvider();
-        keycloakAuthenticationProvider.setGrantedAuthoritiesMapper(new SimpleAuthorityMapper());
-        auth.authenticationProvider(keycloakAuthenticationProvider);
+    Collection<GrantedAuthority> generateAuthoritiesFromClaim(Collection<String> roles) {
+        return roles.stream().map(role -> new SimpleGrantedAuthority("ROLE_" + role)).collect(Collectors.toList());
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        super.configure(http);
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .headers().addHeaderWriter(this::addSameSiteToOAuthCookie).and()
-            .csrf().disable()
-            .authorizeRequests()
-            .mvcMatchers(HttpMethod.GET, CONFIG_ROUTE).permitAll()
-            .mvcMatchers(HttpMethod.GET, API_ROUTE).authenticated()
-            .mvcMatchers(HttpMethod.POST, API_ROUTE).authenticated()
-            .mvcMatchers(HttpMethod.PUT, API_ROUTE).authenticated()
-            .mvcMatchers(HttpMethod.PATCH, API_ROUTE).authenticated()
-            .mvcMatchers(HttpMethod.DELETE, API_ROUTE).authenticated();
+          .headers().addHeaderWriter(this::addSameSiteToOAuthCookie).and()
+          .csrf().disable()
+          .authorizeHttpRequests()
+          .requestMatchers(HttpMethod.GET, CONFIG_ROUTE).permitAll()
+          .requestMatchers(HttpMethod.GET, API_ROUTE).authenticated()
+          .requestMatchers(HttpMethod.POST, API_ROUTE).authenticated()
+          .requestMatchers(HttpMethod.PUT, API_ROUTE).authenticated()
+          .requestMatchers(HttpMethod.PATCH, API_ROUTE).authenticated()
+          .requestMatchers(HttpMethod.DELETE, API_ROUTE).authenticated();
+
+        http.oauth2Login()
+          .and()
+          .logout()
+          .addLogoutHandler(keycloakLogoutHandler)
+          .logoutSuccessUrl("/");
+
+        return http.build();
     }
 
     private void addSameSiteToOAuthCookie(final HttpServletRequest request, final HttpServletResponse response) {

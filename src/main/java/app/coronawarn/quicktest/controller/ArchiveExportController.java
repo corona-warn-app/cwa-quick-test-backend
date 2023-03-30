@@ -138,7 +138,7 @@ public class ArchiveExportController {
     })
     @PostMapping(value = "/zip", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @Secured({ROLE_ARCHIVE_ZIP_CREATOR})
-    public ResponseEntity<byte[]> createZip(@Valid @RequestBody ZipRequest zipRequest) {
+    public ResponseEntity<Void> createZip(@Valid @RequestBody ZipRequest zipRequest) {
 
         try {
             List<String> partnerIds = zipRequest.getPartnerIds();

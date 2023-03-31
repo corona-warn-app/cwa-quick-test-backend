@@ -92,7 +92,7 @@ class CancellationCsvTest {
     @BeforeEach
     void setUp() {
         shortTermArchiveRepository.deleteAll();
-        longTermArchiveRepository.deleteAllByTenantId(PARTNER_ID);
+        longTermArchiveRepository.deleteAllByTenantId(PARTNER_ID_HASH);
         cancellationRepository.deleteAll();
     }
 

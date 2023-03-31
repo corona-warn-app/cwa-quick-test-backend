@@ -52,6 +52,8 @@ public class SecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
     public static final String ROLE_POC_NAT_ADMIN = "ROLE_c19_quick_test_poc_nat_admin";
     public static final String ROLE_TERMINATOR = "ROLE_c19_quick_test_terminator";
     public static final String ROLE_ARCHIVE_OPERATOR = "ROLE_c19_quick_test_archive_operator";
+    public static final String ROLE_ARCHIVE_ZIP_CREATOR = "ROLE_c19_quick_test_archive_operator_zip_creator";
+    public static final String ROLE_ARCHIVE_ZIP_DOWNLOADER = "ROLE_c19_quick_test_archive_operator_zip_downloader";
 
     private static final String API_ROUTE = "/api/**";
     private static final String CONFIG_ROUTE = "/api/config/*";

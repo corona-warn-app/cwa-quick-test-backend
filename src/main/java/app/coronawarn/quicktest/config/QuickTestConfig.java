@@ -55,7 +55,7 @@ public class QuickTestConfig {
     @Setter
     public static class CancellationConfig {
 
-        private int finalDeletionDays = 28;
+        private int finalDeletionDays = 35;
         private int completePendingTestsHours = 24;
         private int readyToArchiveHours = 48;
 

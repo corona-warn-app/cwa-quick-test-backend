@@ -138,7 +138,7 @@ quicktest:
     rules-server-url: ${QUICK_TEST_DCC_RULES_SERVER_URL}
     environment-name: ${QUICK_TEST_ENVIRONMENT_NAME:unknown}
   cancellation:
-    final-deletion-days: ${QUICK_TEST_CANCELLATION_FINAL_DELETION_DAYS:28}
+    final-deletion-days: ${QUICK_TEST_CANCELLATION_FINAL_DELETION_DAYS:35}
   sharedRealms: ${QUICK_TEST_SHARED_REALMS}
 
 archive:

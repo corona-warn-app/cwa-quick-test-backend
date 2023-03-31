@@ -109,7 +109,7 @@ quicktest:
     rules-server-url: https://distribution-6155b8d7d3c6.dcc-rules.de
     environment-name: local
   cancellation:
-    final-deletion-days: 28
+    final-deletion-days: 35
     ready-to-archive-hours: 48
     completePendingTestsHours: 24
     final-delete-job:
